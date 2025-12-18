@@ -184,6 +184,8 @@ fn demo_tuple_type() {
     
     // 元组:可以将多个不同类型的值组合在一起
     let tup: (i32, f64, u8) = (500, 6.4, 1);
+    // 不需要显示指出变量类型
+    // let _tup = (500, 6.4, 1);
     
     println!("完整元组: {:?}", tup);
     
@@ -231,6 +233,7 @@ fn demo_array_type() {
     println!("显式类型数组: {:?}", b);
     
     // 使用相同值初始化数组
+    // * 语法糖
     let c = [3; 5]; // 等同于 [3, 3, 3, 3, 3]
     println!("重复值数组: {:?}", c);
     
@@ -246,8 +249,29 @@ fn demo_array_type() {
     
     // 遍历数组
     println!("\n--- 遍历数组 ---");
+
+    // for 循环语法解释：
+    // 1. for 是循环关键字
+    // 2. element 是迭代变量名（可以自定义）
+    // 3. in 关键字连接迭代变量和可迭代对象
+    // 4. &a 表示对数组 a 的不可变引用
+    //    - 使用 &a 而不是 a，避免数组所有权转移
+    //    - element 的类型是 &i32（元素的引用）
+    // 5. 循环体用 {} 包裹
+    
+    // 方式1：遍历引用（推荐，不转移所有权）
     for element in &a {
         println!("元素: {}", element);
+    }
+    
+    // 方式2：遍历索引和值
+    for (index, element) in a.iter().enumerate() {
+        println!("索引 {}: 元素 {}", index, element);
+    }
+    
+    // 方式3：使用范围遍历索引
+    for i in 0..a.len() {
+        println!("a[{}] = {}", i, a[i]);
     }
     
     // 多维数组
@@ -306,6 +330,9 @@ fn demo_type_conversion() {
     // 使用 as 关键字进行转换
     let z = x as f64 + y;
     println!("i32 转 f64: {} + {} = {}", x, y, z);
+    // * 不转换会报错，i32 无法与 f64 直接相加
+    // let w = x + y;
+    // println!("i32 转 f64: {} + {} = {}", x, y, w);
     
     let a = 256u16;
     let b = a as u8;  // 注意:可能会截断
@@ -349,7 +376,14 @@ fn demo_common_pitfalls() {
     // let element = arr[index]; // 运行时 panic
     println!("安全访问: 使用 get 方法");
     match arr.get(10) {
+        // * match 可以返回值 (所有分支需要返回相同类型的值)
+        // Some(val) => val,
         Some(val) => println!("值: {}", val),
+        
+        // None => {
+        //     println!("索引越界");
+        //     0
+        // }
         None => println!("索引越界"),
     }
     
