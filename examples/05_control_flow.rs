@@ -115,13 +115,13 @@ fn demo_loop() {
         }
     }
     
-    // loop 可以返回值
+    // * loop 可以返回值
     let mut count = 0;
     let result = loop {
         count += 1;
         
         if count == 10 {
-            break count * 2;  // 返回值
+            break count * 2;  // * break 加返回值
         }
     };
     println!("loop 返回值: {}", result);
@@ -177,22 +177,22 @@ fn demo_for() {
     
     // 遍历 Range
     println!("\n使用 Range:");
-    for i in 1..5 {  // 1 到 4 (不包含 5)
+    for i in 1..5 {  // * 1 到 4 (不包含 5)
         println!("i = {}", i);
     }
     
     println!("\n使用包含结束的 Range:");
-    for i in 1..=5 {  // 1 to 5 (包含 5)
+    for i in 1..=5 {  // * 1 to 5 (包含 5)
         println!("i = {}", i);
     }
     
-    // 反向遍历
+    // * 反向遍历
     println!("\n反向遍历:");
     for i in (1..=5).rev() {
         println!("倒计时: {}", i);
     }
     
-    // 遍历带索引
+    // * 遍历带索引
     println!("\n遍历带索引:");
     let names = ["Alice", "Bob", "Carol"];
     for (index, name) in names.iter().enumerate() {
@@ -237,6 +237,12 @@ fn demo_loop_labels() {
     
     let mut count = 0;
     
+    // 'outer 是一个循环标签（loop label）。
+    // 用途：给循环命名，以便在嵌套循环中通过 `break 'outer` 或 `continue 'outer` 精确控制外层循环的行为。
+    // 语法：标签以单引号开头，后跟标识符并置于循环前，例如：`'label: loop { ... }`。
+    // 示例用法（概念说明）：在内层循环中使用 `break 'outer;` 可直接退出标有 `'outer` 的外层循环。
+    // 与生命周期不同：这是控制流标签，不是生命周期标注，不影响借用或类型系统。
+    // 注意：标签名遵循标识符规则；在引用标签时在 `break`/`continue` 前加单引号。
     // 外层循环标签
     'outer: loop {
         println!("外层循环 count = {}", count);

@@ -1,11 +1,11 @@
-//! # 06 - 所有权系统
-//!
-//! ## 学习目标
-//! - 理解所有权的三条规则
-//! - 理解移动(move)语义
-//! - 理解克隆(clone)
-//! - 理解栈和堆的区别
-//! - 掌握函数参数和返回值的所有权转移
+// ! # 06 - 所有权系统
+// !
+// ! ## 学习目标
+// ! - 理解所有权的三条规则
+// ! - 理解移动(move)语义
+// ! - 理解克隆(clone)
+// ! - 理解栈和堆的区别
+// ! - 掌握函数参数和返回值的所有权转移
 
 /*
  * ================================
@@ -20,7 +20,7 @@
  * 3. 当所有者(变量)离开作用域,这个值将被丢弃
  * 
  * 内存管理:
- * - 栈(Stack): 固定大小,后进先出,速度快
+ * - 栈(Stack): 固定大小,先进后出,速度快
  * - 堆(Heap): 动态大小,需要分配器,速度相对慢
  */
 
@@ -35,6 +35,14 @@ fn demo_ownership_basics() {
     } // s 离开作用域,不再有效
     
     // println!("{}", s); // 错误: s 已经离开作用域
+
+    /*
+    let mut s = "foo";
+    let mut s = String::from("foo");
+    以上两行代码的区别:
+    - 第一行创建了一个不可变的字符串切片(&str),存储在栈上,变量绑定本身可以被重新赋值,但内容不可修改
+    - 第二行创建了一个可变的 String 类型,存储在堆上,拥有所有权,内容可以修改
+    */
     
     // String 类型: 在堆上分配
     let mut s = String::from("hello");
@@ -77,13 +85,13 @@ fn demo_clone() {
     println!("\n=== 3. 克隆(深拷贝) ===");
     
     let s1 = String::from("hello");
-    let s2 = s1.clone();  // 深拷贝
+    let s2 = s1.clone();  // * 深拷贝
     
     println!("s1 = {}", s1);
     println!("s2 = {}", s2);
     println!("两个变量都有效!");
     
-    // 克隆是昂贵的操作
+    // * 克隆是昂贵的操作
     let large_string = String::from("这是一个很长的字符串...");
     let cloned = large_string.clone();
     
@@ -147,13 +155,13 @@ fn demo_ownership_and_functions() {
     let s = String::from("hello");
     println!("调用前: s = {}", s);
     
-    takes_ownership(s);  // s 的所有权移动到函数中
+    takes_ownership(s);  // * s 的所有权移动到函数中
     // println!("{}", s); // 错误: s 已经失效
     
     let x = 5;
     println!("调用前: x = {}", x);
     
-    makes_copy(x);  // x 是 Copy 类型,传递的是副本
+    makes_copy(x);  // * x 是 Copy 类型,传递的是副本
     println!("调用后: x = {} (仍然有效)", x);
     
     println!("\n✓ 传递参数会转移或复制所有权");
@@ -162,7 +170,7 @@ fn demo_ownership_and_functions() {
 
 fn takes_ownership(some_string: String) {
     println!("  函数内: some_string = {}", some_string);
-} // some_string 离开作用域并被丢弃
+} // * some_string 离开作用域并被丢弃
 
 fn makes_copy(some_integer: i32) {
     println!("  函数内: some_integer = {}", some_integer);
@@ -191,7 +199,7 @@ fn demo_return_values_and_ownership() {
 
 fn gives_ownership() -> String {
     let some_string = String::from("yours");
-    some_string  // 返回并移动所有权
+    some_string  // * 返回并移动所有权
 }
 
 fn takes_and_gives_back(a_string: String) -> String {
