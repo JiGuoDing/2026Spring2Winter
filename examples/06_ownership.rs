@@ -254,21 +254,23 @@ fn demo_stack_and_heap() {
 fn demo_ownership_scenarios() {
     println!("\n=== 8. 实际应用场景 ===");
     
-    // 场景1: 构建器模式
+    // 场景1: 构建器模式，通过方法链构造一个字符串
+    // build_message() 函数返回一个 MessageBuilder 实例
     let message = build_message()
+        // 每个方法都接收 self 的所有权并返回修改后的 self，每一步都是移动，而不是借用
         .add_greeting("Hello")
         .add_name("Alice")
         .build();
     
     println!("消息: {}", message);
     
-    // 场景2: 处理数据并返回
+    // 场景2: 处理数据并返回，将 Vec<i32> 传入函数，处理后返回新 Vec
     let data = vec![1, 2, 3, 4, 5];
     let processed = process_data(data);
     println!("处理后的数据: {:?}", processed);
     // println!("{:?}", data); // 错误: data 已移动
     
-    // 场景3: 取得所有权进行修改
+    // 场景3: 取得所有权进行修改，传入 String，在函数中修改后返回
     let mut text = String::from("hello");
     text = append_exclamation(text);
     println!("修改后: {}", text);
@@ -291,6 +293,7 @@ impl MessageBuilder {
         }
     }
     
+    // mut self 表示获取 self 的所有权并允许修改，调用后原变量失效 (但是链式调用中间值本来就不需要保留)
     fn add_greeting(mut self, greeting: &str) -> Self {
         self.greeting = greeting.to_string();
         self
@@ -306,10 +309,14 @@ impl MessageBuilder {
     }
 }
 
+// 获取 data 的所有权 (参数类型是 Vec<i32>，不是引用，如 &Vec<i32> 或 &[i32])，处理后返回新 Vec
 fn process_data(data: Vec<i32>) -> Vec<i32> {
+    // into_iter() 消耗原始 Vec，产生一个拥有值的所有权的迭代器
+    // 经过 map 和 collect 后，返回一个全新的 Vec<i32>
     data.into_iter().map(|x| x * 2).collect()
 }
 
+// 接收一个 String 的所有权 (非引用)，修改后返回
 fn append_exclamation(mut s: String) -> String {
     s.push_str("!!!");
     s
@@ -340,7 +347,7 @@ fn demo_common_pitfalls() {
         String::from("c"),
     ];
     
-    // 使用引用遍历,不移动所有权
+    // * 使用引用遍历,不移动所有权
     for s in &strings {
         println!("  {}", s);
     }
