@@ -97,21 +97,21 @@ fn demo_borrowing_rules() {
     let mut s2 = String::from("world");
     let r3 = &mut s2;
     println!("✓ 一个可变引用: r3 = {}", r3);
-    // let r4 = &mut s2; // 错误: 不能同时有两个可变引用
+    // let r4 = &mut s2; // 错误: 不能同时有两个可变引用（当 r3 在后续继续被使用才会报错，不然不会报错）
     
     // 规则3: 不能同时有可变和不可变引用
     let mut s3 = String::from("rust");
     let r5 = &s3;       // 不可变引用
     let r6 = &s3;       // 不可变引用
     println!("不可变引用: {}, {}", r5, r6);
-    // let r7 = &mut s3; // 错误: 已有不可变引用
+    let r7 = &mut s3; // 错误: 已有不可变引用（当 r5 和 r6 在后续继续被使用才会报错，不然不会报错）
     
-    // 引用的作用域从声明开始到最后一次使用
+    // * 引用的作用域从声明开始到最后一次使用
     let mut s4 = String::from("example");
     let r8 = &s4;
     let r9 = &s4;
     println!("{} and {}", r8, r9);
-    // r8 和 r9 不再使用
+    // 不可变引用 r8 和 r9 不再使用
     
     let r10 = &mut s4;  // 现在可以创建可变引用
     println!("{}", r10);
@@ -253,6 +253,8 @@ fn demo_practical_uses() {
     println!("原始数据: {:?}", data);
 }
 
+// * 'a 是一个泛型生命周期参数 (类似泛型类型 T，但用于生命周期)
+// x: &'a String 表示：x 是一个引用，它所指向的数据至少活到 'a 这个生命周期结束
 fn find_longest<'a>(x: &'a String, y: &'a String) -> &'a String {
     if x.len() > y.len() {
         x
