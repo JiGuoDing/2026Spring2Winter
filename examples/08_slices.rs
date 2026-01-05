@@ -98,14 +98,19 @@ fn demo_slice_as_parameter() {
 }
 
 fn first_word(s: &str) -> &str {
+    // 字符串转为字节数组，这里为了按字节遍历字符串，因为 Rust 的 str 类型不能直接按索引访问，单字节切片可以
     let bytes = s.as_bytes();
     
+    // &item 是因为 iter() 返回的是引用 (&u8)
     for (i, &item) in bytes.iter().enumerate() {
+        // b'' 是字面量写法，表示空格字符的 ASCII 值 (32)，如果当前字节是空格，则说明找到了第一个单词的结束位置
         if item == b' ' {
+            // * Rust 要求在这种提前返回的情况下必须显式使用 return
             return &s[0..i];
         }
     }
-    
+    // 如果没有找到空格，则整个字符串就是一个单词
+    // * 只有当要返回的表达式是函数体的最后一个表达式时，才可以省略 return
     &s[..]
 }
 
@@ -184,6 +189,7 @@ fn demo_practical_applications() {
     
     // 应用2: 查找子串
     let sentence = "The quick brown fox";
+    // 在字符串 "The quick brown fox" 中查找子串 "quick"，如果找到了，就截取从该位置开始的 5 个字符并打印出来。
     if let Some(index) = sentence.find("quick") {
         let found = &sentence[index..index+5];
         println!("\n找到单词: {}", found);
@@ -203,7 +209,9 @@ fn demo_practical_applications() {
 
 fn sum_slice(slice: &[i32]) -> i32 {
     let mut total = 0;
-    for &num in slice {
+    // for &num in slice {
+    // * 改为这样同样合法，因为 += 运算符对 i32 实现了自动解引用和运算符重载
+    for num in slice{
         total += num;
     }
     total

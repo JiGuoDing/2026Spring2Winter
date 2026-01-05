@@ -1,5 +1,9 @@
 //! 09 - 结构体
 
+// * #[derive(Debug)] 是 Rust 的属性 (attribute) 语法，用于给代码项 (如 struct, enum, 函数等) 附加元信息或指令。
+// * derive 是一个内置的派生宏（derive macro），它能自动为类型实现某些标准 trait，而无需手写实现代码。
+// * Debug 是一个用于调试输出的 trait，实现了 Debug 的类型可以用 {:?} 在 println! 中打印。
+
 /// 定义结构体
 #[derive(Debug)]
 struct User {
@@ -68,6 +72,7 @@ fn main() {
     // 结构体更新语法
     let user3 = User {
         email: String::from("charlie@example.com"),
+        // * ..user2 表示：除了显式指定的字段（如 email），其余字段从 user2 中复制过来。
         ..user2
     };
     println!("用户3: {:?}", user3);
