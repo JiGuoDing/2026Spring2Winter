@@ -8,6 +8,7 @@ fn main() {
     println!("║    Rust 学习系列 22: 智能指针        ║");
     println!("╚══════════════════════════════════════╝");
     
+    // * Box<T> (读作 box of T)，即一个智能指针
     // Box<T> - 堆分配
     let b = Box::new(5);
     println!("\nBox: {}", b);

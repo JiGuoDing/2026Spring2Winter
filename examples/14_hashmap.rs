@@ -16,6 +16,9 @@ fn main() {
     
     // 访问值
     let team_name = String::from("Blue");
+    // * .get(key) 方法接受一个对 key 的引用，返回类型是 Option<&V> (这里即 Option<&i32>)
+    // * .copied() 是 Option<&T> 的一个方法，返回类型是 Option<V> (不再是引用而是值本身)
+    // * .unwrap_or(0) 是 Option<T> 的方法，安全地把 Option<T> 转成 T 类型，如果是 Some(x) -> 返回 x，如果是 None -> 返回 default (这里就是 0)
     let score = scores.get(&team_name).copied().unwrap_or(0);
     println!("Blue队得分: {}", score);
     
@@ -39,6 +42,8 @@ fn main() {
     let mut map = HashMap::new();
     
     for word in text.split_whitespace() {
+        // * or_insert(default) 存在则取出来，不存在则插入默认值
+        // * 要修改 HashMap，先取出 entry
         let count = map.entry(word).or_insert(0);
         *count += 1;
     }

@@ -1,5 +1,8 @@
 //! 18 - 生命周期
 
+// * <'a> 声明一个泛型生命周期参数，名字是 'a (读作 lifetime a)
+// * x: &'a str 表示 x 是一个字符串引用，其指向的数据至少活到 'a 结束
+//  * -> &'a str 表示返回的引用，其生命周期也是 'a
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.len() > y.len() {
         x

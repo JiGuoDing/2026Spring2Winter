@@ -25,6 +25,8 @@ fn main() {
     let s4 = String::from("Hello, ");
     let s5 = String::from("world!");
     let s6 = s4 + &s5;  // s4 被移动
+    // println!("s4: {}", s4);
+    // println!("s5: {}", s5);
     println!("使用 +: {}", s6);
     
     let s7 = String::from("tic");
@@ -46,7 +48,8 @@ fn main() {
     
     // 切片
     let hello = "Здравствуйте";
-    let s = &hello[0..4];
+    // 一个俄文字符占两个字节
+    let s = &hello[0..6];
     println!("\n切片: {}", s);
     
     println!("\n💡 下一步: 学习 14_hashmap.rs - HashMap集合");

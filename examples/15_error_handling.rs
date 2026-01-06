@@ -23,10 +23,11 @@ fn main() {
         Err(e) => println!("错误: {}", e),
     }
     
-    // unwrap 和 expect
+    // * unwrap 从 Result 中强行取出 Ok 里的值，如果 Result 是 Ok(value) → 返回 value，如果是 Err(error) → 立即 panic！程序崩溃
     let value = result.unwrap();
     println!("unwrap: {}", value);
     
+    // * expect 从 Result 中强行取出 Ok 里的值，如果 Result 是 Ok(value) → 返回 value，如果是 Err(error) → panic！但可以提供自定义的错误消息 msg
     let value2 = result.expect("应该包含值");
     println!("expect: {}", value2);
     

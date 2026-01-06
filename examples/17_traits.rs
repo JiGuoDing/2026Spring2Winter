@@ -14,6 +14,7 @@ struct NewsArticle {
     author: String,
 }
 
+// * Summary for NewsArticle 是为某个类型实现 trait 的语法，作用是把 Summary 这个 trait 的行为 (方法) 绑定到 NewsArticle 这个具体类型上
 impl Summary for NewsArticle {
     fn summarize(&self) -> String {
         format!("{}, by {}", self.headline, self.author)
@@ -61,6 +62,7 @@ fn main() {
     notify(&tweet);
     
     println!("\n作者: {}", article.author());
+    println!("\n作者: {}", tweet.author());
     
     println!("\n💡 下一步: 学习 18_lifetimes.rs - 生命周期");
 }
