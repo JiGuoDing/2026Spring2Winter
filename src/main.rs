@@ -1,5 +1,9 @@
 use std::io;
 
+fn is_triangle(a: i32, b: i32, c: i32) -> bool {
+    a + b > c && a + c > b && b + c > a
+}
+
 fn main() {
     // 读取输入的三个整数
     let mut input_line = String::new();
@@ -9,5 +13,9 @@ fn main() {
     let numbers = input_line.split_whitespace()
     .map(|s| s.parse::<i32>().expect("输入错误")).collect::<Vec<i32>>();
 
-    println!("输入的三个整数是：{} {} {}", numbers[0], numbers[1], numbers[2])
+    if is_triangle(numbers[0], numbers[1], numbers[2]) {
+        println!("Not triangle");
+    }
+
+    
 }
