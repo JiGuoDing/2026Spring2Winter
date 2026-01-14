@@ -20,4 +20,21 @@ fn main() {
 
     // 解析输入
     let k = input_line.trim().parse::<i32>().expect("Invalid input");
+
+    let mut tmp_sum = 0;
+    let mut cnt = 0;
+
+    for i in 1..=k {
+        if is_prime(i) {
+            tmp_sum += i;
+            if tmp_sum <= k {
+                println!("{}", i);
+                cnt += 1;
+            } else {
+                break;
+            }
+        }
+    }
+
+    println!("{}", cnt);
 }

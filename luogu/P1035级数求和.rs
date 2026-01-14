@@ -1,18 +1,5 @@
 use std::io;
 
-// 判断一个数是否为质数
-fn is_prime(n: i32) -> bool {
-    if n <= 1 {
-        return false;
-    }
-    for i in 2..=(n as f64).sqrt() as i32 {
-        if n % i == 0 {
-            return false;
-        }
-    }
-    true
-}
-
 fn main() {
     // 读取输入
     let mut input_line = String::new();
@@ -20,4 +7,14 @@ fn main() {
 
     // 解析输入
     let k = input_line.trim().parse::<i32>().expect("Invalid input");
+
+    let mut tmp = 0.0;
+    let mut idx = 0;
+
+    while tmp <= k as f64 {
+        idx += 1;
+        tmp += 1.0 / (idx as f64);
+    }
+
+    println!("{}", idx);
 }
