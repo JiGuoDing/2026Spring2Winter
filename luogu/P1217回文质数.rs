@@ -8,7 +8,7 @@ fn is_palindrome(n: i32) -> bool {
     }
     let mut original = n;
     let mut reversed = 0;
-    // 只反转一半数字（性能更高）
+    // * 只反转一半数字（性能更高），从 original 末尾取数字，每次取出一个
     while original > reversed {
         reversed = reversed * 10 + original % 10;
         original /= 10;
