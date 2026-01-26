@@ -23,7 +23,7 @@ int main() {
         }
     }
 
-    // 定义8个方向的偏移量（和Java版本完全一致）
+    // 定义8个方向的偏移量
     int directions[8][2] = {
         {-1, -1}, {-1, 0}, {-1, 1},
         {0, -1},          {0, 1},
@@ -52,7 +52,7 @@ int main() {
                     }
                 }
                 // 将数字转换为字符添加到结果行
-                resultLine += (char)('0' + count);
+                resultLine += static_cast<char>('0' + count);
             }
         }
         // 输出当前行结果
