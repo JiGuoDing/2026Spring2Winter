@@ -3,11 +3,13 @@
   "configurations": [
     {
       "name": "C/C++ Runner: Debug Session",
-      "type": "lldb",
+      "type": "cppvsdbg",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/jiguoding/workspace/learn-rust/cxx",
-      "program": "/Users/jiguoding/workspace/learn-rust/cxx/build/Debug/outDebug"
+      "stopAtEntry": false,
+      "console": "externalTerminal",
+      "cwd": "c:/workplace/learn-rust/cxx",
+      "program": "c:/workplace/learn-rust/cxx/build/Debug/outDebug"
     }
   ]
 }
