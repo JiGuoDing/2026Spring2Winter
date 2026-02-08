@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     "/Users/jiguoding/workspace/learn-rust/cxx/output/P1319压缩技术"
+relocations:     []
+...
