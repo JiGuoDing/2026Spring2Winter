@@ -17,31 +17,31 @@ int main(int argc, const char** argv) {
     }
 
 
-    for (int i = 0; i <= n; ++i) {
+    for (size_t i = 0; i <= n; ++i) {
         int coefficient = coefficients[i];
         int abs_coefficient = abs(coefficient);
         if (coefficient == 0)
             continue;
 
         if (coefficient < 0) {
-            if (abs_coefficient == 1) {
-
-            }
             result.append("-");
-            result.append(to_string(abs_coefficient));
-        } else {
-            if (abs_coefficient == 1) {
-                
+            if (i == n || abs_coefficient != 1) {
+                result.append(to_string(abs_coefficient));
             }
+        } else {
             if (i != 0)
                 result.append("+");
-            result.append(to_string(coefficient));
+            if (i == n || abs_coefficient != 1) {
+                result.append(to_string(coefficient));
+            }
         }
 
         if (i != n) {
             result.append("x");
-            result.append("^");   
-            result.append(to_string(n-i));
+            if (i != n-1) {
+                result.append("^");   
+                result.append(to_string(n-i));
+            }
         }
     }
 
