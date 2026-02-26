@@ -25,4 +25,19 @@ func P2676() {
 		fmt.Sscanf(scanner.Text(), "%d", &heights[i])
 	}
 
+	threeWayQuickSort(heights, 0, len(heights)-1)
+
+	cnt := 0
+	currentHeight := 0
+
+	for i := len(heights) - 1; i >= 0; i-- {
+		currentHeight += heights[i]
+		cnt++
+
+		if currentHeight >= b {
+			break
+		}
+	}
+
+	fmt.Println(cnt)
 }
