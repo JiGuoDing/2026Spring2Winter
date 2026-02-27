@@ -111,11 +111,11 @@ unsafe.Pointer 是 Go 的通用指针类型，可以理解为 C 的 void *，它
 
 另外，普通指针受 GC 管理和类型约束，unsafe.Pointer 不受类型约束但仍受 GC 跟踪
 
-### 1.22 unsafe.Pointer 和 uniptr 有什么区别？
+### 1.22 unsafe.Pointer 和 uintptr 有什么区别？
 
-unsafe.Pointer 和 uniptr 可以相互转换，这是 Go 提供的唯一合法的指针运算方式。典型用法是先将 unsafe.Pointer 转换为 uniptr 做算术运算，然后再转回 unsafe.Pointer 使用
+unsafe.Pointer 和 uintptr 可以相互转换，这是 Go 提供的唯一合法的指针运算方式。典型用法是先将 unsafe.Pointer 转换为 uintptr 做算术运算，然后再转回 unsafe.Pointer 使用
 
-最关键的区别在于 GC 追踪，unsafe.Pointer 会被垃圾回收器追踪，它指向的内存不会被错误回收。而 uniptr 只是一个普通整数，GC 完全不知道它指向什么，如果没有其他引用，对应内存可能随时被回收。
+最关键的区别在于 GC 追踪，unsafe.Pointer 会被垃圾回收器追踪，它指向的内存不会被错误回收。而 uintptr 只是一个普通整数，GC 完全不知道它指向什么，如果没有其他引用，对应内存可能随时被回收。
 
 unsafe.Pointer 有 GC 保护，uintptr 没有，这是它们最本质的区别。
 
@@ -160,7 +160,7 @@ type hmap struct {
   count int
   // 状态标志位，记录 map 的状态
   flags uint8
-  // 桶数以 2 为底的指数，决定了哈希表的大小，即 B = log_2(len(buckets))，比如 B = 3，那么桶的数量为 2^3 = 8
+  // 桶数以 2 为底的对数，决定了哈希表的大小，即 B = log_2(len(buckets))，比如 B = 3，那么桶的数量为 2^3 = 8
   B uint8
   // 溢出桶的数量的近似值
   noverflow uint16
@@ -186,3 +186,175 @@ type hmap struct {
 ### 3.2 Go Map 的遍历是有序的还是无序的？
 
 Go Map 的遍历是 **完全随机** 的，没有固定的顺序。map 每次遍历，都会从一个随机值序号的桶，在每个桶中，再从按照之前选定随机槽位开始遍历，所以是无序的
+
+这意味着当使用 for range 遍历一个 Map 时，每次运行得到的元素顺序可能都不一样，甚至在同一个程序运行时多次遍历同一个 Map，顺序也可能不同。
+
+但是使用 fmt.Println 打印 Map 时，元素顺序是固定的，因为 fmt.Println 会按照键的哈希值升序排序输出
+
+### 3.4 Map 如何实现顺序读取？
+
+如果业务上确实需要有序遍历，最规范的做法就是将 Map 的键 (Key) 取出来放入一个切片 (Slice) 中，用 sort 包对切片进行排序，然后根据这个有序的切片去遍历 Map
+
+```go
+package main
+
+import (
+   "fmt"
+   "sort"
+)
+
+func main() {
+   keyList := make([]int, 0)
+   m := map[int]int{
+      3: 200,
+      4: 200,
+      1: 100,
+      8: 800,
+      5: 500,
+      2: 200,
+   }
+   for key := range m {
+      keyList = append(keyList, key)
+   }
+   sort.Ints(keyList)
+   for _, key := range keyList {
+      fmt.Println(key, m[key])
+   }
+}
+```
+
+### 3.5 Go Map 是否是并发安全的？
+
+Go Map 不是并发安全的，并发读写 Map 会导致数据竞争和不一致的结果。如果需要在并发场景下使用 Map，需要使用 sync.Map 或者其他并发安全的 Map 实现
+
+### 3.7 Go Map 的扩容时机是怎样的？
+
+向 map 插入新 key 时，会进行条件检测，符合以下两个条件，就会触发扩容
+
+- 装载因子 (元素个数与桶数的比值) 超过阈值，源码中定义的阈值是 6.5，此时会触发双倍扩容，即 B+1，桶数会增加一倍
+- overflow 的 bucket 数量过多
+  - 当 B < 15 时，overflow bucket 数量超过 2^B
+  - 当 B >= 15 时，overflow bucket 数量超过 2^15
+
+这两种情况下会触发等量扩容，B 不变，创建一组新 bucket (数量和原来一样)，将原有的元素搬迁到新 bucket 中
+
+### 3.8 Go Map 的扩容过程是怎样的？
+
+Go Map 的扩容是 **渐进式** 的 (gradual)，首先分配新空间，然后在后续的每一次插入、修改或删除操作时，才会顺便搬迁一两个旧桶的数据
+
+如果是触发双倍扩容，会新建一个 buckets 数组，新的 buckets 数量大小是原来的 2 倍，然后旧 buckets 数据搬迁到新的 buckets。如果是等量扩容，buckets 数量维持不变，重新做一遍类似双倍扩容的搬迁动作，把松散的键值对重新排列一次，使得同一个 bucket 中的 key 排列地更紧密，这样节省空间，存取效率更高
+
+### 3.9 可以对 Map 的元素取地址吗？
+
+无法对 map 的 key 或 value 进行取址，会发生编译报错，这样设计主要是因为 map 一旦发生扩容，key 和 value 的位置就会改变，之前保存的地址也就失效了
+
+### 3.10 Map 中删除一个 key，它的内存会释放吗？
+
+delete 一个 key，并不会立即释放或收缩 Map 占用的内存，具体来说，delete(m, key) 只是把 key 和 value 对应的内存块标记为 "空闲"，让它们的内容可以被后续的 GC 处理掉。但是，Map 底层为了存储这些键值对二分配的 "桶" 数组，它的规模时不会缩小的，只有在置空这个 map 的时候，整个 map 的空间才会被垃圾回收释放
+
+![map_delete_key](./assets/map_delete_key.png "map_delete_key")
+
+## 4. Channel 面试题
+
+### 4.1 什么是 CSP？
+
+CSP (Communicating Sequential Processes，通信顺序进程) 并发编程模型，它的核心思想是：通过通信共享内存，而不是通过共享内存来通信。Go 语言的 Goroutine 和 Channel 机制，就是 CSP 的经典实现，具有以下特点：
+
+- 避免共享内存：协程 (Goroutine) 不直接修改变量，而是通过 Channel 通信
+- 天然同步：Channel 的发送 / 接受自带同步机制，无需手动加锁
+- 易于组合：Channel 可以嵌套使用，构建复杂并发模式 (如管道、超时控制)
+
+### 4.2 Channel 的底层实现原理是怎样的？
+
+Channel 的底层是一个名为 `hchan` 的结构体，核心包含几个关键组件：
+
+- `环形缓冲区`：有缓冲 channel 内部维护一个固定大小的环形队列，用 buf 指针指向缓冲区，sendx 和 recvx 分别记录发送和接收的位置索引
+- `两个等待队列`：sendq 和 recvq 用来管理阻塞的 goroutine。sendq 存储因 channel 满而阻塞的发送者，recvq 存储因 channel 空而阻塞的接收者。这些队列用双向链表实现，当条件满足时会唤醒对应的 goroutine
+- `互斥锁`：hchan 内部有一个 mutex，所有的发送、接收操作都需要先获取锁，用来保证并发安全
+
+```go
+type hchan struct {
+  qcount   uint           // 队列中元素的数量
+  dataqsiz uint           // 环形队列的长度
+  buf      unsafe.Pointer // 指向环形队列的指针
+  elemsize uint16         // 每个元素的大小
+  closed   uint32         // 通道是否关闭
+  elemtype *_type         // 元素的类型
+  sendx    uint           // 发送索引
+  recvx    uint           // 接收索引
+  recvq    waitq          // 接收等待队列，等待接收的 goroutine 队列
+  sendq    waitq          // 发送等待队列，等待发送的 goroutine 队列
+  lock     mutex          // 互斥锁
+}
+```
+
+![channel_hchan](./assets/channel_hchan.png "channel_hchan")
+
+### 4.3 向 channel 发送数据的过程是怎样的？
+
+向 channel 发送数据的整个过程都会在 mutex 保护下进行，保证并发安全
+
+1. 首先检查是否有等待的接收者，如果 recvq 队列非空，说明有 goroutine 在等待接收数据，这时会直接把数据传递给等待的接收者，跳过缓冲区。同时会唤醒对应的 goroutine 继续执行
+2. 如果没有等待的接收者，就尝试写入缓冲区。检查缓冲区是否还有空间，如果 qcount < dataqsize，就把数据复制到 buf[sendx]，然后更新 sendx 索引和 qcount 计数
+3. 当缓冲区满了就需要阻塞等待。创建一个 sudog (pseudo goroutine) 结构体包装当前 goroutine 和要发送的数据，加入到 sendq 等待队列中，然后调用 gopark 让当前 goroutine 进入阻塞状态，让出 CPU 给其他 goroutine
+
+被唤醒后继续执行。当有接收者从 channel 读取数据后，会从 sendq 中唤醒一个等待的发送者，被唤醒的 goroutine 会完成数据发送并继续执行
+
+有两个 receiver 在 channel 的一边虎视眈眈地等着，这时 channel 另一边来了一个 sender 准备向 channel 发送数据，为了高效，用不着通过 channel 的 buf "中转"一次，直接从源地址把数据 copy 到目的地址就可以了，效率高啊！
+
+### 4.4 从 channel 读取数据的过程是怎样的？
+
+1. 首先检查是否有等待的发送者，如果 sendq 队列非空，说明有 goroutine 在等待发送数据。对于无缓冲 channel，会直接从发送者那里接收数据；对于有缓冲 channel，会先从缓冲区读取数据，然后把等待的发送者的数据放入缓冲区，这样保持 FIFO 顺序
+2. 如果没有等待发送者，尝试从缓冲区读取，检查 qcount > 0，如果缓冲区有数据，就从 buf[recvx] 位置取出数据，然后更新 recvx 索引和 qcount 计数。这是缓冲区有数据时的正常路径
+
+缓冲区为空时需要阻塞等待，创建 sudog 结构体包装当前 goroutine，加入到 recvq 等待队列，调用 gopark 进入阻塞状态，当有发送者写入数据时会被唤醒继续执行
+
+从已关闭的 channel 读取时有特殊处理，如果 channel 已关闭且缓冲区为空，会返回零值和 false 标志；如果缓冲区还有数据，可以正常读取直到清空。这就是为什么 v, ok := <-ch 会返回两个值，第一个是 channel 中的数据，第二个是一个布尔值，表示 channel 是否已关闭
+
+### 4.6 Channel 在什么情况下会引起内存泄漏？
+
+Channel 引起内存泄漏最常见的是引起 goroutine 泄漏从而导致的间接内存泄漏，当 goroutine 阻塞在 channel 操作上永远无法退出时，goroutine 本身和它引用的变量都无法被 GC 回收。例如当一个 goroutine 在等待接收数据，但发送者已经退出了，这个接收者就会永远阻塞下去。或者 select 语句使用不当，在没有 default 分支的 select 中，如果所有 case 都无法执行，goroutine 会永远阻塞，出现内存泄漏
+
+### 4.7 关闭 channel 会产生异常吗？
+
+试图重复关闭一个 channel、关闭一个 nil 值的 channe、关闭一个只有接收方向的 channel 都将导致 panic 异常
+
+### 4.9 什么是 select？
+
+select 是 Go 专门为 channel 操作设计的多路复用控制结构，类似于网络编程中的 select 系统调用
+
+核心作用是同时监听多个 channel 操作，当有多个 channel 都可能有数据收发时，select 能够选择其中一个可执行的 case 进行操作，而不是按顺序逐个尝试。例如同时监听数据输入、超时信号、取消信号等
+
+### 4.10 select 的执行机制是怎样的？
+
+select 的执行机制是随机选择，如果多个 case 同时满足条件，Go 会随机选择一个执行，这避免了饥饿问题，如果没有 case 能执行就会执行 default，当前 goroutine 会阻塞等待
+
+### 4.11 select 的实现原理是怎样的？
+
+Go 实现 select 时，定义了一个数据结构 scase，表示每个 case 语句 (包含 default)，scase 结构包含 channel 指针、操作类型等信息，select 操作的整个过程通过 selectgo 函数在 runtime 层面实现
+
+Go 运行时会将所有 case 进行随机排序，这是为了避免饥饿问题。然后执行两轮扫描策略：第一轮直接检查每个 channel 是否可读写，如果找到就绪的立即执行；如果都没就绪，第二轮就把当前 goroutine 加入到所有 channel 的发送或接收队列中，然后调用 gopark 进入睡眠状态，使当前 goroutine 让出 CPU
+
+当某个 channel 变为可操作时，调度器会唤醒对应的 goroutine，此时需要从其他 channel 的等待队列中清理掉这个 goroutine，然后执行对应的 case 分支
+
+核心原理：case 随机化 + 双重循环检测
+
+```go
+type scase struct {
+    c *hchan // 关联的 channel 指针
+    elem unsafe.Pointer // 数据元素指针，用于存储接收或发送的数据
+    kind uint16 // case 类型：caseNil, caseRecv, caseSend, caseDefault
+    pc uintptr // 程序计数器，用于调试
+    releasetime int64 // 释放时间，用于竞态检测
+}
+```
+
+![select_case](./assets/select_case.png "select_case")
+
+在默认的情况下，select 语句会在编译阶段经过如下过程的处理：
+
+1. 将所有的 case 转换成包含 Channel 以及类型等信息的 scase 结构体；
+
+2. 调用运行时函数 selectgo 获取被选择的 scase 结构体索引，如果当前的 scase 是一个接收数据的操作，还会返回一个指示当前 case 是否是接收的布尔值；
+
+3. 通过 for 循环生成一组 if 语句，在语句中判断自己是不是被选中的 case。
