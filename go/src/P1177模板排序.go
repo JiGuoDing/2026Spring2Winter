@@ -82,6 +82,11 @@ func threeWayQuickSort(a []int, l, r int) {
 	}
 }
 
+/*
+为什么要三路快排？
+普通快排在面对大量重复元素时，时间复杂度会退化到 O(N^2)。三路快排把相等的元素聚集在一起，不再递归处理它们，能保持 O(NlogN)，甚至在重复元素极多时接近 O(N)。
+*/
+
 func P1177() {
 	in := bufio.NewScanner(os.Stdin)
 	in.Split(bufio.ScanWords)
