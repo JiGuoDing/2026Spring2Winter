@@ -358,3 +358,157 @@ type scase struct {
 2. 调用运行时函数 selectgo 获取被选择的 scase 结构体索引，如果当前的 scase 是一个接收数据的操作，还会返回一个指示当前 case 是否是接收的布尔值；
 
 3. 通过 for 循环生成一组 if 语句，在语句中判断自己是不是被选中的 case。
+
+## 5. Sync 面试题
+
+### 5.1 除了 mutex 以外还有哪些方式安全读写共享变量？
+
+除了 mutex，主要还有信号量、通道 (channel)、原子操作 (atomic) 这几种方式
+
+信号量的实现跟 mutex 差不多，实现起来比较方便，主要通过信号量计数来保证。channel 是 Go 最推崇的方式，它通过通信来传递数据所有权，从根源上避免竞争，更适合复杂的业务逻辑；而原子操作则针对最简单的整型或指针等进行无锁操作，性能最高，常用于实现计数器或状态位。选择哪种，完全取决于数据结构等复杂度和业务的读写模型
+
+### 5.2 Go 语言是如何实现原子操作的？
+
+Go 实现原子操作，其根本是依赖底层 CPU 硬件提供的原子指令，而不是通过操作系统或更上层的锁机制
+
+## 5.3 聊聊原子操作和锁的区别
+
+原子操作和锁的最核心区别在于它们的 **实现层级** 和 **保护范围**
+
+原子操作是 CPU 硬件层面的 “微观” 机制，它保证对单个数据 (通常是整型或指针) 的单次读改写操作是绝对不可分割的，性能极高，因为他不设计操作系统内核的介入和 goroutine 的挂起
+
+锁则是操作系统或语言运行时提供的 “宏观” 机制，它保护的是一个代码块 (临界区)，而不仅仅是单个变量。当获取锁失败时，它会让 goroutine 休眠，而不是空耗 CPU。虽然锁的开销远大于原子操作，但它能保护一段复杂的、涉及多个变量的业务逻辑
+
+因此，对于简单的计数器或标志位更新，用原子操作追求极致性能；而一旦需要保护一段逻辑或多个变量的一致性，就必须用锁
+
+### 5.4 Go 互斥锁 mutex 底层是如何实现的？
+
+mutex 底层是通过原子操作加信号量实现的，通过 atomic 包中的一些原子操作来实现锁的锁定，通过信号量来实现协程的阻塞与唤醒
+
+```go
+type Mutex struct {
+  // state 表示锁的状态，有锁定、被唤醒、饥饿模式等，并且是用 state 的二进制位来标识的，不同模式下会有不同的处理方式
+  state int32
+  // sema 表示信号量，mutex 阻塞队列的定位是通过这个变量来实现的，从而实现 goroutine 的阻塞和唤醒
+  sema uint32
+}
+```
+
+![mutex_state](./assets/mutex_state.png "mutex_state")
+
+![mutex_sema](./assets/mutex_sema.png "mutex_sema")
+
+### 5.5 Mutex 有几种模式？
+
+两种模式：正常模式 (Normal Mode) 和饥饿模式 (Starvation Mode)
+
+- 正常模式：这是默认模式，讲究的是性能。新请求锁的 goroutine 会和等待队列头部的 goroutine 竞争，新来的 goroutine 会有几次 “自旋” 的机会，如果在此期间锁被释放，它就可以直接抢到锁。这种方式吞吐量最高，但可能会导致队列头部的 goroutine 等待很久，即不公平
+- 饥饿模式：当一个 goroutine 在等待队列中等待超过 1ms 后，Mutex 就回切换到此模式，讲究的是公平。在此模式下，锁的所有权会直接从解锁的 goroutine 移交给等待队列的头部，新来的 goroutine 不会自旋，必须排到队尾。这样可以确保队列中的等待者不会被 “饿死”
+
+当等待队列为空，或者一个 goroutine 拿到锁时发现它的等待时间小于 1ms，饥饿模式就会结束，切换回正常模式。这两种模式的动态切换，是 Go 在性能和公平性之间做的精妙平衡
+
+### 5.6 在 Mutex 上自旋的 goroutine 会占用太多资源吗
+
+不会，因为 Go 的自旋设计得非常克制和智能
+
+首先，自旋不是无休止的空转，它有严格的次数和时间限制，通常只持续几十纳秒。其次，自旋仅仅在特定条件下才会发生，比如 CPU 核数大于 1，并且当前机器不算繁忙 (没有太多 goroutine 在排队)。它是在赌，与其付出 "goroutine 挂起和唤醒" 这种涉及内核调度的巨大代价，不如原地 “稍等一下”，因为锁可能马上就释放了
+
+所以，这种自旋是一种机会主义的短线优化，目的是用极小的 CPU 开销去避免一次昂贵的上下文切换，在锁竞争不激烈、占用时间极短的场景下，它反而是节省了资源
+
+### 5.8 sync.Once 的作用是什么，讲讲它的底层实现原理
+
+sync.Once 的作用是确保一个函数在程序生命周期内，无论在多少个 goroutine 中被调用，都只会被执行一次。它通常用于单例对象的初始化或一些只需要执行一次的全局配置加载
+
+sync.Once 保证代码段只执行 1 次的原理主要是其内部维护了一个标识位，当它 == 0 时表示还没执行过函数，此时会加锁修改标识位，然后执行对应函数。后续再执行时发现标识为 != 0，则不会再执行后续动作了
+
+```go
+type Once struct {
+  done uint32
+  // m 是一个互斥锁，用于保护 done 标识位的读写操作
+  m Mutex
+}
+```
+
+当 Once.Do(f) 首次被调用时：
+
+1. 首先会通过原子操作 (atomic.LoadUint32) 检查 done 标志位，如果是 1，说明初始化已完成，直接返回，这个路径完全无锁，开销极小
+2. 如果 done 是 0，说明是第一次调用，这时它会进入一个慢路径 (doSlow)
+3. 在慢路径中，它会先加锁，然后再次检查 done 标志位。这个双重检查 (Double-Checked Locking) 是关键，它防止了在多个 goroutine 同时进入慢路径时，函数 f 被重复执行
+4. 如果此时 done 仍然为 0，那么当前 goroutine 就回执行传入的函数 f。执行完毕后，它会通过原子操作 (atomic.StoreUint32) 将 done 标志位置为 1，最后解锁
+
+之后任何再调用 Do 的 goroutine，都会在第一步的原子 Load 操作时发现 done 为 1 而直接返回。整个过程结合了原子操作的速度和互斥锁的安全性，高效且线程安全地实现了 “仅执行一次” 的保证
+
+### 5.9 WaitGroup 是如何实现协程等待的？
+
+WaitGroup 实现等待，本质上是一个原子计数器和一个信号量的协作
+
+调用 Add 会增加计数值，Done 会减少计数值。而 Wait() 方法会检查这个计数器，如果不为 0，就利用信号量将当前 goroutine 高效地挂起，直到最后一个 Done 调用将计数器清零，它就会通过这个信号量，一次性唤醒所有在 Wait 处等待的 goroutine，从而实现等待目的
+
+```go
+type WaitGroup struct {
+  // 这是一个特殊的字段，用于静态分析工具 (go vet) 在编译时检查 WaitGroup 实例是否被复制。WaitGroup 被复制后会导致状态不一致，可能引发程序错误，因此该字段的存在旨在防止此类问题的发生
+  noCopy noCopy
+  // WaitGroup 的核心，一个 64 位的无符号整型，通过 sync/atomic 包进行原子操作，以保证并发安全。这个 64 位的空间被分为两部分
+  // 高 32 位作为计数器，记录了需要等待的 goroutine 的数量
+  // 低 32 位作为等待者计数器，记录了调用 Wait() 方法后被阻塞的 goroutine 的数量
+  state atomic.Uint64
+  // 一个信号量，用于实现 goroutine 的阻塞和唤醒，当主 goroutine 调用 Wait() 方法且计数器不为 0 时，它会通过这个信号量进入休眠状态。当所有子 goroutine 完成任务后，会通过这个信号量来唤醒等待的主 goroutine
+  sema  uint32
+}
+```
+
+### 5.10 讲讲 sync.Map 的底层实现原理
+
+sync.Map 的底层核心是 “空间换时间”，通过两个 Map (read 和 dirty) 的冗余结构，实现 “读写分离”，最终达到针对特定场景的 “读” 操作无锁优化
+
+read 是一个只读的 map，提供无锁的并发读取，速度极快。写操作则会先操作一个加了锁的、可读写的 dirty map。当 dirty map 的数据积累到一定程度，或者 read map 中没有某个 key 时，sync.Map 会将 dirty map 里的数据 “晋升” 并覆盖掉旧的 read map，完成一次数据同步
+
+```go
+type Map struct {
+  // 用于保护 dirty map 的锁
+  mu Mutex
+  // 只读字段，其实际的数据类型是一个 readOnly 结构
+  read atomic.Value
+  // 需要加锁才能访问的 map，其中包含在 read 中除了被 expunged(删除) 以外的所有元素以及新加入的元素
+  dirty map[interface{}]*entry
+  // 计数器，记录从 read 中读取数据的时候，没有命中的次数，当 misses 值等于 dirty 长度时，dirty 提升为 read
+  misses int
+}
+
+// readOnly is an immutable struct stored atomically in the Map.read field.
+type readOnly struct {
+  // key 为任意可比较的类型，value 为 entry 指针
+  m map[interface{}]*entry
+
+  amended bool
+}
+
+type entry struct {
+  // p 指向真正的 value 所在的地址
+  p unsafe.Pointer
+}
+```
+
+![sync_map](./assets/sync_map.png "sync_map")
+
+read map 是 dirty map 的一个不完全、且可能是过期的只读快照，dirty map 则包含了所有的最新数据
+
+具体来说，read map 中的所有数据，在 dirty map 里一定存在。一个 key 如果在 read map 里，那它的 value 要么是最终值，要么就是一个特殊指针，指向 dirty map 中的对应 entry。而 dirty map 中有的 key，在 read map 中不一定存在，因为 dirty map 是最新的、最全的
+
+当 dirty map 积累了足够多的新数据后，它会 “晋升” 为新的 read map，旧的 read map 则被废弃
+
+### 5.12 为什么要设计 nil 和 expunged 两种删除状态？
+
+为了解决在 sync.Map 的 “读写分离” 架构下，如何高效、无锁地处理 “删除” 操作
+
+因为 read map 本身是只读的，不能直接从中删除一个 key。所以，当用户调用 Delete 时，如果这个 key 只存在于 read map 中，系统并不会真的删除它，而是将它的值标记为 expunged。后续的读操作如果看到这个 expunged 标记，就知道这个 key 其实已经不存在了，直接返回 nil, false
+
+而 nil 则是一个中间状态，主要用于 dirty map 和 read map 的同步过程，表示这个 key 正在被删除或迁移
+
+简单来说，这两个状态就像是在只读的 read map 上打的 “逻辑删除” 补丁。它避免了因为一次 Delete 操作就引发加锁和 map 的整体复制，把真正的物理删除延迟到了 dirty map “晋升” 为 read map 的那一刻，是典型的用状态标记来换取无锁性能的设计
+
+### 5.13 sync.Map 适用的场景
+
+sync.Map 适合读多写少的场景
+
+因为期望将更多的流量在 read map 这一层进行拦截，从而避免加锁访问 dirty map。对于更新、删除、读取，read map 可以尽量通过一些原子操作，让整个操作变得无锁化，这样就可以避免进一步加锁访问 dirty map。
