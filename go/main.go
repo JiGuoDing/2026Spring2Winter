@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	src.P2240()
+	src.P1028()
 }
