@@ -18,7 +18,7 @@ func P1164() {
 		fmt.Fscan(reader, &dishPrice[i])
 	}
 
-	// dp[i][j] 表示用用前 i 道菜，花光 j 元的办法总数
+	// dp[i][j] 表示用前 i 道菜，花光 j 元的办法总数
 	dp := make([][]int, n+1)
 	for i := range dp {
 		dp[i] = make([]int, m+1)

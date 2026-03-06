@@ -2,9 +2,9 @@
 package main
 
 import (
-	"luogu/go/src"
+	interviewissue "luogu/go/interviewIssue"
 )
 
 func main() {
-	src.P1164()
+	interviewissue.OddEvenAlternatePrinter()
 }
