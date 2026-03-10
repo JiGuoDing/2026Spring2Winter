@@ -20,3 +20,20 @@ func SearchInsert(nums []int, target int) int {
 
 	return ans
 }
+
+func binarySearchEasy(nums []int, target int) int {
+	left, right := 0, 0
+	for left <= right {
+		mid := (right-left)/2 + left
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] > target {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+
+	// 没找到就返回 -1
+	return -1
+}
