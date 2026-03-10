@@ -1,0 +1,5 @@
+package interviewIssue
+
+func MultiProducerMultiConsumer() {
+
+}
