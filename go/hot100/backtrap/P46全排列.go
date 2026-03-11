@@ -17,9 +17,10 @@ func permute(nums []int) [][]int {
 		if len(path) == n {
 			// 要复制一份，否则后续修改会影响结果
 			// 因为 path 是引用类型，后续的回溯操作会修改 path 底层数组，如果不复制，res 中存的都是同一个空切片或错误数据
-			tmp := make([]int, n)
-			copy(tmp, path)
-			res = append(res, tmp)
+			// tmp := make([]int, n)
+			// copy(tmp, path)
+			// res = append(res, tmp)
+			res = append(res, append([]int{}, path...))
 			return
 		}
 
