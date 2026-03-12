@@ -14,6 +14,7 @@ func insertionSort(a []int, l, r int) {
 	for i := l + 1; i <= r; i++ {
 		pivot := a[i]
 		j := i - 1
+		// a[j] > pivot 保证排序是稳定的
 		for j >= l && a[j] > pivot {
 			// 比 pivot 大的元素右移
 			a[j+1] = a[j]
