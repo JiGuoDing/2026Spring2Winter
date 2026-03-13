@@ -4,5 +4,5 @@ package main
 import "luogu/go/interviewIssue"
 
 func main() {
-	interviewIssue.TestSliceAppend()
+	interviewIssue.WriteWithoutBuffer()
 }

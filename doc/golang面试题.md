@@ -1056,3 +1056,277 @@ Go 语言主要有以下两种：
 - 合理化内存分配的速度、提高赋值器的 CPU 利用率
 - 降低并服用已经申请的内存，比如使用 sync.pool 服用经常需要创建的重复对象
 - 调整 GOGC，可以适量将 GOGC 的值设置得更大，让 GC 触发的时间变得更晚，从而减少其触发频率，进而增加用户代码对机器的使用率
+
+## 12. I/O 面试题
+
+### 12.1 bufio这个库有什么用？讲讲go语言中的io操作？
+
+> bufio 是 Go 标准库中用于 **带缓冲** I/O 的包，它的核心价值是 **减少系统调用次数，提升 I/O 性能**。
+>
+> Go 的 I/O 体系以 io.Reader 和 io.Writer 两个接口为核心抽象，os.File、net.Conn、strings.Reader 等都实现了这些接口。但直接使用这些底层实现时，每次 Read 或 Write 都可能触发一次系统调用，带来用户态和内核态的上下文切换开销。当我们需要频繁地进行小数据量的 I/O 时，这个开销会非常显著。
+>
+> bufio 的解决方案是在用户空间维护一个内存缓冲区。对于读操作，bufio.Reader 每次从底层一次性读取大块数据填充缓冲区，后续的小读操作直接从缓冲区取数据，不再触发系统调用。对于写操作，bufio.Writer 将数据先积累在缓冲区，等缓冲区满了或者手动调用 Flush() 时，才一次性写入底层，大大减少了系统调用次数。
+>
+> bufio 提供了几个主要的 API：bufio.Reader 提供 ReadString、ReadLine、Peek 等方法；bufio.Writer 提供带缓冲的写入，使用时必须记得调用 Flush()；bufio.Scanner 是更现代的逐行读取方式，API 更简洁，适合大多数按行处理文本的场景。
+>
+> 在实际工程中，bufio 在文件处理、网络编程（尤其是 TCP 长连接的协议解析）、以及 HTTP 底层实现中都被大量使用。一个典型的性能场景是，使用 bufio 包装后的写入速度可以比无缓冲写入快一个数量级。
+
+Go 的 I/O 体系以 `io` 包为核心，定义了最基础的接口抽象，整个 I/O 生态都围绕着这些接口展开。
+
+#### 核心接口
+
+```go
+// io 包中最核心的两个接口
+
+// Reader 接口 - 任何可以"读"的东西都实现了这个接口
+type Reader interface {
+    // Read 将数据读入 p，返回实际读取的字节数 n 和可能的错误
+    // 当数据读完时，返回 io.EOF 错误
+    Read(p []byte) (n int, err error)
+}
+
+// Writer 接口 - 任何可以"写"的东西都实现了这个接口
+type Writer interface {
+    // Write 将 p 中的数据写出，返回实际写入的字节数 n 和可能的错误
+    Write(p []byte) (n int, err error)
+}
+```
+
+#### 常见的 I/O 类型
+
+| 类型                  | 包        | 说明                           |
+| --------------------- | --------- | ------------------------------ |
+| `os.File`             | `os`      | 文件读写，实现了 Reader/Writer |
+| `strings.Reader`      | `strings` | 从字符串读取                   |
+| `bytes.Buffer`        | `bytes`   | 内存缓冲区，可读可写           |
+| `net.Conn`            | `net`     | 网络连接，可读可写             |
+| `bufio.Reader/Writer` | `bufio`   | 带缓冲的 I/O                   |
+
+#### 为什么需要 bufio？(无缓冲 I/O 的问题)
+
+##### 系统调用的开销
+
+每次调用 `Read` 或 `Write`，如果底层是文件或网络，就会触发系统调用 (syscall)。系统调用需要从用户态切换到内核态，这个切换本身有相当大的开销。
+
+```plaintext
+用户态程序
+    │
+    │  每次 Read/Write 都要经过这里 ↓ (开销大!)
+    ▼
+系统调用 (用户态 → 内核态切换)
+    │
+    ▼
+内核 I/O 操作 (磁盘/网络)
+```
+
+#### bufio 库详解
+
+`bufio` 的核心思想：在用户空间维护一个内存缓冲区，批量地与底层 I/O 交互，从而减少系统调用次数。
+
+```plaintext
+┌─────────────────────────────────────┐
+│           用户程序                   │
+│  小批量读写  ←→  bufio 缓冲区 (内存).  │
+└─────────────────┬───────────────────┘
+                  │ 积累到一定量后，一次性进行系统调用
+                  ▼
+┌─────────────────────────────────────┐
+│         内核 / 底层 I/O              │
+│         (文件、网络、标准输入等)        │
+└─────────────────────────────────────┘
+```
+
+##### bufio.Reader
+
+```go
+package main
+
+import (
+    "bufio"
+    "fmt"
+    "strings"
+)
+
+func main() {
+    // 模拟一个底层 Reader (这里用 strings.Reader 代替文件/网络)
+    rawReader := strings.NewReader("Hello, World!\nThis is line 2.\nThis is line 3.\n")
+
+    // 用 bufio.NewReader 包装底层 Reader
+    // 默认缓冲区大小为 4096 字节
+    reader := bufio.NewReader(rawReader)
+
+    // 也可以自定义缓冲区大小
+    // reader := bufio.NewReaderSize(rawReader, 1 << 20)
+
+    // ── 方法一：ReadString ──
+    // 读取直到遇到分隔符 '\n'，包含分隔符本身
+    line1, err := reader.ReadString('\n')
+    fmt.Printf("ReadString: %q, err: %v\n", line1, err)
+    // 输出: ReadString: "Hello, World!\n", err: <nil>
+
+    // ── 方法二：ReadLine ──
+    // 读取一行，不包含换行符，不会分配新内存(直接引用缓冲区)
+    // 注意：返回的 []byte 在下次读取前有效，需要及时复制
+    lineBytes, isPrefix, err := reader.ReadLine()
+    fmt.Printf("ReadLine: %q, isPrefix: %v, err: %v\n", lineBytes, isPrefix, err)
+    // 输出: ReadLine: "This is line 2.", isPrefix: false, err: <nil>
+
+    // ── 方法三：ReadBytes ──
+    // 与 ReadString 类似，但返回 []byte
+    lineBytes2, _ := reader.ReadBytes('\n')
+    fmt.Printf("ReadBytes: %q\n", lineBytes2)
+    // 输出: ReadBytes: "This is line 3.\n"
+
+    // ── 方法四：Peek ──
+    // 窥视缓冲区中的前 N 个字节，但不移动读取位置
+    rawReader2 := strings.NewReader("ABCDEFG")
+    reader2 := bufio.NewReader(rawReader2)
+    peeked, _ := reader2.Peek(3)
+    fmt.Printf("Peek: %q\n", peeked) // "ABC"
+    // 再次读取，发现位置没有变化
+    b, _ := reader2.ReadByte()
+    fmt.Printf("After Peek, ReadByte: %q\n", b) // 'A'
+}
+```
+
+##### bufio.Writer
+
+```go
+package main
+
+import (
+    "bufio"
+    "os"
+)
+
+func main() {
+    file, _ := os.Create("output.txt")
+    defer file.Close()
+
+    // 用 bufio.NewWriter 包装底层 Writer
+    // 默认缓冲区大小为 4096 字节
+    writer := bufio.NewWriter(file)
+
+    // 写入数据时，数据先进入缓冲区，并不立即写入文件
+    writer.WriteString("Hello, ")   // 进缓冲区
+    writer.WriteString("World!\n")  // 进缓冲区
+
+    // !! 关键：必须调用 Flush，将缓冲区中的数据强制写入底层 Writer
+    // 如果忘记调用 Flush，缓冲区中的数据可能会丢失！
+    err := writer.Flush()
+    if err != nil {
+        panic(err)
+    }
+
+    // 查看缓冲区状态
+    fmt.Println("缓冲区大小:", writer.Size())       // 4096
+    fmt.Println("缓冲区已用:", writer.Buffered())   // Flush 后为 0
+    fmt.Println("缓冲区可用:", writer.Available())  // Flush 后为 4096
+}
+```
+
+##### bufio.Scanner (更现代的逐行读取方式)
+
+```go
+package main
+
+import (
+    "bufio"
+    "fmt"
+    "strings"
+)
+
+func main() {
+    input := "line 1\nline 2\nline 3\n"
+    reader := strings.NewReader(input)
+
+    // Scanner 是 Go 1.1 引入的，比 ReadString/ReadLine 更易用
+    scanner := bufio.NewScanner(reader)
+
+    // 默认按行扫描 (ScanLines)
+    // 也可以设置其他分割函数：
+    // scanner.Split(bufio.ScanWords)  // 按单词
+    // scanner.Split(bufio.ScanBytes) // 按字节
+    // scanner.Split(bufio.ScanRunes) // 按 Unicode 字符
+
+    // 默认 Scanner 的缓冲区最大为 64KB
+    // 如果要读取超长行，需要自定义缓冲区：
+    buf := make([]byte, 1024*1024) // 1MB
+    scanner.Buffer(buf, len(buf))
+
+    for scanner.Scan() { // Scan() 返回 false 表示读取结束
+        line := scanner.Text() // 返回当前行字符串，不含换行符
+        fmt.Println(line)
+    }
+
+    // 检查扫描过程中是否有错误
+    if err := scanner.Err(); err != nil {
+        fmt.Println("扫描错误:", err)
+    }
+}
+```
+
+##### bufio.ReadWriter (同时支持读写)
+
+```go
+package main
+
+import (
+    "bufio"
+    "fmt"
+    "net"
+)
+
+// 在 TCP 连接中同时使用带缓冲的读写，是 bufio 的经典场景
+func handleConn(conn net.Conn) {
+    defer conn.Close()
+
+    // 创建一个同时带缓冲读写能力的 ReadWriter
+    rw := bufio.NewReadWriter(
+        bufio.NewReader(conn),
+        bufio.NewWriter(conn),
+    )
+
+    // 读取客户端发来的一行数据
+    line, err := rw.ReadString('\n')
+    if err != nil {
+        return
+    }
+    fmt.Print("收到:", line)
+
+    // 回复客户端
+    rw.WriteString("已收到: " + line)
+    rw.Flush() // 别忘了 Flush！
+}
+```
+
+#### bufio 的内部原理
+
+##### Reader 的内部结构
+
+```plaintext
+bufio.Reader 内部缓冲区示意图:
+
+  buf:  [ _ _ _ A B C D E F G _ _ _ ]
+                ↑           ↑
+               r(读位置)   w(写位置)
+
+  - 数据存在于 buf[r:w] 之间
+  - 调用 Read 时，从 r 开始读，r 向右移动
+  - 当 r == w 时，缓冲区为空，触发一次底层 Read，批量填充缓冲区
+  - 这样多次小的 Read 调用，只需要一次真正的系统调用
+```
+
+##### Writer 的内部结构
+
+```plaintext
+bufio.Writer 内部缓冲区示意图:
+
+  buf:  [ A B C D E F _ _ _ _ _ _ _ ]
+                      ↑
+                    n(已用位置)
+
+  - 调用 Write 时，数据写入 buf[n:]，n 向右移动
+  - 当缓冲区满时，自动触发一次底层 Write，将整个缓冲区写出
+  - 调用 Flush 时，强制将 buf[:n] 写出，n 归零
+```
