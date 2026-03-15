@@ -56,8 +56,10 @@ func coinChangeImproved(coins []int, amount int) int {
 		dp[i] = amount + 1
 	}
 
+	// 外层遍历硬币，内层遍历总金额数
 	for _, coin := range coins {
 		for i := coin; i <= amount; i++ {
+			// 要确保上一个状态是可达的
 			if dp[i-coin] != amount+1 {
 				dp[i] = min(dp[i-coin]+1, dp[i])
 			}

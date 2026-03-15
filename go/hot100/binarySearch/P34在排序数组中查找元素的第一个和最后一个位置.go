@@ -1,4 +1,4 @@
-package binraysearch
+package binarySearch
 
 // 在排序数组中寻找 target 的第一个位置
 func binarySearchFirst(nums []int, target int) int {

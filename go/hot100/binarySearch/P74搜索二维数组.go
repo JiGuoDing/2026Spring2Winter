@@ -1,4 +1,4 @@
-package binraysearch
+package binarySearch
 
 func binarySearch(nums []int, target int) bool {
 	left, right, ans := 0, len(nums)-1, len(nums)

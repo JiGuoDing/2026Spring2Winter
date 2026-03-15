@@ -1,4 +1,4 @@
-package binraysearch
+package binarySearch
 
 // 二分查找模板
 func SearchInsert(nums []int, target int) int {
@@ -22,7 +22,7 @@ func SearchInsert(nums []int, target int) int {
 }
 
 func binarySearchEasy(nums []int, target int) int {
-	left, right := 0, 0
+	left, right := 0, len(nums)-1
 	for left <= right {
 		mid := (right-left)/2 + left
 		if nums[mid] == target {
