@@ -1,4 +1,4 @@
-package binarytree
+package binaryTree
 
 func maxDepth(root *TreeNode) int {
 	depthMax := 0
