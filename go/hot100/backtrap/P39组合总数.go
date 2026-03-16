@@ -1,4 +1,4 @@
-package backtrap
+package backTrap
 
 func combinationSum(candidates []int, target int) [][]int {
 	var res [][]int

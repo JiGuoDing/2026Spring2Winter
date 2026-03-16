@@ -1,4 +1,4 @@
-package backtrap
+package backTrap
 
 // 不能用这个省略额外栈的方法，因为函数会修改参数传入的原始切片，导致主程序中的括号切片被意外修改
 // func isValid(bracketSlice []byte) bool {
