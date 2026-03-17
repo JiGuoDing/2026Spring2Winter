@@ -9,7 +9,7 @@ import (
 
 func P1116() {
 	scanner := bufio.NewScanner(os.Stdin)
-	// 设置按照单词 (空哥 / 换行) 分割，而不是默认的按行分割
+	// 设置按照单词 (空格 / 换行) 分割，而不是默认的按行分割
 	scanner.Split(bufio.ScanWords)
 
 	scanner.Scan()

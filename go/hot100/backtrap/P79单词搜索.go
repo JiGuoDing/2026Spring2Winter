@@ -36,10 +36,10 @@ func exist(board [][]byte, word string) bool {
 	}
 	// 偏移数组
 	offsets := []Point{
-		Point{X: -1, Y: 0},
-		Point{X: 0, Y: -1},
-		Point{X: 1, Y: 0},
-		Point{X: 0, Y: 1},
+		{X: -1, Y: 0},
+		{X: 0, Y: -1},
+		{X: 1, Y: 0},
+		{X: 0, Y: 1},
 	}
 
 	// 记录当前字符串
