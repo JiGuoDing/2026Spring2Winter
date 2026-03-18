@@ -1,4 +1,4 @@
-package dynamicaprogramming
+package dynamicaProgramming
 
 func climbStairs(n int) int {
 	a, b, r := 0, 0, 1

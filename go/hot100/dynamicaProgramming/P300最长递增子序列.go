@@ -1,4 +1,4 @@
-package dynamicaprogramming
+package dynamicaProgramming
 
 func lengthOfLIS(nums []int) int {
 	// 处理边界情况
