@@ -1,4 +1,4 @@
-package linkedlist
+package linkedList
 
 /**
  * Definition for singly-linked list.

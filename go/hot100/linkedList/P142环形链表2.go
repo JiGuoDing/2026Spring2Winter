@@ -1,4 +1,4 @@
-package linkedlist
+package linkedList
 
 // 使用 set 记录已经出现的节点地址，当再次遇到已经出现过的节点时，说明出现了环
 func detectCycle(head *ListNode) *ListNode {

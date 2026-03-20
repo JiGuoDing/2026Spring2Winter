@@ -1,4 +1,4 @@
-package linkedlist
+package linkedList
 
 func reverseList(head *ListNode) *ListNode {
 	// 递归解法
