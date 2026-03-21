@@ -1069,11 +1069,11 @@ mspan 结构示意：
 
 Go 将对象按大小分为三类，走不同的分配路径：
 
-| 类型           | 大小范围               | 分配策略                                            |
-| -------------- | ---------------------- | --------------------------------------------------- |
-| **Tiny 对象**  | < 16 bytes，且不含指针 | mcache 中的 tiny 分配器，多个对象共享一个 16 字节块 |
+| 类型                 | 大小范围               | 分配策略                                              |
+| -------------------- | ---------------------- | ----------------------------------------------------- |
+| **Tiny 对象**  | < 16 bytes，且不含指针 | mcache 中的 tiny 分配器，多个对象共享一个 16 字节块   |
 | **Small 对象** | 16 bytes ~ 32 KB       | 按 size class 从 mcache → mcentral → mheap 逐级获取 |
-| **Large 对象** | > 32 KB                | 直接从 mheap 分配，绕过 mcache 和 mcentral          |
+| **Large 对象** | > 32 KB                | 直接从 mheap 分配，绕过 mcache 和 mcentral            |
 
 Size Class 机制
 
@@ -1378,6 +1378,575 @@ Go 语言主要有以下两种：
 
 ## 12. I/O 面试题
 
+### 12.0 常用函数
+
+#### 无需导入
+
+```go
+// len() - 获取长度
+s := []int{1, 2, 3}
+fmt.Println(len(s)) // 3
+
+// cap() - 获取容量
+fmt.Println(cap(s)) // 3
+
+// append() - 追加元素
+s = append(s, 4, 5)       // 追加多个元素
+s = append(s, []int{6,7}...) // 追加另一个切片 (注意 ... 展开)
+
+// copy() - 拷贝切片, 返回实际拷贝的元素数量
+dst := make([]int, 3)
+n := copy(dst, s) // 只拷贝 min(len(dst), len(src)) 个
+
+// make() - 创建切片/map/channel
+slice := make([]int, 5)       // 长度为5, 元素初始化为0
+slice2 := make([]int, 0, 10)  // 长度为0, 容量为10 (预分配, 避免扩容)
+m := make(map[string]int)
+
+// delete() - 删除 map 中的键
+delete(m, "key")
+
+// close() - 关闭 channel
+ch := make(chan int)
+close(ch)
+```
+
+#### sort
+
+##### 基础排序
+
+```go
+// sort.Ints - 对 []int 升序排序 (原地修改)
+nums := []int{5, 2, 4, 1, 3}
+sort.Ints(nums)
+fmt.Println(nums) // [1 2 3 4 5]
+
+// sort.Strings - 对 []string 升序排序
+strs := []string{"banana", "apple", "cherry"}
+sort.Strings(strs)
+fmt.Println(strs) // [apple banana cherry]
+
+// sort.Float64s - 对 []float64 升序排序
+floats := []float64{3.14, 1.41, 2.71}
+sort.Float64s(floats)
+```
+
+##### 自定义排序
+
+```go
+// sort.Slice - 最常用的自定义排序
+people := []struct {
+    Name string
+    Age  int
+}{
+    {"Alice", 30},
+    {"Bob", 25},
+    {"Charlie", 35},
+}
+
+// 按 Age 升序
+sort.Slice(people, func(i, j int) bool {
+    return people[i].Age < people[j].Age
+})
+
+// 按 Age 降序
+sort.Slice(people, func(i, j int) bool {
+    return people[i].Age > people[j].Age
+})
+
+// sort.SliceStable - 稳定排序 (相等元素保持原有相对顺序)
+sort.SliceStable(people, func(i, j int) bool {
+    return people[i].Age < people[j].Age
+})
+
+// 二维切片排序 - 面试常见场景
+intervals := [][]int{{1, 3}, {2, 6}, {0, 5}}
+// 按第一个元素升序, 第一个相同则按第二个升序
+sort.Slice(intervals, func(i, j int) bool {
+    if intervals[i][0] == intervals[j][0] {
+        return intervals[i][1] < intervals[j][1]
+    }
+    return intervals[i][0] < intervals[j][0]
+})
+```
+
+##### 逆序排序
+
+```go
+// 方法一: less 函数中用 > 代替 <
+nums := []int{5, 2, 4, 1, 3}
+sort.Slice(nums, func(i, j int) bool {
+    return nums[i] > nums[j]
+})
+
+// 方法二: sort.Reverse + sort.IntSlice
+sort.Sort(sort.Reverse(sort.IntSlice(nums)))
+```
+
+##### 二分查找
+
+```go
+// sort.Search - 通用二分查找
+// 在 [0, n) 中找到第一个使 f(i) 为 true 的 i
+// 要求: f(i) 为 false 的 i 都在 f(i) 为 true 的 i 的左边 (即单调性)
+nums := []int{1, 2, 3, 4, 5, 6, 7}
+target := 5
+// 找第一个 >= target 的位置 (lower_bound)
+idx := sort.Search(len(nums), func(i int) bool {
+    return nums[i] >= target
+})
+fmt.Println(idx) // 4
+
+// sort.SearchInts - 在已排序的 []int 中找第一个 >= x 的索引
+idx = sort.SearchInts(nums, 5)  // 等价于上面的写法
+fmt.Println(idx) // 4
+
+// 如果找到了, 验证一下
+if idx < len(nums) && nums[idx] == target {
+    fmt.Println("找到了, 索引:", idx)
+} else {
+    fmt.Println("未找到")
+}
+
+// sort.SearchStrings - 在已排序的 []string 中查找
+strs := []string{"apple", "banana", "cherry"}
+i := sort.SearchStrings(strs, "banana") // 1
+
+// sort.SearchFloat64s - 在已排序的 []float64 中查找
+```
+
+##### 检查是否已排序
+
+```go
+nums := []int{1, 2, 3, 4, 5}
+fmt.Println(sort.IntsAreSorted(nums))    // true
+fmt.Println(sort.StringsAreSorted(strs)) // true
+```
+
+#### slices
+
+```go
+import "slices"
+
+// slices.Sort - 对任意有序类型的切片升序排序
+nums := []int{5, 2, 4, 1, 3}
+slices.Sort(nums)
+
+// slices.SortFunc - 自定义比较函数排序
+// 注意: cmp 函数返回负数/0/正数, 而不是 bool
+slices.SortFunc(nums, func(a, b int) int {
+    return a - b // 升序
+    // return b - a // 降序
+})
+
+// slices.SortStableFunc - 稳定排序
+slices.SortStableFunc(nums, func(a, b int) int {
+    return a - b
+})
+
+// slices.Max / slices.Min - 求最大/最小值
+maxVal := slices.Max(nums) // 直接返回最大值, 无需自己遍历
+minVal := slices.Min(nums)
+
+// slices.Contains - 判断是否包含某元素
+fmt.Println(slices.Contains(nums, 3)) // true
+
+// slices.Index - 找到第一个匹配元素的索引, 不存在返回 -1
+idx := slices.Index(nums, 3)
+
+// slices.Reverse - 原地反转切片
+slices.Reverse(nums)
+
+// slices.BinarySearch - 在已排序切片中二分查找
+// 返回 (找到的索引或插入位置, 是否找到)
+slices.Sort(nums)
+idx, found := slices.BinarySearch(nums, 3)
+fmt.Println(idx, found) // 2 true
+
+// slices.BinarySearchFunc - 自定义比较的二分查找
+idx, found = slices.BinarySearchFunc(nums, 3, func(a, b int) int {
+    return a - b
+})
+
+// slices.Equal - 判断两个切片是否相等
+a := []int{1, 2, 3}
+b := []int{1, 2, 3}
+fmt.Println(slices.Equal(a, b)) // true
+
+// slices.Clone - 克隆切片 (深拷贝一层)
+c := slices.Clone(a)
+
+// slices.Compact - 去除连续重复元素 (类似 unique)
+// 注意: 要先排序才能去除所有重复!
+d := []int{1, 1, 2, 2, 3}
+d = slices.Compact(d)
+fmt.Println(d) // [1 2 3]
+
+// slices.Delete - 删除索引 [i, j) 范围内的元素
+s := []int{1, 2, 3, 4, 5}
+s = slices.Delete(s, 1, 3) // 删除索引1和2
+fmt.Println(s) // [1 4 5]
+
+// slices.Insert - 在索引 i 处插入元素
+s = slices.Insert(s, 1, 10, 20) // 在索引1处插入10和20
+fmt.Println(s) // [1 10 20 4 5]
+```
+
+#### math
+
+```go
+import "math"
+
+// 常用常量 - 算法题中极其常用!
+math.MaxInt    // 9223372036854775807 (int 最大值, Go 1.17+)
+math.MinInt    // -9223372036854775808 (int 最小值, Go 1.17+)
+math.MaxInt32  // 2147483647
+math.MinInt32  // -2147483648
+math.MaxFloat64 // float64 最大值
+math.Pi        // 3.141592653589793
+
+// ⚠️ 注意: math.Max/Min 只接受 float64!
+maxVal := math.Max(3.14, 2.71)       // float64
+minVal := math.Min(float64(a), float64(b)) // int 需要转换
+
+// 常用函数
+math.Abs(-5.0)      // 5.0  (只接受 float64)
+math.Sqrt(16.0)     // 4.0
+math.Pow(2.0, 10.0) // 1024.0
+math.Log(math.E)    // 1.0  (自然对数)
+math.Log2(8.0)      // 3.0
+math.Log10(100.0)   // 2.0
+math.Ceil(1.2)      // 2.0  (向上取整)
+math.Floor(1.8)     // 1.0  (向下取整)
+math.Round(1.5)     // 2.0  (四舍五入)
+math.Mod(10, 3)     // 1.0  (取余, 用于 float64)
+
+// 整数的 max/min - Go 1.21 之前需要自己写
+// Go 1.21+ 可以用内置的 max/min 函数 (无需导入任何包!)
+maxInt := max(3, 5)    // 5
+minInt := min(3, 5)    // 3
+maxInt = max(1, 2, 3)  // 支持多个参数
+```
+
+#### strings
+
+```go
+import "strings"
+
+s := "Hello, World!"
+
+// 查找与判断
+strings.Contains(s, "World")       // true
+strings.HasPrefix(s, "Hello")      // true
+strings.HasSuffix(s, "!")          // true
+strings.Index(s, "World")          // 7  (首次出现的索引)
+strings.LastIndex(s, "l")          // 10 (最后出现的索引)
+strings.Count(s, "l")              // 3  (出现次数)
+strings.ContainsRune(s, 'H')       // true
+strings.ContainsAny(s, "aeiou")    // true (包含任意一个字符)
+
+// 大小写转换
+strings.ToLower(s) // "hello, world!"
+strings.ToUpper(s) // "HELLO, WORLD!"
+strings.Title(s)   // 每个单词首字母大写 (已废弃, 但还能用)
+
+// 修剪
+strings.TrimSpace("  hello  ")          // "hello"
+strings.Trim("***hello***", "*")        // "hello"
+strings.TrimLeft("***hello***", "*")    // "hello***"
+strings.TrimRight("***hello***", "*")   // "***hello"
+strings.TrimPrefix("hello_world", "hello_") // "world"
+strings.TrimSuffix("hello_world", "_world") // "hello"
+
+// 替换
+strings.Replace("aaa", "a", "b", 2)  // "bba" (替换前2个)
+strings.ReplaceAll("aaa", "a", "b")  // "bbb" (替换所有)
+
+// 分割
+strings.Split("a,b,c", ",")         // ["a", "b", "c"]
+strings.SplitN("a,b,c", ",", 2)     // ["a", "b,c"] (最多分2段)
+strings.Fields("  foo bar  baz  ")   // ["foo", "bar", "baz"] (按空白分割, 自动去除空串)
+
+// 拼接
+strings.Join([]string{"a", "b", "c"}, "-") // "a-b-c"
+strings.Repeat("ab", 3)                     // "ababab"
+
+// strings.Builder - 高效字符串拼接 (面试中常用, 避免 += 的 O(n^2) 问题)
+var builder strings.Builder
+for i := 0; i < 5; i++ {
+    builder.WriteByte('a' + byte(i))  // 写入单个字节
+    builder.WriteRune('A' + rune(i))  // 写入 rune
+    builder.WriteString("_")          // 写入字符串
+}
+result := builder.String() // 获取结果
+builder.Reset()            // 重置, 可复用
+
+// strings.NewReader - 从字符串创建 Reader
+reader := strings.NewReader("hello")
+_ = reader
+```
+
+#### strconv
+
+```go
+import "strconv"
+
+// int <-> string 转换 (最常用!)
+str := strconv.Itoa(42)          // int -> string: "42"
+num, err := strconv.Atoi("42")   // string -> int: 42, nil
+
+// 更通用的转换
+// FormatInt(i int64, base int) - 任意进制
+strconv.FormatInt(255, 2)  // "11111111" (二进制)
+strconv.FormatInt(255, 16) // "ff" (十六进制)
+strconv.FormatInt(255, 10) // "255" (十进制)
+
+// ParseInt(s string, base int, bitSize int)
+n, _ := strconv.ParseInt("ff", 16, 64)  // 255 (十六进制字符串转整数)
+n, _ = strconv.ParseInt("11111111", 2, 64) // 255 (二进制字符串转整数)
+
+// float <-> string
+strconv.FormatFloat(3.14, 'f', 2, 64) // "3.14" ('f'=普通, 'e'=科学, 2=精度)
+f, _ := strconv.ParseFloat("3.14", 64) // 3.14
+
+// bool <-> string
+strconv.FormatBool(true)    // "true"
+b, _ := strconv.ParseBool("true") // true
+```
+
+#### unicode
+
+```go
+import "unicode"
+
+// 字符分类判断 - 处理字符串中字符类型时非常有用
+unicode.IsLetter('a')   // true  (是否是字母)
+unicode.IsDigit('5')    // true  (是否是数字)
+unicode.IsSpace(' ')    // true  (是否是空白字符)
+unicode.IsUpper('A')    // true  (是否大写)
+unicode.IsLower('a')    // true  (是否小写)
+unicode.IsPunct('.')    // true  (是否是标点)
+
+// 大小写转换 (针对 rune)
+unicode.ToLower('A') // 'a'
+unicode.ToUpper('a') // 'A'
+
+// 实际使用示例: 判断字符串是否只含字母和数字
+s := "Hello123"
+for _, ch := range s {
+    if !unicode.IsLetter(ch) && !unicode.IsDigit(ch) {
+        fmt.Println("含有非字母数字字符")
+    }
+}
+```
+
+#### container/heap (自己实现优先队列)
+
+Go 没有内置优先队列，需要自行实现 `heap.Interface`，但模版固定
+
+```go
+import "container/heap"
+
+// ---- 最小堆模板 ----
+type MinHeap []int
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i] < h[j] } // 改为 > 就是最大堆
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MinHeap) Push(x any) {
+    *h = append(*h, x.(int))
+}
+
+func (h *MinHeap) Pop() any {
+    old := *h
+    n := len(old)
+    x := old[n-1]
+    *h = old[:n-1]
+    return x
+}
+
+// 使用
+func main() {
+    h := &MinHeap{5, 2, 4, 1, 3}
+    heap.Init(h)           // 建堆, O(n)
+
+    heap.Push(h, 0)        // 插入元素, O(log n)
+  
+    top := (*h)[0]         // 查看堆顶 (不弹出)
+    fmt.Println(top)       // 0
+  
+    min := heap.Pop(h)     // 弹出堆顶, O(log n)
+    fmt.Println(min)       // 0
+
+    fmt.Println(h.Len())   // 5
+}
+```
+
+#### container/list (双向链表)
+
+```go
+import "container/list"
+
+l := list.New()
+
+// 插入
+back := l.PushBack(1)   // 尾部插入, 返回 *Element
+front := l.PushFront(0) // 头部插入
+l.InsertAfter(2, back)  // 在 back 后插入 2
+l.InsertBefore(99, back) // 在 back 前插入 99
+
+// 访问
+l.Front()       // 头节点 *Element
+l.Back()        // 尾节点 *Element
+l.Front().Value // 头节点的值 (any 类型, 需类型断言)
+
+// 遍历
+for e := l.Front(); e != nil; e = e.Next() {
+    fmt.Println(e.Value.(int))
+}
+
+// 删除
+l.Remove(front)
+
+// 长度
+l.Len()
+
+// 移动
+l.MoveToFront(back) // 移动到头部
+l.MoveToBack(back)  // 移动到尾部
+```
+
+#### maps
+
+```go
+import "maps"
+
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+// maps.Keys - 获取所有键 (返回 iter.Seq, 需要用 slices.Collect 或 for range)
+// Go 1.23+ 推荐用法
+for k := range maps.Keys(m) {
+    fmt.Println(k)
+}
+
+// maps.Values - 获取所有值
+for v := range maps.Values(m) {
+    fmt.Println(v)
+}
+
+// maps.Clone - 浅拷贝 map
+m2 := maps.Clone(m)
+
+// maps.Equal - 判断两个 map 是否相等
+m3 := map[string]int{"a": 1, "b": 2, "c": 3}
+fmt.Println(maps.Equal(m, m3)) // true
+
+// maps.DeleteFunc - 删除满足条件的键值对
+maps.DeleteFunc(m, func(k string, v int) bool {
+    return v > 1 // 删除值大于1的
+})
+```
+
+#### math/bits (位运算)
+
+```go
+import "math/bits"
+
+// bits.OnesCount - 统计二进制中1的个数 (popcount)
+bits.OnesCount(7)   // 3  (111)
+bits.OnesCount(8)   // 1  (1000)
+bits.OnesCount32(7) // 针对 uint32
+
+// bits.Len - 最高位1的位置 (即 floor(log2(x)) + 1)
+bits.Len(8)  // 4  (1000 需要4位)
+bits.Len(7)  // 3  (111 需要3位)
+
+// bits.TrailingZeros - 末尾0的个数
+bits.TrailingZeros(8) // 3  (1000)
+bits.TrailingZeros(6) // 1  (110)
+
+// bits.LeadingZeros - 前导0的个数
+bits.LeadingZeros(1)  // 63 (64位系统)
+
+// bits.RotateLeft - 循环左移
+bits.RotateLeft(1, 3) // 8  (左移3位)
+
+// bits.Reverse - 反转所有位
+// bits.ReverseBytes - 反转字节顺序
+```
+
+#### 其他常用技巧
+
+```go
+// ---- 1. 整数绝对值 (math.Abs 只接受 float64, 用以下方式) ----
+func abs(x int) int {
+    if x < 0 {
+        return -x
+    }
+    return x
+}
+
+// ---- 2. 整数 max/min (Go 1.21 前需自己写) ----
+// Go 1.21+ 直接用内置 max(a, b) 和 min(a, b)
+
+// ---- 3. 栈 (用切片模拟) ----
+stack := []int{}
+stack = append(stack, 1)          // push
+top := stack[len(stack)-1]        // peek
+stack = stack[:len(stack)-1]      // pop
+isEmpty := len(stack) == 0        // 判空
+
+// ---- 4. 队列 (用切片模拟) ----
+queue := []int{}
+queue = append(queue, 1)          // enqueue
+front := queue[0]                 // peek
+queue = queue[1:]                 // dequeue (注意: 大量操作时内存不回收, 可用双指针优化)
+
+// ---- 5. 二维切片初始化 ----
+m, n := 3, 4
+grid := make([][]int, m)
+for i := range grid {
+    grid[i] = make([]int, n)
+}
+
+// ---- 6. 字符与数字互转 ----
+ch := 'a'
+fmt.Println(ch - 'a')       // 0 (转为0-25的数字)
+fmt.Println(byte(0 + 'a'))  // 'a' (数字转字符)
+
+// ---- 7. 快速幂 (面试手写) ----
+func pow(base, exp, mod int) int {
+    result := 1
+    base %= mod
+    for exp > 0 {
+        if exp%2 == 1 {
+            result = result * base % mod
+        }
+        base = base * base % mod
+        exp /= 2
+    }
+    return result
+}
+
+// ---- 8. GCD 最大公约数 ----
+// Go 1.21+ 可用 math/big 或手写
+func gcd(a, b int) int {
+    for b != 0 {
+        a, b = b, a%b
+    }
+    return a
+}
+
+// LCM 最小公倍数
+func lcm(a, b int) int {
+    return a / gcd(a, b) * b
+}
+```
+
+
+
+
 ### 12.1 bufio这个库有什么用？讲讲go语言中的io操作？
 
 > bufio 是 Go 标准库中用于 **带缓冲** I/O 的包，它的核心价值是 **减少系统调用次数，提升 I/O 性能**。
@@ -1413,8 +1982,8 @@ type Writer interface {
 
 #### 常见的 I/O 类型
 
-| 类型                  | 包        | 说明                           |
-| --------------------- | --------- | ------------------------------ |
+| 类型                    | 包          | 说明                           |
+| ----------------------- | ----------- | ------------------------------ |
 | `os.File`             | `os`      | 文件读写，实现了 Reader/Writer |
 | `strings.Reader`      | `strings` | 从字符串读取                   |
 | `bytes.Buffer`        | `bytes`   | 内存缓冲区，可读可写           |
