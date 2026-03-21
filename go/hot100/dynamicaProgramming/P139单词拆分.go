@@ -1,4 +1,4 @@
-package dynamicaProgramming
+package dynamicProgramming
 
 import "strings"
 

@@ -1,4 +1,4 @@
-package dynamicaProgramming
+package dynamicProgramming
 
 func maxProduct(nums []int) int {
 	if len(nums) == 0 {

@@ -1,4 +1,4 @@
-package dynamicaProgramming
+package dynamicProgramming
 
 /*
 完全背包问题思路：

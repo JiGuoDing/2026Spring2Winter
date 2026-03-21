@@ -1,4 +1,4 @@
-package dynamicaProgramming
+package dynamicProgramming
 
 func generate(numRows int) [][]int {
 	var triangle [][]int

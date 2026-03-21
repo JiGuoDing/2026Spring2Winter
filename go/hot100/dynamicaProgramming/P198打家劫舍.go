@@ -1,4 +1,4 @@
-package dynamicaProgramming
+package dynamicProgramming
 
 func rob(nums []int) int {
 	dp := make([]int, len(nums))

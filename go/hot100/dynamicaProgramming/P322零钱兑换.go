@@ -1,4 +1,4 @@
-package dynamicaProgramming
+package dynamicProgramming
 
 // 外层遍历总金额数，内层遍历硬币
 func coinChange(coins []int, amount int) int {
