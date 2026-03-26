@@ -18,7 +18,7 @@ func lengthOfLIS(nums []int) int {
 	// 对于每一个位置 i，我们需要检查它之前的所有位置 j，如果 nums[i] 大于 nums[j]，那么我们就可以将 nums[i] 加入到以 nums[j] 结尾的子序列中，得到一个更长的子序列
 	// 到以 nums[i] 结尾的子序列中，我们取其中的最长的子序列长度，作为 dp[i] 的值。
 	for i := range dp[:len(nums)] {
-		for j := 0; j < i; j++ {
+		for j := range i {
 			if nums[i] > nums[j] {
 				// 状态转移：尝试接在 j 后面，看是否更长
 				dp[i] = max(dp[i], dp[j]+1)
