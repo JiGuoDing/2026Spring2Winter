@@ -58,5 +58,22 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "markdown.validate.enabled": true,
   "editor.wordWrap": "on",
-  "markdown.preview.wordWrap": "on"
+  "markdown.preview.wordWrap": "on",
+  "window.zoomLevel": 0.75,
+  "files.autoSave": "afterDelay",
+  "editor.fontSize": 14,
+  "editor.fontFamily": "Maple Mono NF CN",
+  "editor.cursorStyle": "line",
+  "editor.cursorBlinking": "smooth",
+  "terminal.integrated.cursorBlinking": true,
+  "editor.smoothScrolling": true,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "terminal.integrated.smoothScrolling": true,
+  "editor.lineHeight": 1.44,
+  "terminal.integrated.lineHeight": 1.44,
+  "notebook.markdown.lineHeight": 1.44,
+  "notebook.output.lineHeight": 1.44,
+  "markdown.preview.lineHeight": 1.44,
+  "terminal.integrated.fontLigatures.enabled": true,
+  "editor.fontLigatures": true
 }

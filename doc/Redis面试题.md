@@ -286,3 +286,313 @@ while true:
 - 与 PFail 和 Fail 的关系：节点故障先本地感知，再通过 Gossip 扩散并收敛为集群共识。
 - 与哈希槽迁移的关系：槽位迁移完成后，新的槽位归属需要依赖 Gossip 广播到全网。
 - 与主从复制的关系：主从复制解决数据同步，Gossip 解决集群成员与拓扑信息同步。
+
+## 3. Redis 中常见的数据类型有哪些？
+
+### Redis 数据类型的核心特征
+
+- 面向场景建模：Redis 不是只有简单的 Key-Value 存储，而是提供多种抽象结构，便于直接表达计数、队列、排行榜、标签、地理位置、位运算等业务模型。
+- 统一访问入口：所有类型都通过 key 访问，但不同类型拥有独立的命令族和时间复杂度特征。
+- 底层自动编码：同一种逻辑类型会根据元素数量、元素长度动态选择底层编码 (encoding)，在内存占用和操作性能之间平衡。
+- 高性能基因：绝大多数操作在 O(1) 或 O(logN) 复杂度内完成，且单线程模型避免了复杂锁竞争。
+- 组合能力强：可以通过 Lua、事务、Pipeline 和过期策略把多种类型组合成完整业务能力。
+
+### 常见数据类型总览
+
+Redis 面试里高频类型包括 String、List、Hash、Set、ZSet，以及面向特定场景的 Bitmap、HyperLogLog、GEO、Stream。
+
+#### 类型速览表
+
+| 数据类型          | 典型业务场景                     | 常用命令                              | 典型复杂度                        |
+| ----------------- | -------------------------------- | ------------------------------------- | --------------------------------- |
+| String            | 缓存对象、计数器、分布式锁 token | GET、SET、INCR、MGET                  | O(1)                              |
+| List              | 消息队列、时间线、任务缓冲       | LPUSH、RPOP、BLPOP、LRANGE            | 头尾 O(1)，按索引 O(N)            |
+| Hash              | 用户资料、配置对象、字段级更新   | HSET、HGET、HMGET、HINCRBY            | O(1)                              |
+| Set               | 标签去重、共同好友、抽奖池       | SADD、SMEMBERS、SINTER、SUNION        | 单操作 O(1)，集合运算与元素数相关 |
+| Sorted Set (ZSet) | 排行榜、延迟队列、权重排序       | ZADD、ZRANGE、ZREVRANK、ZSCORE        | O(logN)                           |
+| Bitmap            | 签到、活跃统计、状态位存储       | SETBIT、GETBIT、BITCOUNT、BITOP       | 位操作 O(1)，统计与位图长度相关   |
+| HyperLogLog       | UV 统计、近似基数统计            | PFADD、PFCOUNT、PFMERGE               | 近似统计，常量级内存              |
+| GEO               | 附近的人、门店检索、距离计算     | GEOADD、GEORADIUS、GEOSEARCH、GEODIST | 基于有序集合索引                  |
+| Stream            | 消息流、消费组、可回溯队列       | XADD、XREAD、XGROUP、XACK             | 追加近 O(1)，读取与范围相关       |
+
+### 1) String
+
+#### 核心原理
+
+- String 是 Redis 最基础类型，值可以是字符串、数字或二进制内容。
+- 底层依赖 SDS (Simple Dynamic String)，支持 O(1) 长度获取、预分配和惰性释放，避免 C 字符串频繁扩容问题。
+- INCR、DECR 等原子计数操作本质是服务端单线程串行执行，无需应用层加锁。
+
+#### 常见应用
+
+- 缓存 JSON 序列化对象。
+- 计数器 (访问量、点赞数、限流令牌桶计数)。
+- 分布式锁 (SET key value NX EX seconds)。
+
+#### 命令示例
+
+```bash
+# 缓存对象并设置过期
+SET user:1001 '{"name":"alice","level":3}' EX 3600
+
+# 原子计数
+INCR page:view:home
+
+# 分布式锁 (加锁)
+SET lock:order:9001 req-uuid-001 NX PX 30000
+```
+
+#### Lua 解锁示例 (防误删)
+
+```lua
+-- 只有 value 匹配时才删除，避免误删其他客户端锁
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+  return redis.call('DEL', KEYS[1])
+else
+  return 0
+end
+```
+
+### 2) List
+
+#### 核心原理
+
+- List 是按插入顺序维护的双端链式逻辑结构，适合头尾插入和弹出。
+- 新版本 Redis 在实现上采用 quicklist (ziplist/listpack + linked list 组合思想)，兼顾内存和遍历性能。
+- 阻塞弹出命令 (BLPOP/BRPOP) 可直接构建轻量消息队列。
+
+#### 常见应用
+
+- 简单异步任务队列。
+- Feed 流时间线 (最新内容头插)。
+- 固定长度日志缓冲 (LPUSH + LTRIM)。
+
+#### 命令示例
+
+```bash
+# 生产者写入任务
+LPUSH queue:email '{"to":"a@example.com","tpl":"welcome"}'
+
+# 消费者阻塞消费
+BRPOP queue:email 10
+
+# 保留最近 100 条日志
+LPUSH log:api '/order/create'
+LTRIM log:api 0 99
+```
+
+### 3) Hash
+
+#### 核心原理
+
+- Hash 是 field-value 的映射结构，适合存储对象型数据。
+- 小对象时常用紧凑编码 (listpack)，字段数量或值长度增长后会升级为哈希表编码。
+- 相比把整个对象放入 String，Hash 支持字段级读写，降低网络与序列化开销。
+
+#### 常见应用
+
+- 用户信息、商品信息、配置中心对象。
+- 字段级计数 (HINCRBY)。
+
+#### 命令示例
+
+```bash
+HSET user:1001 name alice age 28 city shanghai
+HGET user:1001 name
+HMGET user:1001 name city
+HINCRBY user:1001 login_count 1
+```
+
+### 4) Set
+
+#### 核心原理
+
+- Set 是无序且元素唯一的集合。
+- 适合做去重与集合运算 (交集、并集、差集)。
+- 底层会根据元素类型和数量在 intset 与 hashtable 等编码之间切换。
+
+#### 常见应用
+
+- 用户标签去重。
+- 共同关注、共同好友。
+- 黑名单、白名单。
+
+#### 命令示例
+
+```bash
+SADD tag:article:1 redis cache distributed
+SADD tag:article:2 redis interview
+
+# 交集 (两个文章共同标签)
+SINTER tag:article:1 tag:article:2
+```
+
+### 5) Sorted Set (ZSet)
+
+#### 核心原理
+
+- ZSet 在 Set 唯一性的基础上为每个元素增加 score。
+- 底层通常由 hash table + skiplist 组合实现：hash table 提供成员到分值的快速定位，skiplist 负责按分值有序查询与范围操作。
+- 因为支持有序范围检索，ZSet 是排行榜类场景首选。
+
+#### 常见应用
+
+- 实时排行榜 (积分榜、热度榜)。
+- 延迟队列 (score 存时间戳)。
+- 限流窗口统计。
+
+#### 命令示例
+
+```bash
+ZADD rank:game 1200 user:1 980 user:2 1350 user:3
+
+# Top 2
+ZREVRANGE rank:game 0 1 WITHSCORES
+
+# 查询用户排名
+ZREVRANK rank:game user:1
+```
+
+### 6) Bitmap
+
+#### 核心原理
+
+- Bitmap 本质不是独立数据结构，而是基于 String 的位操作能力。
+- 一个 bit 表示一个状态，极其节省空间，适用于海量布尔状态场景。
+
+#### 常见应用
+
+- 用户签到 (第 n 天是否签到)。
+- 在线状态、活跃状态压缩存储。
+
+#### 命令示例
+
+```bash
+# 用户 1001 在第 5 天签到
+SETBIT sign:2026-04:1001 5 1
+
+# 统计当月签到天数
+BITCOUNT sign:2026-04:1001
+```
+
+### 7) HyperLogLog
+
+#### 核心原理
+
+- HyperLogLog 用概率算法估算去重基数 (cardinality)，标准误差约 0.81%。
+- 核心优势是固定且极小的内存开销 (每个 key 约 12 KB 量级)。
+- 适合 UV、独立访客统计，不适合要求精确去重明细的场景。
+
+#### 命令示例
+
+```bash
+PFADD uv:2026-04-03 user:1 user:2 user:3
+PFCOUNT uv:2026-04-03
+```
+
+### 8) GEO
+
+#### 核心原理
+
+- GEO 底层依赖 ZSet，把地理位置编码为 geohash 后按 score 存储。
+- 支持附近检索、距离计算、按距离排序。
+
+#### 命令示例
+
+```bash
+GEOADD store:city 121.4737 31.2304 shanghai_store 116.4074 39.9042 beijing_store
+GEODIST store:city shanghai_store beijing_store km
+GEOSEARCH store:city FROMLONLAT 121.47 31.23 BYRADIUS 10 km WITHDIST
+```
+
+### 9) Stream
+
+#### 核心原理
+
+- Stream 是 Redis 5.0 引入的消息流结构，支持消息持久化、消费组、ACK、待处理列表 (PEL)。
+- 相比 List，Stream 对多消费者协作和消息可回溯更友好。
+
+#### 常见应用
+
+- 订单事件流。
+- 异步任务分发与失败重试。
+
+#### 命令示例
+
+```bash
+# 生产消息
+XADD stream:order * order_id 9001 status created
+
+# 创建消费组
+XGROUP CREATE stream:order group_order 0 MKSTREAM
+
+# 消费组读取
+XREADGROUP GROUP group_order consumer_1 COUNT 10 BLOCK 2000 STREAMS stream:order >
+
+# 处理完成 ACK
+XACK stream:order group_order 1712200000000-0
+```
+
+### 生产配置与选型建议
+
+```conf
+# redis.conf 关键配置示例 (按业务压测结果调整)
+maxmemory 4gb
+maxmemory-policy allkeys-lru
+appendonly yes
+appendfsync everysec
+hash-max-listpack-entries 512
+hash-max-listpack-value 64
+zset-max-listpack-entries 128
+zset-max-listpack-value 64
+```
+
+- 以读多写少缓存为主：优先 String + 过期策略。
+- 以对象字段局部更新为主：优先 Hash，避免整对象反序列化。
+- 以排序检索为主：优先 ZSet。
+- 以可靠消息处理为主：优先 Stream + 消费组，而不是简单 List 队列。
+
+### 客户端交互代码示例 (Go)
+
+```go
+package main
+
+import (
+  "context"
+  "fmt"
+
+  "github.com/redis/go-redis/v9"
+)
+
+func main() {
+  ctx := context.Background()
+  rdb := redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379"})
+
+  // String
+  _ = rdb.Set(ctx, "counter:pv", 1, 0).Err()
+  _ = rdb.Incr(ctx, "counter:pv").Err()
+
+  // Hash
+  _ = rdb.HSet(ctx, "user:1001", "name", "alice", "age", 28).Err()
+
+  // ZSet
+  _ = rdb.ZAdd(ctx, "rank:game", redis.Z{Score: 100, Member: "user:1001"}).Err()
+
+  rank, _ := rdb.ZRevRank(ctx, "rank:game", "user:1001").Result()
+  fmt.Println("rank:", rank)
+}
+```
+
+### 面试回答要点
+
+- String、Hash、List、Set、ZSet 是最核心的五大类型，面试回答必须带上典型场景和复杂度。
+- Bitmap、HyperLogLog、GEO、Stream 是高阶类型，体现你对 Redis 场景化建模能力。
+- 不要只背命令，要说明底层编码 (SDS、quicklist、skiplist、listpack) 与性能权衡。
+- 类型选型本质是空间、时间复杂度、业务语义三者平衡。
+
+### 知识扩展
+
+- 与内存淘汰策略的关系：不同类型 value 的体积和访问模式会影响 LRU/LFU 淘汰效果。
+- 与持久化的关系：AOF/RDB 会影响不同类型写入吞吐与恢复时间。
+- 与事务和 Lua 的关系：可通过 Lua 把多类型操作封装为原子步骤，避免并发竞态。
+- 与 Redis Cluster 的关系：多 key 操作涉及跨槽位约束，类型设计需结合 hash tag 规划 key。
