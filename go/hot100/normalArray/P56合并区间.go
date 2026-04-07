@@ -1,4 +1,4 @@
-package normalarray
+package normalArray
 
 import (
 	"cmp"

@@ -1,4 +1,4 @@
-package normalarray
+package normalArray
 
 func rotate(nums []int, k int) {
 	// 删去超出一次循环的部分

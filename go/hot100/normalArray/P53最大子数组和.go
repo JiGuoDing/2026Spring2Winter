@@ -1,4 +1,4 @@
-package normalarray
+package normalArray
 
 func maxSubArray(nums []int) int {
 	maxSubSum, currentSum := nums[0], nums[0]
