@@ -12,7 +12,7 @@ prompt:
 
 ## 2. 优化策略
 
-### 2.2 在 Flink 中，如何处理数据倾斜问题？有哪些常见的优化手段？
+### 2.1 在 Flink 中，如何处理数据倾斜问题？有哪些常见的优化手段？
 
 #### 如何发现数据倾斜
 
@@ -51,6 +51,159 @@ prompt:
 ##### 策略六：调整并行度与资源
 
 原理：通过提高热点算子的并行度，增加处理能力来缓解倾斜带来的压力 (治标)
+
+### 2.2 Flink 的 Operator Chain 是如何工作的？如何通过调整链优化作业性能？
+
+Operator Chain 是 Flink 在同一个 Task 内将多个可串联算子拼接执行的运行时优化机制。它的核心目标是减少网络传输、序列化反序列化和线程切换开销，从而提升吞吐并降低延迟。
+
+面试里可以先给一句定义：Operator Chain 本质上是把“本来可能跨线程/跨网络边界的算子”尽量下沉到同一个执行线程里，形成函数调用级别的数据传递。
+
+#### 一、Operator Chain 是怎么形成的
+
+Flink 在生成 JobGraph/ExecutionGraph 时，会判断两两相邻算子能否 chain。典型前提包括：
+
+1. 上下游并行度一致。
+2. 分区方式允许前向传输 (典型是 Forward，而不是需要 shuffle 的 keyBy/rebalance)。
+3. 两个算子都允许 chaining (没有显式禁用)。
+4. Slot sharing 与资源约束不冲突。
+
+可以把它理解为：只要运行时不需要“重分发数据”，且调度约束允许，就有机会放进同一条链。
+
+示意图如下：
+
+```plaintext
+未链式执行:
+Source -> Map -> Filter -> Sink
+  |        |        |       |
+ TaskA   TaskB    TaskC   TaskD
+
+链式执行后 (理想情况):
+[Source -> Map -> Filter] -> Sink
+      TaskA             TaskB
+```
+
+链起来后，链内记录通常通过内存对象直接传递，不必每步都走网络栈和序列化。
+
+#### 二、Operator Chain 的收益与代价
+
+##### 收益
+
+1. 更低延迟
+  减少跨 Task 边界传输，链内是本地调用路径。
+2. 更高吞吐
+  降低序列化和网络 buffer 开销，CPU 可更多用于业务计算。
+3. 更低资源开销
+  线程和网络连接数量减少，调度与上下文切换成本下降。
+
+##### 代价和边界
+
+1. 故障隔离粒度变粗
+  同链算子共享同一执行上下文，定位热点与瓶颈有时不如拆链直观。
+2. 反压传播更直接
+  链尾慢会快速传导到链头，可能放大局部抖动。
+3. 不适合“冷热算子混跑”
+  一个极重 CPU 算子和轻算子强行链在一起，可能影响整体稳定性。
+
+#### 三、哪些场景应当主动拆链
+
+以下场景常见要考虑拆链：
+
+1. 链中某个算子特别重
+  例如复杂 JSON 解析、外部 RPC、加解密等，会拖慢整个链。
+2. 需要独立调并行度或资源
+  例如下游 sink 受限明显，希望单独扩并行度和 slot 资源。
+3. 需要更清晰观测
+  拆链后 Web UI 指标更细，便于定位反压来源。
+4. 算子需要隔离故障域
+  外部系统交互算子常单独链路更稳妥。
+
+#### 四、如何通过调整 chain 做性能优化
+
+##### 策略一：默认先让轻量算子链起来
+
+对于纯计算轻操作 (map/filter/flatMap)，优先保持 chaining，先吃到低开销收益。
+
+##### 策略二：在重算子前后打断链
+
+把 CPU 或 IO 重负载算子独立出来，避免整链被单点拖慢。
+
+##### 策略三：结合并行度与 slot sharing 调整
+
+拆链通常要配合并行度、slot sharing group 一起看，否则可能只是“拆了图”，却没有得到资源收益。
+
+##### 策略四：通过压测比较 P50/P99 与吞吐
+
+不要只看平均吞吐，重点看尾延迟与反压持续时长，选更稳的方案。
+
+#### 五、常用 API 与代码示例
+
+```java
+DataStream<Event> stream = env.addSource(new EventSource())
+   .name("source");
+
+DataStream<Event> parsed = stream
+   .map(new ParseMapFunction())
+   .name("parse")
+   // 从这个算子开始一条新链，适合把后续重算子隔离
+   .startNewChain();
+
+DataStream<Event> enriched = parsed
+   .map(new EnrichMapFunction())
+   .name("enrich")
+   // 禁止本算子与上下游 chain，适合重 CPU/外部调用场景
+   .disableChaining();
+
+DataStream<Event> filtered = enriched
+   .filter(new RiskFilter())
+   .name("risk-filter")
+   // 让轻量过滤和下游可继续链式执行
+   .slotSharingGroup("compute");
+
+filtered
+   .addSink(new AlertSink())
+   .name("alert-sink")
+   // sink 常常单独资源组，避免与上游互相影响
+   .slotSharingGroup("sink");
+```
+
+代码解读：
+
+1. `startNewChain()` 用于人为切分链边界。
+2. `disableChaining()` 用于彻底禁止当前算子参与链。
+3. `slotSharingGroup()` 控制资源共享域，常与链策略联动。
+
+#### 六、一个可复盘的调优流程
+
+1. 先看 Web UI：确认瓶颈是网络、CPU 还是下游外部系统。
+2. 导出当前拓扑：观察哪些算子已 chain，哪些在跨 Task 传输。
+3. 对重算子试验拆链：固定输入流量做 A/B 压测。
+4. 对比指标：`numRecordsIn/Out`、busyTime、backPressure、P99 延迟。
+5. 收敛方案：在吞吐、尾延迟、稳定性三者间取平衡，而不是只追单一峰值。
+
+#### 七、常见误区
+
+##### 1. 误区：链越长越好
+
+错误。链过长会让瓶颈算子拖累整链，且可观测性变差。
+
+##### 2. 误区：拆链一定提升性能
+
+错误。拆链会增加网络和序列化开销，轻量算子盲目拆链反而降性能。
+
+##### 3. 误区：只调 chain 不调资源
+
+不完整。链策略必须与并行度、slot sharing、外部系统限流一起优化。
+
+#### 八、面试时可以怎么总结
+
+可以这样回答：Flink 的 Operator Chain 是把可串联算子放在同一 Task 内执行的运行时优化，核心收益是减少网络与序列化开销。优化时通常遵循“轻算子尽量链、重算子适度拆、并行度与资源组联动调优”的原则，并通过压测验证吞吐与 P99 延迟的综合收益。
+
+#### 知识扩展
+
+- Task 与 Slot：Operator Chain 最终落在 Task 执行单元上，理解 Slot 分配有助于解释链的资源边界。
+- Forward/Shuffle 分区：是否需要重分区直接决定链能否跨算子成立。
+- Back Pressure 机制：链内慢算子会更快向上游传播反压，和链设计强相关。
+- Checkpoint 对齐成本：链结构会影响 barrier 传播路径与算子观测粒度。
 
 ## 3. State 状态管理
 
