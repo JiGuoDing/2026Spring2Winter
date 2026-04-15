@@ -1,0 +1,120 @@
+# ==============================================================================
+# OS Temporary Files
+# ==============================================================================
+
+# macOS specific directory metadata
+.DS_Store
+# Windows specific thumbnail cache
+Thumbs.db
+
+# ==============================================================================
+# Runtime & Virtual Environments
+# ==============================================================================
+
+# Local environment variables
+.env
+# Python virtual environment (venv/poetry/pdm)
+.venv/
+# Standard Python virtual environment
+env/
+# Node.js dependencies
+node_modules/
+# Standard Python virtual environment
+venv/
+
+# ==============================================================================
+# Build & Python Output
+# ==============================================================================
+
+# Dynamic library (macOS)
+*.dylib
+# Python egg distribution metadata
+*.egg-info/
+# Python compiled bytecode
+*.pyc
+# Python optimized bytecode
+*.pyo
+# Shared object library (Linux/Unix)
+*.so
+# Python compiled bytecode cache
+__pycache__/
+# General build output directory
+build/
+# General distribution/package directory
+dist/
+# Maven/Rust/other build output directory
+target/
+
+# ==============================================================================
+# Logs & Cache
+# ==============================================================================
+
+# Application log files
+*.log
+# Temporary files
+*.tmp
+# General cache directory
+.cache/
+# ESLint cache
+.eslintcache
+# Mypy type checker cache
+.mypy_cache/
+# Pytest test run cache
+.pytest_cache/
+
+# ==============================================================================
+# Secrets & Sensitive Config
+# ==============================================================================
+
+# Private keys
+*.key
+# SSL/TLS certificates
+*.pem
+# Local application configuration
+config.local.yml
+# Sensitive credentials and secrets
+secrets.json
+
+# ==============================================================================
+# IDE Local Config
+# ==============================================================================
+
+# Backup files (Emacs/other editors)
+*~
+# IntelliJ IDEA module file
+*.iml
+# Vim swap file
+*.swp
+# IntelliJ IDEA/PyCharm project configuration
+.idea/
+# Visual Studio Code project configuration
+.vscode/
+
+# ==============================================================================
+# RAG Specific (Vector DB, Models, Corpus)
+# ==============================================================================
+
+# Model weights or binary data
+*.bin
+# FAISS index files
+*.faiss
+# Milvus data/index files
+*.milvus
+# ONNX model format
+*.onnx
+# SafeTensors model weights
+*.safetensors
+# Large data or model download cache
+cache/
+# Model training checkpoints
+checkpoints/
+# ChromaDB local storage directory
+chroma_db/
+# Large raw text corpus for RAG
+corpus/
+# Training or evaluation datasets
+datasets/
+# Downloaded LLM/embedding model files
+models/
+# Qdrant local storage directory
+qdrant_storage/
