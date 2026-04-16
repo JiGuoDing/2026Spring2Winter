@@ -23,5 +23,5 @@ class VectorStoreService(object):
 if __name__ == "__main__":
     # 测试向量存储服务
     retriever = VectorStoreService(DashScopeEmbeddings(model="text-embedding-v4")).get_retriever()
-    results = retriever.invoke("你好")
+    results = retriever.invoke("一个有效的合同的标准是怎样的？")
     print(results)

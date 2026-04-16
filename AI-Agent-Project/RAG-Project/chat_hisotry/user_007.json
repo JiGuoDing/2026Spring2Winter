@@ -1,0 +1,152 @@
+[
+    {
+        "type": "human",
+        "data": {
+            "content": "一个有效的合同的标准是怎样的？",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null
+        }
+    },
+    {
+        "type": "ai",
+        "data": {
+            "content": "根据《中华人民共和国民法典》的相关规定，一个有效的合同需满足以下四个基本要件：\n\n1. **当事人具有相应的民事行为能力**：即订立合同的各方必须具备法律认可的缔约资格，如成年人、未被依法限制行为能力等。\n\n2. **意思表示真实**：合同内容必须是当事人真实意愿的体现，不存在欺诈、胁迫、重大误解或显失公平等情形。\n\n3. **内容不违反法律、行政法规的强制性规定**：合同条款不得与现行法律、行政法规中的强制性规范相抵触。\n\n4. **不违背公序良俗**（公共秩序和善良风俗）：合同目的和内容应符合社会普遍接受的道德和秩序标准。\n\n此外，对于法律特别规定需履行特定形式（如书面形式）或手续（如不动产登记）的合同，还须依法完成相应程序才能生效。",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    },
+    {
+        "type": "human",
+        "data": {
+            "content": "一个有效的合同的标准是怎样的？",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null
+        }
+    },
+    {
+        "type": "ai",
+        "data": {
+            "content": "一个有效的合同需满足《中华人民共和国民法典》规定的以下四个基本标准：\n\n1. **当事人具有相应的民事行为能力**；  \n2. **意思表示真实**；  \n3. **合同内容不违反法律、行政法规的强制性规定**；  \n4. **不违背公序良俗**（公共秩序和善良风俗）。\n\n此外，若法律规定某些合同需采用特定形式（如书面形式）或履行法定手续（如登记），还须符合这些形式要件，合同方能生效。",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    },
+    {
+        "type": "human",
+        "data": {
+            "content": "一个合法的合同的标准是怎样的？",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null
+        }
+    },
+    {
+        "type": "ai",
+        "data": {
+            "content": "一个合法的合同，即具有法律效力的合同，需符合《中华人民共和国民法典》规定的以下四个基本标准：\n\n1. **当事人具有相应的民事行为能力**：缔约各方必须具备法律认可的行为能力，例如年满18周岁且精神状况正常，或依法被认定具备完全民事行为能力。\n\n2. **意思表示真实**：合同内容必须是当事人自愿、真实的意思表达，不存在欺诈、胁迫、重大误解或显失公平等情形。\n\n3. **内容不违反法律、行政法规的强制性规定**：合同条款不得与国家现行法律或行政法规中的强制性规范相抵触。\n\n4. **不违背公序良俗**：合同的目的和内容不得违反社会公共秩序或公认的道德准则。\n\n此外，若法律对特定类型合同有形式要求（如必须采用书面形式）或需履行特定手续（如不动产买卖需登记），则还须满足这些法定形式或程序要件，合同方为合法有效。",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    },
+    {
+        "type": "human",
+        "data": {
+            "content": "一个合法的合同的标准是怎样的？",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null
+        }
+    },
+    {
+        "type": "ai",
+        "data": {
+            "content": "一个合法的合同，须符合《中华人民共和国民法典》规定的以下四个基本标准：\n\n1. **当事人具有相应的民事行为能力**；  \n2. **意思表示真实**；  \n3. **内容不违反法律、行政法规的强制性规定**；  \n4. **不违背公序良俗**（即公共秩序和善良风俗）。\n\n此外，若法律规定某些合同需采用特定形式（如书面形式）或履行法定手续（如不动产登记），还必须满足这些形式或程序要求，合同才具备法律效力。",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    },
+    {
+        "type": "human",
+        "data": {
+            "content": "一个合法的合同的标准是怎样的？",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null
+        }
+    },
+    {
+        "type": "ai",
+        "data": {
+            "content": "一个合法的合同必须符合《中华人民共和国民法典》规定的以下四个基本标准：\n\n1. **当事人具有相应的民事行为能力**；  \n2. **意思表示真实**；  \n3. **合同内容不违反法律、行政法规的强制性规定**；  \n4. **不违背公序良俗**（即公共秩序和善良风俗）。\n\n此外，若法律对特定合同有形式要求（如书面形式）或需履行法定手续（如登记、批准等），还须满足这些形式或程序要件，合同方为合法有效。",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    },
+    {
+        "type": "human",
+        "data": {
+            "content": "一个规范的合同的标准是怎样的？",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null
+        }
+    },
+    {
+        "type": "ai",
+        "data": {
+            "content": "“规范的合同”通常指在内容、形式和订立程序上符合法律规定、逻辑清晰、权利义务明确，能够有效防范履约风险的合同。根据《中华人民共和国民法典》及相关实践，一个规范的合同应具备以下标准：\n\n1. **主体适格**：合同当事人具有相应的民事行为能力，身份信息真实、准确、可核实。\n\n2. **意思表示真实且一致**：双方在平等、自愿基础上协商达成合意，不存在欺诈、胁迫、重大误解等情形；要约与承诺过程清晰。\n\n3. **条款完整、明确**：包括但不限于以下核心条款：\n   - 合同标的（如货物、服务或权利）；\n   - 数量、质量要求；\n   - 价款或报酬及支付方式；\n   - 履行期限、地点和方式；\n   - 违约责任；\n   - 争议解决方式（如仲裁或诉讼）；\n   - 生效条件与签署日期。\n\n4. **内容合法合规**：不违反法律、行政法规的强制性规定，不违背公序良俗。\n\n5. **形式符合法定要求**：对于法律要求采用书面形式（如不动产买卖、借款金额较大等）或需经批准、登记才能生效的合同，必须满足相应形式要件。\n\n6. **签署规范**：由有权代表签字或盖章，必要时加盖公章或按指印，并注明签署日期。\n\n综上，一个规范的合同不仅“合法”，还应“严谨、可执行、可救济”，有助于预防纠纷并保障各方权益。",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    }
+]

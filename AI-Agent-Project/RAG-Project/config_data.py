@@ -1,5 +1,10 @@
 md5_path = "./md5.text"
 
+# embedding model
+embedding_model = "text-embedding-v4"
+# chat model
+chat_model = "qwen3-max"
+
 # Chroma
 collection_name = "rag"
 persist_directory = "./chroma_db"
@@ -16,3 +21,9 @@ min_split_char_number = 1000
 similarity_threshold = 2
 
 
+# 会话配置
+session_config = {
+    "configurable": {
+        "session_id": "user_007",
+    }
+}

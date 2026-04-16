@@ -36,7 +36,7 @@ def save_md5(md5_str: str):
     """
     将传入的 md5 字符串保存到文件内
     """
-    with open(config.md5_path, 'w', encoding='utf-8') as f:
+    with open(config.md5_path, 'a', encoding='utf-8') as f:
         f.write(md5_str + '\n')
 
 
