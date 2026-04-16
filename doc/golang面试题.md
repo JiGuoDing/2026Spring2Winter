@@ -1468,7 +1468,7 @@ Go 的 Interface 底层有两种数据结构：eface 和 iface
 
 eface 是空 interface{} 的实现，只包含两个指针：`_type` 指向类型信息，`data` 指向实际数据，这就是为什么空接口能存储任意类型值的原因，通过类型指针来标识具体类型，通过数据指针来访问实际值
 
-iface 是带方法的 interface 实现，包含 `itab` 和 `data` 两个部分，itab 是核心，它存储了接口类型、具体类型以及方法表。方法表是函数指针数组，保存了该类型实现的所有接口方法的地址
+iface 是带方法的 interface 实现，包含 `tab` 和 `data` 两个部分，tab 是核心，它存储了接口类型、具体类型以及方法表。方法表是函数指针数组，保存了该类型实现的所有接口方法的地址
 
 ```go
 type eface struct {
@@ -1499,11 +1499,202 @@ type itab struct {
 
 ### 7.2 iface 和 eface 的区别是什么？
 
-核心区别在于是否包含方法信息
+iface 和 eface 是 Go 语言中两种不同接口类型的底层实现，它们的核心区别在于是否包含方法信息以及对应的内存结构和处理机制。
 
-eface 是空接口 interface{} 的底层实现，结构非常简单，只有两个字段：_type 指向类型信息，data 指向实际数据。因为空接口没有方法约束，所以不需要存储方法相关信息
+#### 一、核心定义与内存结构
 
-iface 是非空接口的底层实现，结构相对复杂，包含 itab 和 data。关键是 itab，它不仅包含类型信息，还包含一个方法表，存储着该类型实现的所有接口方法的函数指针
+##### 1. eface（空接口的实现）
+
+eface 是 `interface{}`（空接口）的底层实现，结构非常简单，仅包含两个字段：
+
+```go
+type eface struct {
+    _type *_type     // 指向类型信息
+    data  unsafe.Pointer  // 指向实际数据
+}
+```
+
+- `_type`：指向一个 `_type` 结构体，包含类型的元信息（如类型大小、对齐方式、方法集等）
+- `data`：指向实际数据的指针，对于值类型会存储其副本，对于引用类型则存储其指针
+
+##### 2. iface（非空接口的实现）
+
+iface 是非空接口（即包含方法的接口）的底层实现，结构相对复杂：
+
+```go
+type iface struct {
+    tab  *itab       // 接口表
+    data unsafe.Pointer  // 指向实际数据
+}
+
+type itab struct {
+    inter *interfacetype  // 接口类型信息
+    _type *_type         // 具体类型信息
+    link  *itab          // 哈希表链接
+    hash  uint32         // 类型哈希值
+    fun   [1]uintptr     // 方法表，存储方法函数指针
+}
+```
+
+- `tab`：指向 `itab` 结构体，包含接口类型信息、具体类型信息以及方法表
+- `data`：与 eface 类似，指向实际数据
+- `itab.fun`：存储具体类型实现的接口方法的函数指针，便于运行时快速调用
+
+#### 二、底层实现原理差异
+
+##### 1. 类型信息存储
+
+- **eface**：仅存储具体类型的 `_type` 信息，不包含方法相关数据
+- **iface**：不仅存储具体类型的 `_type` 信息，还通过 `itab` 存储接口类型信息和方法表
+
+##### 2. 方法处理机制
+
+- **eface**：由于空接口无方法约束，不需要存储方法表，运行时也不需要进行方法查找
+- **iface**：编译期会为每个实现接口的类型生成对应的 `itab`，运行时通过 `itab` 快速查找和调用方法
+
+##### 3. 类型断言行为
+
+- **eface**：类型断言主要检查 `_type` 是否匹配，相对简单
+- **iface**：类型断言不仅检查 `_type` 匹配，还需要确保具体类型实现了接口的所有方法
+
+#### 三、适用场景对比
+
+##### 1. eface（interface{}）适用场景
+
+- 泛型编程：在 Go 1.18 引入泛型前，广泛用于实现类似泛型的功能
+- 类型不确定的场景：如 JSON 解析、反射操作、容器存储不同类型元素
+- 函数参数或返回值类型不固定的情况：如标准库中的 `fmt.Print` 系列函数
+
+##### 2. iface（非空接口）适用场景
+
+- 多态实现：定义统一接口，不同类型实现相同方法，实现代码复用和扩展性
+- 依赖注入：通过接口抽象具体实现，便于测试和模块解耦
+- 标准库接口：如 `io.Reader`、`io.Writer`、`sort.Interface` 等，提供统一的操作方式
+
+#### 四、性能特性分析
+
+##### 1. 内存开销
+
+- **eface**：内存开销较小，仅包含两个指针（约 16 字节，64 位系统）
+- **iface**：内存开销较大，包含两个指针（`tab` 和 `data`），且 `tab` 本身也占用内存
+
+##### 2. 运行时性能
+
+- **eface**：
+  - 类型断言速度较快，仅需比较 `_type` 指针
+  - 无方法调用开销，因为不涉及方法表查找
+
+- **iface**：
+  - 首次类型断言较慢，需要构建或查找 `itab`
+  - 方法调用需要通过方法表间接跳转，有一定开销
+  - 但后续相同类型的接口转换会复用已构建的 `itab`，性能会提升
+
+##### 3. 编译期优化
+
+- **eface**：编译期优化空间有限，主要依赖运行时处理
+- **iface**：编译器可以进行更多优化，如内联方法调用、静态类型检查等
+
+#### 五、代码示例
+
+##### 1. eface 使用示例
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    // eface 示例：空接口可以存储任何类型
+    var i interface{} = 42
+    fmt.Printf("Type: %T, Value: %v\n", i, i)
+    
+    i = "hello"
+    fmt.Printf("Type: %T, Value: %v\n", i, i)
+    
+    // 类型断言
+    if v, ok := i.(string); ok {
+        fmt.Printf("String value: %s\n", v)
+    }
+}
+```
+
+##### 2. iface 使用示例
+
+```go
+package main
+
+import "fmt"
+
+// 定义一个接口
+type Speaker interface {
+    Speak() string
+}
+
+// 实现接口的类型
+type Dog struct{}
+
+func (d Dog) Speak() string {
+    return "Woof!"
+}
+
+type Cat struct{}
+
+func (c Cat) Speak() string {
+    return "Meow!"
+}
+
+func main() {
+    // iface 示例：非空接口存储实现了接口的类型
+    var s Speaker
+    
+    s = Dog{}
+    fmt.Printf("Type: %T, Speak: %s\n", s, s.Speak())
+    
+    s = Cat{}
+    fmt.Printf("Type: %T, Speak: %s\n", s, s.Speak())
+    
+    // 类型断言
+    if dog, ok := s.(Dog); ok {
+        fmt.Println("It's a dog:", dog.Speak())
+    } else if cat, ok := s.(Cat); ok {
+        fmt.Println("It's a cat:", cat.Speak())
+    }
+}
+```
+
+#### 六、编译期与运行期处理机制
+
+##### 1. 编译期处理
+
+- **eface**：编译期仅做基本类型检查，不生成额外代码
+- **iface**：
+  - 编译期会检查类型是否实现了接口的所有方法
+  - 生成类型转换代码，包括 `itab` 的构建逻辑
+  - 对方法调用进行静态分析，可能进行内联优化
+
+##### 2. 运行期处理
+
+- **eface**：
+  - 类型断言时，直接比较 `_type` 指针
+  - 数据访问通过 `data` 指针直接获取
+
+- **iface**：
+  - 首次类型转换时，构建 `itab` 并缓存
+  - 方法调用时，通过 `itab.fun` 查找并调用对应方法
+  - 类型断言时，检查 `_type` 匹配且方法集满足接口要求
+
+#### 七、总结
+
+| 特性 | eface (interface{}) | iface (非空接口) |
+|------|-------------------|------------------|
+| 内存结构 | 简单（_type + data） | 复杂（tab + data，tab 包含 itab） |
+| 方法信息 | 无 | 包含方法表 |
+| 适用场景 | 泛型编程、类型不确定的场景 | 多态实现、依赖注入、标准库接口 |
+| 内存开销 | 较小（约 16 字节） | 较大（额外的 itab 开销） |
+| 类型断言速度 | 较快（仅比较类型） | 较慢（需检查类型和方法集） |
+| 方法调用开销 | 无 | 有（方法表查找） |
+
+iface 和 eface 是 Go 语言类型系统的重要组成部分，理解它们的区别有助于我们更高效地使用接口，编写性能更好的代码。在实际开发中，应根据具体场景选择合适的接口类型：需要泛型能力时使用 `interface{}`，需要多态和方法约束时使用非空接口。
 
 ### 7.3 类型转换和断言的区别是什么？
 
@@ -1700,9 +1891,241 @@ GO scheduler 是 Go 运行时的 `协程调度器`，负责在系统线程上调
 
 ### 9.3 Go 语言在进行 goroutine 调度时，调度策略是怎样的？
 
-Go 语言采用的是抢占式调度策略。Go 会启动一个线程，一直运行着 sysmon 函数，sysmon 运行在 M 上，且不需要 P。当 sysmon 发现 M 已运行同一个 G 10ms 以上时，它会将该 G 当内部参数 preempt 设置为 true，表示需要被抢占，让出 GPU
+Go 语言的调度策略是基于 G-M-P 模型的抢占式调度，结合工作窃取算法和信号驱动的异步抢占机制，实现了高效的协程调度。下面从多个维度全面分析其调度策略：
 
-Go 1.14 之后：调度策略基于信号的异步抢占机制，sysmon 会监测到运行了 10ms 以上的 G，然后 sysmon 向运行 G 的 M 发送信号 (SIGURG)。Go 的信号处理程序会调用 M 上的一个叫做 gsignal 的 goroutine 来处理该信号，并使其检查该信号。gsignal 看到抢占信号，停止正在运行的 G
+#### 一、核心架构：G-M-P 模型
+
+G-M-P 模型是 Go 调度器的核心架构，由三个主要组件组成：
+
+- **G (Goroutine)**：代表一个协程，包含执行栈、状态等信息
+- **M (Machine)**：代表一个系统线程，负责执行 G
+- **P (Processor)**：代表处理器，维护本地可运行 G 队列，是 M 与 G 之间的桥梁
+
+```go
+// G 的核心结构
+type g struct {
+    stack       stack   // 执行栈
+    stackguard0 uintptr // 栈边界
+    status      uint32  // 状态：_Gidle, _Grunnable, _Grunning, _Gsyscall, _Gwaiting, _Gdead
+    preempt     bool    // 是否需要被抢占
+    // 其他字段...
+}
+
+// M 的核心结构
+type m struct {
+    g0      *g     // 系统栈对应的 G
+    curg    *g     // 当前运行的 G
+    p       *p     // 绑定的 P
+    // 其他字段...
+}
+
+// P 的核心结构
+type p struct {
+    runq     [256]guintptr // 本地可运行 G 队列
+    runqhead uint32
+    runqtail uint32
+    // 其他字段...
+}
+```
+
+#### 二、工作窃取算法 (Work Stealing)
+
+工作窃取是 Go 调度器的重要优化策略，用于负载均衡：
+
+1. **本地队列优先**：每个 M 优先从绑定 P 的本地队列获取 G 执行
+2. **全局队列补充**：本地队列为空时，从全局队列获取 G
+3. **工作窃取**：全局队列也为空时，从其他 P 的本地队列窃取一半的 G
+
+```go
+// 简化的工作窃取逻辑
+func findrunnable() (gp *g, inheritTime bool) {
+    // 1. 从本地队列获取
+    if gp := runqget(_g_.m.p); gp != nil {
+        return gp, false
+    }
+    
+    // 2. 从全局队列获取
+    if sched.runqsize != 0 {
+        lock(&sched.lock)
+        gp := globrunqget(_g_.m.p, 1)
+        unlock(&sched.lock)
+        if gp != nil {
+            return gp, false
+        }
+    }
+    
+    // 3. 工作窃取
+    for i := 0; i < len(allp); i++ {
+        p := allp[(getg().m.p.ptr().id+i+1)%len(allp)]
+        if gp := runqsteal(_g_.m.p, p, stealWork); gp != nil {
+            return gp, false
+        }
+    }
+    
+    // 其他逻辑...
+    return nil, false
+}
+```
+
+#### 三、抢占式调度机制
+
+Go 采用抢占式调度，确保没有 goroutine 能长时间占用 CPU：
+
+##### 1. 协作式抢占 (Go 1.14 之前)
+
+- **基于函数调用**：在函数调用时检查 `preempt` 标志
+- **sysmon 监控**：系统监控线程每 20us 检查一次，发现运行超过 10ms 的 G 时设置 `preempt` 标志
+
+##### 2. 基于信号的异步抢占 (Go 1.14 之后)
+
+- **信号发送**：sysmon 发现运行超过 10ms 的 G 时，向对应的 M 发送 SIGURG 信号
+- **信号处理**：M 上的 gsignal 协程处理信号，调用 `preemptPark` 暂停当前 G
+- **状态转换**：将 G 从 _Grunning 状态转换为 _Grunnable 状态，重新进入调度队列
+
+```go
+// sysmon 中的抢占检测逻辑
+func sysmon() {
+    // ...
+    for {
+        // 每 20us 检查一次
+        usleep(20)
+        
+        // 检查运行时间过长的 G
+        now := nanotime()
+        for _, p := range allp {
+            if p == nil || p.status != _Prunning {
+                continue
+            }
+            gp := p.curg
+            if gp == nil || gp == gp.m.g0 {
+                continue
+            }
+            if gp.preemptoff != "" {
+                continue
+            }
+            // 运行超过 10ms 触发抢占
+            if now-gp.schedtick*1000000 > 10*1000000 && atomic.Load(&gp.preempt) == 0 {
+                // 发送抢占信号
+                preemptone(gp)
+            }
+        }
+        // ...
+    }
+}
+```
+
+#### 四、调度器状态转换生命周期
+
+Goroutine 的完整调度生命周期包括以下状态转换：
+
+1. **创建**：通过 `go` 关键字创建，状态为 _Gidle
+2. **就绪**：进入可运行队列，状态为 _Grunnable
+3. **运行**：被 M 选中执行，状态为 _Grunning
+4. **阻塞**：遇到 channel 操作、系统调用等，状态为 _Gwaiting 或 _Gsyscall
+5. **唤醒**：阻塞条件满足，重新进入就绪状态
+6. **结束**：执行完成，状态为 _Gdead
+
+#### 五、调度策略的版本演进
+
+| 版本 | 调度策略 | 主要改进 |
+|------|---------|----------|
+| Go 1.0-1.13 | 协作式抢占 | 基于函数调用的抢占，存在长计算无法被抢占的问题 |
+| Go 1.14 | 基于信号的异步抢占 | 解决了长计算无法被抢占的问题，实现真正的抢占式调度 |
+| Go 1.16 | 非协作式系统调用抢占 | 系统调用超过一定时间后会被抢占，提高系统响应性 |
+| Go 1.18 | 工作窃取算法优化 | 改进了工作窃取的效率和公平性 |
+
+#### 六、关键调度场景分析
+
+##### 1. Goroutine 阻塞与唤醒
+
+当 goroutine 遇到 channel 操作、互斥锁等阻塞操作时：
+
+```go
+// 简化的 channel 接收操作
+func chanrecv1(c *hchan, elem unsafe.Pointer) {
+    // 检查 channel 状态
+    if c == nil {
+        gopark(nil, nil, waitReasonChanReceiveNilChan, traceEvGoStop, 2)
+        return
+    }
+    
+    // 无数据且非关闭，阻塞当前 G
+    if empty(c) && !c.closed {
+        gp := getg()
+        mysg := acquireSudog()
+        // 加入等待队列
+        queueSudog(c, mysg, gp, nil, elem, false)
+        // 挂起当前 G
+        gopark(chanparkcommit, unsafe.Pointer(mysg), waitReasonChanReceive, traceEvGoBlockRecv, 2)
+        // 唤醒后继续执行
+        // ...
+    }
+}
+```
+
+##### 2. 系统调用处理流程
+
+当 goroutine 执行系统调用时：
+
+1. **进入系统调用**：G 状态变为 _Gsyscall，M 与 P 解绑
+2. **系统调用执行**：M 执行系统调用，P 可以绑定其他 M 继续执行 G
+3. **系统调用返回**：
+   - 快速系统调用：直接返回，M 重新绑定 P 继续执行 G
+   - 慢速系统调用：G 进入就绪队列，等待重新调度
+
+```go
+// 系统调用进入点
+func entersyscall() {
+    gp := getg()
+    // 记录系统调用开始时间
+    gp.syscalltick = gp.schedtick
+    // 状态转换为 _Gsyscall
+    casgstatus(gp, _Grunning, _Gsyscall)
+    // M 与 P 解绑
+    releasep()
+    // 执行系统调用
+    // ...
+}
+
+// 系统调用返回点
+func exitsyscall() {
+    gp := getg()
+    // 尝试重新绑定 P
+    if acquirep() != nil {
+        // 成功绑定，继续执行
+        casgstatus(gp, _Gsyscall, _Grunning)
+        return
+    }
+    // 无法绑定 P，进入就绪队列
+    casgstatus(gp, _Gsyscall, _Grunnable)
+    // 重新调度
+    schedule()
+}
+```
+
+#### 七、调度器核心函数
+
+1. **schedule()**：调度器主函数，负责选择下一个要执行的 G
+2. **execute()**：执行选定的 G，切换到 G 的栈
+3. **gopark()**：挂起当前 G，让出 CPU
+4. **goready()**：唤醒被挂起的 G，使其进入就绪状态
+5. **runqget()**：从 P 的本地队列获取 G
+6. **runqsteal()**：从其他 P 的本地队列窃取 G
+7. **globrunqget()**：从全局队列获取 G
+
+#### 八、实践建议
+
+1. **合理设置 GOMAXPROCS**：一般设置为 CPU 核心数，充分利用多核性能
+2. **避免长计算**：将长计算拆分为多个短任务，提高调度公平性
+3. **使用 context 控制 goroutine 生命周期**：避免 goroutine 泄漏
+4. **注意 channel 操作**：避免无缓冲 channel 导致的死锁
+5. **监控 goroutine 数量**：使用 pprof 等工具监控 goroutine 数量，及时发现泄漏
+
+#### 九、总结
+
+Go 语言的调度策略是一个精心设计的系统，通过 G-M-P 模型、工作窃取算法和基于信号的异步抢占机制，实现了高效的协程调度。它既保证了并发性能，又确保了调度的公平性，是 Go 语言能够高效处理并发任务的重要基础。
+
+随着 Go 版本的演进，调度策略也在不断优化，从早期的协作式抢占到现在的基于信号的异步抢占，解决了一个又一个调度问题，使 Go 语言在并发编程方面的表现越来越出色。
 
 ### 9.4 发生调度的时机有哪些？
 
