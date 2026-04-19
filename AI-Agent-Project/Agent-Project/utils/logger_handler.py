@@ -1,8 +1,6 @@
 import logging
 import os
 
-import datetime
-
 from utils.path_tool import get_abs_path
 from datetime import datetime
 
@@ -14,7 +12,7 @@ os.makedirs(LOG_ROOT, exist_ok=True)
 
 # 日志的格式配置
 DEFAULT_LOG_FORMAT = logging.Formatter(
-    '%(asctime)s - %(name) - 8s [%(levelname)] - 8s %(filename)s:%(lineno)d - %(message)s',
+    '%(asctime)s - %(name)-8s [%(levelname)-8s] %(filename)s:%(lineno)d - %(message)s',
 )
 
 def get_logger(name="agent", console_level=logging.INFO, file_level=logging.DEBUG, log_file=None) -> logging.Logger:

@@ -36,7 +36,7 @@ def get_file_md5_hex(file_path: str):
 
 def listdir_with_allowed_suffix(dir_path: str, allowed_suffixes: tuple[str]):
     """
-    返回目录下的指定后缀的文件列表
+    返回目录下的指定后缀的文件列表 (绝对路径)
     :return:
     """
     files = []
@@ -46,6 +46,7 @@ def listdir_with_allowed_suffix(dir_path: str, allowed_suffixes: tuple[str]):
 
     for f in os.listdir(dir_path):
         if f.endswith(allowed_suffixes):
+            # 追加的是文件的绝对路径
             files.append(os.path.join(dir_path, f))
 
     return tuple(files)
@@ -64,4 +65,4 @@ def txt_loader(file_path: str) -> list[Document]:
     :return:
     """
 
-    return TextLoader(file_path=file_path).load()
+    return TextLoader(file_path=file_path, encoding="utf-8").load()

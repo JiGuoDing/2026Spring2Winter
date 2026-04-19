@@ -2,9 +2,9 @@
 package main
 
 import (
-	"luogu/go/redis"
+	"luogu/go/interviewIssue"
 )
 
 func main() {
-	redis.ConnectRedis()
+	interviewIssue.NonStrictlyIncreasingArray()
 }
