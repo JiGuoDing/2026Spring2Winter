@@ -4483,3 +4483,634 @@ LLM 调用本身是外部副作用，不可回滚。Flink Agents 的策略是将
 - Async I/O in Flink：Agent 中调用外部 LLM 服务时，异步 I/O 是避免阻塞算子线程的关键优化手段
 - MCP 协议 (Model Context Protocol)：Flink Agents 兼容 MCP 协议，可接入符合标准的工具和模型资源
 
+## 10. Flink SQL 与 Table API
+
+### 10.1 Flink 中的 Upsert 是什么机制？请具体说明其逻辑和执行步骤，再举个例子说明。
+
+先给结论：Flink 中的 Upsert 是一种基于主键的"插入或更新/删除"消息语义，本质是通过 Changelog (变更日志) 流来维护动态表 (Dynamic Table)，其中每条数据携带 RowKind (INSERT / UPDATE_BEFORE / UPDATE_AFTER / DELETE) 标记，同一主键的新值会"覆盖"旧值。它不是简单的追加，而是按主键做幂等写入，适合需要维护最新状态的场景 (如实时指标看板、维表同步、CDC 入湖)。
+
+面试里可以先用一句话概括：Upsert = 主键 + 变更日志 (INSERT/UPDATE/DELETE) + 幂等覆盖写入，是 Flink Table/SQL 中处理"会变化"的数据的核心机制。
+
+#### 一、为什么需要 Upsert 模式
+
+在传统的 Append-Only 流中，每条数据都是新增的，没有"修改"或"删除"的概念。但在很多真实场景中必须支持变更：
+
+1. 数据库 CDC 捕获到 UPDATE 或 DELETE 操作，下游需要反映最新数据状态。
+2. 聚合窗口触发后输出新的聚合结果，旧值应被新值替代 (如实时 PV 统计更新)。
+3. 维表数据发生变化，关联结果需要同步修正。
+
+这些场景的共同需求是：下游存储 (Kafka、数据库、湖仓) 中同一个业务主键只保留最新一条记录，而不是多份历史版本叠加。Append-Only 模式无法满足，因此需要 Upsert 模式。
+
+#### 二、Upsert 的底层逻辑：Changelog 与 RowKind
+
+Flink Table/SQL 在流模式下把每一条数据封装为一行带 RowKind 的事件：
+
+| RowKind          | 含义             | 常见触发场景                       |
+|------------------|------------------|-----------------------------------|
+| `INSERT` (aka `+I`) | 新增一条记录      | 源表新数据、窗口首次输出              |
+| `UPDATE_BEFORE` (aka `-U`) | 回撤旧值  | 主键聚合值更新时，先撤销旧的输出                     |
+| `UPDATE_AFTER` (aka `+U`)  | 更新为新值  | 主键聚合值更新时，再输出新的结果                   |
+| `DELETE` (aka `-D`) | 删除一条记录      | CDC 删除操作、窗口过期清理                         |
+
+Upsert 机制的核心可以用四个字概括："先撤后补" (retract-then-upsert)。当同一个主键的聚合结果发生变化时，Flink 会先发出一条 `UPDATE_BEFORE` 消息撤回旧值，再发出一条 `UPDATE_AFTER` 消息写入新值。下游 Upsert Sink 利用主键将这两步合并为一次写入操作。
+
+#### 三、执行步骤详解
+
+##### 1. 数据流入：Source 产生 Changelog
+
+Source 端产生带 RowKind 的变更流，常见来源包括：
+
+- CDC Source (如 mysql-cdc、postgres-cdc) 直接输出 INSERT / UPDATE / DELETE。
+- 普通 Append-Only Source (如 Kafka) 配合 `PRIMARY KEY ... NOT ENFORCED` 声明，Flink 会自动将同主键的多条记录视为 Upsert。
+
+##### 2. 算子处理：理解并传播 Changelog
+
+Flink 在底层通过 `ChangelogMode` 来描述每个算子支持处理/产出的 RowKind 组合。不同算子支持的 ChangelogMode 不同：
+
+- `Aggregate`：输入 INSERT/UPDATE，输出 INSERT/UPDATE (upsert 模式)，需要状态来维护主键当前值。
+- `Join`：双流 Join 在 Delta Join 实现下可以输入并输出完整 Changelog。
+- `Group By (Streaming)`：输入 INSERT，输出 INSERT/UPDATE_BEFORE/UPDATE_AFTER，因为聚合值可能随数据变化而更新。
+
+##### 3. 数据流出：Sink 消费 Changelog
+
+Upsert Sink (如 `upsert-kafka`、JDBC 等) 的行为：
+
+- 收到 INSERT：写入新记录 (key=主键, value=行数据)。
+- 收到 UPDATE_AFTER：覆盖写入同主键记录。
+- 收到 DELETE：删除同主键记录 (或写入 tombstone 消息)。
+
+这里的关键区别在于：Append Sink 每条都追加为独立记录；而 Upsert Sink 按主键覆盖，同一 key 始终只有最新一条。
+
+##### 4. 完整链路示意
+
+```plaintext
+CDC Source (Binlog)
+  ↓ INSERT/UPDATE/DELETE
+Flink SQL 算子 (Group By / Join / Window Aggregate)
+  ↓ INSERT/UPDATE_BEFORE/UPDATE_AFTER/DELETE
+Upsert Sink (Kafka / JDBC)
+  ↓ 按主键幂等写入，只保留最新记录
+```
+
+#### 四、代码示例
+
+##### 示例 1：从 MySQL CDC 读取订单表，按用户 ID 聚合订单金额，写入 Upsert Kafka
+
+```sql
+-- Step 1：定义 CDC Source 表 (MySQL 订单表)
+CREATE TABLE orders_cdc (
+  order_id   BIGINT,
+  user_id    BIGINT,
+  amount     DECIMAL(10, 2),
+  status     STRING,
+  update_time TIMESTAMP(3),
+  PRIMARY KEY (order_id) NOT ENFORCED      -- 声明主键，标识 upsert 语义
+) WITH (
+  'connector' = 'mysql-cdc',
+  'hostname' = 'mysql-host',
+  'port' = '3306',
+  'username' = 'flink',
+  'password' = '******',
+  'database-name' = 'trade_db',
+  'table-name' = 'orders'
+);
+
+-- Step 2：定义 Upsert Kafka Sink 表 (按用户 ID 汇总订单金额)
+CREATE TABLE user_order_summary (
+  user_id   BIGINT,
+  total_amount DECIMAL(12, 2),
+  order_count  BIGINT,
+  last_update  TIMESTAMP(3),
+  PRIMARY KEY (user_id) NOT ENFORCED       -- 主键 = 用户 ID，保证同用户一条记录
+) WITH (
+  'connector' = 'upsert-kafka',
+  'topic' = 'user_order_summary_topic',
+  'properties.bootstrap.servers' = 'kafka:9092',
+  'key.format' = 'json',
+  'value.format' = 'json'
+);
+
+-- Step 3：执行 upsert 写入 (流式 SQL)
+INSERT INTO user_order_summary
+SELECT
+  user_id,
+  SUM(amount)         AS total_amount,     -- 聚合会在流模式下持续更新
+  COUNT(DISTINCT order_id) AS order_count,
+  MAX(update_time)    AS last_update
+FROM orders_cdc
+WHERE status = 'PAID'
+GROUP BY user_id;
+```
+
+代码解读：
+
+1. `orders_cdc` 表以 `order_id` 为主键，每条订单的 INSERT/UPDATE/DELETE 都会被 CDC 捕获并流入 Flink。
+2. `GROUP BY user_id` 在流模式下会为每个用户维护一份聚合状态。当某个用户有新订单或订单金额变更时，聚合结果会更新，Flink 自动生成 `UPDATE_BEFORE` (撤回旧聚合值) + `UPDATE_AFTER` (写入新聚合值) 两条消息。
+3. `upsert-kafka` Sink 收到 `UPDATE_AFTER` 后覆盖同 user_id 的旧记录，下游消费者始终读到每个用户最新聚合值。
+
+##### 示例 2：DataStream API 中使用 Upsert 语义 (Java)
+
+```java
+// 定义输入流 (来自 Kafka CDC JSON 格式)
+DataStream<OrderEvent> orders = env
+    .fromSource(flinkKafkaConsumer, WatermarkStrategy.noWatermarks(), "kafka-source");
+
+// 按 user_id 分组，维护聚合状态
+DataStream<UserAggResult> aggregated = orders
+    .keyBy(OrderEvent::getUserId)
+    .process(new KeyedProcessFunction<Long, OrderEvent, UserAggResult>() {
+
+        // Flink 托管状态：每个 user_id 的累加金额
+        private ValueState<BigDecimal> totalAmountState;
+        private ValueState<Long> orderCountState;
+
+        @Override
+        public void open(Configuration parameters) {
+            ValueStateDescriptor<BigDecimal> amountDesc =
+                new ValueStateDescriptor<>("totalAmount", BigDecimal.class);
+            totalAmountState = getRuntimeContext().getState(amountDesc);
+
+            ValueStateDescriptor<Long> countDesc =
+                new ValueStateDescriptor<>("orderCount", Long.class);
+            orderCountState = getRuntimeContext().getState(countDesc);
+        }
+
+        @Override
+        public void processElement(OrderEvent event, Context ctx,
+                                    Collector<UserAggResult> out) throws Exception {
+            BigDecimal currentAmount = totalAmountState.value();
+            Long currentCount = orderCountState.value();
+
+            if (currentAmount == null) {
+                currentAmount = BigDecimal.ZERO;
+                currentCount = 0L;
+            }
+
+            // 累加新订单金额
+            BigDecimal newAmount = currentAmount.add(event.getAmount());
+            long newCount = currentCount + 1;
+
+            totalAmountState.update(newAmount);
+            orderCountState.update(newCount);
+
+            // 输出聚合结果 (底层可配合 upsert sink 做幂等写入)
+            out.collect(new UserAggResult(
+                ctx.getCurrentKey(), newAmount, newCount, event.getUpdateTime()
+            ));
+        }
+    });
+
+// 使用 Upsert Kafka Sink 写入 (按 user_id 覆盖)
+KafkaSink<UserAggResult> upsertSink = KafkaSink.<UserAggResult>builder()
+    .setBootstrapServers("kafka:9092")
+    .setRecordSerializer(
+        KafkaRecordSerializationSchema.builder()
+            .setTopic("user_order_summary_topic")
+            .setKeySerializationSchema(...)    // 按 user_id 序列化为 key
+            .setValueSerializationSchema(...)  // 聚合结果序列化为 value
+            .build()
+    )
+    .setDeliveryGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
+    .build();
+
+aggregated.sinkTo(upsertSink);
+```
+
+代码解读：
+
+1. 通过 `keyBy` + `KeyedProcessFunction` 维护每个用户的聚合状态。
+2. 每来一条新订单，都更新 `ValueState` 并输出新的聚合结果。
+3. 配合 Kafka Compact Topic，同一个 user_id 的多条聚合结果消息会被压缩 (compaction)，只保留最新一条。
+
+#### 五、Upsert 在 Kafka 层面的实现：Log Compaction
+
+Upsert Kafka 之所以能做到"同一主键只保留最新一条"，依赖 Kafka 的 Log Compaction 特性：
+
+```plaintext
+Kafka Topic Partition 原始日志：
+
+Offset:  0      1      2      3      4      5
+Key:     A      B      A      B      A      C
+Value:  val1   val2   val3   val4   val5   val6
+
+经过 Log Compaction 后：
+
+Key A -> val5  (只保留最新值)
+Key B -> val4  (只保留最新值)
+Key C -> val6
+```
+
+关键配置：
+
+```yaml
+# Kafka Topic 配置 (需在创建 Topic 时指定)
+cleanup.policy=compact        # 启用日志压缩
+min.cleanable.dirty.ratio=0.5 # 在 50% 的日志段为脏数据时触发压缩
+```
+
+当 Flink 的 `upsert-kafka` connector 写入时，它会把主键映射为 Kafka message key。后续 Kafka Broker 的 Log Cleaner 线程会定期扫描日志段，按 key 去重，保留最新的 value。消费者只要从 `__consumer_offsets` 恢复，就能读到每个 key 的最新状态。
+
+#### 六、Upsert 与 Append / Retract 模式的对比
+
+| 维度         | Append-Only                     | Retract                          | Upsert                           |
+|-------------|---------------------------------|----------------------------------|----------------------------------|
+| 消息语义    | 只有 INSERT                      | INSERT + DELETE                  | INSERT + UPDATE_BEFORE + UPDATE_AFTER + DELETE |
+| 下游可见性  | 每条记录都是独立历史版本              | 可撤销旧记录但不覆盖                    | 同主键只有最新一条可见                          |
+| 存储需求    | 保留全量历史                        | 保留全量历史                             | 仅保留最新一条 (更省存储)                          |
+| 典型 Sink   | Kafka (append mode)、Filesystem | 不支持大部分生产 Sink                     | Upsert-Kafka、JDBC、HBase、Elasticsearch         |
+| 使用场景    | 日志、审计、事件溯源                  | 极少 (主要用于 Flink 内部算子传播)        | 实时指标、维表同步、CDC 结果落地                  |
+
+面试要点：Upsert 与 Retract 的区别在于，Upsert 是 Retract 的"工程落地版本"——原本需要两条独立消息 (`-U` + `+U`) 表达的更新，在 Upsert 模式下由 Sink 内部合并为一次原子写入，对外只呈现最终结果。
+
+#### 七、常见问题与排障
+
+##### 1. Upsert Kafka 消费端读到多条同 key 记录
+
+- 原因：Log Compaction 是异步后台任务，不是写入时立即删旧值。
+- 解决方案：消费者收到新消息时按当前最新 offset 判断 (只看最新 offset 的值)，或者在 Flink 消费侧按主键做 `lastest` 去重。
+
+##### 2. Upsert 模式下聚合状态无限膨胀
+
+- 原因：Group By 的 key 不收敛 (如用了随机生成的 UUID 做 key)。
+- 解决方案：配置状态 TTL (`table.exec.state.ttl`)，让过期 key 自动清理。
+
+##### 3. `UPDATE_BEFORE` 消息丢失导致下游状态错乱
+
+- 原因：After Update 消息到达时，相应的 Before Update 已因 checkpoint 对齐延迟而丢失。
+- 解决方案：Sink 侧使用 UPSERT 语义而不是 RETRACT，用主键覆盖替代"先删后写"的两步操作。
+
+##### 4. 非确定函数 (CURRENT_TIMESTAMP 等) 在 Upsert 流中结果不一致
+
+- 原因：`UPDATE_BEFORE` 和 `UPDATE_AFTER` 生成时间不同，非确定函数值可能不同。
+- 解决方案：避免在 Upsert 流的变换逻辑中使用非确定函数，或将其移至 Append-Only 的上游阶段。
+
+#### 八、面试时可以怎么总结
+
+可以这样回答：Flink 的 Upsert 是基于主键 + Changelog (INSERT/UPDATE/DELETE) 的幂等写入机制，核心逻辑是"同一个主键的变更以最新值覆盖旧值"。在数据面，它通过 RowKind 在算子间传播变更语义，通过 Upsert Sink (如 upsert-kafka) 按主键做覆盖写入，底层依赖 Kafka Log Compaction 或数据库 UPSERT 语法保证存储中只保留最新记录。在工程上，它与 Append-Only 模式的本质区别在于"对同一实体的多次变更会压缩为最终状态"而不是"保留所有历史版本"，因此适合实时指标、维表同步和 CDC 数据落地等需要最新值的场景。
+
+#### 知识扩展
+
+- CDC (Change Data Capture)：Upsert 是 CDC 下游最常见的消费方式，Binlog 的 INSERT/UPDATE/DELETE 天然对应 Upsert 的 RowKind。
+- Delta Join：Delta Join 内部也使用了类似 Upsert 的机制来维护 Join 结果的增量变更，二者共享 Changelog 语义基础。
+- Stream-Table Duality (流表对偶性)：Upsert 是实现"流表互转"的关键机制，Changelog 流被解释为动态表的持续变化，动态表的变化又被编码为 Changelog 流输出。
+- Flink State TTL：Upsert 聚合需要维护状态，状态 TTL 是控制键空间膨胀的第一道防线。
+- Kafka Log Compaction：Upsert Kafka Sink 的存储层基础，理解 Compaction 机制才能排障"为什么 Consumer 偶尔读到重复值"。
+- Checkpoint / Savepoint：Upsert 流的 Checkpoint 确保状态可恢复，Savepoint 允许在保留聚合结果的前提下修改 SQL 逻辑并手动重启。
+
+## 11. Fluss 流式存储
+
+### 11.1 Fluss 是什么？请详细介绍一下 Fluss，具体说明其作用、逻辑、应用。
+
+先给结论：Apache Fluss (Incubating) 是一个面向实时分析场景的分布式列式流式存储引擎，它统一了 Log (日志) 和 Cache (缓存) 的能力，为 Flink 生态提供了亚秒级延迟的流式读写存储层。Fluss 的核心定位是"流式存储" (Streaming Storage)，它既不像 Kafka 那样只是一个消息队列，也不像 Iceberg/Paimon 那样是一个面向批查询的湖存储格式，而是一个专门为"实时写入 + 实时查询"场景设计的列式存储系统。
+
+面试里可以先用一句话概括：Fluss = 列式流存储 + 主键 Upsert + 流湖一体 (Streaming Lakehouse)，是 Flink 生态中填补"实时热存储"空白的关键组件。
+
+#### 一、为什么需要 Fluss
+
+在 Fluss 出现之前，实时计算架构普遍存在以下痛点：
+
+1. **流存分离导致的架构碎片化**：典型架构需要 Kafka (消息队列) + Redis/HBase (实时查询) + 数据湖 (历史存储) 三套系统，数据在多个系统间复制、同步，一致性和运维复杂度高。
+2. **Flink 状态膨胀**：Flink 做双流 Join 或长周期聚合时，状态数据存储在 Flink 的 RocksDB 状态后端中，Checkpoint 体积大、恢复慢，且状态生命周期受限于作业本身。
+3. **湖存储的实时性瓶颈**：Iceberg/Paimon/Hudi 等湖格式基于 Parquet/ORC 文件，分钟级甚至更长的写入延迟无法满足亚秒级实时分析需求。
+4. **Log 与 Cache 分离的一致性难题**：Kafka 写日志、Redis 做缓存的场景中，Cache 失效、双写不一致、故障恢复后 Cache 重建困难等问题频繁发生。
+
+Fluss 的设计目标就是解决这些问题：它提供一个亚秒级延迟的流式存储层，既可以作为 Flink 的 Source/Sink，也可以直接支持点查和范围查询，还能将冷数据自动分层到 Iceberg/Paimon 等湖存储。
+
+#### 二、Fluss 的核心概念与数据模型
+
+Fluss 支持两种表类型：
+
+##### 1. Log Table (日志表)
+
+- Append-Only 语义，适合事件日志、埋点数据、审计日志。
+- 每条新数据追加到日志尾部，不支持更新和删除。
+- 底层以 Apache Arrow IPC 格式存储，支持列式投影下推。
+
+```sql
+-- Flink SQL 创建 Fluss Log Table
+CREATE TABLE event_log (
+  event_id   BIGINT,
+  user_id    BIGINT,
+  event_type STRING,
+  event_time TIMESTAMP(3),
+  payload    STRING
+) WITH (
+  'connector' = 'fluss',
+  'table.type' = 'log',             -- Log Table
+  'bucket.num' = '8',               -- 分区数 (并行度)
+  'fluss.coordinator.host' = 'fluss-cluster:9123'
+);
+```
+
+##### 2. Primary Key Table (主键表)
+
+- Upsert 语义，支持 INSERT/UPDATE/DELETE，同一主键只保留最新一条记录。
+- 同时提供 Log (变更日志) 和 Cache (最新值快照) 两种视图。
+- 底层由 KvTablet (每个 Bucket 一个) 管理：RocksDB 存储最新 KV 状态 + PreWriteBuffer 做写缓冲 + LogTablet 持久化变更日志。
+
+```sql
+-- Flink SQL 创建 Fluss Primary Key Table
+CREATE TABLE user_profile (
+  user_id    BIGINT,
+  user_name  STRING,
+  email      STRING,
+  level      INT,
+  update_time TIMESTAMP(3),
+  PRIMARY KEY (user_id) NOT ENFORCED
+) WITH (
+  'connector' = 'fluss',
+  'table.type' = 'primary-key',     -- Primary Key Table
+  'bucket.num' = '16',
+  'fluss.coordinator.host' = 'fluss-cluster:9123'
+);
+```
+
+#### 三、Fluss 的架构与核心逻辑
+
+Fluss 采用存算分离的分布式架构，主要由以下组件构成：
+
+```plaintext
+┌─────────────────────────────────────────────────────────┐
+│                   Fluss Coordinator                      │
+│   (元数据管理、 Tablet 分配、Snapshot 调度、高可用协调)    │
+└─────────────────────┬───────────────────────────────────┘
+                      │
+      ┌───────────────┼───────────────┐
+      ▼               ▼               ▼
+┌────────────┐ ┌────────────┐ ┌────────────┐
+│ TabletServer │ │ TabletServer │ │ TabletServer │
+│  (KvTablet)  │ │  (KvTablet)  │ │  (KvTablet)  │
+│  + LogTablet │ │  + LogTablet │ │  + LogTablet │
+└──────┬───────┘ └──────┬───────┘ └──────┬───────┘
+       │                │                │
+       ▼                ▼                ▼
+┌─────────────────────────────────────────────────────────┐
+│                   Remote Storage (S3/HDFS)               │
+│         (Snapshot 快照 + Log Segment 日志段)              │
+└─────────────────────────────────────────────────────────┘
+      │
+      ▼
+┌─────────────────────────────────────────────────────────┐
+│              Lakehouse Storage (Iceberg/Paimon)          │
+│         (Tiering Service 自动冷数据分层)                  │
+└─────────────────────────────────────────────────────────┘
+```
+
+##### 1. Coordinator (协调器)
+
+- 管理表的元数据 (Schema、Bucket 分配、副本分布)。
+- 调度 TabletServer 的负载均衡和故障转移。
+- 管理 Snapshot 快照的生成和过期策略。
+
+##### 2. TabletServer (表分片服务器)
+
+每个 TabletServer 管理多个 KvTablet，每个 KvTablet 包含：
+
+- **PreWriteBuffer**：内存写缓冲，接收客户端写入请求，按顺序组装为 Arrow 格式的 CDC 批次。
+- **LogTablet**：持久化的 Append-Only 变更日志，记录每条写入的完整变更历史，供下游 Flink 消费。
+- **RocksDB**：嵌入式 KV 存储，维护每个主键的最新值 (最新状态快照)，支持亚毫秒级点查。
+- **Snapshot Manager**：定期将 RocksDB 状态生成增量快照，上传到 Remote Storage。
+
+##### 3. 写入路径 (Write Path) - 严格顺序保证
+
+```plaintext
+Client (Flink Sink / SDK)
+    │
+    │  1. 写入请求 (Upsert/Delete)
+    ▼
+PreWriteBuffer (内存缓冲)
+    │
+    │  2. 按序组装为 Arrow CDC Batch
+    ▼
+LogTablet (持久化变更日志) ────▶ 可被下游 Flink 实时消费
+    │
+    │  3. 确认写入成功后
+    ▼
+RocksDB (刷新最新 KV 状态)
+    │
+    │  4. 异步生成 Snapshot 到 Remote Storage
+    ▼
+Remote Storage (S3/HDFS)
+```
+
+关键设计：写入路径保证"先写 Log，再刷 RocksDB，最后应答客户端"。这决定了 Fluss 的强一致性：Log 和 Cache 永远对齐，不会出现"Log 已更新但 Cache 未同步"的不一致窗口。
+
+##### 4. 读取路径 (Read Path)
+
+- **点查 (Point Lookup)**：直接走 RocksDB，亚毫秒级返回主键最新值。
+- **范围扫描 (Range Scan)**：从 RocksDB 迭代扫描。
+- **流式消费 (Streaming Read)**：从 LogTablet 消费变更日志，支持从指定 Offset 或 Snapshot 恢复。
+
+#### 四、Streaming Lakehouse：流湖一体
+
+Fluss 最具特色的能力是 Streaming Lakehouse (流湖一体)，它通过 Tiering Service 将 Fluss 中的实时数据自动分层到 Iceberg/Paimon 等湖存储格式：
+
+```plaintext
+┌─────────────────────────────────────────────────────────────┐
+│                     Union Read (统一读取)                       │
+│   Flink SQL: SELECT * FROM fluss_table (自动 Union 两层的)      │
+└──────────────────────┬────────────────────────────────────────┘
+                       │
+        ┌──────────────┴──────────────┐
+        ▼                             ▼
+┌─────────────────┐         ┌─────────────────────────┐
+│  Fluss Hot Layer │         │   Iceberg/Paimon Cold    │
+│  (Arrow 格式)    │ Tiering │   Layer (Parquet 格式)   │
+│  亚秒级实时数据    │ ──────▶ │   分钟级历史数据          │
+│  保留最近 N 天    │         │   长期低成本存储          │
+└─────────────────┘         └─────────────────────────┘
+```
+
+核心设计思路：
+
+1. Fluss 作为"热层"：写入直接进 Fluss，延迟亚秒级，数据以 Arrow 格式存储，适合实时读写。
+2. Tiering Service 自动将 Fluss 中的旧数据压缩为 Parquet 格式并提交到 Iceberg/Paimon。
+3. 查询时通过 Union Read 自动合并热层 + 冷层数据，对用户完全透明。
+
+这样用户就得到了一个既有亚秒级写入延迟、又有完整历史查询能力的统一存储系统。
+
+```bash
+# Fluss Server 配置 Streaming Lakehouse (Tiering 到 Iceberg)
+server.yaml 配置示例：
+datalake.format: iceberg
+datalake.iceberg.type: hadoop
+datalake.iceberg.warehouse: /path/to/iceberg-warehouse
+datalake.iceberg.catalog: hadoop
+tiering.interval: 300    # 每 5 分钟做一次分层
+tiering.retention.hours: 48  # Fluss 热层保留 48 小时
+```
+
+#### 五、Delta Join：零状态 Join
+
+Fluss 的另一个核心能力是 Delta Join，它是一种革新性的 Join 实现方式，用于解决 Flink 传统双流 Join 下的"状态爆炸"问题。
+
+传统 Flink Join 的问题：
+
+- 需要在 Flink 算子内维护两侧全量历史状态。
+- 状态通过 RocksDB 管理，Checkpoint 体积大、恢复慢。
+- 数据倾斜和长周期 Join 场景下状态膨胀不可控。
+
+```java
+// 传统 Flink 双流 Join：需要在 Flink 算子中维护全量状态
+streamA.keyBy(key)
+    .intervalJoin(streamB.keyBy(key))
+    .between(Time.minutes(-30), Time.minutes(30))
+    .process(new FullStateJoinFunction());
+// 问题：状态大小 = A 侧 30 分钟数据 + B 侧 30 分钟数据
+// Checkpoint 体积大，恢复慢
+```
+
+Delta Join 的做法：
+
+- 将 Join 所需的"对侧候选数据"从 Flink 算子状态转移到 Fluss 主键表中。
+- Fluss 表作为中心化状态存储，天然支持 Upsert 和点查。
+- Flink 算子只需在事件到达时，从 Fluss 查询对侧最新值即可，无需在本地维护状态。
+
+```java
+// Delta Join 实现：状态外置到 Fluss
+DataStream<JoinResult> joined = leftStream
+    .keyBy(OrderEvent::getUserId)
+    .process(new KeyedProcessFunction<Long, OrderEvent, JoinResult>() {
+
+        private transient FlussClient flussClient;
+
+        @Override
+        public void open(Configuration parameters) {
+            // 连接 Fluss 集群
+            flussClient = FlussClient.create("fluss-cluster:9123");
+        }
+
+        @Override
+        public void processElement(OrderEvent event, Context ctx,
+                                    Collector<JoinResult> out) throws Exception {
+            // 1) 将当前事件写入 Fluss (作为本侧状态)
+            flussClient.upsert("order_state", event.getUserId(), event);
+
+            // 2) 从 Fluss 查询对侧最新状态 (点查，<1ms)
+            UserProfile profile = flussClient.lookup("user_profile", event.getUserId());
+
+            // 3) 做 Join 拼接
+            if (profile != null) {
+                out.collect(new JoinResult(event, profile));
+            }
+        }
+    });
+// 优势：Flink 算子不再需要维护大量 Join State
+// Checkpoint 体积显著减小，恢复速度提升
+```
+
+面试要点：Delta Join 的核心就是把"Flink 托管状态"变成"Fluss 外置状态"，用 Fluss 的点查能力替代 Flink 的状态存储。这本质上是一种存算分离的 Join 实现方案，对长周期窗口 Join、大状态场景尤其有效。
+
+#### 六、实际应用场景
+
+##### 场景 1：实时用户画像与特征工程
+
+```sql
+-- 实时用户行为写入 Fluss
+CREATE TABLE user_behavior (
+  user_id    BIGINT,
+  event_type STRING,
+  feature_json STRING,
+  event_time TIMESTAMP(3),
+  PRIMARY KEY (user_id) NOT ENFORCED
+) WITH (
+  'connector' = 'fluss',
+  'table.type' = 'primary-key',
+  'bucket.num' = '32',
+  'fluss.coordinator.host' = 'fluss-cluster:9123'
+);
+
+-- Flink 实时更新用户画像
+INSERT INTO user_behavior
+SELECT
+  user_id,
+  'profile_update',
+  JSON_OBJECT('total_orders' VALUE COUNT(*),
+              'total_amount' VALUE SUM(amount),
+              'avg_amount' VALUE AVG(amount)),
+  CURRENT_TIMESTAMP
+FROM orders_cdc
+GROUP BY user_id;
+
+-- AI 推理服务通过 Fluss SDK 点查用户最新特征 (<1ms)
+-- 无需经过 Kafka + Redis 两条链路，直接读 Fluss 主键表即可
+```
+
+##### 场景 2：实时风控规则引擎
+
+- 风险事件写入 Fluss Log Table 作为审计日志。
+- 风控规则引擎从 Fluss 实时消费变更事件。
+- 黑名单/白名单等维度数据存储在 Fluss Primary Key Table 中。
+- 风控判断时直接点查 Fluss 获取用户最新状态。
+
+##### 场景 3：流湖一体的实时数仓
+
+```sql
+-- Fluss 作为实时接入层，Flink 写入 Fluss
+INSERT INTO fluss_order_table
+SELECT * FROM kafka_order_raw;
+
+-- Iceberg 作为历史层，Tiering Service 自动分层
+-- 查询时 Union Read 自动合并 Fluss 实时层 + Iceberg 历史层
+SELECT
+  user_id,
+  SUM(amount) as total_amount,
+  COUNT(*) as order_count
+FROM fluss_order_table   -- Fluss Union Read 自动合并 Fluss + Iceberg
+WHERE event_time >= NOW() - INTERVAL '7' DAY
+GROUP BY user_id;
+```
+
+#### 七、Fluss vs Paimon vs Kafka
+
+| 维度 | Kafka | Apache Paimon | Apache Fluss |
+|-----|-------|---------------|--------------|
+| 核心定位 | 消息队列 | 流式湖存储格式 | 列式流存储引擎 |
+| 数据格式 | 二进制/Bytes | Parquet/ORC | Apache Arrow (列式) |
+| 写入延迟 | 毫秒级 | 分钟级 | 亚秒级 |
+| 查询能力 | 不支持 (需消费后再查) | 支持批查询 (分钟级) | 支持实时点查 + 流式查询 |
+| Upsert | 不支持 (需 Compaction) | 支持 (LSM-Tree) | 原生支持 |
+| 存储介质 | 本地磁盘 | 对象存储 (S3/HDFS) | 本地 SSD + 对象存储 |
+| 与 Flink 集成 | 通用 Source/Sink | Table Store 集成 | 深度集成 (Delta Join) |
+| 流湖一体 | 不支持 | 本身就是湖 | Fluss 做热层 + 湖做冷层 |
+| 最佳场景 | 消息解耦 | 流式数仓 ODS/DWD 层 | 实时热存储 + 实时分析 |
+
+#### 八、常见问题与排障
+
+##### 1. Fluss 和 Kafka 是什么关系？能替代 Kafka 吗？
+
+- Fluss 不是消息队列，不直接替代 Kafka 的消息路由/多消费者组/消息订阅能力。
+- 如果场景需要"多个不同消费组独立消费事件流"，Kafka 更适合。
+- 如果场景需要"实时写入 + 实时查询 + Upsert"，Fluss 更适合；两者可以共存。
+
+##### 2. Fluss 和 Paimon 是什么关系？
+
+- 互补关系，不是替代关系。
+- Fluss 做"实时热层" (亚秒级)，Paimon 做"近实时冷层" (分钟级)。
+- 典型架构：数据写入 Fluss → Tiering Service 自动分层到 Paimon → Union Read 统一查询。
+
+##### 3. Fluss 的写入延迟能有多低？
+
+- 根据官方 Benchmark，端到端 P99 写入延迟通常在 10-50ms 级别 (取决于网络和 SSD 性能)。
+- 点查延迟 < 1ms (RocksDB 直接读取)。
+- 列式投影下推可将不必要列的 I/O 降低 5-10 倍。
+
+##### 4. Fluss 数据可靠性如何保证？
+
+- 写入先写 LogTablet (持久化)，再刷 RocksDB，最后应答客户端。
+- LogTablet 支持多副本复制。
+- Snapshot 定期上传到 Remote Storage，支持从 Snapshot + Log 完整恢复。
+
+#### 九、面试时可以怎么总结
+
+可以这样回答：Apache Fluss 是一个面向实时分析的分布式列式流式存储引擎，它统一了 Log 和 Cache 的能力，为 Flink 生态提供亚秒级延迟的存储层。它的核心价值体现在三个层面：第一，作为流式存储，它的 Primary Key Table 同时提供变更日志和最新值快照两种视图，解决了传统 Log-Cache 分离架构的一致性问题；第二，作为流湖一体引擎，它通过 Tiering Service 自动将实时数据分层到 Iceberg/Paimon，查询时通过 Union Read 透明合并；第三，它通过 Delta Join 机制将 Flink Join 状态外置到自己表中，大幅降低 Flink 作业的状态体积和 Checkpoint 开销。在生产架构中，Fluss 通常作为"实时热层"与 Paimon/Iceberg (冷层) + Kafka (消息路由) 配合使用，三者各司其职。
+
+#### 知识扩展
+
+- Delta Join：Fluss 的核心能力之一，通过状态外置解决 Flink 传统双流 Join 的状态爆炸问题，与 Fluss 的点查能力强相关。
+- Streaming Lakehouse：Fluss 的流湖一体架构将流式存储与湖存储统一，与 Iceberg/Paimon 的 Tiering 机制和 Union Read 能力强相关。
+- Apache Arrow：Fluss 底层列式存储格式，零拷贝、列式投影下推是其低延迟性能的基础。
+- Flink State Backend：Fluss 的 Delta Join 从某种意义上是对 Flink 状态后端的"外置替代"——用 Fluss 替代 Flink 的部分托管状态。
+- RocksDB：Fluss Primary Key Table 的底层 KV 引擎，与 Flink 状态后端的 RocksDB 实现理念相通。
+- 存算分离架构：Fluss 的 Coordinator + TabletServer + Remote Storage 三层架构是典型的存算分离设计。
+
