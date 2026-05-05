@@ -1,5 +1,6 @@
 ---
 description: "按《Flink 面试题》文档风格回答后续问题"
+name: "新增 Flink 面试知识点"
 argument-hint: "要回答的 Flink 问题"
 agent: "agent"
 ---
