@@ -378,6 +378,214 @@ func sliceExample2() {
 
 通过上述内容，我们可以看出 slice 是一个轻量级的数据结构，它通过封装底层数组，提供了更加灵活和方便的操作方式。理解 slice 的底层结构和扩容机制，对于编写高效的 Go 代码非常重要。
 
+### 2.2 请具体说明 golang 的 slice 的扩容机制
+
+> 面试官您好，关于 Go 语言 slice 的扩容机制，我的理解如下：slice 的扩容发生在 append 时 len == cap 的情况下，Go 运行时会调用 runtime.growslice 函数来完成扩容。整个扩容过程可以分为三步：首先计算新的目标容量，其次根据元素类型确定是否需要进行内存对齐调整，最后分配新内存并拷贝旧数据。在 Go 1.18 之后，扩容策略有了显著变化：小容量 (小于 256) 时翻倍增长，大容量时以约 1.25 倍增长加上一个与容量相关的额外值，这比 Go 1.17 及之前的纯 2 倍 / 1.25 倍策略更加平滑，减少了内存浪费。同时，Go 还引入了针对大对象的内存整理 (contiguous slice) 优化。值得注意的是，扩容时还会考虑内存对齐 (class size)，实际分配的容量可能比理论计算值更大。
+
+#### 扩容的触发条件
+
+当调用 append 向 slice 追加元素时，如果当前 slice 的剩余容量不足以容纳新增的元素 (即 `len(s) + num > cap(s)`)，就会触发扩容。扩容的核心逻辑在 runtime 包的 growslice 函数中。
+
+#### Go 1.18 之后的扩容策略 (当前版本)
+
+Go 1.18 对扩容策略进行了重要调整。核心逻辑如下：
+
+**第一步：确定新的目标容量 (newcap)**
+
+```go
+// 这段代码是对 runtime.growslice 核心逻辑的简化说明
+// 以下是 Go 1.18+ 的扩容规则
+
+newcap := oldCap
+// 双倍扩容：将容量翻倍，直到大于等于需要的最小容量
+doublecap := newcap + newCap
+if newCap > doublecap {
+    newcap = newCap  // 如果需要的最小容量非常大，直接使用它
+} else {
+    if oldCap < 256 {
+        // 小容量时直接翻倍
+        newcap = doublecap
+    } else {
+        // 大容量时：循环增加 25% + 256，直到足够
+        for 0 < newcap && newcap < newCap {
+            newcap += (newcap + 3*256) / 4
+        }
+        // 防止溢出
+        if newcap <= 0 {
+            newcap = newCap
+        }
+    }
+}
+```
+
+具体来说：
+
+- 当需要的最小容量 `newCap` 已经超过当前容量的两倍 `doublecap` 时，直接使用 `newCap` 作为新容量 (这通常发生在一次性 append 大量元素的场景)
+- 否则，如果当前容量 `oldCap < 256`，新容量直接翻倍 (`newcap = 2 * oldCap`)
+- 如果当前容量 `oldCap >= 256`，则通过循环每次增长 `newcap += (newcap + 3*256) / 4`，大约每次增长 25%，同时加上一个固定偏移量 192，直到满足需求
+
+**第二步：内存对齐调整**
+
+确定了 newcap 之后，还会根据元素的类型大小进行内存对齐 (memory alignment) 调整。Go 的内存分配器有一套 size class 体系，实际分配的内存大小会向上取整到最近的 size class。因此，最终分配的容量可能比计算出的 newcap 更大。
+
+```go
+// 计算实际需要的内存字节数
+capmem := uintptr(newcap) * uintptr(et.size)
+// 向上取整到最近的内存对齐大小 (size class)
+capmem = roundupsize(capmem)
+// 用对齐后的内存大小反算实际容量
+newcap = int(capmem / uintptr(et.size))
+```
+
+**第三步：分配内存并拷贝数据**
+
+- 通过 runtime.mallocgc 分配新的底层数组
+- 使用 memmove 将旧数组中的数据复制到新数组
+- 如果新旧内存不重叠，编译器可能会优化为更高效的拷贝方式
+
+#### Go 1.17 及之前的扩容策略
+
+在 Go 1.17 及更早版本中，扩容策略更为简单：
+
+- 当 `oldCap < 1024` 时，新容量为原来的 2 倍
+- 当 `oldCap >= 1024` 时，新容量为原来的 1.25 倍
+
+对比 Go 1.18+ 的策略，主要区别在于：
+
+| 特性           | Go 1.17 及之前 | Go 1.18 及之后                    |
+| -------------- | -------------- | --------------------------------- |
+| 小容量阈值     | 1024           | 256                               |
+| 小容量增长倍数 | 2x             | 2x                                |
+| 大容量增长策略 | 线性 1.25x     | 渐进式 ~1.25x + 固定偏移          |
+| 内存对齐优化   | 无             | 有 (根据 size class 调整实际容量) |
+
+Go 1.18 的策略之所以将阈值从 1024 降到 256，是因为在实际场景中，256 到 1024 之间的容量区间如果使用 2 倍增长，会导致内存浪费较大。新策略在更小的容量就开始使用渐进式增长，更加节省内存。
+
+#### 连续内存布局优化 (Contiguous Slice Elements)
+
+Go 1.18 还引入了一个重要优化：当 slice 的元素类型为指针或包含指针时，旧的扩容策略可能产生内存碎片。新策略会尝试让新的底层数组与旧的底层数组在内存中相邻 (contiguous)，这样做的好处是：
+
+- 减少 GC 扫描时的内存碎片
+- 提高 CPU 缓存命中率
+- 便于 GC 更高效地追踪指针
+
+#### 扩容的性能影响
+
+- **时间复杂度**：单次扩容操作需要 O(n) 的数据拷贝，但均摊 (amortized) 后每次 append 的均摊时间复杂度仍为 O(1)
+- **内存浪费**：扩容后的新容量通常大于实际需要的元素数量，造成一定的内存浪费。Go 1.18 的对齐策略进一步放大了这种浪费，但也带来了更好的性能
+- **扩容时机**：频繁扩容会导致多次内存分配和数据拷贝，因此如果能预估 slice 的最终大小，应使用 `make([]T, 0, n)` 预分配容量
+
+#### 代码示例：观察扩容行为
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    var s []int
+
+    fmt.Println("初始状态:")
+    fmt.Printf("len=%d, cap=%d\n", len(s), cap(s))
+
+    fmt.Println("\n追加元素，观察扩容:")
+    for i := 0; i < 20; i++ {
+        oldCap := cap(s)
+        s = append(s, i)
+        newCap := cap(s)
+        if newCap != oldCap {
+            fmt.Printf("append(%2d): len=%-3d cap=%-4d (旧cap=%-4d, 增长比=%.2f)\n",
+                i, len(s), newCap, oldCap, float64(newCap)/float64(oldCap))
+        }
+    }
+
+    // 预分配 vs 不预分配的性能对比
+    fmt.Println("\n--- 预分配容量的重要性 ---")
+
+    // 不预分配：会多次扩容
+    s1 := []int{}
+    for i := 0; i < 1000; i++ {
+        s1 = append(s1, i)
+    }
+
+    // 预分配：零扩容
+    s2 := make([]int, 0, 1000)
+    for i := 0; i < 1000; i++ {
+        s2 = append(s2, i)
+    }
+
+    fmt.Printf("不预分配: len=%d, cap=%d\n", len(s1), cap(s1))
+    fmt.Printf("预分配:   len=%d, cap=%d\n", len(s2), cap(s2))
+}
+```
+
+运行输出 (Go 1.22)：
+
+```
+初始状态:
+len=0, cap=0
+
+追加元素，观察扩容:
+append( 0): len=1   cap=1    (旧cap=0   , 增长比=+Inf)
+append( 1): len=2   cap=2    (旧cap=1   , 增长比=2.00)
+append( 2): len=3   cap=4    (旧cap=2   , 增长比=2.00)
+append( 4): len=5   cap=8    (旧cap=4   , 增长比=2.00)
+append( 8): len=9   cap=16   (旧cap=8   , 增长比=2.00)
+append(16): len=17  cap=32   (旧cap=16  , 增长比=2.00)
+
+--- 预分配容量的重要性 ---
+不预分配: len=1000, cap=1280
+预分配:   len=1000, cap=1000
+```
+
+可以看到：小容量时以 2 倍增长；而预分配容量可以完全避免扩容开销。
+
+#### append 的陷阱：扩容导致的底层数组脱离
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    s := make([]int, 3, 5) // len=3, cap=5
+    s[0], s[1], s[2] = 1, 2, 3
+
+    // sub 与 s 共享底层数组
+    sub := s[1:2] // sub = [2], len=1, cap=4
+
+    // 向 sub 追加元素，未超出其 cap，仍在原底层数组上操作
+    sub = append(sub, 30)
+    fmt.Println("追加30后:")
+    fmt.Println("s  =", s)   // s = [1 2 30] — s[2] 被修改了
+    fmt.Println("sub=", sub) // sub = [2 30]
+
+    // 再追加一个元素，sub 的 len+append 数量超出 s 的 cap 界限
+    // 实际上 sub 的 cap 是 4，追加到 [2, 30, 40] 仍在共享范围内
+    sub = append(sub, 40)
+    fmt.Println("追加40后:")
+    fmt.Println("s  =", s)   // s = [1 2 30] — 没变，40 写到了 s[3] 的位置
+    fmt.Println("sub=", sub) // sub = [2 30 40]
+
+    // 当追加的元素数量超出 sub 的 cap 时，触发扩容，sub 获得新的底层数组
+    sub = append(sub, 50, 60, 70)
+    fmt.Println("大量追加后 (触发扩容):")
+    fmt.Println("s  =", s)   // s = [1 2 30] — 不再受影响
+    fmt.Println("sub=", sub) // sub = [2 30 40 50 60 70] — 全新底层数组
+}
+```
+
+这个例子清楚地展示了：扩容前 slice 共享底层数组的行为，以及扩容后新旧 slice 彻底独立的特性。
+
+#### 知识扩展
+
+- **slice header 结构**：slice 扩容本质上是替换 slice header 中的 array 指针和更新 cap 值，理解 slice header (array, len, cap) 是理解扩容的前提
+- **append 的语义**：append 的返回值总是需要赋值给原变量 (如 `s = append(s, x)`)，因为扩容后 array 指针会变化，如果不赋值，旧变量仍指向旧数组
+- **内存分配器 (runtime.mallocgc)**：slice 扩容最终依赖 Go 的内存分配器来分配新内存，Go 的分配器使用 mcache/mcentral/mheap 三级缓存体系
+- **sync.Pool 减少分配**：如果 slice 频繁扩容，可以考虑使用 sync.Pool 缓存 slice，减少 GC 压力
+- **copy 函数与 append 的区别**：copy 只复制已有元素，不会触发扩容；append 可能触发扩容并返回新的 slice
+- **string 与 []byte 的转换**：字符串和字节切片之间的转换会复制底层数据，频繁转换时可以使用 unsafe 规避，但需注意安全问题
+
 ### 2.3 从一个切片截取出另一个切片，修改新切片的值是否会影响原来的切片内容？
 
 在截取完之后，如果新切片没有触发扩容，则修改切片元素会影响原切片，如果触发了扩容则不会
@@ -390,7 +598,7 @@ func sliceExample2() {
 
 ### 3.1 Go Map 的底层实现原理
 
-map 是一个 hmap 结构，Go Map 的底层实现是一个哈希表，它在运行时表现为一个指向 hmap 结构体的指针，hmap 中记录了通数组指针 buckets、溢出桶指针以及元素个数等字段。每个桶是一个 bmap 结构体，能存储 8 个键值对和 8 个 tophash，并有指向下一个溢出桶的指针 overflow。为了内存紧凑，bmap 中采用的是先存 8 个键再存 8 个值的存储方式
+map 是一个 hmap 结构，Go Map 的底层实现是一个哈希表，它在运行时表现为一个指向 hmap 结构体的指针，hmap 中记录了桶数组指针 buckets、溢出桶指针以及元素个数等字段。每个桶是一个 bmap 结构体，能存储 8 个键值对和 8 个 tophash，并有指向下一个溢出桶的指针 overflow。为了内存紧凑，bmap 中采用的是先存 8 个键再存 8 个值的存储方式
 
 ```go
 type hmap struct {
@@ -985,6 +1193,429 @@ func main() {
 - 接口限流（控制并发协程数量）
 - 异步任务解耦，提升程序吞吐量
 - 批量数据传输与缓存
+
+### 4.13 golang 协程之间如何通信？哪些方式解决并发访问？
+
+> 面试官您好，Go 协程之间的通信和并发访问问题可以从两个维度来回答：
+> 在通信层面，Go 的核心哲学是 "Don't communicate by sharing memory; instead, share memory by communicating"，因此 channel 是首选的协程间通信方式。此外还有共享内存加锁的方式，以及 sync 包提供的各类同步原语。
+> 在并发访问层面，Go 提供了多层次的解决方案：从最底层的 atomic 原子操作，到 sync.Mutex / sync.RWMutex 互斥锁，再到 channel 的 CSP 通信模型，以及 sync.Once、sync.Map、sync.Pool 等高级同步工具。选择哪种方式取决于具体的并发场景。
+
+#### 一、协程间通信方式
+
+Go 协程间通信主要分为两大类：基于 channel 的消息传递和基于共享内存的通信。
+
+##### 1. Channel (通道) — Go 推荐的通信方式
+
+Channel 是 Go 语言并发编程的核心原语，基于 CSP (Communicating Sequential Processes) 模型设计。它通过在协程之间传递数据来实现通信，从根本上避免了共享内存带来的竞态问题。
+
+```go
+package main
+
+import "fmt"
+
+// 使用 channel 在协程间传递数据
+// 生产者通过 channel 发送数据，消费者通过 channel 接收数据
+func main() {
+    // 创建一个有缓冲的 string 类型 channel
+    ch := make(chan string, 3)
+
+    // 生产者协程：向 channel 发送数据
+    go func() {
+        for i := 0; i < 5; i++ {
+            msg := fmt.Sprintf("消息 #%d", i)
+            ch <- msg // 发送数据到 channel
+        }
+        close(ch) // 数据发送完毕，关闭 channel
+    }()
+
+    // 消费者 (主协程)：从 channel 接收数据
+    // 使用 for-range 遍历 channel，直到 channel 被关闭且数据读完
+    for msg := range ch {
+        fmt.Println("收到:", msg)
+    }
+    fmt.Println("所有消息已处理完毕")
+}
+```
+
+Channel 的核心特性：
+
+- **类型安全**：channel 是类型相关的，一个 chan T 只能传递 T 类型的值
+- **阻塞语义**：无缓冲 channel 发送和接收都会阻塞直到对方就绪；有缓冲 channel 在缓冲区满时发送阻塞、空时接收阻塞
+- **数据所有权转移**：通过 channel 传递数据时，发送方放弃数据的所有权，接收方获得所有权，从而避免了并发读写同一份数据
+
+##### 2. 共享内存 — 传统但有效的方式
+
+多个协程可以访问同一块内存空间 (共享变量)，但必须通过同步机制来保证并发安全。这是最传统的方式，虽然不是 Go 最推荐的，但在某些场景下 (如高性能计数器、缓存等) 是不可避免的。
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+// 使用共享内存 + 互斥锁实现并发安全的计数器
+// 多个协程同时修改同一个变量，通过 mutex 保证安全
+func main() {
+    var (
+        counter int
+        mu      sync.Mutex
+        wg      sync.WaitGroup
+    )
+
+    // 启动 1000 个协程并发修改计数器
+    for i := 0; i < 1000; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            mu.Lock()         // 加锁，保证同一时刻只有一个协程能修改 counter
+            counter++         // 对共享变量的写操作
+            mu.Unlock()       // 解锁，释放临界区
+        }()
+    }
+
+    wg.Wait()
+    fmt.Println("最终计数:", counter) // 输出: 最终计数: 1000
+}
+```
+
+##### 3. sync.WaitGroup — 协程等待
+
+WaitGroup 用于等待一组协程完成，是最常用的协程同步工具之一。
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var wg sync.WaitGroup
+
+    for i := 0; i < 5; i++ {
+        wg.Add(1) // 每启动一个协程前 Add(1)
+        go func(id int) {
+            defer wg.Done() // 协程完成时 Done()
+            fmt.Printf("协程 %d 完成任务\n", id)
+        }(i)
+    }
+
+    wg.Wait() // 阻塞直到所有协程都调用了 Done
+    fmt.Println("所有协程已完成")
+}
+```
+
+##### 4. Context — 跨协程的取消与超时控制
+
+Context 用于在协程树中传递截止时间、取消信号和请求范围的值，是 Go 服务端编程中控制协程生命周期的标准方式。
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func main() {
+    // 创建一个 1 秒后自动取消的 context
+    ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+    defer cancel()
+
+    ch := make(chan string, 1)
+
+    // 模拟一个耗时的协程任务
+    go func() {
+        time.Sleep(2 * time.Second) // 模拟耗时操作
+        ch <- "任务结果"
+    }()
+
+    // 使用 select 同时等待任务结果和超时
+    select {
+    case result := <-ch:
+        fmt.Println("任务成功:", result)
+    case <-ctx.Done(): // context 超时或被取消
+        fmt.Println("任务超时:", ctx.Err())
+    }
+}
+```
+
+#### 二、并发访问的解决方案
+
+当多个协程需要同时访问共享资源时，Go 提供了以下几种层次的解决方案：
+
+##### 1. atomic 原子操作 — 最轻量的方案
+
+Go 的 `sync/atomic` 包提供了原子操作，直接利用 CPU 硬件指令 (如 CAS) 实现无锁的并发安全操作，性能最高，但只适用于简单的数值类型或指针。
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+    "sync/atomic"
+)
+
+func main() {
+    var counter int64
+    var wg sync.WaitGroup
+
+    // 使用原子操作实现并发安全的计数器
+    // 相比 mutex，原子操作开销更小
+    for i := 0; i < 1000; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            atomic.AddInt64(&counter, 1) // 原子自增，无需加锁
+        }()
+    }
+
+    wg.Wait()
+    fmt.Println("原子操作计数:", counter) // 输出: 原子操作计数: 1000
+
+    // 其他常用原子操作
+    atomic.StoreInt64(&counter, 0)          // 原子写
+    val := atomic.LoadInt64(&counter)       // 原子读
+    fmt.Println("原子读取:", val)
+
+    // Compare-And-Swap (CAS)：乐观锁的基础
+    // 只有当前值等于 old 时，才更新为 new，返回是否成功
+    swapped := atomic.CompareAndSwapInt64(&counter, 0, 42)
+    fmt.Println("CAS 成功:", swapped, "当前值:", atomic.LoadInt64(&counter))
+}
+```
+
+##### 2. sync.Mutex 互斥锁 — 最通用的方案
+
+Mutex 提供排他锁，同一时刻只有一个协程能持有锁，适用于保护任意复杂的临界区。
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+// 线程安全的 Map 封装
+type SafeMap struct {
+    mu sync.Mutex
+    m  map[string]int
+}
+
+func NewSafeMap() *SafeMap {
+    return &SafeMap{m: make(map[string]int)}
+}
+
+func (s *SafeMap) Set(key string, value int) {
+    s.mu.Lock()
+    defer s.mu.Unlock()
+    s.m[key] = value
+}
+
+func (s *SafeMap) Get(key string) (int, bool) {
+    s.mu.Lock()
+    defer s.mu.Unlock()
+    val, ok := s.m[key]
+    return val, ok
+}
+
+func main() {
+    sm := NewSafeMap()
+    var wg sync.WaitGroup
+
+    // 并发写入
+    for i := 0; i < 100; i++ {
+        wg.Add(1)
+        go func(n int) {
+            defer wg.Done()
+            key := fmt.Sprintf("key-%d", n)
+            sm.Set(key, n)
+        }(i)
+    }
+
+    wg.Wait()
+    fmt.Println("写入完成，map 大小:", len(sm.m))
+}
+```
+
+##### 3. sync.RWMutex 读写锁 — 读多写少场景
+
+RWMutex 允许多个协程同时读取，但写入时独占，适用于读多写少的场景。
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+// 使用读写锁保护的缓存
+type Cache struct {
+    mu   sync.RWMutex
+    data map[string]string
+}
+
+func NewCache() *Cache {
+    return &Cache{data: make(map[string]string)}
+}
+
+func (c *Cache) Get(key string) (string, bool) {
+    c.mu.RLock()         // 获取读锁，多个协程可以同时持有
+    defer c.mu.RUnlock()
+    val, ok := c.data[key]
+    return val, ok
+}
+
+func (c *Cache) Set(key, value string) {
+    c.mu.Lock()          // 获取写锁，独占访问
+    defer c.mu.Unlock()
+    c.data[key] = value
+}
+
+func main() {
+    cache := NewCache()
+    var wg sync.WaitGroup
+
+    // 10 个协程并发写入
+    for i := 0; i < 10; i++ {
+        wg.Add(1)
+        go func(n int) {
+            defer wg.Done()
+            key := fmt.Sprintf("key-%d", n)
+            cache.Set(key, fmt.Sprintf("value-%d", n))
+        }(i)
+    }
+
+    // 100 个协程并发读取
+    for i := 0; i < 100; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            cache.Get("key-0")
+        }()
+    }
+
+    wg.Wait()
+    fmt.Println("缓存操作完成")
+}
+```
+
+##### 4. sync.Once — 保证只执行一次
+
+适用于单例初始化、配置加载等只需执行一次的场景。
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+type Config struct {
+    DBHost string
+    Port   int
+}
+
+var (
+    config *Config
+    once   sync.Once
+)
+
+// GetConfig 使用 sync.Once 保证配置只被加载一次
+// 无论多少个协程同时调用，初始化函数只执行一次
+func GetConfig() *Config {
+    once.Do(func() {
+        fmt.Println("正在加载配置...") // 只会打印一次
+        config = &Config{
+            DBHost: "localhost",
+            Port:   3306,
+        }
+    })
+    return config
+}
+
+func main() {
+    var wg sync.WaitGroup
+
+    // 100 个协程同时获取配置，初始化只会执行一次
+    for i := 0; i < 100; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            cfg := GetConfig()
+            _ = cfg
+        }()
+    }
+
+    wg.Wait()
+    fmt.Printf("配置: %+v\n", GetConfig())
+}
+```
+
+##### 5. sync.Map — 并发安全的 Map
+
+Go 标准库提供的并发安全 map，适用于读多写少或 key 集合基本固定的场景。
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var m sync.Map
+
+    // 存储键值对
+    m.Store("name", "Go")
+    m.Store("version", "1.22")
+
+    // 读取值
+    val, ok := m.Load("name")
+    fmt.Println("name:", val, "exists:", ok) // name: Go exists: true
+
+    // LoadOrStore: 如果 key 存在返回旧值，不存在则存储并返回新值
+    actual, loaded := m.LoadOrStore("name", "Rust")
+    fmt.Println("actual:", actual, "loaded:", loaded) // actual: Go loaded: true
+
+    // 遍历所有键值对
+    m.Range(func(key, value any) bool {
+        fmt.Printf("  %v: %v\n", key, value)
+        return true // 返回 false 停止遍历
+    })
+}
+```
+
+#### 三、方案选择指南
+
+| 场景                          | 推荐方案         | 原因                           |
+| ----------------------------- | ---------------- | ------------------------------ |
+| 协程间传递数据                | Channel          | 符合 Go CSP 模型，避免竞态     |
+| 简单数值的并发操作 (计数器等) | atomic           | 无锁操作，性能最高             |
+| 复杂数据结构的并发保护        | sync.Mutex       | 通用性强，适用于任意临界区     |
+| 读多写少的场景                | sync.RWMutex     | 并发读性能优于 Mutex           |
+| 单例 / 一次性初始化           | sync.Once        | 语义清晰，实现高效             |
+| 并发读写 map (读多写少)       | sync.Map         | 标准库提供，针对特定场景优化   |
+| 超时 / 取消控制               | Context + select | 标准的协程生命周期管理方式     |
+| 协程完成等待                  | sync.WaitGroup   | 语义明确，等待一组协程全部完成 |
+
+#### 四、知识扩展
+
+- **Channel 与 GMP 调度器的关系**：当 goroutine 在 channel 上阻塞时，运行时会将其状态标记为 Gwaiting 并从 M 上解绑，M 可以继续执行其他 G，不会浪费系统资源
+- **CSP 模型 vs 共享内存模型**：Go 的 channel 基于 CSP 模型，强调通过通信共享内存；而 mutex 基于传统的共享内存模型，强调通过同步保护共享数据。Go 官方推荐优先使用 channel
+- **Race Detector**：Go 内置竞态检测工具 (`go run -race main.go`)，可以在运行时检测数据竞争，开发阶段应经常使用
+- **内存模型 (Memory Model)**：Go 的内存模型规定了不同 goroutine 之间操作的可见性保证，channel 操作和 sync 包中的同步操作都会建立 happens-before 关系
+- **Mutex 底层实现**：Go 的互斥锁经历了多次优化，目前采用混合锁策略，包含自旋、信号量等机制，会在运行时根据等待时间动态调整
+- **errgroup**：`golang.org/x/sync/errgroup` 是 WaitGroup 的增强版，支持在协程中返回错误并自动取消其他协程，适用于并发执行多个任务并需要错误处理的场景
 
 ## 5. Sync 面试题
 
@@ -1658,14 +2289,14 @@ func main() {
 
 #### 七、总结
 
-| 特性     | eface (interface{}) | iface (非空接口)               |
-| ------ | ------------------- | -------------------------- |
-| 内存结构   | 简单（\_type + data）   | 复杂（tab + data，tab 包含 itab） |
-| 方法信息   | 无                   | 包含方法表                      |
-| 适用场景   | 泛型编程、类型不确定的场景       | 多态实现、依赖注入、标准库接口            |
-| 内存开销   | 较小（约 16 字节）         | 较大（额外的 itab 开销）            |
-| 类型断言速度 | 较快（仅比较类型）           | 较慢（需检查类型和方法集）              |
-| 方法调用开销 | 无                   | 有（方法表查找）                   |
+| 特性         | eface (interface{})        | iface (非空接口)                  |
+| ------------ | -------------------------- | --------------------------------- |
+| 内存结构     | 简单（\_type + data）      | 复杂（tab + data，tab 包含 itab） |
+| 方法信息     | 无                         | 包含方法表                        |
+| 适用场景     | 泛型编程、类型不确定的场景 | 多态实现、依赖注入、标准库接口    |
+| 内存开销     | 较小（约 16 字节）         | 较大（额外的 itab 开销）          |
+| 类型断言速度 | 较快（仅比较类型）         | 较慢（需检查类型和方法集）        |
+| 方法调用开销 | 无                         | 有（方法表查找）                  |
 
 iface 和 eface 是 Go 语言类型系统的重要组成部分，理解它们的区别有助于我们更高效地使用接口，编写性能更好的代码。在实际开发中，应根据具体场景选择合适的接口类型：需要泛型能力时使用 `interface{}`，需要多态和方法约束时使用非空接口。
 
@@ -2000,12 +2631,12 @@ Goroutine 的完整调度生命周期包括以下状态转换：
 
 #### 五、调度策略的版本演进
 
-| 版本          | 调度策略       | 主要改进                      |
-| ----------- | ---------- | ------------------------- |
-| Go 1.0-1.13 | 协作式抢占      | 基于函数调用的抢占，存在长计算无法被抢占的问题   |
-| Go 1.14     | 基于信号的异步抢占  | 解决了长计算无法被抢占的问题，实现真正的抢占式调度 |
-| Go 1.16     | 非协作式系统调用抢占 | 系统调用超过一定时间后会被抢占，提高系统响应性   |
-| Go 1.18     | 工作窃取算法优化   | 改进了工作窃取的效率和公平性            |
+| 版本        | 调度策略             | 主要改进                                           |
+| ----------- | -------------------- | -------------------------------------------------- |
+| Go 1.0-1.13 | 协作式抢占           | 基于函数调用的抢占，存在长计算无法被抢占的问题     |
+| Go 1.14     | 基于信号的异步抢占   | 解决了长计算无法被抢占的问题，实现真正的抢占式调度 |
+| Go 1.16     | 非协作式系统调用抢占 | 系统调用超过一定时间后会被抢占，提高系统响应性     |
+| Go 1.18     | 工作窃取算法优化     | 改进了工作窃取的效率和公平性                       |
 
 #### 六、关键调度场景分析
 
@@ -2360,24 +2991,24 @@ mspan 结构示意：
 
 `mspan` 的关键字段
 
-| 字段         | 说明                        |
-| ---------- | ------------------------- |
-| startAddr  | span 起始地址                 |
-| npages     | span 包含的 page 数量          |
+| 字段       | 说明                                 |
+| ---------- | ------------------------------------ |
+| startAddr  | span 起始地址                        |
+| npages     | span 包含的 page 数量                |
 | spanclass  | size class 编号 (含是否有指针的信息) |
-| freeindex  | 下一个空闲对象的索引                |
-| allocBits  | 位图，标记哪些槽位已分配              |
-| gcmarkBits | 位图，GC 标记使用                |
+| freeindex  | 下一个空闲对象的索引                 |
+| allocBits  | 位图，标记哪些槽位已分配             |
+| gcmarkBits | 位图，GC 标记使用                    |
 
 ##### 对象大小分类与分配路径
 
 Go 将对象按大小分为三类，走不同的分配路径：
 
-| 类型           | 大小范围              | 分配策略                                          |
-| ------------ | ----------------- | --------------------------------------------- |
-| **Tiny 对象**  | < 16 bytes，且不含指针  | mcache 中的 tiny 分配器，多个对象共享一个 16 字节块            |
-| **Small 对象** | 16 bytes \~ 32 KB | 按 size class 从 mcache → mcentral → mheap 逐级获取 |
-| **Large 对象** | > 32 KB           | 直接从 mheap 分配，绕过 mcache 和 mcentral             |
+| 类型           | 大小范围               | 分配策略                                            |
+| -------------- | ---------------------- | --------------------------------------------------- |
+| **Tiny 对象**  | < 16 bytes，且不含指针 | mcache 中的 tiny 分配器，多个对象共享一个 16 字节块 |
+| **Small 对象** | 16 bytes \~ 32 KB      | 按 size class 从 mcache → mcentral → mheap 逐级获取 |
+| **Large 对象** | > 32 KB                | 直接从 mheap 分配，绕过 mcache 和 mcentral          |
 
 Size Class 机制
 
@@ -2610,13 +3241,208 @@ Go 的 GC 目前使用的是无分代 (对象没有代际之分)、不整理 (�
 - 灰色：已被访问但其引用对象还未完全扫描的对象，是待处理队列
 - 黑色：已被访问且其所有引用对象都已扫描完成的对象，确认存活
 
-标记流程：GC 开始时所有对象都是白色，从 GC Root (全局变量、栈变量等) 开始将直接可达对象标记为灰色。然后不断从灰色队列中取出对象，扫描其引用的对象：如果引用对象时白色就标记为灰色，当前对象所有引用扫描完成后标记为黑色。重复这个过程直到灰色队列为空
+标记流程：GC 开始时所有对象都是白色，从 GC Root (全局变量、栈变量等) 开始将直接可达对象标记为灰色。然后不断从灰色队列中取出对象，扫描其引用的对象：如果引用对象是白色就标记为灰色，当前对象所有引用扫描完成后标记为黑色。重复这个过程直到灰色队列为空
 
 ![GC\_example](./assets/GC_example.png "GC_example")
 
 当垃圾回收开始时，只有白色对象。随着标记过程开始进行时，灰色对象开始出现 (着色)，这时候波面便开始扩大。当一个对象的所有子节点均完成扫描时，会被着色为黑色。当整个堆便利完成时，只剩下黑色和白色对象，这时的黑色对象为可达对象，即存活；而白色对象为不可达对象，即死亡。这个过程可以视为以灰色对象为波面，将黑色对象和白色对象分离，使波面不断向前推进，直到所有可达达灰色对象都变为黑色对象为止的过程
 
-### 11.4 Go 语言中 GC 的根对象到底是什么？
+### 11.4 什么是垃圾回收的三色标记法？它解决了什么问题？请具体说明。
+
+> 面试官您好，关于三色标记法，我的理解如下：三色标记法是 Go GC 的核心算法，它将堆中的对象划分为白色、灰色、黑色三种状态，通过波面推进的方式高效地完成可达性分析。相比最原始的引用计数和标记清除，三色标记法最大的贡献在于：它提供了一个清晰的抽象模型，使得并发垃圾回收 (GC 与用户程序同时运行) 成为可能。结合写屏障 (Write Barrier) 技术，三色标记法在保证正确性的同时大幅缩短了 STW 时间，是 Go GC 能做到低延迟的关键所在。
+
+#### 三色标记法解决了什么问题
+
+在三色标记法出现之前，垃圾回收面临两大核心挑战：
+
+**1. 如何高效判断对象是否存活**
+
+最朴素的方法是引用计数 (Reference Counting)：每个对象维护一个引用计数，计数归零就回收。但引用计数有两个致命缺陷：
+
+- 无法处理循环引用：A 引用 B，B 引用 A，两者的引用计数永远不为零，但实际已无外部引用
+- 每次赋值操作都要修改计数器，高频场景下性能开销大
+
+三色标记法通过可达性分析 (从 GC Root 出发遍历引用图) 来判断对象存活，从根本上解决了循环引用问题——只要从 GC Root 不可达，无论内部怎样循环引用都会被回收。
+
+**2. 如何让 GC 与用户程序并发执行**
+
+传统的标记清除算法需要完全停止用户程序 (STW) 才能安全地标记和清扫。对于大型堆，STW 时间可能达到数百毫秒甚至秒级，这对延迟敏感的服务来说是不可接受的。三色标记法通过将对象分为三种状态，提供了一个理论框架，使得增量式和并发式 GC 的正确性分析成为可能——只需保证三色不变式不被破坏，GC 就能在与用户程序并发的情况下正确工作。
+
+#### 三色的定义与含义
+
+| 颜色         | 含义                                 | 说明                                                     |
+| ------------ | ------------------------------------ | -------------------------------------------------------- |
+| 白色 (White) | 未被扫描的对象                       | GC 结束时仍为白色的对象被认为是不可达的，将被回收        |
+| 灰色 (Gray)  | 已被扫描但其引用的对象尚未全部处理   | 灰色对象是"工作队列"中的待处理对象，是标记过程的前沿     |
+| 黑色 (Black) | 已被扫描且其所有引用对象都已处理完毕 | 黑色对象确认存活，其引用的所有直接对象至少已被标记为灰色 |
+
+标记开始时，所有对象都是白色。从 GC Root 出发，将直接引用的对象标记为灰色并加入工作队列。然后不断从队列中取出灰色对象：遍历它引用的所有对象，若引用的对象为白色则标记为灰色并入队；当前灰色对象所有引用都处理完后，将其标记为黑色。重复此过程直到灰色队列为空。
+
+#### 标记过程的详细步骤
+
+```go
+/*
+    假设堆中有如下引用关系：
+
+    GC Roots (全局变量、栈变量)
+    ├── A (引用 B, C)
+    ├── D (引用 E)
+    └── F (孤立对象，无外部引用)
+
+    三色标记过程：
+
+    阶 1 (初始化): 所有对象都是白色
+        白色: {A, B, C, D, E, F}
+
+    阶段 2 (扫描 GC Root): 从根直接可达的对象标记为灰色
+        灰色: {A, D}
+        白色: {B, C, E, F}
+
+    阶段 3 (处理 A): 取出灰色对象 A，扫描其引用
+        - A 引用 B → B 标记为灰色
+        - A 引用 C → C 标记为灰色
+        - A 自身标记为黑色
+        黑色: {A}
+        灰色: {D, B, C}
+        白色: {E, F}
+
+    阶段 4 (处理 D): 取出灰色对象 D，扫描其引用
+        - D 引用 E → E 标记为灰色
+        - D 自身标记为黑色
+        黑色: {A, D}
+        灰色: {B, C, E}
+        白色: {F}
+
+    阶段 5 (处理 B, C, E): 它们没有引用其他对象，直接标黑
+        黑色: {A, D, B, C, E}
+        灰色: {} (空)
+        白色: {F}
+
+    阶段 6 (结束): 灰色队列为空，标记完成
+        - F 仍然是白色 → 不可达 → 将被回收
+        - A, B, C, D, E 是黑色 → 存活
+*/
+```
+
+#### 并发场景下的正确性问题
+
+在 GC 与用户程序并发执行时，用户代码可能随时修改对象的引用关系，这会导致两个经典问题：
+
+**问题一：对象消失 (Object Lost)**
+
+同时满足以下两个条件时，一个本应存活的白色对象会被错误回收：
+
+1. 赋值器插入了一条从黑色对象到白色对象的引用 (黑色→白色)
+2. 赋值器删除了从灰色对象到该白色对象的唯一引用路径 (灰色→...→白色)
+
+这导致黑色对象直接引用了白色对象，但灰色对象已不再指向它。由于黑色对象不会再被扫描，这个白色对象永远不会变灰或变黑，最终被错误回收。
+
+**问题二：三色不变式**
+
+为了保证并发标记的正确性，必须保证三色不变式不被破坏。有两种等价的表述方式：
+
+- **强三色不变式 (Strong Tri-color Invariant)**：黑色对象不得直接引用白色对象。这通过插入写屏障 (Insertion Write Barrier) 来保证——每次向黑色对象写入新的指针引用时，都将被引用的白色对象标记为灰色。
+- **弱三色不变式 (Weak Tri-color Invariant)**：所有被黑色对象引用的白色对象，都必须同时被某个灰色对象直接或间接引用。这通过删除写屏障 (Deletion Write Barrier) 来保证——每次删除一个指针引用时，都将被删除引用指向的对象标记为灰色。
+
+#### Go 的实际实现：混合写屏障 (Hybrid Write Barrier)
+
+Go 1.8 引入了混合写屏障，结合了插入写屏障和删除写屏障的优势，其规则为：
+
+1. 在 GC 标记阶段，对指针写入操作 (即 `*slot = ptr`) 时，先将 `*slot` 原指向的对象和 `ptr` 指向的对象都标为灰色
+2. 这样既保证了新引用的目标不会被遗漏 (插入屏障的作用)，也保证了旧引用的目标不会被错误回收 (删除屏障的作用)
+
+混合写屏障的具体伪代码如下：
+
+```go
+// 混合写屏障的伪代码表示
+// 当执行 *slot = ptr 时 (即修改某个对象的指针字段)
+func writeBarrier(slot *unsafe.Pointer, ptr unsafe.Pointer) {
+    shade(*slot)  // 将旧引用指向的对象标灰 (删除屏障)
+    shade(ptr)    // 将新引用指向的对象标灰 (插入屏障)
+    *slot = ptr   // 执行实际的写入
+}
+
+// shade 函数将一个白色对象标记为灰色，如果已经是灰色或黑色则不操作
+func shade(ptr unsafe.Pointer) {
+    obj := findObject(ptr)
+    if obj != nil && isWhite(obj) {
+        markGray(obj)
+    }
+}
+```
+
+#### 真实 Go 代码演示 GC 的三色行为
+
+```go
+package main
+
+import (
+    "fmt"
+    "runtime"
+    "runtime/debug"
+    "time"
+)
+
+type Node struct {
+    Data string
+    Next *Node
+}
+
+func main() {
+    // 关闭 GC 自动触发，手动控制
+    debug.SetGCPercent(-1)
+
+    // 构建一条链: root -> A -> B -> C
+    root := &Node{Data: "root"}
+    a := &Node{Data: "A"}
+    b := &Node{Data: "B"}
+    c := &Node{Data: "C"}
+
+    root.Next = a
+    a.Next = b
+    b.Next = c
+
+    // 手动触发第一次 GC，root 可达所以全部存活
+    runtime.GC()
+    fmt.Println("After first GC:")
+    fmt.Println("root =", root.Data) // root = root
+    fmt.Println("A =", root.Next.Data) // A = A
+    fmt.Println("B =", root.Next.Next.Data) // B = B
+    fmt.Println("C =", root.Next.Next.Next.Data) // C = C
+
+    // 断开引用: root -> A -> nil，B 和 C 不再从 root 可达
+    a.Next = nil
+
+    // 手动触发第二次 GC
+    // 此时 B 和 C 从 GC Root 不可达，它们在三色标记中会是白色
+    runtime.GC()
+    time.Sleep(time.Millisecond) // 确保 GC 完成
+
+    fmt.Println("\nAfter second GC:")
+    fmt.Println("root =", root.Data) // root = root
+    fmt.Println("A =", root.Next.Data) // A = A
+    // B 和 C 已被回收，此时如果再访问 root.Next.Next 会 panic
+    fmt.Println("B and C have been collected by GC (white objects)")
+}
+```
+
+#### 性能特征与工程意义
+
+- **低延迟**：Go 的三色标记配合混合写屏障，STW 时间通常在亚毫秒级别，远优于传统全停顿的标记清除
+- **非分代设计**：Go 没有采用分代 GC，因为写屏障的开销在非分代设计下也可以接受，且避免了分代 GC 中老年代晋升带来的复杂性
+- **并发清扫**：标记完成后，清扫阶段也与用户程序并发执行，进一步减少停顿
+- **标记辅助 (Mark Assist)**：当用户 goroutine 分配内存的速度过快时，会被要求协助 GC 进行标记工作，从而保证 GC 进度不会落后太多
+
+#### 知识扩展
+
+- **写屏障 (Write Barrier)**：三色标记法在并发场景下正确运行的核心保障，混合写屏障是插入写屏障和删除写屏障的结合
+- **STW (Stop the World)**：虽然三色标记大幅减少了 STW，但标记开始和结束时仍然需要短暂的 STW 来确保一致性
+- **GC 根对象 (GC Roots)**：三色标记的起点，包括全局变量、栈变量、寄存器中的指针等
+- **GC 调优 (GOGC)**：通过调整 GOGC 参数控制 GC 触发频率，影响三色标记的执行频率和内存使用
+- **分代 GC vs 非分代 GC**：三色标记法既可以用于分代 GC 也可以用于非分代 GC，Go 选择了非分代设计
+- **内存屏障 vs 写屏障**：CPU 层面的内存屏障用于保证内存操作的可见性和顺序性，与 GC 写屏障是不同的概念
+
+### 11.5 Go 语言中 GC 的根对象到底是什么？
 
 根对象在垃圾回收的术语中又叫做根集合，它是垃圾回收器在标记过程时最先检查的对象，包括：
 
@@ -2624,11 +3450,11 @@ Go 的 GC 目前使用的是无分代 (对象没有代际之分)、不整理 (�
 - 执行栈：每个 goroutine 都包含自己的执行栈，这些执行栈上包含栈上的变量及指向分配的堆内存区块的指针
 - 寄存器：寄存器的值可能表示一个指针，参与计算的这些指针可能指向某些赋值器分配的对内存区块
 
-### 11.5 STW 是什么意思？
+### 11.6 STW 是什么意思？
 
 STW 是 Stop the World 的缩写，通常意义上指的是用户代码被完全停止运行，STW 越长，对用户代码造成的影响 (例如延迟) 就越大，早期 Go 对垃圾回收器的实现中 STW 长达几百毫秒，对时间敏感的实时通信等应用程序会造成巨大的影响
 
-### 11.6 并发标记清除法的难点是什么？
+### 11.7 并发标记清除法的难点是什么？
 
 并发标记清除法的核心难点在于如何保证在用户程序并发修改对象引用时，垃圾回收器仍能正确识别存活对象
 
@@ -2637,19 +3463,19 @@ STW 是 Stop the World 的缩写，通常意义上指的是用户代码被完全
 - 对象消失问题：在标记过程中，如果用户程序删除了从黑色对象到白色对象的引用，同时从灰色对象到该白色对象的引用也被删除，这个白色对象就会被错误回收，但它实际上还是可达的
 - 新对象处理：标记期间新分配的对象如何着色？如果标记为白色可能被误回收，标记为黑色可能造成浮动垃圾
 
-### 11.9 Go 语言中 GC 的流程是什么？
+### 11.8 Go 语言中 GC 的流程是什么？
 
-| 阶段               | 说明                            | 赋值器状态 |
-| ---------------- | ----------------------------- | ----- |
-| SweepTermination | 清扫种植阶段，为下一个阶段的并发标记做准备工作，启动扫屏障 | STW   |
-| Mark             | 扫描标记阶段，与赋值器并发执行，写屏障开启         | 并发    |
-| MarkTermination  | 标记终止阶段，保证一个周期内标记任务完成，停止写屏障    | STW   |
-| GCoff            | 内存清扫阶段，将需要回收的内存归还到堆中，写屏障关闭    | 并发    |
-| Gcoff            | 内存归还阶段，将过多的内存归还给操作系统，写屏障关闭    | 并发    |
+| 阶段             | 说明                                                       | 赋值器状态 |
+| ---------------- | ---------------------------------------------------------- | ---------- |
+| SweepTermination | 清扫终止阶段，为下一个阶段的并发标记做准备工作，启动扫屏障 | STW        |
+| Mark             | 扫描标记阶段，与赋值器并发执行，写屏障开启                 | 并发       |
+| MarkTermination  | 标记终止阶段，保证一个周期内标记任务完成，停止写屏障       | STW        |
+| GCoff            | 内存清扫阶段，将需要回收的内存归还到堆中，写屏障关闭       | 并发       |
+| Gcoff            | 内存归还阶段，将过多的内存归还给操作系统，写屏障关闭       | 并发       |
 
 ![Go\_GC\_step](./assets/Go_GC_step.png "Go_GC_step")
 
-### 11.10 GC 触发的时机有哪些
+### 11.9 GC 触发的时机有哪些
 
 - 主动触发，通过调用 runtime.GC() 触发 GC，此调用阻塞式地等待当前 GC 运行完毕
 - 被动触发，分为两种方式：
@@ -2658,14 +3484,14 @@ STW 是 Stop the World 的缩写，通常意义上指的是用户代码被完全
     - 可以通过 debug.SetGCPercent(500) 来修改步调，这里表示，如果当前堆大小超过了上次标记的堆大小的 500%，就会触发
     - 第一次 GC 的触发的临界值是 4MB
 
-### 11.11 GC 关注的指标有哪些
+### 11.10 GC 关注的指标有哪些
 
 - CPU 利用率：回收算法会在多大程度上拖慢程序？有时候，这个是通过回收占用的 CPU 时间与其他 CPU 时间的百分比来描述的
 - GC 停顿时间；回收器会造成多长时间的停顿？目前的 GC 中需要考虑 STW 和 Mark Assist 两个部分可能造成的停顿
 - GC 停顿频率：回收器造成的停顿频率是怎样的？目前的 GC 中需要考虑 STW 和 Mark Assist 两个部分可能造成的停顿
 - GC 可扩展性：当堆内存变大时，垃圾回收器的性能如何？但大部分的程序可能并不一定关心这个问题
 
-### 11.12 有了 GC，为什么还会发生内存泄漏
+### 11.11 有了 GC，为什么还会发生内存泄漏
 
 有 GC 机制的话，内存泄漏其实就是预期的能很快被释放的内存，其生命期意外地被延长，导致预计能够立即回收的内存长时间得不到回收
 
@@ -2674,7 +3500,7 @@ Go 语言主要有以下两种：
 - 内存被根对象引用而没有得到迅速释放，比如某个局部变量被复制到了一个全局变量 map 中
 - goroutine 泄漏，一些不当的使用，导致 goroutine 不能正常退出，也会造成内存泄漏
 
-### 11.13 Go 的 GC 如何调优
+### 11.12 Go 的 GC 如何调优
 
 - 合理化内存分配的速度、提高赋值器的 CPU 利用率
 - 降低并服用已经申请的内存，比如使用 sync.pool 服用经常需要创建的重复对象
@@ -3283,13 +4109,13 @@ type Writer interface {
 
 #### 常见的 I/O 类型
 
-| 类型                    | 包         | 说明                     |
-| --------------------- | --------- | ---------------------- |
+| 类型                  | 包        | 说明                           |
+| --------------------- | --------- | ------------------------------ |
 | `os.File`             | `os`      | 文件读写，实现了 Reader/Writer |
-| `strings.Reader`      | `strings` | 从字符串读取                 |
-| `bytes.Buffer`        | `bytes`   | 内存缓冲区，可读可写             |
-| `net.Conn`            | `net`     | 网络连接，可读可写              |
-| `bufio.Reader/Writer` | `bufio`   | 带缓冲的 I/O               |
+| `strings.Reader`      | `strings` | 从字符串读取                   |
+| `bytes.Buffer`        | `bytes`   | 内存缓冲区，可读可写           |
+| `net.Conn`            | `net`     | 网络连接，可读可写             |
+| `bufio.Reader/Writer` | `bufio`   | 带缓冲的 I/O                   |
 
 #### 为什么需要 bufio？(无缓冲 I/O 的问题)
 
