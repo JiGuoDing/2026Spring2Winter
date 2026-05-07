@@ -1901,7 +1901,7 @@ read map 是 dirty map 的一个不完全、且可能是过期的只读快照，
 
 sync.Map 采用 nil 和 expunged 两种状态，是为了在读写分离架构下，既能实现无锁的高效逻辑删除，又能保证 dirty map 重建时的内存回收与数据一致性
 
-nil (逻辑删除状态)：当用户调用 Delete 时，如果在 read map 中找到该 key，会通过无锁 cAS 操作将其值设为 nil。这避免了加锁和修改底层 map 结构。如果以后该 key 再次被 Store 写入，可以直接无锁更新
+nil (逻辑删除状态)：当用户调用 Delete 时，如果在 read map 中找到该 key，会通过无锁 CAS 操作将其值设为 nil。这避免了加锁和修改底层 map 结构。如果以后该 key 再次被 Store 写入，可以直接无锁更新
 
 expunged (物理剔除标记)：当 read map 需要全量复制数据构建新的 dirty map 时，为了避免把已删除的 key 也复制过去导致内存泄漏，系统会将 read 中为 nil 的 key 标记为 expunged，并跳过复制
 
@@ -2086,7 +2086,7 @@ type eface struct {
 ![eface](./assets/eface.png "eface")
 
 ```go
-// iface = (我现在装的是哪种具体类型 + 它如何实现该接口的方法表， 以及 具体数据在哪里)
+// iface = (我现在装的是哪种具体类型 + 它如何实现该接口的方法表， 以及具体数据在哪里)
 type iface struct {
   tab *itab
   data unsafe.Pointer
