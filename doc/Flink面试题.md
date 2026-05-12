@@ -3455,7 +3455,7 @@ SingleOutputStreamOperator<UserOrderSummary> result = stream
 优点：可修正首版结果。\
 风险：下游若不支持幂等/upsert，可能出现重复累计。
 
-#### 三、方式 3：Side Output 收集超迟到数据
+#### 三、方式 3：Side Output 收集超时迟到数据
 
 对于超过 `allowedLateness` 的“极晚数据”，主窗口已经关闭，Flink 可将其输出到侧输出流，交给专门链路处理，而不是静默丢弃。
 
