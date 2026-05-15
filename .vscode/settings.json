@@ -75,5 +75,7 @@
   "notebook.output.lineHeight": 1.44,
   "markdown.preview.lineHeight": 1.44,
   "terminal.integrated.fontLigatures.enabled": true,
-  "editor.fontLigatures": true
+  "editor.fontLigatures": true,
+  "python-envs.defaultEnvManager": "ms-python.python:conda",
+  "python-envs.defaultPackageManager": "ms-python.python:conda"
 }
