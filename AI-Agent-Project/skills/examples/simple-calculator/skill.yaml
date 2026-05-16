@@ -1,0 +1,46 @@
+apiVersion: skill.agent/v1
+kind: Skill
+metadata:
+  name: simple-calculator
+  version: 1.0.0
+  description: 基础四则运算技能，支持加减乘除
+  author: skills-tutorial
+  tags:
+    - math
+    - calculator
+    - beginner
+
+spec:
+  type: compute
+  input:
+    properties:
+      operation:
+        type: string
+        enum: [add, subtract, multiply, divide]
+        description: 运算类型
+      operand_a:
+        type: number
+        description: 第一个操作数
+      operand_b:
+        type: number
+        description: 第二个操作数
+    required:
+      - operation
+      - operand_a
+      - operand_b
+
+  output:
+    properties:
+      result:
+        type: number
+        description: 运算结果
+      operation:
+        type: string
+        description: 执行的运算类型
+    required:
+      - result
+      - operation
+
+  config:
+    timeout: 5s
+    maxRetries: 0

@@ -1,0 +1,89 @@
+apiVersion: registry.agent/v1
+kind: SkillRegistry
+
+global:
+  healthCheckInterval: 30s
+  deprecationGracePeriod: 90d
+  maxVersionsPerSkill: 10
+
+skills:
+  - name: simple-calculator
+    version: 1.0.0
+    type: compute
+    status: active
+    endpoint: http://localhost:8081
+    timeout: 5s
+    dependencies: []
+
+  - name: web-search
+    version: 1.0.0
+    type: integration
+    status: active
+    endpoint: http://localhost:8082
+    timeout: 10s
+    dependencies: []
+
+  - name: data-analysis
+    version: 1.0.0
+    type: compute
+    status: active
+    endpoint: http://localhost:8083
+    timeout: 30s
+    dependencies: []
+
+  - name: multi-modal-assistant
+    version: 1.0.0
+    type: orchestration
+    status: active
+    endpoint: http://localhost:8084
+    timeout: 30s
+    dependencies:
+      - simple-calculator
+      - web-search
+      - data-analysis
+
+  - name: code-generator
+    version: 1.0.0
+    type: generate
+    status: active
+    endpoint: http://localhost:8085
+    timeout: 15s
+    dependencies: []
+
+routing:
+  strategy: weighted
+  rules:
+    - match:
+        type: compute
+      target: compute-pool
+      weight: 40
+    - match:
+        type: integration
+      target: integration-pool
+      weight: 30
+    - match:
+        type: orchestration
+      target: orchestration-pool
+      weight: 20
+    - match:
+        type: generate
+      target: generate-pool
+      weight: 10
+
+pools:
+  compute-pool:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPU: 70
+  integration-pool:
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPU: 60
+  orchestration-pool:
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPU: 80
+  generate-pool:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPU: 70

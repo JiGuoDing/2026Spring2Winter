@@ -1,0 +1,67 @@
+apiVersion: skill.agent/v1
+kind: Skill
+metadata:
+  name: web-search
+  version: 1.0.0
+  description: 网页搜索技能，支持多搜索引擎、缓存和重试
+  author: skills-tutorial
+  tags:
+    - search
+    - http
+    - intermediate
+
+spec:
+  type: integration
+  input:
+    properties:
+      query:
+        type: string
+        description: 搜索关键词
+      engine:
+        type: string
+        enum: [google, bing, duckduckgo]
+        default: google
+        description: 搜索引擎
+      max_results:
+        type: integer
+        default: 10
+        description: 最大返回结果数
+      language:
+        type: string
+        default: zh-CN
+        description: 搜索语言
+    required:
+      - query
+
+  output:
+    properties:
+      results:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+            url:
+              type: string
+            snippet:
+              type: string
+          required:
+            - title
+            - url
+      total:
+        type: integer
+        description: 总结果数
+      cached:
+        type: boolean
+        description: 是否来自缓存
+    required:
+      - results
+      - total
+
+  config:
+    timeout: 10s
+    maxRetries: 3
+    retryDelay: 1s
+    cacheTTL: 300s
+    rateLimit: 10

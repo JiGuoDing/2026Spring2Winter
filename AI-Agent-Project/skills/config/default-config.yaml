@@ -1,0 +1,56 @@
+agent:
+  name: ai-agent
+  version: 1.0.0
+  logLevel: info
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  readTimeout: 15s
+  writeTimeout: 30s
+  maxHeaderBytes: 1048576
+
+skill:
+  defaultTimeout: 10s
+  maxRetries: 3
+  retryDelay: 1s
+  maxConcurrent: 100
+
+cache:
+  enabled: true
+  type: memory
+  ttl: 300s
+  maxSize: 1000
+  cleanupInterval: 60s
+
+rateLimit:
+  enabled: true
+  requestsPerSecond: 50
+  burst: 100
+
+logging:
+  level: info
+  format: json
+  output: stdout
+  fields:
+    - timestamp
+    - level
+    - skill_name
+    - duration
+    - error
+
+metrics:
+  enabled: true
+  endpoint: /metrics
+  interval: 15s
+
+security:
+  inputSanitization: true
+  maxInputSize: 1048576
+  outputMasking:
+    enabled: false
+    patterns:
+      - password
+      - secret
+      - token
+      - api_key

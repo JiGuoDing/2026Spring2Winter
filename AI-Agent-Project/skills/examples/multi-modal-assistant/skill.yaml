@@ -1,0 +1,76 @@
+apiVersion: skill.agent/v1
+kind: Skill
+metadata:
+  name: multi-modal-assistant
+  version: 1.0.0
+  description: 多模态助手技能，支持文本/图片/语音的统一处理与意图路由
+  author: skills-tutorial
+  tags:
+    - assistant
+    - multimodal
+    - orchestration
+    - advanced
+
+spec:
+  type: orchestration
+  input:
+    properties:
+      message:
+        type: string
+        description: 用户输入消息文本
+      modality:
+        type: string
+        enum: [text, image, audio]
+        default: text
+        description: 输入模态
+      image_url:
+        type: string
+        description: 图片URL（当modality为image时）
+      audio_url:
+        type: string
+        description: 语音URL（当modality为audio时）
+      session_id:
+        type: string
+        description: 会话ID，用于上下文管理
+      stream:
+        type: boolean
+        default: false
+        description: 是否启用流式响应
+    required:
+      - message
+      - session_id
+
+  output:
+    properties:
+      response:
+        type: string
+        description: 助手回复
+      intent:
+        type: string
+        description: 识别的意图
+      confidence:
+        type: number
+        description: 意图识别置信度
+      modality:
+        type: string
+        description: 响应模态
+      sub_skills:
+        type: array
+        items:
+          type: string
+        description: 调用的子技能列表
+    required:
+      - response
+      - intent
+
+  config:
+    timeout: 30s
+    maxContextTurns: 10
+    intentThreshold: 0.7
+    supportedIntents:
+      - greeting
+      - question
+      - image_analysis
+      - audio_transcription
+      - code_help
+      - general

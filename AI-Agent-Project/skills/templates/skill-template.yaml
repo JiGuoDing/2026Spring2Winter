@@ -1,0 +1,28 @@
+apiVersion: skill.agent/v1
+kind: Skill
+metadata:
+  name: {{SKILL_NAME}}
+  version: 0.1.0
+  description: {{SKILL_DESCRIPTION}}
+  author: {{AUTHOR}}
+  tags:
+    - {{TAG_1}}
+    - {{TAG_2}}
+
+spec:
+  type: {{SKILL_TYPE}}
+  input:
+    properties:
+      {{INPUT_PROPERTIES}}
+    required:
+      {{REQUIRED_INPUTS}}
+
+  output:
+    properties:
+      {{OUTPUT_PROPERTIES}}
+    required:
+      {{REQUIRED_OUTPUTS}}
+
+  config:
+    timeout: 10s
+    maxRetries: 2

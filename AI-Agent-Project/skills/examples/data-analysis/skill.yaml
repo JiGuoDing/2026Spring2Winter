@@ -1,0 +1,61 @@
+apiVersion: skill.agent/v1
+kind: Skill
+metadata:
+  name: data-analysis
+  version: 1.0.0
+  description: 数据分析技能，支持数据清洗、统计计算和数据管道
+  author: skills-tutorial
+  tags:
+    - data
+    - analysis
+    - statistics
+    - intermediate
+
+spec:
+  type: compute
+  input:
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+        description: 待分析的数据集
+      format:
+        type: string
+        enum: [csv, json]
+        default: json
+        description: 数据格式
+      operations:
+        type: array
+        items:
+          type: string
+          enum: [clean, deduplicate, fill_missing, remove_outliers, stats, correlation]
+        description: 要执行的操作列表
+      column:
+        type: string
+        description: 分析的目标列
+    required:
+      - data
+      - operations
+
+  output:
+    properties:
+      stats:
+        type: object
+        description: 统计结果
+      cleaned_count:
+        type: integer
+        description: 清洗后数据条数
+      operations_applied:
+        type: array
+        items:
+          type: string
+        description: 已执行的操作列表
+    required:
+      - stats
+      - operations_applied
+
+  config:
+    timeout: 30s
+    batchSize: 1000
+    outlierThreshold: 3.0

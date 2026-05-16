@@ -1,0 +1,58 @@
+apiVersion: skill.agent/v1
+kind: Skill
+metadata:
+  name: code-generator
+  version: 1.0.0
+  description: 代码生成技能，支持模板驱动、多语言输出和语法校验
+  author: skills-tutorial
+  tags:
+    - codegen
+    - template
+    - advanced
+
+spec:
+  type: generate
+  input:
+    properties:
+      template_name:
+        type: string
+        description: 模板名称
+      language:
+        type: string
+        enum: [go, python, typescript]
+        default: go
+        description: 目标语言
+      variables:
+        type: object
+        description: 模板变量
+      validate:
+        type: boolean
+        default: true
+        description: 是否校验生成的代码
+    required:
+      - template_name
+      - language
+
+  output:
+    properties:
+      code:
+        type: string
+        description: 生成的代码
+      language:
+        type: string
+        description: 目标语言
+      valid:
+        type: boolean
+        description: 语法校验结果
+      errors:
+        type: array
+        items:
+          type: string
+        description: 校验错误列表
+    required:
+      - code
+      - language
+
+  config:
+    timeout: 15s
+    cacheEnabled: true
