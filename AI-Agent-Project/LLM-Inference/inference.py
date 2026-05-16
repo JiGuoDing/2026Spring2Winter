@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 
 # ---- 项目根目录（脚本所在目录）----
-# PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parent
 # MODELS_DIR = PROJECT_ROOT / "models"
 MODELS_DIR = Path("/media/jgd/EA0AA0DD0AA0A851/models/Qwen3-0.6B")
 
