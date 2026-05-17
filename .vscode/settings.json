@@ -77,5 +77,8 @@
   "terminal.integrated.fontLigatures.enabled": true,
   "editor.fontLigatures": true,
   "python-envs.defaultEnvManager": "ms-python.python:conda",
-  "python-envs.defaultPackageManager": "ms-python.python:conda"
+  "python-envs.defaultPackageManager": "ms-python.python:conda",
+  "protobuf.externalLinter.enabled": true,
+  "protobuf.externalLinter.linter": "buf",
+  "protobuf.externalLinter.bufPath": "c:\\Users\\48520\\AppData\\Roaming\\Code\\User\\globalStorage\\drblury.protobuf-vsc\\bin\\buf.exe"
 }

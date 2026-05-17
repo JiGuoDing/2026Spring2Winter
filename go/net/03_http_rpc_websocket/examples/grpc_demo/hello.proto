@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package demo;
+
+option go_package = "luogu/go/net/03_http_rpc_websocket/examples/grpc_demo;main";
+
+import "google/protobuf/wrappers.proto";
+
+service EchoService {
+  rpc Echo(google.protobuf.StringValue) returns (google.protobuf.StringValue);
+}

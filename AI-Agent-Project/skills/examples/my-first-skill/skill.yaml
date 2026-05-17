@@ -1,0 +1,19 @@
+name: hello-world
+version: 1.0.0
+description: "一个简单的问候技能"
+
+input:
+  type: object
+  properties:
+    name:
+      type: string
+      description: "要问候的用户名"
+  required:
+    - name
+
+output:
+  type: object
+  properties:
+    greeting:
+      type: string
+      description: "生成的问候语"
