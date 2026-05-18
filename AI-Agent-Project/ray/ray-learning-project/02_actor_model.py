@@ -572,6 +572,10 @@ A: 1. 死锁风险：Actor A 等待 Actor B 的返回值，Actor B 同时等待 
    2. Actor 崩溃导致级联失败：一个 Actor 不可用会影响所有依赖它的 Actor
    3. 调试困难：调用链跨多个进程/节点，日志分散
    4. 解决思路：避免环形依赖、使用超时（ray.wait timeout）、添加健康检查机制
+
+   补充：Actor 的容错可以通过 max_restarts 参数实现自动重启。
+   当 Actor 进程崩溃时，Ray 会自动重新执行 __init__ 恢复 Actor（但内存状态丢失）。
+   默认 max_restarts=0（不自动重启），设为 -1 表示无限重启。
 """
 
 print("\n" + "=" * 70)

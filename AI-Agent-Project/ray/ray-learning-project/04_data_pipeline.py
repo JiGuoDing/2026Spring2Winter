@@ -785,21 +785,25 @@ A: 没有内置 Watermark，但有几种替代方案：
 Q20: 如何在 Ray 上实现故障恢复？和 Flink 的 Checkpoint 有什么不同？
 ─────────────────────────────────────────────────────────────
 A: Flink Checkpoint 是框架级别的自动快照：状态、偏移量、算子位置全部一致地保存。
-   Ray 的故障恢复需要自己实现：
-   1. 任务级: max_retries 重试（仅适用于幂等任务）
-   2. Actor 级: max_restarts 重启，但 Actor 内存状态会丢失
+   Ray 提供多层次的容错机制：
+   1. 任务级: max_retries 控制重试次数，默认重试系统级故障（worker 崩溃、节点故障）；
+      设置 retry_exceptions=True 可对应用异常也重试。Ray 还支持基于血缘（lineage）
+      的对象重建 —— 当任务结果丢失时自动重新执行上游任务。
+   2. Actor 级: max_restarts 控制自动重启次数（默认 0 不重启，-1 无限重启）；
+      重启时 __init__ 重新执行，但内存状态丢失。
    3. 应用级: 定期将 Actor 状态序列化到外部存储（类似手动 checkpoint）
-   4. Ray 有实验性的 Ray Serve / Ray Train 提供了更完善的容错
-   总体来说：Flink 的容错是"开箱即用"的，Ray 的容错是需要"手工打造"的。
-   这也是两者设计哲学的差异 —— Flink 是"框架负责容错"，Ray 是"给你工具，
-   你自己决定如何容错"。
+   4. Ray Serve / Ray Train 等高层库提供了更完善的容错封装
+   总体来说：Flink 的容错是"开箱即用"的（checkpoint 覆盖状态+位点），
+   Ray 的容错更灵活但需要按需配置 —— 这也是两者设计哲学的差异：
+   Flink 是"框架负责容错"，Ray 是"给你工具，你自己决定如何容错"。
 
 Q21: Ray 的 Object Store 内存溢出会发生什么？如何避免？
 ─────────────────────────────────────────────────────
 A: 当 Object Store 内存满时，Ray 会将对象溢出到磁盘（/tmp/ray/session_xxx/），
    这会导致后续 ray.get() 显著变慢（磁盘 IO 替代内存访问）。
    避免方法：
-   1. 及时删除不再需要的 ObjectRef: del ref; ray.internal.internal_api.free(ref)
+   1. 让 ObjectRef 的 Python 引用自然超出作用域（del ref），
+      Ray 的分布式引用计数会自动回收不再被引用的对象
    2. 增加 object_store_memory 配额
    3. 用 ray.wait() 流式消费结果，而非一次性 ray.get() 全部
    4. 使用 Actor 代替 Object Store 做状态存储（Actor 状态不占 Object Store）

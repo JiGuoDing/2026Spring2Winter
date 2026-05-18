@@ -53,16 +53,16 @@ print("  第一部分：启动 Ray 集群")
 print("=" * 70)
 
 # ray.init() 初始化 Ray 运行时，关键参数：
-#   - address="auto"  : 自动发现并连接已有集群（类似 Flink 的 -m yarn-cluster 指定地址）
+#   - address="auto"  : 连接已有的 Ray 集群（地址从环境变量 RAY_ADDRESS 读取，
+#                        默认 127.0.0.1:6379）。若无已有集群则抛出 ConnectionError。
+#                        不传 address 参数时才会在本地启动一个新集群。
 #   - ignore_reinit_error=True : 避免重复初始化报错（适合 notebook 场景）
 #   - num_cpus=N       : 限制 Ray 可使用的 CPU 核心数（类似 Flink 的 taskmanager.numberOfTaskSlots）
 #
-# 此处我们在本地启动一个单节点"集群"，方便学习。
+# 此处我们不传 address，在本地启动一个单节点"集群"，方便学习。
 # ray.init(
-#     address="auto",           # 若有已有集群则连接，否则创建本地集群
 #     ignore_reinit_error=True, # 重复调用不抛异常
 #     # 下面两个参数仅在首次创建集群时生效：
-
 #     # num_cpus=4,             # 限制使用 4 个 CPU（Flink 类比: taskmanager.numberOfTaskSlots=4）
 #     # _temp_dir="/tmp/ray",   # 临时目录（日志、对象溢出文件）
 # )
@@ -355,8 +355,11 @@ A: 两者都可以实现分布式执行用户逻辑，但核心差异在于：
       Ray 是"命令式"的 —— 你用 .remote() 显式调用，运行时动态构建 DAG。
    2. 状态管理：Flink 的 map 在 KeyedStream 中自动享有状态后端；
       Ray 的 remote task 是无状态的，状态需要你自己管理（或用 Actor）。
-   3. 容错机制：Flink 通过 checkpoint 自动恢复；Ray 默认没有自动容错，
-      任务失败需要你手动重试（或在任务中实现幂等性）。
+   3. 容错机制：Flink 通过 checkpoint 自动恢复算子状态和消费位点；
+      Ray 提供基于血缘（lineage）的对象重建 —— 当任务结果丢失（如节点故障），
+      Ray 会自动重新执行上游任务来重建对象（受 max_retries 控制）。
+      但 Ray 不保存算子内部状态，有状态容错需要通过 Actor 的 max_restarts
+      或应用层自行实现。
 
 Q2: ray.put() 和 ray.get() 分别在什么场景下使用？
 ──────────────────────────────────────────────────────

@@ -90,8 +90,8 @@ big_data_ref = ray.put(big_data)  # 存入 Object Store
 @ray.remote
 def analyze_list(data_ref: ray.ObjectRef) -> List[dict]:
     """接收 ObjectRef，在需要时才 ray.get() 取数据。"""
-    data = ray.get(data_ref)
-    return [{"index": i, "value": i * 2} for i in data]
+    # data = ray.get(data_ref)
+    return [{"index": i, "value": i * 2} for i in data_ref]
 
 results_via_ref = ray.get(analyze_list.remote(big_data_ref))
 print(f"   方式1（传值）: {len(results_normal)} 条结果")
@@ -380,8 +380,12 @@ done, pending = ray.wait(refs, num_returns=2, timeout=None)
 fastest_results = ray.get(done)
 print(f"最快的 2 个结果: {fastest_results}")
 
-# 取消剩余任务（注意：Ray 没有内置的"取消运行中的任务"功能，
-# 剩余任务会继续执行完毕，只是我们不取结果了）
+# 取消剩余任务
+# Ray 提供了 ray.cancel(ref) API 可以取消排队中或运行中的任务，但有以下限制：
+#   - 对 Actor 任务无效（需用 ray.kill(actor) 强制终止）
+#   - 被取消的任务不会自动重试
+#   - 运行中的任务需要配合 ray.get_runtime_context().is_canceled() 轮询才能响应取消
+# 如果不主动取消，剩余任务会继续执行完毕，只是我们不取结果了
 print(f"剩余 {len(pending)} 个任务将被丢弃（仍在运行但结果不再获取）")
 
 

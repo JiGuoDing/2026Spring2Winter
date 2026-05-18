@@ -46,7 +46,7 @@ print("=" * 70)
 print("  第一部分：为任务/Actor 指定资源需求")
 print("=" * 70)
 
-ray.init(address="auto", ignore_reinit_error=True)
+ray.init()
 
 print(f"\n集群可用资源: {ray.available_resources()}")
 # 输出示例: {'CPU': 8.0, 'memory': 1.6e+10, 'object_store_memory': 7.9e+09}
@@ -88,7 +88,7 @@ print("   light_io_task:     num_cpus=0.1 (最多同时 80 个)")
 
 # 提交任务
 heavy_refs = [heavy_computation.remote(100_000) for _ in range(4)]
-light_refs = [light_io_task.remote(i) for _ in range(5)]
+light_refs = [light_io_task.remote(i) for i in range(5)]
 
 heavy_results = ray.get(heavy_refs)
 light_results = ray.get(light_refs)
@@ -193,7 +193,7 @@ pg = placement_group([{"CPU": 2}, {"CPU": 2}], strategy="PACK")
 # 等待资源就绪（类似 Flink 中等待 slot 分配完成）
 ray.get(pg.ready())
 print(f"\n📦 Placement Group 已就绪:")
-print(f"   状态: {pg.state}")
+print(f"   状态: {pg.bundle_specs}")
 print(f"   {placement_group_table(pg)}")
 
 

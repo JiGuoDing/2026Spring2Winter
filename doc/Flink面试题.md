@@ -1046,6 +1046,225 @@ AsyncDataStream.unorderedWait(
 - Exactly Once 与幂等性：异步请求更偏读模型，若用于写操作必须特别关注重复执行问题。
 - Operator Chain：异步算子通常会打断简单链路，理解算子链有助于分析它对延迟和资源隔离的影响。
 
+### 2.6 Flink 中 SlotSharing 是什么概念？请你具体由浅入深地说明一下。再说说其可能碰到的问题以及可以优化的地方。
+
+Slot Sharing (Slot 共享) 是 Flink 资源管理和任务调度中的一个核心机制，它允许多个算子 (Operator) 共享同一个 Task Slot，从而提高资源利用率。要理解 Slot Sharing，需要先理解 Flink 的资源模型。
+
+#### 一、先理解 Flink 的资源模型
+
+Flink 集群由一个 JobManager 和多个 TaskManager 组成。TaskManager 是真正执行计算的进程，每个 TaskManager 拥有一定数量的 **Task Slot**，Slot 是 TaskManager 中资源分配的最小单位。
+
+```plaintext
+JobManager (1 个)
+    │
+    ├── TaskManager-0 (slots: 3)
+    │   ├── Slot-0
+    │   ├── Slot-1
+    │   └── Slot-2
+    │
+    ├── TaskManager-1 (slots: 3)
+    │   ├── Slot-0
+    │   ├── Slot-1
+    │   └── Slot-2
+    │
+    └── TaskManager-2 (slots: 3)
+        ├── Slot-0
+        ├── Slot-1
+        └── Slot-2
+```
+
+每个 Slot 可以理解为一个"计算容器"，拥有固定的内存和 CPU 资源。一个 Task (算子的一个并行实例) 运行在一个 Slot 中。
+
+#### 二、什么是 Slot Sharing？
+
+**Slot Sharing 是指：同一个 Job 中，不同算子的并行实例可以共享同一个 Task Slot。**
+
+在没有 Slot Sharing 的情况下，每个算子的每个并行实例都需要独占一个 Slot。考虑一个简单的 Pipeline：
+
+```text
+Source (parallelism=4) → Map (parallelism=4) → Sink (parallelism=4)
+```
+
+如果没有 Slot Sharing，需要 4 + 4 + 4 = 12 个 Slot。但实际上，Source、Map、Sink 之间是流水线式执行的 (一条数据从 Source 流到 Map 再流到 Sink)，它们并不是同时在做 CPU 密集计算，因此让它们共享 Slot 是合理的。
+
+有了 Slot Sharing 之后，同一个 Slot 中可以同时运行 Source-0、Map-0、Sink-0，总共只需要 4 个 Slot：
+
+```text
+Slot-0: [Source-0] → [Map-0] → [Sink-0]     # 同一个 Slot 中的算子形成一条链
+Slot-1: [Source-1] → [Map-1] → [Sink-1]
+Slot-2: [Source-2] → [Map-2] → [Sink-2]
+Slot-3: [Source-3] → [Map-3] → [Sink-3]
+```
+
+#### 三、Slot Sharing 的工作原理
+
+##### 1. SlotSharingGroup
+
+Flink 中通过 `SlotSharingGroup` 来控制哪些算子可以共享 Slot。默认情况下，同一个 Job 的所有算子都属于同一个默认的 SlotSharingGroup，即所有算子都可以共享 Slot。
+
+```java
+// 默认行为：所有算子共享 Slot
+DataStream<String> source = env.addSource(...);
+DataStream<Result> result = source.map(...).keyBy(...).sum(...);
+result.addSink(...);
+
+// 以上所有算子 (Source, Map, KeyBy, Sum, Sink) 默认在同一个 SlotSharingGroup 中
+```
+
+也可以手动指定不同的 SlotSharingGroup 来强制隔离：
+
+```java
+// 手动指定 SlotSharingGroup，将算子分组
+source.slotSharingGroup("source-group");      // Source 算子在 "source-group"
+map.slotSharingGroup("compute-group");         // Map 算子在 "compute-group"
+sink.slotSharingGroup("sink-group");           // Sink 算子在 "sink-group"
+
+// 此时三个 group 各自独占 Slot，总共需要 12 个 Slot (4+4+4)
+```
+
+##### 2. Slot Sharing 与 Operator Chain 的关系
+
+Slot Sharing 和 Operator Chain 是两个相关但不同的概念：
+
+- **Slot Sharing**：决定哪些算子**可以**在同一个 Slot 中运行 (资源层面的共享)
+- **Operator Chain**：决定哪些算子**实际**在同一个线程中运行 (执行层面的链接)
+
+在同一个 Slot 中，算子可以通过 Operator Chain 合并到一个线程中执行，也可以各自独立线程执行。Slot Sharing 是 Operator Chain 的前提条件——只有在同一个 Slot 中的算子才有资格被链接。
+
+```text
+Slot-0:
+  ├── 如果被 Chain: [Source-0 → Map-0 → Sink-0] 在一个线程中执行
+  │                  数据通过方法调用传递，无网络开销
+  │
+  └── 如果未被 Chain: [Source-0] ──网络──→ [Map-0] ──网络──→ [Sink-0]
+                      各自独立线程，数据通过 Netty 传输
+```
+
+##### 3. 数据传输的两种模式
+
+Slot 内和 Slot 间的数据传输方式不同：
+
+```plaintext
+同一 Slot 内 (被 Chain 的算子):
+  Source-0 ──(方法调用/内存缓冲)──→ Map-0 ──(方法调用)──→ Sink-0
+  延迟: 微秒级，无序列化/网络开销
+
+不同 Slot 间 (跨 Slot 的算子):
+  Slot-0: [Source-0] ──(Netty)──→ Slot-1: [Map-0] ──(Netty)──→ Slot-2: [Sink-0]
+  延迟: 毫秒级，有序列化/反序列化 + 网络传输
+```
+
+#### 四、Slot Sharing 的优势
+
+| 优势 | 说明 |
+| ---- | ---- |
+| **提高资源利用率** | 多个算子共享 Slot，避免 Slot 空闲浪费 |
+| **减少所需 Slot 数量** | 从 O(算子数 × 并行度) 降到 O(max(并行度)) |
+| **降低网络开销** | 同 Slot 内的算子可通过 Chain 消除网络传输 |
+| **简化部署** | 所需资源更少，集群规模更小 |
+
+#### 五、Slot Sharing 可能遇到的问题
+
+##### 问题一：资源竞争导致性能抖动
+
+当多个算子共享同一个 Slot 时，它们共享该 Slot 的内存和 CPU 资源。如果其中一个算子是 CPU 密集型 (如复杂计算) 或内存密集型 (如大状态)，会挤占同 Slot 中其他算子的资源，导致性能下降。
+
+```text
+Slot-0 中同时运行:
+  [Source-0]        → 正常
+  [HeavyCompute-0]  → CPU 密集，占用 80% CPU
+  [Sink-0]          → 被挤压，延迟飙升
+```
+
+##### 问题二：GC 相互干扰
+
+同一 Slot 中的多个算子运行在同一个 JVM 中，一个算子产生的大量临时对象可能触发 GC，导致同 Slot 中其他算子的处理延迟出现毛刺。
+
+##### 问题三：单点故障影响范围大
+
+如果一个 Slot 所在的 TaskManager 宕机，该 Slot 中所有共享的算子实例都会失败，恢复时间较长。
+
+##### 问题四：资源分配不均
+
+不同算子的资源需求差异很大，但同一个 SlotSharingGroup 中的所有实例获得的资源是相同的。例如 Source 算子通常需要较少资源，而窗口聚合算子需要较多资源，共享 Slot 时无法差异化分配。
+
+#### 六、优化策略
+
+##### 策略一：按资源需求分组 (SlotSharingGroup)
+
+将资源需求相似的算子放在同一个 SlotSharingGroup 中，将资源需求差异大的算子分开：
+
+```java
+// Source 算子资源需求低，放在一起
+source.slotSharingGroup("light");
+
+// 计算算子资源需求高，单独分组
+heavyCompute.slotSharingGroup("heavy");
+
+// Sink 资源需求中等，可与 Source 共享
+sink.slotSharingGroup("light");
+```
+
+##### 策略二：调整 TaskManager 的 Slot 数量
+
+减少每个 TaskManager 的 Slot 数量，可以让每个 Slot 获得更多资源：
+
+```yaml
+# flink-conf.yaml
+taskmanager.numberOfTaskSlots: 2  # 从默认的较多 Slot 减少到 2
+```
+
+##### 策略三：配合 Operator Chain 策略
+
+通过 `disableChaining()` 将资源需求大的算子从链中拆出，使其独占 Slot：
+
+```java
+// 将重计算算子从链中拆出
+DataStream<Result> heavy = input
+    .map(new HeavyComputeFunction())
+    .disableChaining()  // 打断链，独占 Slot
+    .map(new LightFunction());
+```
+
+##### 策略四：使用细粒度资源管理 (Fine-Grained Resource Management)
+
+Flink 1.10+ 引入了细粒度资源管理，允许为每个算子指定独立的 CPU 和内存需求，不再依赖 Slot 粒度的均分：
+
+```java
+// 为算子指定独立资源
+env.slotSharingGroup(
+    new SlotSharingGroup.Builder("heavy-group")
+        .setCpuCores(2.0)
+        .setTaskHeapMemory(MemorySize.ofMebiBytes(512))
+        .build()
+);
+```
+
+##### 策略五：隔离关键路径
+
+对于延迟敏感的关键路径，将其 SlotSharingGroup 与其他算子隔离，确保资源独占：
+
+```java
+// 关键路径独占 Slot
+latencyCriticalSource.slotSharingGroup("critical-path");
+latencyCriticalMap.slotSharingGroup("critical-path");
+// 其他算子共享另一个 group
+otherOperators.slotSharingGroup("batch");
+```
+
+#### 七、面试时可以这样回答
+
+Slot Sharing 是 Flink 资源调度中的核心机制，它允许同一个 Job 中不同算子的并行实例共享同一个 Task Slot。它的本质目的是提高资源利用率——因为流水线式执行的算子之间是交替使用的，不是同时占满 CPU，所以让它们共享 Slot 可以将所需 Slot 数从"所有算子并行度之和"降低到"最大并行度"。默认情况下，同一个 Job 的所有算子都属于同一个 SlotSharingGroup，可以通过 `slotSharingGroup()` 手动分组。Slot Sharing 和 Operator Chain 紧密相关：Slot Sharing 是资源层面的共享，Operator Chain 是执行层面的链接，Chain 以 Slot Sharing 为前提。在实际使用中，Slot Sharing 可能遇到资源竞争、GC 干扰、单点故障影响范围大等问题，优化手段包括按资源需求分组、调整 Slot 数量、配合 Chain 策略、使用细粒度资源管理、以及隔离关键路径。
+
+#### 知识扩展
+
+- Operator Chain：Slot Sharing 的"下一步"，理解 Chain 机制有助于分析同 Slot 中算子的实际执行方式和数据传输开销。
+- TaskManager 与 Slot 配置：Slot 数量的设置直接影响资源分配粒度，与集群部署和资源规划强相关。
+- Fine-Grained Resource Management：Flink 的细粒度资源管理是对 Slot Sharing 粒度过粗问题的根本解决方案，允许按算子维度分配 CPU 和内存。
+- 反压 (Backpressure)：Slot 内算子的资源竞争可能引发反压，理解反压排查与 Slot Sharing 的关系有助于定位性能瓶颈。
+- 算子并行度设置：Slot Sharing 与并行度共同决定实际需要的 Slot 数量，两者需要配合调优。
+- Kubernetes / YARN 部署：在容器化部署中，Slot 对应容器的资源配额，Slot Sharing 策略直接影响容器资源规划和扩缩容策略。
+
 ## 3. State 状态管理
 
 ### 3.1 Flink 中的 Broadcast State 是什么？它在分布式计算中的作用是什么？
