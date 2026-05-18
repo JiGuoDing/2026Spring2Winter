@@ -58,14 +58,15 @@ print("=" * 70)
 #   - num_cpus=N       : 限制 Ray 可使用的 CPU 核心数（类似 Flink 的 taskmanager.numberOfTaskSlots）
 #
 # 此处我们在本地启动一个单节点"集群"，方便学习。
-ray.init(
-    address="auto",           # 若有已有集群则连接，否则创建本地集群
-    ignore_reinit_error=True, # 重复调用不抛异常
-    # 下面两个参数仅在首次创建集群时生效：
+# ray.init(
+#     address="auto",           # 若有已有集群则连接，否则创建本地集群
+#     ignore_reinit_error=True, # 重复调用不抛异常
+#     # 下面两个参数仅在首次创建集群时生效：
 
-    # num_cpus=4,             # 限制使用 4 个 CPU（Flink 类比: taskmanager.numberOfTaskSlots=4）
-    # _temp_dir="/tmp/ray",   # 临时目录（日志、对象溢出文件）
-)
+#     # num_cpus=4,             # 限制使用 4 个 CPU（Flink 类比: taskmanager.numberOfTaskSlots=4）
+#     # _temp_dir="/tmp/ray",   # 临时目录（日志、对象溢出文件）
+# )
+ray.init()
 
 print(f"✅ Ray 已启动")
 print(f"   Ray 版本: {ray.__version__}")
@@ -207,13 +208,18 @@ def read_shared_data(shared_data_ref: ray.ObjectRef) -> dict:
     """从 Object Store 读取共享数据并做处理。"""
     # 注意：这里需要 ray.get() 来解引用，但这不会产生网络拷贝
     # 如果任务和被引用的对象在同一节点，共享内存直接访问（零拷贝）
-    data = ray.get(shared_data_ref)
+    # ! 添加以下这句会报错，因为 shared_data_ref 已经被自动解引用为了真实 data 对象，而不再是 ObjectRef
+    # data = ray.get(shared_data_ref)
     return {
         "processor": os.getpid(),
-        "original": data,
-        "heat_index": data["temperature"] * data["humidity"],  # 一个假的计算
+        "original": shared_data_ref,
+        "heat_index": shared_data_ref["temperature"] * shared_data_ref["humidity"],  # 一个假的计算
+        "type": type(shared_data_ref), # 查看 shared_data_ref 的类型
+        # ! 发现输出为 dict，说明 shared_data_ref 被自动解引用为真实 data 对象了
     }
 
+# ! Ray 会自动把传给远程函数的 ObjectRef 解引用，例如这里的 data_ref 传给远程函数 read_shared_data 时，会自动将 data_ref 解引用为真实 data 对象
+# ! 也就是说 read_shared_data(data_ref) 收到的的不是 ObjectRef，而是 data_ref 指向的真实对象
 result2 = ray.get(read_shared_data.remote(data_ref))
 print(f"   ✅ 远程任务从 Object Store 读取到数据: {result2}")
 
@@ -251,10 +257,10 @@ def parse_logs(raw_logs_ref: ray.ObjectRef) -> list[dict]:
     """阶段2：解析日志，提取结构化字段。
     它接收阶段1的 ObjectRef，Ray 自动建立依赖关系。
     """
-    raw_logs = ray.get(raw_logs_ref)  # 等待阶段1完成
-    print(f"  [阶段2] 解析 {len(raw_logs)} 条日志... (进程 {os.getpid()})")
+    # raw_logs = ray.get(raw_logs_ref)  # 等待阶段1完成
+    print(f"  [阶段2] 解析 {len(raw_logs_ref)} 条日志... (进程 {os.getpid()})")
     parsed = []
-    for log in raw_logs:
+    for log in raw_logs_ref:
         parts = log.split()
         parsed.append({
             "source":  parts[0].strip("[]"),
@@ -268,18 +274,21 @@ def parse_logs(raw_logs_ref: ray.ObjectRef) -> list[dict]:
 @ray.remote
 def generate_report(parsed_logs_ref: ray.ObjectRef) -> str:
     """阶段3：根据解析结果生成报告。"""
-    logs = ray.get(parsed_logs_ref)
-    print(f"  [阶段3] 生成报告，共 {len(logs)} 条... (进程 {os.getpid()})")
+    # logs = ray.get(parsed_logs_ref)
+    print(f"  [阶段3] 生成报告，共 {len(parsed_logs_ref)} 条... (进程 {os.getpid()})")
     levels = {}
-    for log in logs:
+    for log in parsed_logs_ref:
         levels[log["level"]] = levels.get(log["level"], 0) + 1
-    return f"📊 报告: 日志总数={len(logs)}, 级别分布={levels}"
+    return f"📊 报告: 日志总数={len(parsed_logs_ref)}, 级别分布={levels}"
 
 
 # 构建 DAG（通过传递 ObjectRef 隐式建立依赖）
 print("\n构建任务 DAG:")
+# 返回一个指向字符串列表的 ObjectRef
 raw_ref   = fetch_raw_logs.remote("app-server-01")     # 阶段1
+# 返回一个指向字典列表的 ObjectRef
 parsed_ref = parse_logs.remote(raw_ref)                  # 阶段2 ← 依赖阶段1
+# 返回一个指向字符串的 ObjectRef
 report    = ray.get(generate_report.remote(parsed_ref))  # 阶段3 ← 依赖阶段2
 print(f"\n{report}")
 

@@ -47,7 +47,7 @@ print("=" * 70)
 print("  第一部分：远程任务启动方式对比")
 print("=" * 70)
 
-ray.init(address="auto", ignore_reinit_error=True)
+ray.init()
 
 
 # --- 远程任务参数传递机制 ---
