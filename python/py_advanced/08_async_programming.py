@@ -49,6 +49,9 @@ class AsyncDatabasePool:
         self._available = pool_size
         self._name = "DBPool"
 
+    # * "AsyncDatabasePool" 是类型注解，表示 __aenter__ 方法返回的是 AsyncDatabasePool 类型的实例
+    # * "" 语法是前向引用，用于在类定义时引用类本身，Python 会将其当作 字符串 延迟解析，等到类定义完成后才去查找这个类型
+    # * 该方法配合 async with 语句使用，用于在异步上下文管理器中初始化资源并返回资源实例
     async def __aenter__(self) -> "AsyncDatabasePool":
         print(f"  [{self._name}] 初始化连接池({self.pool_size}个连接)")
         await asyncio.sleep(0.2)  # 模拟连接建立
@@ -100,7 +103,6 @@ class FetchResult:
     data: str
     elapsed: float
 
-
 async def fetch_with_timing(url: str, delay: float) -> FetchResult:
     """带计时的数据获取"""
     start = time.monotonic()
@@ -112,15 +114,23 @@ async def fetch_with_timing(url: str, delay: float) -> FetchResult:
 async def sequential_fetch(urls: list[str]) -> list[FetchResult]:
     """串行获取：一个接一个"""
     results = []
+    # for url in urls:
+    #     result = await fetch_with_timing(url, 0.3)
+    #     results.append(result)
+    # return results
+    
+    # * 以下为并行获取，效果与下面的 concurrent_fetch 相同
     for url in urls:
-        result = await fetch_with_timing(url, 0.3)
+        # ! 直接调用 fetch_with_timing 并不会执行函数体，而是返回一个协程对象，需要使用 await 关键字等待其完成
+        # * 循环只是把协程对象收集到列表中，最后用 gather 同时执行
+        result = fetch_with_timing(url, 0.3)
         results.append(result)
-    return results
-
+    return await asyncio.gather(*results)
 
 async def concurrent_fetch(urls: list[str]) -> list[FetchResult]:
     """并发获取：同时发起所有请求"""
     tasks = [fetch_with_timing(url, 0.3) for url in urls]
+    # * *tasks 表示将 tasks 列表展开，作为参数传递，等价于 asyncio.gather(task1, task2, task3)
     return await asyncio.gather(*tasks)
 
 
@@ -128,7 +138,7 @@ async def limited_concurrent_fetch(
     urls: list[str], max_concurrent: int = 3
 ) -> list[FetchResult]:
     """限流并发：使用信号量控制并发数"""
-    semaphore = asyncio.Semaphore(max_concurrent)
+    semaphore = asyncio.Semaphore(value=max_concurrent)
 
     async def limited_fetch(url: str) -> FetchResult:
         async with semaphore:
