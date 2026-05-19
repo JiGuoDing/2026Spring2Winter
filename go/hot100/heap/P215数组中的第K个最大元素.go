@@ -9,21 +9,30 @@ package heap
 // MinHeap 最小堆结构体
 type MinHeap struct {
 	data []int
-	size int
 }
 
 // NewMinHeap 创建一个空的最小堆
 func NewMinHeap() *MinHeap {
-	return &MinHeap{data: []int{}, size: 0}
+	return &MinHeap{
+		data: []int{},
+	}
 }
 
 // Len 返回堆的大小
 func (h *MinHeap) Len() int {
-	return h.size
+	return len(h.data)
 }
 
-// Top 返回堆顶元素（最小值），不删除
+// Empty 判断堆是否为空
+func (h *MinHeap) Empty() bool {
+	return len(h.data) == 0
+}
+
+// Top 返回堆顶元素，也就是最小值，不删除
 func (h *MinHeap) Top() int {
+	if h.Empty() {
+		panic("MinHeap.Top: empty heap")
+	}
 	return h.data[0]
 }
 
@@ -31,81 +40,112 @@ func (h *MinHeap) Top() int {
 // 步骤：追加到末尾 -> 上浮到合适位置
 func (h *MinHeap) Push(val int) {
 	h.data = append(h.data, val)
-	h.size++
-	h.siftUp(h.size - 1) // 对最后一个元素执行上浮
+	h.siftUp(len(h.data) - 1)
 }
 
-// Pop 移除并返回堆顶元素（最小值）
+// Pop 移除并返回堆顶元素，也就是最小值
 // 步骤：记录堆顶 -> 末尾元素移到堆顶 -> 下沉到合适位置
 func (h *MinHeap) Pop() int {
-	top := h.data[0]
-	h.size--
-	if h.size > 0 {
-		// 将最后一个元素移到堆顶
-		h.data[0] = h.data[h.size]
-		h.data = h.data[:h.size]
-		h.siftDown(0) // 对堆顶元素执行下沉
-	} else {
-		h.data = h.data[:0]
+	if h.Empty() {
+		panic("MinHeap.Pop: empty heap")
 	}
+
+	top := h.data[0]
+	last := h.data[len(h.data)-1]
+
+	// 删除最后一个元素
+	h.data = h.data[:len(h.data)-1]
+
+	// 如果删除后堆不为空，把最后一个元素放到堆顶并下沉
+	if !h.Empty() {
+		h.data[0] = last
+		h.siftDown(0)
+	}
+
 	return top
 }
 
+// ReplaceTop 替换堆顶元素，并重新调整堆
+// 返回被替换掉的旧堆顶
+func (h *MinHeap) ReplaceTop(val int) int {
+	if h.Empty() {
+		panic("MinHeap.ReplaceTop: empty heap")
+	}
+
+	oldTop := h.data[0]
+	h.data[0] = val
+	h.siftDown(0)
+
+	return oldTop
+}
+
 // siftUp 上浮操作：将索引 i 处的元素向上移动到正确位置
-// 当前节点 < 父节点 时，交换（维护最小堆性质）
-//
-//	    1
-//	   / \
-//	  3   2
-//	 /
-//	0  <- 插入了 0，需要上浮
-//
-// 上浮过程：0<3 交换 -> 0<1 交换 -> 到达根节点，停止
 func (h *MinHeap) siftUp(i int) {
 	for i > 0 {
-		parent := (i - 1) / 2 // 父节点索引
-		if h.data[i] < h.data[parent] {
-			// 当前节点比父节点小，交换
-			h.data[i], h.data[parent] = h.data[parent], h.data[i]
-			i = parent // 继续向上检查
-		} else {
-			break // 已满足堆性质，停止
+		parent := (i - 1) / 2
+
+		// 如果当前节点 >= 父节点，说明已经满足最小堆性质
+		if h.data[i] >= h.data[parent] {
+			break
 		}
+
+		// 当前节点比父节点小，交换
+		h.data[i], h.data[parent] = h.data[parent], h.data[i]
+		i = parent
 	}
 }
 
 // siftDown 下沉操作：将索引 i 处的元素向下移动到正确位置
-// 当前节点 > 子节点中的最小值 时，交换（维护最小堆性质）
-//
-//	    9           <- 堆顶被替换为 9，需要下沉
-//	   / \
-//	  3   2
-//	 / \
-//	5   4
-//
-// 下沉过程：9>min(3,2)=2，与2交换 -> 9>min(?,?)...直到叶子
 func (h *MinHeap) siftDown(i int) {
-	for {
-		smallest := i    // 假设当前节点最小
-		left := 2*i + 1  // 左子节点索引
-		right := 2*i + 2 // 右子节点索引
+	n := len(h.data)
 
-		// 找左、右、当前 三者中的最小值
-		if left < h.size && h.data[left] < h.data[smallest] {
+	for {
+		smallest := i
+		left := 2*i + 1
+		right := 2*i + 2
+
+		if left < n && h.data[left] < h.data[smallest] {
 			smallest = left
 		}
-		if right < h.size && h.data[right] < h.data[smallest] {
+
+		if right < n && h.data[right] < h.data[smallest] {
 			smallest = right
 		}
 
+		// 如果当前节点已经比左右孩子都小，停止
 		if smallest == i {
-			break // 当前节点已是最小，停止下沉
+			break
 		}
 
-		// 与最小子节点交换
 		h.data[i], h.data[smallest] = h.data[smallest], h.data[i]
-		i = smallest // 继续向下检查
+		i = smallest
 	}
+}
+
+// FindKthLargest 找数组中第 k 大的元素
+func FindKthLargest(nums []int, k int) int {
+	if k <= 0 || k > len(nums) {
+		panic("invalid k")
+	}
+
+	minHeap := NewMinHeap()
+
+	for _, num := range nums {
+		// 堆大小不足 k，直接入堆
+		if minHeap.Len() < k {
+			minHeap.Push(num)
+			continue
+		}
+
+		// 如果当前元素比堆顶大，说明它应该进入前 k 大
+		if num > minHeap.Top() {
+			minHeap.ReplaceTop(num)
+		}
+	}
+
+	// 小顶堆中保存的是最大的 k 个元素
+	// 堆顶就是这 k 个元素中最小的，也就是第 k 大
+	return minHeap.Top()
 }
 
 // findKthLargestByHeap 使用最小堆找第 k 大元素
