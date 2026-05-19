@@ -24,13 +24,24 @@ def timer(func):
     @functools.wraps(func)  # 保留原函数的元信息（名称、文档等）
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
+        # 执行原函数并获取结果值
+        # * *args 表示将元组展开，作为参数传递给 func
+        # * **kwargs 表示将字典展开，作为参数传递给 func
+        # * 这两个作为“万能中转站”，把调用时传入的所有参数原封不动地转发给原函数
         result = func(*args, **kwargs)
         elapsed = time.perf_counter() - start
         logger.info(f"{func.__name__} 执行耗时: {elapsed:.4f}秒")
         return result
     return wrapper
 
+# ! @ 语法的调用：
+'''
+@retry(max_attempts=3, delay=0.5)
+def foo(): ...
 
+等价于 foo = retry(max_attempts=3, delay=0.5)(foo)
+先接受一次参数，转为装饰器函数，再调用装饰器函数，返回增强后的函数
+'''
 def retry(max_attempts: int = 3, delay: float = 1.0):
     """重试装饰器（带参数）：函数失败时自动重试指定次数
 
