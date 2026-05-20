@@ -114,6 +114,7 @@ async def fetch_with_timing(url: str, delay: float) -> FetchResult:
 async def sequential_fetch(urls: list[str]) -> list[FetchResult]:
     """串行获取：一个接一个"""
     results = []
+    # * 以下为异步串行获取，效果与同步串行获取相同
     # for url in urls:
     #     result = await fetch_with_timing(url, 0.3)
     #     results.append(result)
