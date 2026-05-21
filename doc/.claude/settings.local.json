@@ -6,7 +6,8 @@
       "Bash(gh repo *)",
       "Bash(gh api *)",
       "WebFetch(domain:docs.openclaw.ai)",
-      "WebFetch(domain:deepwiki.com)"
+      "WebFetch(domain:deepwiki.com)",
+      "Skill(generate-knowledge)"
     ]
   }
 }
