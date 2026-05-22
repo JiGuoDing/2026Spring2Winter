@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	interviewIssue.NonStrictlyIncreasingArray()
+	interviewIssue.TestAddTwoLists()
 }

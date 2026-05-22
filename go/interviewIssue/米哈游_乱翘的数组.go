@@ -38,7 +38,7 @@ func DisorderedArray() {
 
 	// 状态更新
 	// for i := 3; i < n; i++ {
-	// 	// 状态转移：dp[i] = max(上一个比 i 小的同时比该数前一个数也小的数的 dp 值, 上一个比 i 大的同时比该数的前一个数也大的数的 dp 值) 加 1
+	// 状态转移：dp[i] = max(上一个比 i 小的同时比该数前一个数也小的数的 dp 值, 上一个比 i 大的同时比该数的前一个数也大的数的 dp 值) 加 1
 	// 	var lastLegalLessIndex, lastLegalGreaterIndex int
 	// 	for j := i - 1; j >= 2; j-- {
 	// 		if A[j] < A[i] {
