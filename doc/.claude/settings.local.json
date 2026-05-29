@@ -23,7 +23,10 @@
       "Bash(curl -s \"https://api.github.com/repos/NousResearch/hermes-agent/contents/pyproject.toml\")",
       "Bash(curl -s \"https://api.github.com/search/repositories?q=openclaw+agent+framework&sort=stars&order=desc&per_page=5\")",
       "Bash(curl -s \"https://api.github.com/search/repositories?q=openclaw+in:name&sort=stars&order=desc&per_page=5\")",
-      "Bash(curl -s \"https://raw.githubusercontent.com/NousResearch/hermes-agent/main/AGENTS.md\")"
+      "Bash(curl -s \"https://raw.githubusercontent.com/NousResearch/hermes-agent/main/AGENTS.md\")",
+      "Bash(grep -E \"^#{1,4} \")",
+      "Bash(awk '/^## [0-9]/{print NR\": \"$0}' /home/jgd/workplace/2026Spring2Winter/doc/大模型面试题.md')",
+      "Bash(grep -E \"^#{1,3} \")"
     ]
   }
 }
