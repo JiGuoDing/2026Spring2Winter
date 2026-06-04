@@ -16,7 +16,7 @@ USE mysql_tutorial;
 -- 8.0 窗口函数 vs 聚合函数：核心区别
 -- ---------------------------------------------------
 -- 聚合函数（GROUP BY）：将多行折叠为一行，丢失明细
--- 窗口函数（OVER）：保留每行明细，同时计算聚合值
+-- 窗口函数（OVER）：保留每行明细，同时计算聚合值，会在每一行上附加一个“计算窗口”的结果，窗口函数保留所有行，同时在每一行旁边显示该行所属组的聚合值
 
 -- 聚合函数：只能看到每类一个总数
 SELECT category_id, AVG(price) AS 均价 FROM products
@@ -27,7 +27,9 @@ SELECT
     name,
     category_id,
     price,
+    -- 使用窗口函数计算每个品类内的平均价格
     AVG(price) OVER (PARTITION BY category_id) AS 本类均价,
+    -- * 这里不能直接用本类均价代替表达式，因为在 SELECT 阶段，各列表达式是同时计算的，别名在此时还不可见
     price - AVG(price) OVER (PARTITION BY category_id) AS 与均价差值
 FROM products
 WHERE category_id IS NOT NULL
@@ -49,24 +51,24 @@ LIMIT 10;
 -- ROW_NUMBER()：唯一行号（并列也递增 1,2,3,4...）
 SELECT
     ROW_NUMBER() OVER (ORDER BY price DESC) AS 排名,
-    name,
-    price
+    name as 商品名,
+    price as 售价
 FROM products
 LIMIT 10;
 
 -- RANK()：有间隔排名（同值同排名，下一名跳号 1,1,3...）
 SELECT
     RANK() OVER (ORDER BY price DESC) AS 排名,
-    name,
-    price
+    name as 商品名,
+    price as 售价
 FROM products
 LIMIT 10;
 
 -- DENSE_RANK()：无间隔排名（同值同排名，下一名不跳号 1,1,2...）
 SELECT
     DENSE_RANK() OVER (ORDER BY price DESC) AS 排名,
-    name,
-    price
+    name as 商品名,
+    price as 售价
 FROM products
 LIMIT 10;
 
@@ -112,6 +114,7 @@ SELECT
     customer_id,
     order_date,
     total_amount,
+    -- * LAG(字段, offset=1, default=NULL) OVER (PARTITION BY ... ORDER BY ...)
     LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date) AS prev_amount,
     ROUND(
         (total_amount - LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date))
@@ -122,6 +125,8 @@ FROM orders
 WHERE total_amount > 0
 ORDER BY customer_id, order_date
 LIMIT 20;
+
+select customer_id, order_date, total_amount, LAG(total_amount, 1) over (partition by customer_id order by order_date) as prev_amount, round((total_amount - LAG(total_amount, 1) over (partition by customer_id order by order_date)) / LAG(total_amount, 1) over (partition by customer_id order by order_date) * 100, 2) as 环比增长率 from orders where total_amount > 0 order by customer_id, order_date LIMIT 20;
 
 -- LEAD：查下一单信息
 SELECT
@@ -194,6 +199,8 @@ SELECT
 FROM orders
 ORDER BY customer_id, order_date
 LIMIT 20;
+
+select customer_id, order_date, total_amount, sum(total_amount) over (partition by customer_id order by order_date rows between unbounded preceding and current row) as 客户累计消费 from orders order by customer_id, order_date LIMIT 20;
 
 -- 移动平均（最近3笔订单的平均金额）
 SELECT

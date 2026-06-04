@@ -145,6 +145,8 @@ FROM customers c
 LEFT JOIN orders o ON c.id = o.customer_id
 WHERE o.id IS NULL;
 
+select c.id, c.name, c.register_date from customers c left join orders o on c.id = o.customer_id where o.id is null;
+
 -- -------------------------------------------------------
 -- 题17：查询消费总额 TOP 5 的客户姓名和消费总额
 -- -------------------------------------------------------
@@ -154,6 +156,8 @@ JOIN orders o ON c.id = o.customer_id
 GROUP BY c.id, c.name
 ORDER BY 总消费 DESC
 LIMIT 5;
+
+select c.name, sum(o.total_amount) as 总消费 from customers as c join orders as o on o.customer_id = c.id group by c.id, c.name order by 总消费 desc limit 5;
 
 -- -------------------------------------------------------
 -- 题18：查询每个分类价格最高的商品（关联子查询）
@@ -178,6 +182,8 @@ JOIN products p ON oi.product_id = p.id
 WHERE p.name IN ('华为 Mate 70 Pro', '小米 15 Ultra')
 GROUP BY c.id, c.name
 HAVING COUNT(DISTINCT p.id) = 2;
+
+
 
 -- -------------------------------------------------------
 -- 题20：用窗口函数查每个客户消费金额最高的订单

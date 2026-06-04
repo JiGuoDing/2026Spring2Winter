@@ -189,14 +189,26 @@ select name as 客户姓名, register_date as 注册日期 from customers where 
 -- 题6：查询价格最高的 10 件商品，按价格降序排列
 -- 你的代码：
 
+select * from products order by price desc limit 10;
+
 
 -- 题7：查询库存不为 NULL 的商品，按库存升序，显示第 6~10 名（即第2页，每页5条）
 -- 你的代码：
+
+-- 这两条 SQL 语句的执行结果完全相同，都返回按 stock 升序排列后第 6~10 行的记录。
+-- 原因：
+--   LIMIT 5 OFFSET 5：这是标准 SQL 语法 (MySQL、PostgreSQL、SQLite 等均支持)。LIMIT 5 表示返回 5 条记录，OFFSET 5 表示跳过前 5 条 → 最终返回第 6~10 行。
+--   LIMIT 5, 5     ：这是 MySQL 专属的简写语法，等价于 LIMIT 5 OFFSET 5。第一个参数是偏移量 (跳过 5 条)，第二个参数是返回行数 (最多 5 条) → 最终也返回第 6~10 行。
+--   两者仅在语法风格上有区别：OFFSET 写法是 SQL 标准，跨数据库可移植；逗号写法是 MySQL 方言，其他数据库不认。
+select * from products where stock is not NULL order by stock asc LIMIT 5 offset 5;
+
+select * from products where stock is not null order by stock asc limit 5, 5;
 
 
 -- 题8：查询供应商评分为 NULL 的供应商（IS NULL）
 -- 你的代码：
 
+select * from suppliers where rating is null;
 
 -- =====================================================
 -- 第三部分：面试技巧

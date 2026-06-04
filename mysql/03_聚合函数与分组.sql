@@ -22,14 +22,16 @@ USE mysql_tutorial;
 SELECT COUNT(*)   AS 总商品数 FROM products;
 SELECT COUNT(description) AS 有描述的商品数 FROM products;  -- NULL不计数
 SELECT COUNT(DISTINCT city) AS 客户分布城市数 FROM customers;
+select count(distinct city) as 客户分布城市数 from customers;
 
 -- SUM：求和（忽略NULL）
 SELECT SUM(total_amount) AS 总销售额 FROM orders;
 SELECT SUM(stock) AS 总库存 FROM products;
 
 -- AVG：平均值
-SELECT AVG(price)  AS 平均价格 FROM products;
+SELECT AVG(price) AS 平均价格 FROM products;
 SELECT ROUND(AVG(price), 2) AS 平均价格 FROM products;  -- 保留2位小数
+select round(avg(price), 2) as 平均价格 from products;
 
 -- MAX / MIN：最大/最小值
 SELECT MAX(price) AS 最贵, MIN(price) AS 最便宜 FROM products;
@@ -49,6 +51,8 @@ GROUP BY city
 ORDER BY 客户数 DESC
 LIMIT 5;
 
+select city, count(*) as 客户数 from customers group by city order by 客户数 asc limit 7;
+
 -- 每个分类的商品数和平均价格
 SELECT
     category_id,
@@ -67,11 +71,13 @@ FROM customers
 GROUP BY city, gender
 ORDER BY city, gender;
 
+select city as 城市, gender as 性别, count(*) as 人数 from customers group by city, gender order by 人数 asc;
+
 -- ---------------------------------------------------
 -- 3.3 HAVING vs WHERE ⭐ 面试必考！
 -- ---------------------------------------------------
--- WHERE：在分组前过滤行（原始数据过滤）
--- HAVING：在分组后过滤组（聚合结果过滤）
+-- * WHERE：在分组前过滤行（原始数据过滤）
+-- * HAVING：在分组后过滤组（聚合结果过滤）
 
 -- SQL 执行顺序（核心！）：
 -- FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
@@ -90,6 +96,8 @@ GROUP BY category_id             -- 分组
 HAVING COUNT(*) >= 3             -- 后过滤：商品数>=3的分类
 ORDER BY 均价 DESC;
 
+select category_id, count(*) as 商品数, round(avg(price), 2) as 均价 from products where category_id is not null group by category_id having count(*) >= 3 order by 均价 desc;
+
 -- WHERE 和 HAVING 可以同时存在（各司其职）
 SELECT
     status,
@@ -98,7 +106,7 @@ SELECT
 FROM orders
 WHERE order_date >= '2024-01-01'             -- 先过滤行：只要2024年的
 GROUP BY status                                -- 分组
-HAVING SUM(total_amount) > 10000              -- 后过滤组：总额>10000
+HAVING 总额 > 10000              -- 后过滤组：总额>10000
 ORDER BY 总额 DESC;
 
 -- ---------------------------------------------------
@@ -120,6 +128,8 @@ SELECT
 FROM customers
 GROUP BY city, gender WITH ROLLUP;
 
+select COALESCE(city, '所有城市') as 城市, COALESCE(gender, '所有性别') as 性别, count(*) as 人数 from customers group by city, gender with ROLLUP;
+
 -- ---------------------------------------------------
 -- 3.5 GROUP_CONCAT — 组内拼接（MySQL 独有）
 -- ---------------------------------------------------
@@ -134,6 +144,8 @@ GROUP BY city
 HAVING COUNT(*) >= 5
 ORDER BY 人数 DESC;
 
+select city, count(*) as 人数, GROUP_CONCAT(name order by name SEPARATOR ' + ') as 客户名单 from customers group by city having count(*) >= 5 order by 人数 asc;
+
 -- =====================================================
 -- 第二部分：练习题
 -- =====================================================
@@ -141,22 +153,29 @@ ORDER BY 人数 DESC;
 -- 题1：统计 products 表的总行数、有描述的行数（description IS NOT NULL）
 -- 你的代码：
 
+SELECT COUNT(*) AS 总行数, COUNT(description) AS 有描述行数 FROM products;
 
 -- 题2：查询每个供应商（supplier_id）供应的商品数，按商品数降序排列
 -- 你的代码：
 
+select supplier_id as 供应商编号, count(*) as 商品数 from products where supplier_id is not null group by supplier_id order by 商品数 desc;
 
 -- 题3：查询每个商品分类的平均价格，只显示均价 > 500 的分类
 -- 你的代码：
 
+select category_id as 商品分类编号, avg(price) as 均价 from products where category_id is not null group by category_id HAVING 均价 > 500 order by 均价 asc;
 
 -- 题4：查询 2024 年每个月的订单数和总销售额（提示：用 MONTH(order_date) 或 DATE_FORMAT）
 -- 你的代码：
 
+select date_format(order_date, '%Y-%m') as 月份, count(*) as 订单数, sum(total_amount) as 总销售额 from orders where order_date >= '2024-01-01' and order_date <= '2024-12-31' group by date_format(order_date, '%Y-%m') order by 月份 asc;
+
+select * from orders order by order_date asc;
 
 -- 题5：查询客户数 >= 5 的城市，按客户数降序（用 HAVING 过滤）
 -- 你的代码：
 
+select city as 城市, count(*) as 客户数 from customers group by city having count(*) >= 5 order by 客户数 desc;
 
 -- 题6：查询每个订单状态（status）的订单数和总金额
 -- 你的代码：
