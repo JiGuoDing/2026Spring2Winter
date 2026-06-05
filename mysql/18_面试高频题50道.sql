@@ -183,7 +183,7 @@ WHERE p.name IN ('华为 Mate 70 Pro', '小米 15 Ultra')
 GROUP BY c.id, c.name
 HAVING COUNT(DISTINCT p.id) = 2;
 
-
+select c.name as 用户名 from customers c join orders o on c.id = o.customer_id join order_items oi on oi.order_id = o.id join products p on p.id = oi.product_id where p.name in ('华为 Mate 70 Pro', '小米 15 Ultra') group by c.id, c.name having count(distinct p.id) = 2;
 
 -- -------------------------------------------------------
 -- 题20：用窗口函数查每个客户消费金额最高的订单
