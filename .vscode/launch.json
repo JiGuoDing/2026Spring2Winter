@@ -1,15 +1,15 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "C/C++ Runner: Debug Session",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "args": [],
-      "stopAtEntry": false,
-      "console": "externalTerminal",
-      "cwd": "c:/workplace/learn-rust/cxx",
-      "program": "c:/workplace/learn-rust/cxx/build/Debug/outDebug"
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C/C++ Runner: Debug Session",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "console": "externalTerminal",
+            "cwd": "c:/workplace/learn-rust/cxx",
+            "program": "c:/workplace/learn-rust/cxx/build/Debug/outDebug"
+        }
+    ]
 }
