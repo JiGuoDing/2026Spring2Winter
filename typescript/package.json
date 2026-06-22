@@ -1,0 +1,26 @@
+{
+  "name": "typescript-beginner-tutorial",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TypeScript 入门教程项目：文档、示例、练习和 Todo CLI 实战。",
+  "scripts": {
+    "dev": "tsx src/01_getting_started.ts",
+    "check": "tsc --noEmit",
+    "build": "tsc",
+    "start": "node dist/01_getting_started.js",
+    "todo": "tsx src/todo-cli/index.ts",
+    "example:01": "tsx src/01_getting_started.ts",
+    "example:02": "tsx src/02_basic_types.ts",
+    "example:03": "tsx src/03_functions.ts",
+    "example:04": "tsx src/04_objects_interfaces.ts",
+    "example:05": "tsx src/05_unions_narrowing.ts",
+    "example:06": "tsx src/06_generics.ts",
+    "example:07": "tsx src/07_classes.ts",
+    "example:08": "tsx src/08_modules_tooling.ts"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}
