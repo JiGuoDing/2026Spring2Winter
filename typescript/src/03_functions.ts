@@ -1,3 +1,5 @@
+import { printChapter, printStep, printTip, printValue } from "./example-utils";
+
 function formatPrice(amount: number, currency = "CNY"): string {
   return `${currency} ${amount.toFixed(2)}`;
 }
@@ -26,11 +28,22 @@ function normalize(input: string | string[]): string | string[] {
   return input.trim().toLowerCase();
 }
 
-console.log(formatPrice(19.9));
-console.log(joinNames("Ada"));
-console.log(sum(1, 2, 3));
-console.log(countText("typescript"));
-console.log(mapValues([1, 2, 3], (value) => value * 2));
-console.log(normalize(["  TS ", " Node "]));
+printChapter("03 函数类型");
+
+printStep("参数类型、返回值类型和默认参数");
+printValue("formatPrice(19.9)", formatPrice(19.9));
+printValue("formatPrice(19.9, \"USD\")", formatPrice(19.9, "USD"));
+
+printStep("可选参数和剩余参数");
+printValue("joinNames(\"Ada\")", joinNames("Ada"));
+printValue("joinNames(\"Ada\", \"Lovelace\")", joinNames("Ada", "Lovelace"));
+printValue("sum(1, 2, 3)", sum(1, 2, 3));
+
+printStep("函数类型、回调和重载");
+printValue("countText(\"typescript\")", countText("typescript"));
+printValue("mapValues([1, 2, 3], value => value * 2)", mapValues([1, 2, 3], (value) => value * 2));
+printValue("normalize(\"  TS \")", normalize("  TS "));
+printValue("normalize([\"  TS \", \" Node \"])", normalize(["  TS ", " Node "]));
+printTip("函数重载让调用方看到更精确的输入输出关系。");
 
 export {};

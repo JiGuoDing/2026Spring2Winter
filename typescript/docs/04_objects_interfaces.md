@@ -27,6 +27,12 @@ interface User {
 }
 ```
 
+接口里的属性可以细分：
+
+- `readonly id: string`：对象创建后不能重新赋值。
+- `email?: string`：可选属性，可以存在，也可以不存在。
+- `metadata: Record<string, string>`：索引结构，适合表达一组字符串键值对。
+
 经验规则：
 
 - 对象模型优先使用 `interface`。
@@ -40,6 +46,14 @@ interface User {
 npm run example:04
 ```
 
+也可以运行全部章节：
+
+```bash
+npm run example
+```
+
+本章输出会展示一个 `User` 对象和一个 `PageResult<Product>` 分页对象。重点观察接口如何约束对象字段，以及泛型分页类型如何复用在不同业务模型上。
+
 ## 常见错误
 
 错误示例：
@@ -49,6 +63,14 @@ const user: User = { id: "u_001" };
 ```
 
 如果 `name` 不是可选属性，创建对象时必须提供。TypeScript 会帮助你发现缺字段问题。
+
+只读属性也只能在创建对象时赋值：
+
+```ts
+user.id = "u_002";
+```
+
+上面代码会报错，因为 `id` 被声明为 `readonly`。
 
 ## 练习题
 

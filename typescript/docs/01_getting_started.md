@@ -15,12 +15,14 @@ TypeScript 是 JavaScript 的超集。你写的 TypeScript 最终会被编译成
 ```bash
 npm install
 npm run dev
+npm run example
 npm run check
 ```
 
 - `tsx`：直接运行 TypeScript 文件。
 - `tsc --noEmit`：只检查类型，不生成编译产物。
 - `tsc`：将 `src/` 编译到 `dist/`。
+- `npm run example`：按顺序运行 01 到 08 的所有入门示例。
 
 ## 可运行示例
 
@@ -40,11 +42,22 @@ console.log(hello("Ada"));
 npm run example:01
 ```
 
-预期输出：
+也可以运行全部章节：
+
+```bash
+npm run example
+```
+
+预期输出会带有章节标题、步骤标题和观察点，例如：
 
 ```text
-Hello, Ada. Welcome to TypeScript.
+=== 01 环境准备与第一个 TS 程序 ===
+-- 调用带类型标注的函数
+hello("Ada") 的返回值: Hello, Ada. Welcome to TypeScript.
+观察点：name 被声明为 string，所以调用 hello 时只能传入字符串。
 ```
+
+这类输出不是为了展示最终业务结果，而是帮助你把“代码写法”和“类型约束”对应起来。
 
 ## 常见错误
 

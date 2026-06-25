@@ -1,3 +1,5 @@
+import { printChapter, printStep, printTip, printValue } from "./example-utils";
+
 interface User {
   readonly id: string;
   name: string;
@@ -44,7 +46,16 @@ const productPage: PageResult<Product> = {
   total: 1,
 };
 
-console.log(user);
-console.log(productPage);
+printChapter("04 对象、接口与类型别名");
+
+printStep("interface 描述对象结构");
+printValue("User 对象", user);
+printTip("id 是 readonly，创建后不能再重新赋值；email 是可选属性。");
+
+printStep("type 组合泛型对象");
+printValue("PageResult<Product>", productPage);
+printValue("第一页商品数量", productPage.items.length);
+printValue("商品元信息 category", productPage.items[0]?.metadata.category);
+printTip("interface 适合对象模型，type 适合联合类型、工具类型和组合类型。");
 
 export {};

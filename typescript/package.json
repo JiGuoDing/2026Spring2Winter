@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/01_getting_started.js",
     "todo": "tsx src/todo-cli/index.ts",
+    "example": "tsx src/run_examples.ts",
     "example:01": "tsx src/01_getting_started.ts",
     "example:02": "tsx src/02_basic_types.ts",
     "example:03": "tsx src/03_functions.ts",
@@ -20,7 +21,11 @@
   },
   "devDependencies": {
     "@types/node": "latest",
-    "tsx": "latest",
+    "tsx": "^4.22.4",
     "typescript": "latest"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true
   }
 }

@@ -20,6 +20,8 @@ function printId(input: string | number): string {
 }
 ```
 
+拿到联合类型后，不能直接当成某一种类型使用。你需要先通过 `typeof`、`in`、`Array.isArray`、判别字段或自定义类型守卫缩小范围。
+
 判别联合适合表达 API 状态：
 
 ```ts
@@ -40,6 +42,14 @@ type ApiState<T> =
 npm run example:05
 ```
 
+也可以运行全部章节：
+
+```bash
+npm run example
+```
+
+本章输出会分三组：普通联合类型、判别联合、自定义类型守卫。重点观察判断条件出现后，代码里能访问的属性和方法会变得更精确。
+
 ## 常见错误
 
 错误示例：
@@ -51,6 +61,14 @@ function render<T>(state: ApiState<T>): string {
 ```
 
 不是所有状态都有 `data`。必须先根据 `status` 收窄类型。
+
+推荐写法是：
+
+```ts
+if (state.status === "success") {
+  return String(state.data);
+}
+```
 
 ## 练习题
 

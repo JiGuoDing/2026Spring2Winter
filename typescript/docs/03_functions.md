@@ -16,6 +16,20 @@ function formatPrice(amount: number, currency = "CNY"): string {
 }
 ```
 
+默认参数会参与类型推断，上面的 `currency = "CNY"` 会被推断为 `string`，调用时可以不传。
+
+可选参数用 `?` 表示，剩余参数用数组类型表示：
+
+```ts
+function joinNames(firstName: string, lastName?: string): string {
+  return lastName ? `${firstName} ${lastName}` : firstName;
+}
+
+function sum(...numbers: number[]): number {
+  return numbers.reduce((total, current) => total + current, 0);
+}
+```
+
 回调函数也可以精确建模：
 
 ```ts
@@ -33,6 +47,14 @@ function mapValues<T, R>(values: T[], mapper: (value: T) => R): R[] {
 ```bash
 npm run example:03
 ```
+
+也可以运行全部章节：
+
+```bash
+npm run example
+```
+
+本章输出会按“默认参数”“可选参数”“剩余参数”“回调”“函数重载”分组。你可以对照输出看同一个函数在不同输入下的返回值。
 
 ## 常见错误
 

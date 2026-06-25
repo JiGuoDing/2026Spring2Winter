@@ -26,9 +26,16 @@ export function createOrder(id: string): Order {
 import { createOrder } from "./order-utils";
 ```
 
+拆分模块时建议按职责划分：
+
+- 类型定义和纯函数可以放到工具模块，例如 `src/order-utils.ts`。
+- 示例入口只负责准备数据、调用函数和打印结果，例如 `src/08_modules_tooling.ts`。
+- 导出的类型和函数会被 TypeScript 跨文件检查。
+
 本项目的关键脚本：
 
 - `npm run dev`：用 `tsx` 直接运行 TS。
+- `npm run example`：运行 01 到 08 的全部示例。
 - `npm run check`：用 `tsc --noEmit` 做类型检查。
 - `npm run build`：编译到 `dist/`。
 - `npm run start`：运行编译后的 JS。
@@ -40,6 +47,14 @@ import { createOrder } from "./order-utils";
 ```bash
 npm run example:08
 ```
+
+也可以运行全部章节：
+
+```bash
+npm run example
+```
+
+本章输出会展示从 `order-utils.ts` 导入的 `createOrder` 和 `summarizeOrder` 如何协作。重点观察模块导入导出不会改变运行结果，但会让代码职责更清楚。
 
 ## 常见错误
 
