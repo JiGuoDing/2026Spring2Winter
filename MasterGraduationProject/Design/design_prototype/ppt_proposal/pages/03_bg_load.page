@@ -1,0 +1,191 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 300, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 01 · 研究背景
+  - elementId: page-no
+    elementType: text
+    bounds: [756, 30, 148, 14]
+    content: {style: "$note", align: [right, top], wrap: false, text: 背景 1 / 2}
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 负载变了：从「单轮问答」走向「多轮 Agent 会话」
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: bullets
+    elementType: text
+    bounds: [56, 122, 424, 280]
+    content:
+      style: "$body"
+      fontSize: 13.5
+      lineHeight: 1.65
+      align: [left, top]
+      text: |
+        <p><strong>现状</strong>：现有流式推理系统（小红书项目）针对<strong>单轮对话</strong>——每次请求都是独立完成的一次计算。</p>
+        <p style="margin-top:14px"><strong>迁移到多轮 Agent 会话</strong>后，推理从「一次计算」变成「跨轮、跨会话可复用的状态」：</p>
+        <p style="margin-top:10px">· 会话结果可以复用</p>
+        <p>· 知识库资料可以缓存复用</p>
+        <p style="margin-top:14px"><strong>同时引入新问题</strong>：请求路由需要<strong>会话亲和性调度</strong>——同一会话的请求应落到持有其状态的算子上。</p>
+
+  - elementId: dia-label-a
+    elementType: text
+    bounds: [512, 122, 300, 16]
+    content: {fontSize: 12, bold: true, color: "$sub", wrap: false, text: 单轮对话（现有系统）}
+  - elementId: dia-a-n1
+    elementType: shape
+    bounds: [512, 148, 76, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: dia-a-n1-t
+    elementType: text
+    bounds: [512, 148, 76, 34]
+    content: {fontSize: 11, color: "$sub", align: [center, middle], text: 请求}
+  - elementId: dia-a-arr1
+    elementType: line
+    bounds: [592, 160, 30, 6]
+    viewBox: [30, 6]
+    points: "0,3 30,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: dia-a-n2
+    elementType: shape
+    bounds: [626, 148, 76, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: dia-a-n2-t
+    elementType: text
+    bounds: [626, 148, 76, 34]
+    content: {fontSize: 11, color: "$sub", align: [center, middle], text: 推理}
+  - elementId: dia-a-arr2
+    elementType: line
+    bounds: [706, 160, 30, 6]
+    viewBox: [30, 6]
+    points: "0,3 30,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: dia-a-n3
+    elementType: shape
+    bounds: [740, 148, 76, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: dia-a-n3-t
+    elementType: text
+    bounds: [740, 148, 76, 34]
+    content: {fontSize: 11, color: "$sub", align: [center, middle], text: 返回}
+  - elementId: dia-a-cap
+    elementType: text
+    bounds: [512, 190, 392, 14]
+    content: {style: "$note", wrap: false, text: 请求之间相互独立，每次推理从零开始}
+
+  - elementId: dia-label-b
+    elementType: text
+    bounds: [512, 232, 300, 16]
+    content: {fontSize: 12, bold: true, color: "$primary", wrap: false, text: 多轮 Agent 会话（本课题场景）}
+  - elementId: dia-b-n1
+    elementType: shape
+    bounds: [512, 258, 96, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: dia-b-n1-t
+    elementType: text
+    bounds: [512, 258, 96, 34]
+    content: {fontSize: 11, color: "$primary", bold: true, align: [center, middle], text: 会话轮次 1}
+  - elementId: dia-b-arr1
+    elementType: line
+    bounds: [612, 270, 30, 6]
+    viewBox: [30, 6]
+    points: "0,3 30,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$primary"}
+  - elementId: dia-b-n2
+    elementType: shape
+    bounds: [646, 258, 96, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: dia-b-n2-t
+    elementType: text
+    bounds: [646, 258, 96, 34]
+    content: {fontSize: 11, color: "$primary", bold: true, align: [center, middle], text: 会话轮次 2}
+  - elementId: dia-b-arr2
+    elementType: line
+    bounds: [746, 270, 30, 6]
+    viewBox: [30, 6]
+    points: "0,3 30,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$primary"}
+  - elementId: dia-b-n3
+    elementType: shape
+    bounds: [780, 258, 96, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: dia-b-n3-t
+    elementType: text
+    bounds: [780, 258, 96, 34]
+    content: {fontSize: 11, color: "$primary", bold: true, align: [center, middle], text: 会话轮次 3}
+  - elementId: dia-b-reuse
+    elementType: line
+    bounds: [560, 300, 268, 24]
+    viewBox: [268, 24]
+    points: "268,0 134,24 0,0"
+    curve: smooth
+    arrow: [null, stealth]
+    border: {style: dash, width: 1.2, color: "$primary"}
+  - elementId: dia-b-cap
+    elementType: text
+    bounds: [512, 330, 392, 14]
+    content: {fontSize: 10, color: "$primary", wrap: false, text: 上下文逐轮累积，历史回复与知识资料可跨轮 / 跨会话复用}
+
+  - elementId: takeaway-bar
+    elementType: shape
+    bounds: [56, 442, 3, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: takeaway
+    elementType: text
+    bounds: [72, 442, 832, 42]
+    content:
+      fontSize: 13.5
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        机会在于「复用」——会话结果与知识资料都能跨轮、跨会话复用；代价是这份「状态」必须被缓存、调度与控制。
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 03 / 17}

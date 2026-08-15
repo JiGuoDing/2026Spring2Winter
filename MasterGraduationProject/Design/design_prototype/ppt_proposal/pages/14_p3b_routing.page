@@ -1,0 +1,214 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 04 · 三个研究点 — 点 3 执行
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 点 3b：会话亲和性路由——扩缩容时最小化会话迁移
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: rt-s1
+    elementType: shape
+    bounds: [56, 140, 90, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rt-s1-t
+    elementType: text
+    bounds: [56, 140, 90, 34]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 会话 S1}
+  - elementId: rt-s2
+    elementType: shape
+    bounds: [56, 196, 90, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rt-s2-t
+    elementType: text
+    bounds: [56, 196, 90, 34]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 会话 S2}
+  - elementId: rt-s3
+    elementType: shape
+    bounds: [56, 252, 90, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rt-s3-t
+    elementType: text
+    bounds: [56, 252, 90, 34]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 会话 S3}
+  - elementId: rt-s4
+    elementType: shape
+    bounds: [56, 308, 90, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rt-s4-t
+    elementType: text
+    bounds: [56, 308, 90, 34]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 会话 S4}
+  - elementId: rt-arr-s1
+    elementType: line
+    bounds: [146, 157, 80, 43]
+    viewBox: [80, 43]
+    points: "0,0 80,43"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.1, color: "$faint"}
+  - elementId: rt-arr-s2
+    elementType: line
+    bounds: [146, 213, 80, 11]
+    viewBox: [80, 11]
+    points: "0,0 80,11"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.1, color: "$faint"}
+  - elementId: rt-arr-s3
+    elementType: line
+    bounds: [146, 262, 80, 11]
+    viewBox: [80, 11]
+    points: "0,11 80,0"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.1, color: "$faint"}
+  - elementId: rt-arr-s4
+    elementType: line
+    bounds: [146, 276, 80, 49]
+    viewBox: [80, 49]
+    points: "0,49 80,0"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.1, color: "$faint"}
+  - elementId: rt-hash
+    elementType: shape
+    bounds: [226, 190, 140, 96]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: rt-hash-t
+    elementType: text
+    bounds: [234, 196, 124, 84]
+    content: {fontSize: 11.5, bold: true, color: "$primary", lineHeight: 1.35, align: [center, middle], text: Session ID<br/>一致性哈希}
+  - elementId: rt-arr-h1
+    elementType: line
+    bounds: [366, 172, 70, 60]
+    viewBox: [70, 60]
+    points: "0,60 70,0"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.3, color: "$sub"}
+  - elementId: rt-arr-h2
+    elementType: line
+    bounds: [366, 240, 70, 44]
+    viewBox: [70, 44]
+    points: "0,0 70,44"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.3, color: "$sub"}
+  - elementId: rt-op1
+    elementType: shape
+    bounds: [436, 150, 130, 44]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rt-op1-t
+    elementType: text
+    bounds: [436, 150, 130, 44]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.3, align: [center, middle], text: 推理算子实例 1<br/>（持有 S1 / S2 状态）}
+  - elementId: rt-op2
+    elementType: shape
+    bounds: [436, 260, 130, 44]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rt-op2-t
+    elementType: text
+    bounds: [436, 260, 130, 44]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.3, align: [center, middle], text: 推理算子实例 2<br/>（持有 S3 / S4 状态）}
+  - elementId: rt-op3
+    elementType: shape
+    bounds: [436, 360, 130, 44]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "#FFFFFF"}
+    border: {style: dash, width: 1.2, color: "$accent"}
+  - elementId: rt-op3-t
+    elementType: text
+    bounds: [436, 360, 130, 44]
+    content: {fontSize: 11, color: "$accent", lineHeight: 1.3, align: [center, middle], text: 推理算子实例 3<br/>（扩容新增）}
+  - elementId: rt-migrate
+    elementType: line
+    bounds: [499, 306, 4, 52]
+    viewBox: [4, 52]
+    points: "2,0 2,52"
+    arrow: [null, stealth]
+    border: {style: dash, width: 1.3, color: "$accent"}
+  - elementId: rt-migrate-label
+    elementType: text
+    bounds: [512, 316, 150, 30]
+    content: {fontSize: 9.5, color: "$accent", lineHeight: 1.35, align: [left, top], text: 扩容时仅少量会话迁移（如 S4 → 实例 3）}
+
+  - elementId: rt-right
+    elementType: text
+    bounds: [640, 140, 264, 230]
+    content:
+      style: "$body"
+      fontSize: 12.5
+      lineHeight: 1.6
+      align: [left, top]
+      text: |
+        <p>· 根据 <strong>Session ID 一致性哈希</strong>到推理算子</p>
+        <p style="margin-top:8px">· 扩缩容时<strong>最小化会话迁移</strong></p>
+        <p style="margin-top:8px">· 会话自动路由到其<strong>会话状态所在的新算子实例</strong></p>
+        <p style="margin-top:8px">· 与点 3a 配合：路由目标即缓存所在位置，保证语义命中</p>
+
+  - elementId: rt-bar
+    elementType: shape
+    bounds: [56, 446, 3, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: rt-note
+    elementType: text
+    bounds: [72, 446, 832, 42]
+    content:
+      fontSize: 13
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        一致性哈希保证扩缩容时只有少量会话的映射发生变化；会话状态存于 Operator State，随 checkpoint 容错、随扩缩容可追踪迁移。
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 14 / 17}

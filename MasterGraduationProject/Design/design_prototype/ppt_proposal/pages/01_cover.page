@@ -1,0 +1,151 @@
+pageType: cover
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: edge-block
+    elementType: shape
+    bounds: [0, 0, 10, 540]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+
+  - elementId: kicker
+    elementType: text
+    bounds: [64, 84, 600, 18]
+    content:
+      style: "$kicker"
+      letterSpacing: 3
+      wrap: false
+      text: 硕士毕业设计 · 初版方案讨论稿
+
+  - elementId: kicker-rule
+    elementType: shape
+    bounds: [64, 114, 56, 3]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+
+  - elementId: main-title
+    elementType: text
+    bounds: [64, 134, 832, 104]
+    content:
+      fontFamily: 思源宋体
+      fontSize: 37
+      bold: true
+      color: "$text"
+      lineHeight: 1.35
+      align: [left, top]
+      text: |
+        <p>面向 SLO 的知识库缓存动态优化的</p>
+        <p>流式 Agent 推理系统</p>
+
+  - elementId: sub-title
+    elementType: text
+    bounds: [64, 250, 832, 18]
+    content:
+      fontSize: 12
+      color: "$sub"
+      wrap: false
+      text: SLO-Oriented Dynamic Knowledge-Base Cache Optimization for Streaming Agent Inference（暂定题）
+
+  - elementId: intro
+    elementType: text
+    bounds: [64, 288, 792, 74]
+    content:
+      fontSize: 13
+      color: "$sub"
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        多轮 Agent 会话让大模型推理从「每次独立完成的一次计算」变成「跨轮、跨会话可复用的状态」。本研究用 Flink 键控状态承载这份「语义记忆」，在端到端时延 SLO 与错误率预算双约束下，用最小的缓存容量与推理资源服务动态负载。
+
+  - elementId: motif-node-1
+    elementType: shape
+    bounds: [64, 392, 110, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: motif-node-1-t
+    elementType: text
+    bounds: [64, 392, 110, 34]
+    content: {fontSize: 10.5, color: "$sub", align: [center, middle], text: Source}
+  - elementId: motif-a1
+    elementType: line
+    bounds: [178, 406, 24, 6]
+    viewBox: [24, 6]
+    points: "0,3 24,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: motif-node-2
+    elementType: shape
+    bounds: [206, 392, 110, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$primary"}
+  - elementId: motif-node-2-t
+    elementType: text
+    bounds: [206, 392, 110, 34]
+    content: {fontSize: 10.5, color: "#FFFFFF", bold: true, align: [center, middle], text: 语义记忆算子}
+  - elementId: motif-a2
+    elementType: line
+    bounds: [320, 406, 24, 6]
+    viewBox: [24, 6]
+    points: "0,3 24,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: motif-node-3
+    elementType: shape
+    bounds: [348, 392, 110, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: motif-node-3-t
+    elementType: text
+    bounds: [348, 392, 110, 34]
+    content: {fontSize: 10.5, color: "$sub", align: [center, middle], text: Batcher}
+  - elementId: motif-a3
+    elementType: line
+    bounds: [462, 406, 24, 6]
+    viewBox: [24, 6]
+    points: "0,3 24,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: motif-node-4
+    elementType: shape
+    bounds: [490, 392, 110, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: motif-node-4-t
+    elementType: text
+    bounds: [490, 392, 110, 34]
+    content: {fontSize: 10.5, color: "$sub", align: [center, middle], text: Inferencer}
+  - elementId: motif-a4
+    elementType: line
+    bounds: [604, 406, 24, 6]
+    viewBox: [24, 6]
+    points: "0,3 24,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: motif-node-5
+    elementType: shape
+    bounds: [632, 392, 110, 34]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: motif-node-5-t
+    elementType: text
+    bounds: [632, 392, 110, 34]
+    content: {fontSize: 10.5, color: "$sub", align: [center, middle], text: Sink}
+
+  - elementId: info
+    elementType: text
+    bounds: [64, 476, 832, 18]
+    content:
+      fontSize: 12
+      color: "$sub"
+      wrap: false
+      text: 汇报人：×××　｜　指导教师：×××　｜　2026 年 8 月

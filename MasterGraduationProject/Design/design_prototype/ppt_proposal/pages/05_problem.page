@@ -1,0 +1,146 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 300, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 01 · 研究背景
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 问题定义：双约束 SLO 下的三个研究问题
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: slo-label
+    elementType: text
+    bounds: [56, 112, 400, 18]
+    content: {fontSize: 13, bold: true, color: "$sub", wrap: false, text: SLO 包含两个部分}
+  - elementId: slo1-box
+    elementType: shape
+    bounds: [56, 138, 408, 62]
+    shapeName: rect
+    fill: {type: solid, color: "$soft"}
+  - elementId: slo1-edge
+    elementType: shape
+    bounds: [56, 138, 3, 62]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: slo1-t
+    elementType: text
+    bounds: [72, 146, 380, 22]
+    content: {fontSize: 14.5, bold: true, color: "$primary", wrap: false, text: ① 端到端时延}
+  - elementId: slo1-d
+    elementType: text
+    bounds: [72, 170, 380, 24]
+    content: {fontSize: 11.5, color: "$sub", wrap: false, text: 端到端时延 ＝ 排队时延 ＋ 推理时延，关注 TTFT 与 P50 / P95}
+  - elementId: slo2-box
+    elementType: shape
+    bounds: [496, 138, 408, 62]
+    shapeName: rect
+    fill: {type: solid, color: "$soft"}
+  - elementId: slo2-edge
+    elementType: shape
+    bounds: [496, 138, 3, 62]
+    shapeName: rect
+    fill: {type: solid, color: "$accent"}
+  - elementId: slo2-t
+    elementType: text
+    bounds: [512, 146, 380, 22]
+    content: {fontSize: 14.5, bold: true, color: "$accent", wrap: false, text: ② 错误率}
+  - elementId: slo2-d
+    elementType: text
+    bounds: [512, 170, 380, 24]
+    content: {fontSize: 11.5, color: "$sub", wrap: false, text: 推理短路产生的错误回复比例 ≤ 用户指定阈值 δ}
+
+  - elementId: q-label
+    elementType: text
+    bounds: [56, 224, 400, 18]
+    content: {fontSize: 13, bold: true, color: "$sub", wrap: false, text: 由此分解出三个研究问题（感知 → 决策 → 执行）}
+
+  - elementId: q1-num
+    elementType: text
+    bounds: [56, 254, 60, 24]
+    content: {fontSize: 17, bold: true, color: "$primary", wrap: false, text: Q1}
+  - elementId: q1-title
+    elementType: text
+    bounds: [116, 254, 788, 20]
+    content: {fontSize: 14.5, bold: true, color: "$text", wrap: false, text: 感知｜如何高效、准确地预测多轮上下文下的推理长度与端到端时延？}
+  - elementId: q1-desc
+    elementType: text
+    bounds: [116, 278, 788, 16]
+    content: {style: "$small", wrap: false, text: 预测是所有配置与调度决策的输入；多轮上下文与排队效应是现有单轮预测未覆盖的部分。}
+  - elementId: q1-line
+    elementType: shape
+    bounds: [56, 306, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: q2-num
+    elementType: text
+    bounds: [56, 322, 60, 24]
+    content: {fontSize: 17, bold: true, color: "$primary", wrap: false, text: Q2}
+  - elementId: q2-title
+    elementType: text
+    bounds: [116, 322, 788, 20]
+    content: {fontSize: 14.5, bold: true, color: "$text", wrap: false, text: 决策｜如何在满足 SLO 的前提下最小化缓存与推理资源，并安全地短路推理？}
+  - elementId: q2-desc
+    elementType: text
+    bounds: [116, 346, 788, 16]
+    content: {style: "$small", wrap: false, text: 语义库容量、推理并行度、批次大小与短路阈值需要联合调优；短路复用必须受错误率约束。}
+  - elementId: q2-line
+    elementType: shape
+    bounds: [56, 374, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: q3-num
+    elementType: text
+    bounds: [56, 390, 60, 24]
+    content: {fontSize: 17, bold: true, color: "$primary", wrap: false, text: Q3}
+  - elementId: q3-title
+    elementType: text
+    bounds: [116, 390, 788, 20]
+    content: {fontSize: 14.5, bold: true, color: "$text", wrap: false, text: 执行｜给定容量下缓存什么命中率最高？扩缩容时如何保持会话亲和？}
+  - elementId: q3-desc
+    elementType: text
+    bounds: [116, 414, 788, 16]
+    content: {style: "$small", wrap: false, text: 缓存项替换决定命中率，进而决定检索召回时间与端到端时延；路由决定会话状态是否就地可用。}
+  - elementId: q3-line
+    elementType: shape
+    bounds: [56, 442, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: q-note
+    elementType: text
+    bounds: [56, 460, 848, 30]
+    content:
+      style: "$body"
+      fontSize: 13
+      align: [left, middle]
+      text: |-
+        三个问题对应论文的三个研究点（点 1 预测 → 点 2 调优与短路 → 点 3 执行层优化），构成一个闭环。
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 05 / 17}

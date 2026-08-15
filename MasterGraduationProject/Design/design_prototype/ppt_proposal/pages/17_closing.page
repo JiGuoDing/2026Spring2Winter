@@ -1,0 +1,39 @@
+pageType: final
+background:
+  type: solid
+  color: "$primary"
+elements:
+  - elementId: thanks
+    elementType: text
+    bounds: [80, 196, 800, 48]
+    content:
+      fontSize: 30
+      bold: true
+      color: "#FFFFFF"
+      align: [center, middle]
+      wrap: false
+      text: 谢谢聆听 · 恳请老师批评指正
+  - elementId: closing-rule
+    elementType: shape
+    bounds: [430, 262, 100, 2]
+    shapeName: rect
+    fill: {type: solid, color: "#FFFFFF"}
+  - elementId: recap
+    elementType: text
+    bounds: [160, 284, 640, 64]
+    content:
+      fontSize: 13
+      color: "#FFFFFFCC"
+      lineHeight: 1.7
+      align: [center, top]
+      text: |
+        把「语义记忆」装上 Flink 流式推理管线——预测感知 → 联合配置 → 短路执行，在时延与错误率双约束下，用最小资源服务动态多轮会话负载。
+  - elementId: info
+    elementType: text
+    bounds: [80, 470, 800, 16]
+    content:
+      fontSize: 11
+      color: "#FFFFFF99"
+      align: [center, middle]
+      wrap: false
+      text: 汇报人：×××　·　2026 年 8 月

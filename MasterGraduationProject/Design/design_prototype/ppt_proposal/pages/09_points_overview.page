@@ -1,0 +1,79 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 04 · 三个研究点
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 研究点总览：感知 → 决策 → 执行
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: overview-table
+    elementType: table
+    bounds: [56, 116, 848, 292]
+    columnWidths: [0.23, 0.27, 0.31, 0.19]
+    rowHeights: [0.13, 0.29, 0.29, 0.29]
+    style: "$default"
+    rows:
+      - - text: 研究点
+        - text: 目标
+        - text: 关键方法
+        - text: 产出
+      - - text: 点 1｜面向多轮上下文的推理时延预测（感知）
+          bold: true
+        - text: 高效、准确地预测推理长度与端到端时延
+        - text: 轻量机器学习：token 数区间预测 ＋ TTFT / P50 / P95 预测 ＋ 排队时延推算
+        - text: 时延预测模型
+      - - text: 点 2｜面向 SLO 的推理短路与语义库 & 推理参数调优（决策）
+          bold: true
+        - text: 满足 SLO 下最小化缓存容量与推理并行度；相似请求短路复用、节省 GPU
+        - text: vCache 式正确复用概率估计（δ 约束）＋ 容量 / 并行度 / 批次扩缩容
+        - text: 短路机制＋调优策略
+      - - text: 点 3｜面向语义命中的会话状态执行层优化（执行）
+          bold: true
+        - text: 给定容量下最大化语义命中率；扩缩容保持会话亲和
+        - text: LightGBM × 高效数据结构双路打分替换 ＋ Session ID 一致性哈希路由
+        - text: 替换算法＋路由机制
+
+  - elementId: loop-bar
+    elementType: shape
+    bounds: [56, 436, 3, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: loop-text
+    elementType: text
+    bounds: [72, 436, 832, 42]
+    content:
+      fontSize: 13
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        <p><strong>闭环关系</strong>：点 1 的预测是点 2 配置的依据，点 3 在点 2 给定的容量下执行，运行观测（命中率 / 错误率 / 时延）再回注点 1 在线校准。</p>
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 09 / 17}

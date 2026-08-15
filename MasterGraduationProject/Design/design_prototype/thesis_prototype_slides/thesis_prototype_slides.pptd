@@ -1,0 +1,63 @@
+version: v2
+title: 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统 · 初版讨论
+size: [960, 540]
+theme:
+  colors:
+    bg: "#F7F5F0"
+    ink: "#26292B"
+    sub: "#6E7370"
+    primary: "#1E5A50"
+    accent: "#C0603C"
+    hairline: "#D8D4C9"
+    paper: "#FFFFFF"
+    softgreen: "#DDE8E3"
+    softterra: "#F3E4D9"
+  textStyles:
+    pagetitle:
+      fontSize: 23
+      bold: true
+      color: "$ink"
+    lead:
+      fontSize: 12.5
+      color: "$ink"
+      lineHeight: 1.5
+    body:
+      fontSize: 12
+      color: "$ink"
+      lineHeight: 1.45
+    small:
+      fontSize: 10
+      color: "$sub"
+      lineHeight: 1.4
+    caption:
+      fontSize: 9
+      color: "$sub"
+  tableStyles:
+    default:
+      cellStyle:
+        fontSize: 11.5
+        color: "$ink"
+        lineHeight: 1.35
+        border: [null, null, {style: solid, width: 1, color: "$hairline"}, null]
+        align: [left, middle]
+      firstRowStyle:
+        fill: {type: solid, color: "$primary"}
+        color: "#FFFFFF"
+        bold: true
+        fontSize: 11.5
+      bodyStyles:
+        - fill: {type: solid, color: "$paper"}
+        - fill: {type: solid, color: "$bg"}
+pages:
+  - pages/01_cover.page
+  - pages/02_agenda.page
+  - pages/03_background.page
+  - pages/04_storyline.page
+  - pages/05_framework.page
+  - pages/06_point1_prediction.page
+  - pages/07_point2_shortcut.page
+  - pages/08_point2_tuning.page
+  - pages/09_point3_replacement.page
+  - pages/10_point3_routing.page
+  - pages/11_discussion.page
+  - pages/12_end.page

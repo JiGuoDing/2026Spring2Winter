@@ -1,0 +1,110 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 05 · 可行性与计划
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 关键权衡与开放问题
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: tradeoff-header
+    elementType: text
+    bounds: [56, 116, 400, 20]
+    content: {fontSize: 14.5, bold: true, color: "$primary", wrap: false, text: 三组核心权衡（Trade-off）}
+  - elementId: tf1-t
+    elementType: text
+    bounds: [56, 152, 400, 20]
+    content: {fontSize: 13.5, bold: true, color: "$text", wrap: false, text: 短路节省 GPU　⇄　错误回复风险}
+  - elementId: tf1-d
+    elementType: text
+    bounds: [56, 176, 400, 32]
+    content: {fontSize: 11.5, color: "$sub", lineHeight: 1.45, text: 阈值 δ 越低越保守（多推理、少短路）；越高越省 GPU 但错误回复越多}
+  - elementId: tf1-line
+    elementType: shape
+    bounds: [56, 220, 400, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+  - elementId: tf2-t
+    elementType: text
+    bounds: [56, 236, 400, 20]
+    content: {fontSize: 13.5, bold: true, color: "$text", wrap: false, text: 语义库容量　⇄　命中率}
+  - elementId: tf2-d
+    elementType: text
+    bounds: [56, 260, 400, 32]
+    content: {fontSize: 11.5, color: "$sub", lineHeight: 1.45, text: 容量越大命中越高、检索召回越快，但内存成本越高；平衡点随负载移动}
+  - elementId: tf2-line
+    elementType: shape
+    bounds: [56, 304, 400, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+  - elementId: tf3-t
+    elementType: text
+    bounds: [56, 320, 400, 20]
+    content: {fontSize: 13.5, bold: true, color: "$text", wrap: false, text: 扩缩容收益　⇄　调整开销}
+  - elementId: tf3-d
+    elementType: text
+    bounds: [56, 344, 400, 32]
+    content: {fontSize: 11.5, color: "$sub", lineHeight: 1.45, text: 状态迁移与重配置成本需被显式评估，避免频繁调整反而违约 SLO}
+  - elementId: tf-note
+    elementType: text
+    bounds: [56, 396, 400, 60]
+    content:
+      fontSize: 11.5
+      color: "$sub"
+      lineHeight: 1.5
+      align: [left, top]
+      text: |
+        这三组权衡正是「点 2 联合配置」要在线求解的问题，也是本课题区别于 vCache 等单机工作的核心。
+
+  - elementId: divider
+    elementType: shape
+    bounds: [488, 116, 1, 360]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: question-header
+    elementType: text
+    bounds: [524, 116, 380, 20]
+    content: {fontSize: 14.5, bold: true, color: "$accent", wrap: false, text: 想请老师指导的问题}
+  - elementId: questions
+    elementType: text
+    bounds: [524, 150, 380, 250]
+    content:
+      fontSize: 12.5
+      color: "$text"
+      lineHeight: 1.55
+      align: [left, top]
+      text: |
+        <p><strong>1</strong>｜研究边界与创新点的表述是否清晰、成立？</p>
+        <p style="margin-top:12px"><strong>2</strong>｜错误率阈值 δ 应如何设定与实验验证？</p>
+        <p style="margin-top:12px"><strong>3</strong>｜多轮 Agent 会话 workload 如何构造得更贴近真实？</p>
+        <p style="margin-top:12px"><strong>4</strong>｜双路打分的权重 w 与调优粒度（频率 / 步长）如何选择？</p>
+        <p style="margin-top:12px"><strong>5</strong>｜下一步是否先细化点 2 的调优算法与实验矩阵？</p>
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 16 / 17}

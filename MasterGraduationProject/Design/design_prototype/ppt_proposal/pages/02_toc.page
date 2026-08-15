@@ -1,0 +1,126 @@
+pageType: table_of_contents
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 300, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: CONTENTS
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 500, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 汇报框架
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: toc1-num
+    elementType: text
+    bounds: [56, 122, 56, 30]
+    content: {fontSize: 22, bold: true, color: "$primary", wrap: false, text: "01"}
+  - elementId: toc1-title
+    elementType: text
+    bounds: [124, 122, 700, 22]
+    content: {fontSize: 17, bold: true, color: "$text", wrap: false, text: 研究背景与问题定义}
+  - elementId: toc1-desc
+    elementType: text
+    bounds: [124, 148, 740, 16]
+    content: {style: "$small", wrap: false, text: 负载变化 · 知识库远端拉取开销 · 双约束 SLO 与三个研究问题}
+  - elementId: toc1-line
+    elementType: shape
+    bounds: [56, 180, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: toc2-num
+    elementType: text
+    bounds: [56, 194, 56, 30]
+    content: {fontSize: 22, bold: true, color: "$primary", wrap: false, text: "02"}
+  - elementId: toc2-title
+    elementType: text
+    bounds: [124, 194, 700, 22]
+    content: {fontSize: 17, bold: true, color: "$text", wrap: false, text: 相关工作与差异化定位}
+  - elementId: toc2-desc
+    elementType: text
+    bounds: [124, 220, 740, 16]
+    content: {style: "$small", wrap: false, text: vCache / GPTCache / 单轮流式推理的边界，与本课题的切入点}
+  - elementId: toc2-line
+    elementType: shape
+    bounds: [56, 252, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: toc3-num
+    elementType: text
+    bounds: [56, 266, 56, 30]
+    content: {fontSize: 22, bold: true, color: "$primary", wrap: false, text: "03"}
+  - elementId: toc3-title
+    elementType: text
+    bounds: [124, 266, 700, 22]
+    content: {fontSize: 17, bold: true, color: "$text", wrap: false, text: 研究故事线与整体框架}
+  - elementId: toc3-desc
+    elementType: text
+    bounds: [124, 292, 740, 16]
+    content: {style: "$small", wrap: false, text: 预测 → 联合配置 → 推理短路与状态维护的闭环；管线零改动，只升级一个算子}
+  - elementId: toc3-line
+    elementType: shape
+    bounds: [56, 324, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: toc4-num
+    elementType: text
+    bounds: [56, 338, 56, 30]
+    content: {fontSize: 22, bold: true, color: "$primary", wrap: false, text: "04"}
+  - elementId: toc4-title
+    elementType: text
+    bounds: [124, 338, 700, 22]
+    content: {fontSize: 17, bold: true, color: "$text", wrap: false, text: 三个研究点}
+  - elementId: toc4-desc
+    elementType: text
+    bounds: [124, 364, 740, 16]
+    content: {style: "$small", wrap: false, text: 时延预测（感知）· 推理短路与参数调优（决策）· 状态执行层优化（执行）}
+  - elementId: toc4-line
+    elementType: shape
+    bounds: [56, 396, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: toc5-num
+    elementType: text
+    bounds: [56, 410, 56, 30]
+    content: {fontSize: 22, bold: true, color: "$primary", wrap: false, text: "05"}
+  - elementId: toc5-title
+    elementType: text
+    bounds: [124, 410, 700, 22]
+    content: {fontSize: 17, bold: true, color: "$text", wrap: false, text: 可行性基础与讨论要点}
+  - elementId: toc5-desc
+    elementType: text
+    bounds: [124, 436, 740, 16]
+    content: {style: "$small", wrap: false, text: InferTuner 基底资产 · 关键权衡 · 开放问题与下一步}
+  - elementId: toc5-line
+    elementType: shape
+    bounds: [56, 468, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 02 / 17}

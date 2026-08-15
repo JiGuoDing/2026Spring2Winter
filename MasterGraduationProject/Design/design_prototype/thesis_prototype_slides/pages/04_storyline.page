@@ -1,0 +1,163 @@
+pageType: content
+background:
+  type: solid
+  color: "$bg"
+notes: 核心一页：一句话讲清研究故事——用 Flink 键控状态承载语义记忆，建立「预测→联合配置→短路与状态维护」闭环，在双约束下最小化资源。下方明确 SLO 的两个组成部分。
+elements:
+  - elementId: hdr-tag
+    elementType: text
+    bounds: [48, 24, 500, 16]
+    content: {fontSize: 10, color: "$sub", letterSpacing: 2, wrap: false, text: 02 · 研究故事线与 SLO 定义}
+  - elementId: hdr-page
+    elementType: text
+    bounds: [860, 24, 52, 16]
+    content: {fontSize: 10, color: "$sub", align: [right, top], wrap: false, text: 04 / 12}
+  - elementId: title
+    elementType: text
+    bounds: [48, 48, 800, 34]
+    content: {style: "$pagetitle", wrap: false, text: 研究故事线：以「语义记忆」为主线的闭环}
+  - elementId: title-tick
+    elementType: shape
+    bounds: [48, 90, 34, 3]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: lead
+    elementType: text
+    bounds: [48, 106, 864, 42]
+    content:
+      style: "$lead"
+      text: 用 Flink 键控状态承载「语义记忆」，在流式推理管线上建立「预测 → 联合配置 → 推理短路与状态维护」的闭环，用最小的缓存容量与推理资源服务动态负载。
+  - elementId: loop-n1
+    elementType: shape
+    bounds: [48, 196, 240, 66]
+    shapeName: rect
+    fill: {type: solid, color: "$paper"}
+    border: {style: solid, width: 1.5, color: "$primary"}
+  - elementId: loop-n1-t
+    elementType: text
+    bounds: [48, 196, 240, 66]
+    content:
+      align: [center, middle]
+      lineHeight: 1.35
+      text: |
+        <p style="text-align:center"><span style="font-size:13.5px; color:$ink;"><strong>① 预测</strong></span></p>
+        <p style="text-align:center"><span style="font-size:10px; color:$sub;">推理长度 · TTFT · 端到端时延 P50/P95</span></p>
+  - elementId: loop-a1
+    elementType: line
+    bounds: [292, 228, 40, 2]
+    viewBox: [40, 2]
+    points: "0,1 40,1"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.5, color: "$sub"}
+  - elementId: loop-n2
+    elementType: shape
+    bounds: [336, 196, 240, 66]
+    shapeName: rect
+    fill: {type: solid, color: "$paper"}
+    border: {style: solid, width: 1.5, color: "$primary"}
+  - elementId: loop-n2-t
+    elementType: text
+    bounds: [336, 196, 240, 66]
+    content:
+      align: [center, middle]
+      lineHeight: 1.35
+      text: |
+        <p style="text-align:center"><span style="font-size:13.5px; color:$ink;"><strong>② 联合配置</strong></span></p>
+        <p style="text-align:center"><span style="font-size:10px; color:$sub;">语义库缓存容量 · 推理并行度 · 批次大小</span></p>
+  - elementId: loop-a2
+    elementType: line
+    bounds: [580, 228, 40, 2]
+    viewBox: [40, 2]
+    points: "0,1 40,1"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.5, color: "$sub"}
+  - elementId: loop-n3
+    elementType: shape
+    bounds: [624, 196, 240, 66]
+    shapeName: rect
+    fill: {type: solid, color: "$paper"}
+    border: {style: solid, width: 1.5, color: "$primary"}
+  - elementId: loop-n3-t
+    elementType: text
+    bounds: [624, 196, 240, 66]
+    content:
+      align: [center, middle]
+      lineHeight: 1.35
+      text: |
+        <p style="text-align:center"><span style="font-size:13.5px; color:$ink;"><strong>③ 推理短路与状态维护</strong></span></p>
+        <p style="text-align:center"><span style="font-size:10px; color:$sub;">语义命中短路 · 缓存替换 · 亲和路由</span></p>
+  - elementId: loop-fb-h
+    elementType: line
+    bounds: [168, 262, 576, 40]
+    viewBox: [576, 40]
+    points: "576,0 576,40 0,40"
+    curve: sharp
+    border: {style: dash, width: 1.5, color: "$accent"}
+  - elementId: loop-fb-v
+    elementType: line
+    bounds: [167, 264, 2, 38]
+    viewBox: [2, 38]
+    points: "1,38 1,0"
+    arrow: [null, stealth]
+    border: {style: dash, width: 1.5, color: "$accent"}
+  - elementId: loop-fb-label
+    elementType: text
+    bounds: [300, 292, 320, 14]
+    content: {fontSize: 9.5, color: "$accent", align: [center, middle], wrap: false, text: 反馈：真实时延 · 命中情况 · 错误率}
+  - elementId: carrier
+    elementType: text
+    bounds: [48, 330, 864, 16]
+    content:
+      fontSize: 11
+      color: "$primary"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p style="text-align:center">载体：<strong>Flink 键控状态 = 语义记忆</strong>（会话结果 + 知识资料缓存）</p>
+  - elementId: slo-rule
+    elementType: shape
+    bounds: [48, 372, 864, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: slo-label
+    elementType: text
+    bounds: [48, 390, 120, 20]
+    content: {fontSize: 13, bold: true, color: "$accent", wrap: false, text: 双约束 SLO}
+  - elementId: slo1-t
+    elementType: text
+    bounds: [48, 420, 420, 20]
+    content: {fontSize: 12.5, bold: true, color: "$ink", wrap: false, text: ① 端到端时延}
+  - elementId: slo1-b
+    elementType: text
+    bounds: [48, 444, 420, 40]
+    content:
+      fontSize: 11
+      color: "$sub"
+      lineHeight: 1.5
+      text: 端到端时延 = 排队时延 + 推理时延，关注 TTFT 与 P50 / P95 分位表现
+  - elementId: slo-div
+    elementType: shape
+    bounds: [492, 420, 1, 60]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: slo2-t
+    elementType: text
+    bounds: [516, 420, 396, 20]
+    content: {fontSize: 12.5, bold: true, color: "$ink", wrap: false, text: ② 错误率预算}
+  - elementId: slo2-b
+    elementType: text
+    bounds: [516, 444, 396, 40]
+    content:
+      fontSize: 11
+      color: "$sub"
+      lineHeight: 1.5
+      text: 推理短路复用所产生的错误回复比例，必须控制在用户指定的阈值之内
+  - elementId: foot-line
+    elementType: shape
+    bounds: [48, 512, 864, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: foot-text
+    elementType: text
+    bounds: [48, 519, 500, 13]
+    content: {fontSize: 9, color: "$sub", wrap: false, text: 面向 SLO 的流式 Agent 推理系统 · 毕业设计初版讨论}

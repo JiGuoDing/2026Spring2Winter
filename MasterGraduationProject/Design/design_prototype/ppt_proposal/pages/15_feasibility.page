@@ -1,0 +1,83 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 05 · 可行性与计划
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 可行性：InferTuner 基底提供现成资产
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: asset-table
+    elementType: table
+    bounds: [56, 116, 848, 320]
+    columnWidths: [0.19, 0.42, 0.39]
+    rowHeights: [0.12, 0.176, 0.176, 0.176, 0.176, 0.176]
+    style: "$default"
+    rows:
+      - - text: 基底资产
+        - text: 现状
+        - text: 本课题复用方式
+      - - text: 推理时延预测
+          bold: true
+        - text: token 数预测（BGE-m3 embedding＋PCA＋MLP，MAPE 5–13%）＋ 算子级单 token 生成时间 GBDT
+        - text: 点 1 的基础模型与特征工程
+      - - text: FREQUENCY 动态缓存
+          bold: true
+        - text: 基于访问频率分布动态调整容量，命中率与 P95 时延优于 STATIC / FLUID
+        - text: 频次统计复用为点 3 的访问热度输入
+      - - text: MCKP 离散择优
+          bold: true
+        - text: 并行度 × 批次的组合搜索（DP），SLO 约束下最小化 GPU 数，优于 DS2 / ContTune
+        - text: 点 2 的决策框架，扩展容量 S / 短路阈值变量
+      - - text: StateFetcher 算子
+          bold: true
+        - text: keyBy(userId) ＋ Operator State 缓存，随 checkpoint 容错
+        - text: 升级为「语义记忆算子」的天然载体
+      - - text: 实验平台与硬件
+          bold: true
+        - text: Flink 1.17 管线 ＋ vLLM 集成 ＋ 真实流量 trace ＋ 结果绘图脚本；H20-141G / A6000-40G×4
+        - text: 端到端实验直接复用，2–4 卡满足实验规模
+
+  - elementId: constraint-bar
+    elementType: shape
+    bounds: [56, 452, 3, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: constraint-text
+    elementType: text
+    bounds: [72, 452, 832, 42]
+    content:
+      fontSize: 13
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        <p><strong>约束条件</strong>：学术型硕士 · 周期约 4 个月 · 实验资源 2–4 张 GPU —— 三个研究点均在现有平台上增量建设，工作量可控。</p>
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 15 / 17}

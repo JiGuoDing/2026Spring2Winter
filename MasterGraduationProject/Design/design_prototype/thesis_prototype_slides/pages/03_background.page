@@ -1,0 +1,139 @@
+pageType: content
+background:
+  type: solid
+  color: "$bg"
+notes: 强调问题性质的转变：单轮场景每次请求独立，多轮 Agent 会话让状态和知识可复用，同时带来远端知识库拉取、重复推理、亲和调度三个具体问题。
+elements:
+  - elementId: hdr-tag
+    elementType: text
+    bounds: [48, 24, 500, 16]
+    content: {fontSize: 10, color: "$sub", letterSpacing: 2, wrap: false, text: 01 · 研究背景与动机}
+  - elementId: hdr-page
+    elementType: text
+    bounds: [860, 24, 52, 16]
+    content: {fontSize: 10, color: "$sub", align: [right, top], wrap: false, text: 03 / 12}
+  - elementId: title
+    elementType: text
+    bounds: [48, 48, 800, 34]
+    content: {style: "$pagetitle", wrap: false, text: 背景：从「单轮推理」到「多轮 Agent 会话」}
+  - elementId: title-tick
+    elementType: shape
+    bounds: [48, 90, 34, 3]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: from-box
+    elementType: shape
+    bounds: [48, 112, 330, 66]
+    shapeName: rect
+    fill: {type: solid, color: "$paper"}
+    border: {style: solid, width: 1, color: "$hairline"}
+  - elementId: from-tag
+    elementType: text
+    bounds: [64, 122, 300, 14]
+    content: {fontSize: 9.5, color: "$sub", wrap: false, text: 现有基底（小红书项目）}
+  - elementId: from-t
+    elementType: text
+    bounds: [64, 140, 300, 30]
+    content: {fontSize: 13.5, bold: true, color: "$ink", lineHeight: 1.3, text: 单轮对话的流式推理系统：每次请求独立完成一次计算}
+  - elementId: migrate-arrow
+    elementType: line
+    bounds: [388, 144, 72, 2]
+    viewBox: [72, 2]
+    points: "0,1 72,1"
+    arrow: [null, stealth]
+    border: {style: solid, width: 2, color: "$primary"}
+  - elementId: migrate-label
+    elementType: text
+    bounds: [370, 122, 108, 14]
+    content: {fontSize: 9.5, color: "$primary", align: [center, middle], wrap: false, text: 场景迁移}
+  - elementId: to-box
+    elementType: shape
+    bounds: [472, 112, 440, 66]
+    shapeName: rect
+    fill: {type: solid, color: "$softgreen"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: to-tag
+    elementType: text
+    bounds: [488, 122, 400, 14]
+    content: {fontSize: 9.5, color: "$primary", wrap: false, text: 本研究场景}
+  - elementId: to-t
+    elementType: text
+    bounds: [488, 140, 408, 30]
+    content:
+      fontSize: 13.5
+      bold: true
+      color: "$ink"
+      lineHeight: 1.3
+      text: 多轮 Agent 会话：跨轮、跨会话可复用的状态 —— 历史回复可复用，知识资料可缓存
+  - elementId: m1-no
+    elementType: text
+    bounds: [48, 210, 32, 24]
+    content: {fontSize: 17, bold: true, color: "$accent", wrap: false, text: "1"}
+  - elementId: m1-lead
+    elementType: text
+    bounds: [88, 210, 824, 20]
+    content: {fontSize: 13.5, bold: true, color: "$ink", wrap: false, text: 知识库远端部署，拼接上下文存在拉取开销}
+  - elementId: m1-body
+    elementType: text
+    bounds: [88, 234, 824, 40]
+    content:
+      fontSize: 11.5
+      color: "$sub"
+      lineHeight: 1.5
+      text: 企业主流做法是将知识库部署在远端平台、团队共享同一份知识库，每次查询都需远端拉取。可将 Flink 状态能力用于多轮 / 跨会话的知识库缓存：缓存最近最常访问的知识资料，拼接上下文时直接从状态获取，减少拼接耗时。
+  - elementId: m2-no
+    elementType: text
+    bounds: [48, 296, 32, 24]
+    content: {fontSize: 17, bold: true, color: "$accent", wrap: false, text: "2"}
+  - elementId: m2-lead
+    elementType: text
+    bounds: [88, 296, 824, 20]
+    content: {fontSize: 13.5, bold: true, color: "$ink", wrap: false, text: 相似请求重复推理，浪费 GPU}
+  - elementId: m2-body
+    elementType: text
+    bounds: [88, 320, 824, 40]
+    content:
+      fontSize: 11.5
+      color: "$sub"
+      lineHeight: 1.5
+      text: 受短路读思路启发（参考 vCache），复用到 LLM 推理场景：相似度达到阈值的请求直接复用历史回复。需要研究推理短路与正确回复之间的 tradeoff，把短路产生的错误回复控制在一定阈值内。
+  - elementId: m3-no
+    elementType: text
+    bounds: [48, 382, 32, 24]
+    content: {fontSize: 17, bold: true, color: "$accent", wrap: false, text: "3"}
+  - elementId: m3-lead
+    elementType: text
+    bounds: [88, 382, 824, 20]
+    content: {fontSize: 13.5, bold: true, color: "$ink", wrap: false, text: 动态负载下，会话亲和调度与资源成本问题凸显}
+  - elementId: m3-body
+    elementType: text
+    bounds: [88, 406, 824, 40]
+    content:
+      fontSize: 11.5
+      color: "$sub"
+      lineHeight: 1.5
+      text: 多轮会话带来请求路由的亲和性调度问题；负载动态变化时，语义库缓存容量与推理并行度需要随之扩缩容，在 SLO 合规与资源成本之间取得平衡。
+  - elementId: slo-band
+    elementType: shape
+    bounds: [48, 462, 864, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: slo-text
+    elementType: text
+    bounds: [48, 474, 864, 20]
+    content:
+      fontSize: 12
+      color: "$ink"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p style="text-align:center">由此，本研究的 SLO 包含两部分：<strong>端到端时延</strong> 与 <strong>错误率预算</strong></p>
+  - elementId: foot-line
+    elementType: shape
+    bounds: [48, 512, 864, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: foot-text
+    elementType: text
+    bounds: [48, 519, 500, 13]
+    content: {fontSize: 9, color: "$sub", wrap: false, text: 面向 SLO 的流式 Agent 推理系统 · 毕业设计初版讨论}

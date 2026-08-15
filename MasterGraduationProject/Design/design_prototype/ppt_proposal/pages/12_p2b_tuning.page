@@ -1,0 +1,195 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 04 · 三个研究点 — 点 2 决策
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 点 2b：语义库容量与推理参数调优——SLO 下成本最小化
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: var-label
+    elementType: text
+    bounds: [56, 116, 260, 18]
+    content: {fontSize: 13, bold: true, color: "$sub", wrap: false, text: 决策变量（三个）}
+  - elementId: var1-box
+    elementType: shape
+    bounds: [56, 142, 240, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$soft"}
+  - elementId: var1-t
+    elementType: text
+    bounds: [68, 142, 226, 42]
+    content: {fontSize: 11.5, color: "$text", align: [left, middle], text: <strong>S</strong>｜语义库缓存容量}
+  - elementId: var2-box
+    elementType: shape
+    bounds: [56, 194, 240, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$soft"}
+  - elementId: var2-t
+    elementType: text
+    bounds: [68, 194, 226, 42]
+    content: {fontSize: 11.5, color: "$text", align: [left, middle], text: <strong>p</strong>｜推理算子并行度（Flink）}
+  - elementId: var3-box
+    elementType: shape
+    bounds: [56, 246, 240, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$soft"}
+  - elementId: var3-t
+    elementType: text
+    bounds: [68, 246, 226, 42]
+    content: {fontSize: 11.5, color: "$text", align: [left, middle], text: <strong>b</strong>｜推理批次大小}
+  - elementId: goal-text
+    elementType: text
+    bounds: [56, 312, 260, 130]
+    content:
+      fontSize: 12
+      color: "$sub"
+      lineHeight: 1.6
+      align: [left, top]
+      text: |
+        <p><strong style="color:#23292E">调优目标</strong>：满足 SLO（时延＋错误率）的前提下，最小化缓存容量与并行度，降低成本；</p>
+        <p style="margin-top:8px">负载上升时提升容量与并行度，尽可能满足 SLO；</p>
+        <p style="margin-top:8px">每次调整都显式<strong style="color:#23292E">评估扩缩容开销</strong>。</p>
+
+  - elementId: tn-monitor
+    elementType: shape
+    bounds: [520, 116, 240, 44]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: tn-monitor-t
+    elementType: text
+    bounds: [528, 120, 224, 36]
+    content: {fontSize: 11.5, bold: true, color: "$primary", align: [center, middle], text: 监测 SLO 达成（时延 / 错误率）}
+  - elementId: tn-arr-m
+    elementType: line
+    bounds: [638, 162, 4, 30]
+    viewBox: [4, 30]
+    points: "2,0 2,30"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: tn-diamond
+    elementType: shape
+    bounds: [570, 194, 140, 96]
+    shapeName: diamond
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1.2, color: "$primary"}
+  - elementId: tn-diamond-t
+    elementType: text
+    bounds: [584, 216, 112, 52]
+    content: {fontSize: 10, color: "$text", lineHeight: 1.3, align: [center, middle], text: 当前配置<br/>满足 SLO？}
+  - elementId: tn-yes-label
+    elementType: text
+    bounds: [520, 206, 44, 14]
+    content: {fontSize: 11, bold: true, color: "$primary", wrap: false, text: 满足}
+  - elementId: tn-arr-yes
+    elementType: line
+    bounds: [490, 238, 76, 8]
+    viewBox: [76, 8]
+    points: "76,4 0,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.5, color: "$primary"}
+  - elementId: tn-shrink
+    elementType: shape
+    bounds: [336, 206, 150, 72]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: tn-shrink-t
+    elementType: text
+    bounds: [342, 210, 138, 64]
+    content: {fontSize: 10, color: "$text", lineHeight: 1.35, align: [center, middle], text: 逐步缩容 S / p / b<br/>降低成本；不再满足时回退上一档}
+  - elementId: tn-no-label
+    elementType: text
+    bounds: [716, 206, 60, 14]
+    content: {fontSize: 11, bold: true, color: "$accent", wrap: false, text: 不满足}
+  - elementId: tn-arr-no
+    elementType: line
+    bounds: [714, 238, 40, 8]
+    viewBox: [40, 8]
+    points: "0,4 40,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.5, color: "$accent"}
+  - elementId: tn-expand
+    elementType: shape
+    bounds: [758, 206, 146, 72]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$accent"}
+  - elementId: tn-expand-t
+    elementType: text
+    bounds: [764, 210, 134, 64]
+    content: {fontSize: 10, color: "$text", lineHeight: 1.35, align: [center, middle], text: 扩容 S / p / b<br/>直到重新满足 SLO}
+  - elementId: tn-arr-e1
+    elementType: line
+    bounds: [409, 280, 4, 42]
+    viewBox: [4, 42]
+    points: "2,0 2,42"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: tn-arr-e2
+    elementType: line
+    bounds: [824, 280, 4, 42]
+    viewBox: [4, 42]
+    points: "2,0 2,42"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: tn-eval
+    elementType: shape
+    bounds: [336, 326, 568, 46]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: tn-eval-t
+    elementType: text
+    bounds: [344, 330, 552, 38]
+    content: {fontSize: 11.5, color: "$text", align: [center, middle], text: 评估每次扩缩容的开销（状态迁移 / 重配置成本），计入调优收益}
+  - elementId: tn-loop
+    elementType: line
+    bounds: [300, 138, 220, 211]
+    viewBox: [220, 211]
+    points: "36,211 0,211 0,0 220,0"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: dash, width: 1.2, color: "$faint"}
+  - elementId: tn-caption
+    elementType: text
+    bounds: [336, 386, 568, 16]
+    content: {fontSize: 10.5, color: "$sub", wrap: false, text: 负载下降 → 缩容降成本；负载上升 → 扩容保 SLO；收敛于「满足 SLO 的最小配置」}
+
+  - elementId: p2b-note
+    elementType: text
+    bounds: [56, 478, 848, 14]
+    content: {style: "$note", wrap: false, text: 容量调优基于小红书缓存替换算法改进；并行度与批次调优利用预测的推理时间（点 1 输出）。}
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 12 / 17}

@@ -1,0 +1,74 @@
+version: v2
+title: 毕业设计初版方案讨论 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+size: [960, 540]
+theme:
+  colors:
+    primary: "#155E52"
+    accent: "#C9752F"
+    text: "#23292E"
+    sub: "#5F6B72"
+    faint: "#9AA5A1"
+    line: "#DDE3DE"
+    soft: "#F2F5F0"
+    softP: "#E4EEE9"
+  textStyles:
+    kicker:
+      fontSize: 11
+      bold: true
+      color: "$primary"
+      letterSpacing: 2
+    pageTitle:
+      fontSize: 25
+      bold: true
+      color: "$text"
+      lineHeight: 1.2
+    body:
+      fontSize: 13.5
+      color: "$text"
+      lineHeight: 1.55
+    small:
+      fontSize: 11
+      color: "$sub"
+      lineHeight: 1.45
+    note:
+      fontSize: 10
+      color: "$faint"
+      lineHeight: 1.35
+    footer:
+      fontSize: 9
+      color: "$faint"
+  tableStyles:
+    default:
+      cellStyle:
+        fontSize: 11
+        color: "$text"
+        lineHeight: 1.35
+        align: [left, middle]
+        border: {style: solid, width: 1, color: "$line"}
+      firstRowStyle:
+        fill: {type: solid, color: "$primary"}
+        color: "#FFFFFF"
+        bold: true
+        fontSize: 11.5
+        align: [center, middle]
+      bodyStyles:
+        - {fill: {type: solid, color: "#FFFFFF"}}
+        - {fill: {type: solid, color: "#F6F8F5"}}
+pages:
+  - pages/01_cover.page
+  - pages/02_toc.page
+  - pages/03_bg_load.page
+  - pages/04_bg_kb.page
+  - pages/05_problem.page
+  - pages/06_related.page
+  - pages/07_storyline.page
+  - pages/08_framework.page
+  - pages/09_points_overview.page
+  - pages/10_p1_prediction.page
+  - pages/11_p2a_shortcut.page
+  - pages/12_p2b_tuning.page
+  - pages/13_p3a_replacement.page
+  - pages/14_p3b_routing.page
+  - pages/15_feasibility.page
+  - pages/16_discussion.page
+  - pages/17_closing.page

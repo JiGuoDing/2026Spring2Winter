@@ -1,0 +1,169 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 04 · 三个研究点 — 点 2 决策
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 点 2a：推理短路——相似请求直接复用历史回复
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: sc-n1
+    elementType: shape
+    bounds: [56, 146, 170, 56]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: sc-n1-t
+    elementType: text
+    bounds: [62, 150, 158, 48]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.3, align: [center, middle], text: 拼接完整上下文后的 prompt}
+  - elementId: sc-arr1
+    elementType: line
+    bounds: [232, 170, 40, 8]
+    viewBox: [40, 8]
+    points: "0,4 40,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: sc-n2
+    elementType: shape
+    bounds: [278, 146, 196, 56]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: sc-n2-t
+    elementType: text
+    bounds: [284, 150, 184, 48]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.3, align: [center, middle], text: 计算 embedding 语义相似度<br/>（与语义库最近邻比较）}
+  - elementId: sc-arr2
+    elementType: line
+    bounds: [480, 170, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: sc-diamond
+    elementType: shape
+    bounds: [522, 124, 132, 100]
+    shapeName: diamond
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1.2, color: "$primary"}
+  - elementId: sc-diamond-t
+    elementType: text
+    bounds: [534, 146, 108, 56]
+    content: {fontSize: 9.5, color: "$text", lineHeight: 1.3, align: [center, middle], text: 相似度 ≥ 阈值<br/>且正确复用概率达标？}
+  - elementId: sc-yes-label
+    elementType: text
+    bounds: [662, 142, 30, 14]
+    content: {fontSize: 11, bold: true, color: "$primary", wrap: false, text: 是}
+  - elementId: sc-arr-yes
+    elementType: line
+    bounds: [660, 166, 40, 8]
+    viewBox: [40, 8]
+    points: "0,4 40,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.5, color: "$primary"}
+  - elementId: sc-n3
+    elementType: shape
+    bounds: [706, 138, 198, 56]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$primary"}
+  - elementId: sc-n3-t
+    elementType: text
+    bounds: [712, 142, 186, 48]
+    content: {fontSize: 10.5, color: "#FFFFFF", bold: true, lineHeight: 1.3, align: [center, middle], text: 短路到对话明细存储算子<br/>（保留最近 T 时间的会话结果）}
+  - elementId: sc-n3-cap
+    elementType: text
+    bounds: [706, 202, 198, 44]
+    content: {fontSize: 10, color: "$primary", lineHeight: 1.4, align: [left, top], text: 拿到会话结果直接返回用户，省去一次拼接上下文与推理 → 节省 GPU}
+  - elementId: sc-no-label
+    elementType: text
+    bounds: [556, 230, 30, 14]
+    content: {fontSize: 11, bold: true, color: "$sub", wrap: false, text: 否}
+  - elementId: sc-arr-no
+    elementType: line
+    bounds: [586, 228, 4, 34]
+    viewBox: [4, 34]
+    points: "2,0 2,34"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: sc-n4
+    elementType: shape
+    bounds: [500, 266, 176, 52]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: sc-n4-t
+    elementType: text
+    bounds: [506, 270, 164, 44]
+    content: {fontSize: 10.5, color: "$text", lineHeight: 1.3, align: [center, middle], text: Batcher → Inferencer<br/>走完整推理路径}
+  - elementId: sc-arr-n5
+    elementType: line
+    bounds: [682, 288, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: sc-n5
+    elementType: shape
+    bounds: [724, 266, 180, 52]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: sc-n5-t
+    elementType: text
+    bounds: [730, 270, 168, 44]
+    content: {fontSize: 10.5, color: "$text", lineHeight: 1.3, align: [center, middle], text: 结果写回语义库 / 对话明细<br/>（供后续请求复用）}
+
+  - elementId: vc-bar
+    elementType: shape
+    bounds: [56, 360, 3, 104]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: vc-title
+    elementType: text
+    bounds: [72, 360, 700, 18]
+    content: {fontSize: 13, bold: true, color: "$text", wrap: false, text: 借鉴 vCache（ICLR 2026）：错误率可控的语义缓存}
+  - elementId: vc-body
+    elementType: text
+    bounds: [72, 384, 832, 80]
+    content:
+      fontSize: 12
+      color: "$sub"
+      lineHeight: 1.55
+      align: [left, top]
+      text: |
+        <p><strong style="color:#23292E">vCache 解决的问题</strong>：两个问题语义相似时，系统怎样在「尽量复用历史回答」的同时，把返回错误回答的概率控制在用户指定的范围 δ 内。</p>
+        <p style="margin-top:8px"><strong style="color:#23292E">本课题做法</strong>：根据历史探索结果估计候选响应的「正确复用概率」（简版实现，贴合流处理系统场景）；仅当相似度达到阈值 <strong style="color:#23292E">且</strong> 满足错误率约束时才短路，把短路产生的错误回复控制在阈值内。</p>
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 11 / 17}

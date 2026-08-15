@@ -1,0 +1,145 @@
+pageType: table_of_contents
+background:
+  type: solid
+  color: "$bg"
+notes: 介绍今天的汇报结构：先讲为什么做，再讲核心思想与整体框架，然后逐点展开设计细节，最后列出想请老师把关的开放问题。
+elements:
+  - elementId: hdr-tag
+    elementType: text
+    bounds: [48, 24, 500, 16]
+    content:
+      fontSize: 10
+      color: "$sub"
+      letterSpacing: 2
+      wrap: false
+      text: AGENDA
+  - elementId: hdr-page
+    elementType: text
+    bounds: [860, 24, 52, 16]
+    content:
+      fontSize: 10
+      color: "$sub"
+      align: [right, top]
+      wrap: false
+      text: 02 / 12
+  - elementId: title
+    elementType: text
+    bounds: [48, 48, 500, 34]
+    content:
+      style: "$pagetitle"
+      wrap: false
+      text: 讨论议程
+  - elementId: title-tick
+    elementType: shape
+    bounds: [48, 90, 34, 3]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: ag1-no
+    elementType: text
+    bounds: [48, 124, 44, 26]
+    content: {fontSize: 18, bold: true, color: "$primary", wrap: false, text: "01"}
+  - elementId: ag1-t
+    elementType: text
+    bounds: [104, 124, 520, 20]
+    content: {fontSize: 14.5, bold: true, color: "$ink", wrap: false, text: 研究背景与动机}
+  - elementId: ag1-d
+    elementType: text
+    bounds: [104, 148, 520, 16]
+    content: {fontSize: 11, color: "$sub", wrap: false, text: 为什么多轮 Agent 会话改变了流式推理的问题性质}
+  - elementId: ag1-line
+    elementType: shape
+    bounds: [104, 176, 540, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: ag2-no
+    elementType: text
+    bounds: [48, 190, 44, 26]
+    content: {fontSize: 18, bold: true, color: "$primary", wrap: false, text: "02"}
+  - elementId: ag2-t
+    elementType: text
+    bounds: [104, 190, 520, 20]
+    content: {fontSize: 14.5, bold: true, color: "$ink", wrap: false, text: 研究故事线与 SLO 定义}
+  - elementId: ag2-d
+    elementType: text
+    bounds: [104, 214, 520, 16]
+    content: {fontSize: 11, color: "$sub", wrap: false, text: 一句话核心思想、「语义记忆」闭环、双约束 SLO}
+  - elementId: ag2-line
+    elementType: shape
+    bounds: [104, 242, 540, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: ag3-no
+    elementType: text
+    bounds: [48, 256, 44, 26]
+    content: {fontSize: 18, bold: true, color: "$primary", wrap: false, text: "03"}
+  - elementId: ag3-t
+    elementType: text
+    bounds: [104, 256, 520, 20]
+    content: {fontSize: 14.5, bold: true, color: "$ink", wrap: false, text: 整体框架}
+  - elementId: ag3-d
+    elementType: text
+    bounds: [104, 280, 520, 16]
+    content: {fontSize: 11, color: "$sub", wrap: false, text: 三个研究点如何协同作用于同一条流式推理管线}
+  - elementId: ag3-line
+    elementType: shape
+    bounds: [104, 308, 540, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: ag4-no
+    elementType: text
+    bounds: [48, 322, 44, 26]
+    content: {fontSize: 18, bold: true, color: "$primary", wrap: false, text: "04"}
+  - elementId: ag4-t
+    elementType: text
+    bounds: [104, 322, 520, 20]
+    content: {fontSize: 14.5, bold: true, color: "$ink", wrap: false, text: 关键设计细节}
+  - elementId: ag4-d
+    elementType: text
+    bounds: [104, 346, 520, 16]
+    content: {fontSize: 11, color: "$sub", wrap: false, text: 时延预测 · 推理短路 · 联合调优 · 缓存替换 · 亲和路由}
+  - elementId: ag4-line
+    elementType: shape
+    bounds: [104, 374, 540, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: ag5-no
+    elementType: text
+    bounds: [48, 388, 44, 26]
+    content: {fontSize: 18, bold: true, color: "$accent", wrap: false, text: "05"}
+  - elementId: ag5-t
+    elementType: text
+    bounds: [104, 388, 520, 20]
+    content: {fontSize: 14.5, bold: true, color: "$ink", wrap: false, text: 关键权衡与待讨论问题}
+  - elementId: ag5-d
+    elementType: text
+    bounds: [104, 412, 520, 16]
+    content: {fontSize: 11, color: "$sub", wrap: false, text: 三个核心权衡，以及希望导师把关的开放点}
+  - elementId: side-rule
+    elementType: shape
+    bounds: [700, 124, 1, 300]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: side-title
+    elementType: text
+    bounds: [724, 124, 190, 20]
+    content: {fontSize: 13, bold: true, color: "$primary", wrap: false, text: 本次讨论目标}
+  - elementId: side-body
+    elementType: text
+    bounds: [724, 156, 196, 200]
+    content:
+      fontSize: 11.5
+      color: "$ink"
+      lineHeight: 1.65
+      text: |
+        <p>① 确认选题价值与故事线的完整性</p>
+        <p style="margin-top:10px">② 确认三个研究点技术路线的可行性</p>
+        <p style="margin-top:10px">③ 明确实验验证的方向与优先级</p>
+  - elementId: foot-line
+    elementType: shape
+    bounds: [48, 512, 864, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$hairline"}
+  - elementId: foot-text
+    elementType: text
+    bounds: [48, 519, 500, 13]
+    content: {fontSize: 9, color: "$sub", wrap: false, text: 面向 SLO 的流式 Agent 推理系统 · 毕业设计初版讨论}

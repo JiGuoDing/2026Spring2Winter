@@ -1,0 +1,207 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 04 · 三个研究点 — 点 1 感知
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 点 1：面向多轮上下文的推理时延预测
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: formula
+    elementType: text
+    bounds: [56, 108, 848, 26]
+    content:
+      fontSize: 15.5
+      bold: true
+      color: "$text"
+      wrap: false
+      align: [left, middle]
+      text: |
+        <p>端到端时延 ＝ <span style="color:$accent">排队时延</span> ＋ <span style="color:$primary">推理时延</span>　　（目标：高效、准确地预测两者）</p>
+
+  - elementId: ra-label
+    elementType: text
+    bounds: [56, 148, 300, 18]
+    content: {fontSize: 12.5, bold: true, color: "$primary", wrap: false, text: A · 推理长度预测}
+  - elementId: ra-feat
+    elementType: shape
+    bounds: [56, 172, 296, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: ra-feat-t
+    elementType: text
+    bounds: [68, 178, 272, 58]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.4, align: [left, middle], text: 输入特征：当前 prompt、会话上下文长度、RAG 文档长度}
+  - elementId: ra-arr1
+    elementType: line
+    bounds: [360, 202, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: ra-model
+    elementType: shape
+    bounds: [404, 172, 190, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$primary"}
+  - elementId: ra-model-t
+    elementType: text
+    bounds: [412, 178, 174, 58]
+    content: {fontSize: 11, color: "#FFFFFF", bold: true, lineHeight: 1.4, align: [center, middle], text: 轻量机器学习模型<br/>（同小红书项目）}
+  - elementId: ra-arr2
+    elementType: line
+    bounds: [602, 202, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: ra-out
+    elementType: shape
+    bounds: [646, 172, 258, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: ra-out-t
+    elementType: text
+    bounds: [658, 178, 234, 58]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.4, align: [left, middle], text: 输出：输出 token 数的<strong>区间</strong>估计}
+
+  - elementId: rb-label
+    elementType: text
+    bounds: [56, 262, 300, 18]
+    content: {fontSize: 12.5, bold: true, color: "$primary", wrap: false, text: B · 推理时延预测}
+  - elementId: rb-feat
+    elementType: shape
+    bounds: [56, 286, 296, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rb-feat-t
+    elementType: text
+    bounds: [68, 292, 272, 58]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.4, align: [left, middle], text: 输入特征：token 数区间、批次大小、并行度、队列长度（新增）}
+  - elementId: rb-arr1
+    elementType: line
+    bounds: [360, 316, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: rb-model
+    elementType: shape
+    bounds: [404, 286, 190, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$primary"}
+  - elementId: rb-model-t
+    elementType: text
+    bounds: [412, 292, 174, 58]
+    content: {fontSize: 11, color: "#FFFFFF", bold: true, lineHeight: 1.4, align: [center, middle], text: 轻量机器学习模型<br/>（同小红书项目）}
+  - elementId: rb-arr2
+    elementType: line
+    bounds: [602, 316, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: rb-out
+    elementType: shape
+    bounds: [646, 286, 258, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: rb-out-t
+    elementType: text
+    bounds: [658, 292, 234, 58]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.4, align: [left, middle], text: 输出：TTFT、端到端时延 <strong>P50 / P95</strong>}
+
+  - elementId: rc-label
+    elementType: text
+    bounds: [56, 376, 300, 18]
+    content: {fontSize: 12.5, bold: true, color: "$accent", wrap: false, text: C · 排队时延推算（规则）}
+  - elementId: rc-feat
+    elementType: shape
+    bounds: [56, 400, 296, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rc-feat-t
+    elementType: text
+    bounds: [68, 406, 272, 58]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.4, align: [left, middle], text: 输入：当前请求在队列中的位置、前序请求的预测时延}
+  - elementId: rc-arr1
+    elementType: line
+    bounds: [360, 430, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: rc-model
+    elementType: shape
+    bounds: [404, 400, 190, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$accent"}
+  - elementId: rc-model-t
+    elementType: text
+    bounds: [412, 406, 174, 58]
+    content: {fontSize: 11, color: "$text", bold: true, lineHeight: 1.4, align: [center, middle], text: 按队列位置累加<br/>前序请求预测时延}
+  - elementId: rc-arr2
+    elementType: line
+    bounds: [602, 430, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: rc-out
+    elementType: shape
+    bounds: [646, 400, 258, 70]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: rc-out-t
+    elementType: text
+    bounds: [658, 406, 234, 58]
+    content: {fontSize: 11, color: "$text", lineHeight: 1.4, align: [left, middle], text: 输出：排队时延 → 与 B 相加得端到端时延}
+
+  - elementId: p1-note
+    elementType: text
+    bounds: [56, 484, 848, 14]
+    content: {style: "$note", wrap: false, text: 方法沿用小红书项目的轻量机器学习路线；面向多轮会话新增：会话上下文长度、RAG 文档长度、队列长度三类特征。}
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 10 / 17}

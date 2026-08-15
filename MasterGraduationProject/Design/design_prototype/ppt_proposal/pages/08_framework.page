@@ -1,0 +1,256 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 300, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 03 · 研究框架
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 整体框架：管线零改动，只升级一个算子
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: upgrade-note
+    elementType: shape
+    bounds: [206, 120, 184, 40]
+    shapeName: rect
+    fill: {type: solid, color: "#FFFFFF"}
+    border: {style: dash, width: 1, color: "$primary"}
+  - elementId: upgrade-note-t
+    elementType: text
+    bounds: [212, 124, 172, 32]
+    content: {fontSize: 9.5, color: "$primary", align: [center, middle], lineHeight: 1.3, text: StateFetcher 升级为「语义记忆算子」：embedding 索引 ＋ 语义检索}
+  - elementId: upgrade-link
+    elementType: line
+    bounds: [297, 162, 2, 50]
+    viewBox: [2, 50]
+    points: "1,0 1,50"
+    border: {style: dash, width: 1, color: "$primary"}
+
+  - elementId: ctrl-box
+    elementType: shape
+    bounds: [610, 118, 254, 52]
+    shapeName: rect
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: ctrl-box-t
+    elementType: text
+    bounds: [618, 122, 238, 44]
+    content:
+      lineHeight: 1.3
+      align: [left, middle]
+      text: |
+        <p><span style="font-size:11.5px; color:$primary"><strong>SLO 控制器（点 2）</strong></span></p>
+        <p><span style="font-size:9.5px; color:$sub">调优：容量 S · 并行度 p · 批次 b · 短路阈值</span></p>
+  - elementId: ctrl-to-sf
+    elementType: line
+    bounds: [298, 162, 312, 48]
+    viewBox: [312, 48]
+    points: "312,0 0,48"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: dash, width: 1.2, color: "$primary"}
+  - elementId: ctrl-to-inf
+    elementType: line
+    bounds: [654, 172, 76, 40]
+    viewBox: [76, 40]
+    points: "76,0 0,40"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: dash, width: 1.2, color: "$primary"}
+
+  - elementId: pipe-source
+    elementType: shape
+    bounds: [56, 214, 110, 48]
+    shapeName: roundRect
+    adjustments: [12000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: pipe-source-t
+    elementType: text
+    bounds: [56, 214, 110, 48]
+    content: {fontSize: 12, bold: true, color: "$text", align: [center, middle], text: Source}
+  - elementId: pipe-a1
+    elementType: line
+    bounds: [170, 234, 44, 8]
+    viewBox: [44, 8]
+    points: "0,4 44,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: pipe-sf
+    elementType: shape
+    bounds: [218, 214, 160, 48]
+    shapeName: roundRect
+    adjustments: [12000]
+    fill: {type: solid, color: "$primary"}
+  - elementId: pipe-sf-t
+    elementType: text
+    bounds: [218, 214, 160, 48]
+    content: {fontSize: 12, bold: true, color: "#FFFFFF", align: [center, middle], lineHeight: 1.25, text: 语义记忆算子<br/>（原 StateFetcher）}
+  - elementId: pipe-a2
+    elementType: line
+    bounds: [382, 234, 44, 8]
+    viewBox: [44, 8]
+    points: "0,4 44,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: pipe-batcher
+    elementType: shape
+    bounds: [430, 214, 110, 48]
+    shapeName: roundRect
+    adjustments: [12000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: pipe-batcher-t
+    elementType: text
+    bounds: [430, 214, 110, 48]
+    content: {fontSize: 12, bold: true, color: "$text", align: [center, middle], text: Batcher}
+  - elementId: pipe-a3
+    elementType: line
+    bounds: [544, 234, 44, 8]
+    viewBox: [44, 8]
+    points: "0,4 44,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: pipe-inferencer
+    elementType: shape
+    bounds: [592, 214, 120, 48]
+    shapeName: roundRect
+    adjustments: [12000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: pipe-inferencer-t
+    elementType: text
+    bounds: [592, 214, 120, 48]
+    content: {fontSize: 12, bold: true, color: "$text", align: [center, middle], text: Inferencer}
+  - elementId: pipe-a4
+    elementType: line
+    bounds: [716, 234, 44, 8]
+    viewBox: [44, 8]
+    points: "0,4 44,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: pipe-sink
+    elementType: shape
+    bounds: [764, 214, 100, 48]
+    shapeName: roundRect
+    adjustments: [12000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: pipe-sink-t
+    elementType: text
+    bounds: [764, 214, 100, 48]
+    content: {fontSize: 12, bold: true, color: "$text", align: [center, middle], text: Sink}
+
+  - elementId: miss-label
+    elementType: text
+    bounds: [430, 268, 240, 13]
+    content: {fontSize: 9.5, color: "$faint", wrap: false, text: 未命中 → 走完整推理路径}
+
+  - elementId: shortcut-v1
+    elementType: line
+    bounds: [296, 264, 4, 52]
+    viewBox: [4, 52]
+    points: "2,0 2,52"
+    border: {style: dash, width: 1.4, color: "$primary"}
+  - elementId: shortcut-h
+    elementType: line
+    bounds: [296, 314, 518, 4]
+    viewBox: [518, 4]
+    points: "0,2 518,2"
+    border: {style: dash, width: 1.4, color: "$primary"}
+  - elementId: shortcut-v2
+    elementType: line
+    bounds: [812, 264, 4, 52]
+    viewBox: [4, 52]
+    points: "2,52 2,0"
+    arrow: [null, stealth]
+    border: {style: dash, width: 1.4, color: "$primary"}
+  - elementId: shortcut-label
+    elementType: text
+    bounds: [400, 322, 400, 14]
+    content: {fontSize: 10.5, bold: true, color: "$primary", wrap: false, text: 语义命中 → 短路 Batcher ＋ Inferencer，直接返回结果（节省 GPU）}
+
+  - elementId: rp1-rule
+    elementType: shape
+    bounds: [56, 384, 264, 2]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: rp1-title
+    elementType: text
+    bounds: [56, 394, 264, 18]
+    content: {fontSize: 13, bold: true, color: "$text", wrap: false, text: 点 1 · 感知｜时延预测}
+  - elementId: rp1-desc
+    elementType: text
+    bounds: [56, 416, 264, 34]
+    content: {fontSize: 10.5, color: "$sub", lineHeight: 1.4, text: 在请求到达与排队处，预测推理长度与端到端时延}
+  - elementId: rp1-loc
+    elementType: text
+    bounds: [56, 452, 264, 14]
+    content: {fontSize: 9.5, color: "$faint", wrap: false, text: 作用位置：Source 与 Batcher 前的排队区}
+
+  - elementId: rp2-rule
+    elementType: shape
+    bounds: [348, 384, 264, 2]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: rp2-title
+    elementType: text
+    bounds: [348, 394, 264, 18]
+    content: {fontSize: 13, bold: true, color: "$text", wrap: false, text: 点 2 · 决策｜短路与调优}
+  - elementId: rp2-desc
+    elementType: text
+    bounds: [348, 416, 264, 34]
+    content: {fontSize: 10.5, color: "$sub", lineHeight: 1.4, text: 错误率约束内短路复用；联合调优容量 / 并行度 / 批次}
+  - elementId: rp2-loc
+    elementType: text
+    bounds: [348, 452, 264, 14]
+    content: {fontSize: 9.5, color: "$faint", wrap: false, text: 作用位置：全管线（SLO 控制器）}
+
+  - elementId: rp3-rule
+    elementType: shape
+    bounds: [640, 384, 264, 2]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: rp3-title
+    elementType: text
+    bounds: [640, 394, 264, 18]
+    content: {fontSize: 13, bold: true, color: "$text", wrap: false, text: 点 3 · 执行｜状态优化}
+  - elementId: rp3-desc
+    elementType: text
+    bounds: [640, 416, 264, 34]
+    content: {fontSize: 10.5, color: "$sub", lineHeight: 1.4, text: 缓存项双路打分替换；会话亲和性路由}
+  - elementId: rp3-loc
+    elementType: text
+    bounds: [640, 452, 264, 14]
+    content: {fontSize: 9.5, color: "$faint", wrap: false, text: 作用位置：语义记忆算子内部}
+
+  - elementId: framework-note
+    elementType: text
+    bounds: [56, 482, 848, 14]
+    content: {style: "$note", wrap: false, text: 基底管线 Source → StateFetcher → Batcher → Inferencer → Sink 保持不变；记忆条目存于 Operator State，随 checkpoint 容错。}
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 08 / 17}

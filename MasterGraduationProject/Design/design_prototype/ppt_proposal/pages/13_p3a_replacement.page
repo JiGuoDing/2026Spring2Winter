@@ -1,0 +1,179 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 400, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 04 · 三个研究点 — 点 3 执行
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 点 3a：双路打分的语义库缓存项替换
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: rp-goal
+    elementType: text
+    bounds: [56, 102, 848, 36]
+    content:
+      fontSize: 12
+      color: "$sub"
+      lineHeight: 1.45
+      align: [left, top]
+      text: |-
+        目标：在点 2 给定的缓存容量下，决定<strong style="color:#23292E">优先预取哪些、优先保留哪些语义资料</strong>，最大化语义命中率，减少检索召回时间、降低端到端时延。（基于中移动项目研究）
+
+  - elementId: rp-start
+    elementType: shape
+    bounds: [56, 210, 140, 80]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rp-start-t
+    elementType: text
+    bounds: [62, 216, 128, 68]
+    content: {fontSize: 10.5, color: "$text", lineHeight: 1.35, align: [center, middle], text: 候选语义资料<br/>（库外新资料＋库内已有资料）}
+  - elementId: rp-arr-u
+    elementType: line
+    bounds: [196, 182, 60, 68]
+    viewBox: [60, 68]
+    points: "0,68 60,0"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.3, color: "$sub"}
+  - elementId: rp-arr-d
+    elementType: line
+    bounds: [196, 262, 60, 52]
+    viewBox: [60, 52]
+    points: "0,0 60,52"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.3, color: "$sub"}
+  - elementId: rp-score-a
+    elementType: shape
+    bounds: [256, 144, 240, 76]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: rp-score-a-t
+    elementType: text
+    bounds: [264, 150, 224, 64]
+    content:
+      lineHeight: 1.35
+      align: [left, middle]
+      text: |-
+        <p><span style="font-size:11px; color:$primary"><strong>路 A｜LightGBM（GPU）</strong></span></p>
+        <p><span style="font-size:10px; color:$sub">依 prompt、访问间隔等预测访问概率 → 得分 A</span></p>
+  - elementId: rp-score-b
+    elementType: shape
+    bounds: [256, 276, 240, 76]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$softP"}
+    border: {style: solid, width: 1, color: "$primary"}
+  - elementId: rp-score-b-t
+    elementType: text
+    bounds: [264, 282, 224, 64]
+    content:
+      lineHeight: 1.35
+      align: [left, middle]
+      text: |-
+        <p><span style="font-size:11px; color:$primary"><strong>路 B｜CM Sketch / Cuckoo Filter</strong></span></p>
+        <p><span style="font-size:10px; color:$sub">依事实访问频次与波动得到访问趋势 → 得分 B</span></p>
+  - elementId: rp-arr-mu
+    elementType: line
+    bounds: [496, 182, 60, 52]
+    viewBox: [60, 52]
+    points: "0,0 60,52"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.3, color: "$sub"}
+  - elementId: rp-arr-md
+    elementType: line
+    bounds: [496, 266, 60, 48]
+    viewBox: [60, 48]
+    points: "0,48 60,0"
+    curve: sharp
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.3, color: "$sub"}
+  - elementId: rp-merge
+    elementType: shape
+    bounds: [556, 210, 150, 80]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: rp-merge-t
+    elementType: text
+    bounds: [562, 216, 138, 68]
+    content: {fontSize: 10.5, color: "$text", lineHeight: 1.35, align: [center, middle], text: 加权求和<br/><strong>w·A ＋ (1−w)·B</strong><br/>再归一化}
+  - elementId: rp-arr-keep
+    elementType: line
+    bounds: [710, 246, 36, 8]
+    viewBox: [36, 8]
+    points: "0,4 36,4"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.4, color: "$sub"}
+  - elementId: rp-keep
+    elementType: shape
+    bounds: [750, 210, 154, 80]
+    shapeName: roundRect
+    adjustments: [10000]
+    fill: {type: solid, color: "$primary"}
+  - elementId: rp-keep-t
+    elementType: text
+    bounds: [756, 216, 142, 68]
+    content: {fontSize: 10.5, color: "#FFFFFF", bold: true, lineHeight: 1.35, align: [center, middle], text: 保留得分最高的 n 个<br/>（语义容量内）}
+
+  - elementId: rule1-dot
+    elementType: shape
+    bounds: [56, 382, 8, 8]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: rule1-t
+    elementType: text
+    bounds: [76, 376, 828, 20]
+    content: {fontSize: 12, color: "$text", wrap: false, text: <strong>版本约束</strong>：同时考虑语义资料的版本，版本更新则需替换为新版本}
+  - elementId: rule2-dot
+    elementType: shape
+    bounds: [56, 416, 8, 8]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: rule2-t
+    elementType: text
+    bounds: [76, 410, 828, 20]
+    content: {fontSize: 12, color: "$text", wrap: false, text: <strong>防抖约束</strong>：每次最多替换缓存中已有语义资料的 25%，防止缓存抖动}
+  - elementId: rule3-dot
+    elementType: shape
+    bounds: [56, 450, 8, 8]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: rule3-t
+    elementType: text
+    bounds: [76, 444, 828, 20]
+    content: {fontSize: 12, color: "$text", wrap: false, text: <strong>可替换性</strong>：打分模型（LightGBM，可换其他集成学习算法）与数据结构（CM Sketch / Cuckoo Filter，可换其他结构）均可替换}
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 13 / 17}

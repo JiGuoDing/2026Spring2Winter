@@ -1,0 +1,223 @@
+pageType: content
+background:
+  type: solid
+  color: "#FFFFFF"
+elements:
+  - elementId: kicker
+    elementType: text
+    bounds: [56, 30, 300, 14]
+    content:
+      style: "$kicker"
+      wrap: false
+      text: 01 · 研究背景
+  - elementId: page-no
+    elementType: text
+    bounds: [756, 30, 148, 14]
+    content: {style: "$note", align: [right, top], wrap: false, text: 背景 2 / 2}
+  - elementId: title
+    elementType: text
+    bounds: [56, 48, 848, 34]
+    content:
+      style: "$pageTitle"
+      wrap: false
+      text: 知识库在远端：拼接上下文的隐性开销
+  - elementId: title-rule
+    elementType: shape
+    bounds: [56, 92, 848, 1]
+    shapeName: rect
+    fill: {type: solid, color: "$line"}
+
+  - elementId: flow-a-label
+    elementType: text
+    bounds: [56, 120, 400, 16]
+    content: {fontSize: 12, bold: true, color: "$sub", wrap: false, text: 现状：每次查询都到远端拉取}
+  - elementId: fa-n1
+    elementType: shape
+    bounds: [56, 146, 84, 38]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: fa-n1-t
+    elementType: text
+    bounds: [56, 146, 84, 38]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 请求}
+  - elementId: fa-arr1
+    elementType: line
+    bounds: [144, 160, 34, 6]
+    viewBox: [34, 6]
+    points: "0,3 34,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.5, color: "$accent"}
+  - elementId: fa-n2
+    elementType: shape
+    bounds: [182, 146, 130, 38]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: fa-n2-t
+    elementType: text
+    bounds: [182, 146, 130, 38]
+    content: {fontSize: 11, color: "$text", align: [center, middle], lineHeight: 1.2, text: 远端知识库平台<br/>（团队共享）}
+  - elementId: fa-arr2
+    elementType: line
+    bounds: [316, 160, 34, 6]
+    viewBox: [34, 6]
+    points: "0,3 34,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: fa-n3
+    elementType: shape
+    bounds: [354, 146, 110, 38]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: fa-n3-t
+    elementType: text
+    bounds: [354, 146, 110, 38]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 拼接上下文}
+  - elementId: fa-arr3
+    elementType: line
+    bounds: [468, 160, 34, 6]
+    viewBox: [34, 6]
+    points: "0,3 34,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: fa-n4
+    elementType: shape
+    bounds: [506, 146, 84, 38]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: fa-n4-t
+    elementType: text
+    bounds: [506, 146, 84, 38]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 推理}
+  - elementId: fa-cap
+    elementType: text
+    bounds: [144, 192, 240, 14]
+    content: {fontSize: 10, color: "$accent", wrap: false, text: ↑ 网络往返拉取资料，拼接上下文耗时长}
+
+  - elementId: flow-b-label
+    elementType: text
+    bounds: [56, 232, 400, 16]
+    content: {fontSize: 12, bold: true, color: "$primary", wrap: false, text: 本课题思路：Flink 键控状态做本地缓存}
+  - elementId: fb-n1
+    elementType: shape
+    bounds: [56, 258, 84, 38]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: fb-n1-t
+    elementType: text
+    bounds: [56, 258, 84, 38]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 请求}
+  - elementId: fb-arr1
+    elementType: line
+    bounds: [144, 272, 34, 6]
+    viewBox: [34, 6]
+    points: "0,3 34,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.5, color: "$primary"}
+  - elementId: fb-n2
+    elementType: shape
+    bounds: [182, 252, 130, 50]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$primary"}
+  - elementId: fb-n2-t
+    elementType: text
+    bounds: [186, 256, 122, 42]
+    content:
+      fontSize: 10.5
+      color: "#FFFFFF"
+      bold: true
+      align: [center, middle]
+      lineHeight: 1.25
+      text: |-
+        Flink 键控状态缓存<br/>（最近最常访问资料）
+  - elementId: fb-arr2
+    elementType: line
+    bounds: [316, 272, 34, 6]
+    viewBox: [34, 6]
+    points: "0,3 34,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: fb-n3
+    elementType: shape
+    bounds: [354, 258, 110, 38]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: fb-n3-t
+    elementType: text
+    bounds: [354, 258, 110, 38]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 拼接上下文}
+  - elementId: fb-arr3
+    elementType: line
+    bounds: [468, 272, 34, 6]
+    viewBox: [34, 6]
+    points: "0,3 34,3"
+    arrow: [null, stealth]
+    border: {style: solid, width: 1.2, color: "$faint"}
+  - elementId: fb-n4
+    elementType: shape
+    bounds: [506, 258, 84, 38]
+    shapeName: roundRect
+    adjustments: [14000]
+    fill: {type: solid, color: "$soft"}
+    border: {style: solid, width: 1, color: "$line"}
+  - elementId: fb-n4-t
+    elementType: text
+    bounds: [506, 258, 84, 38]
+    content: {fontSize: 11, color: "$text", align: [center, middle], text: 推理}
+  - elementId: fb-cap
+    elementType: text
+    bounds: [144, 304, 260, 14]
+    content: {fontSize: 10, color: "$primary", wrap: false, text: ↑ 拼接时直接从状态获取，省去远端拉取}
+
+  - elementId: right-text
+    elementType: text
+    bounds: [640, 132, 264, 220]
+    content:
+      style: "$body"
+      fontSize: 12.5
+      lineHeight: 1.6
+      align: [left, top]
+      text: |
+        <p><strong>企业主流部署</strong>：知识库部署在远端平台，团队共享同一份知识库。</p>
+        <p style="margin-top:10px"><strong>问题</strong>：查询时需到远端拉取知识库内容，拼接上下文耗时。</p>
+        <p style="margin-top:10px"><strong>思路</strong>：把 Flink 的状态能力用于多轮会话 / 跨会话的知识库缓存，缓存最近最常访问的知识资料。</p>
+
+  - elementId: takeaway-bar
+    elementType: shape
+    bounds: [56, 442, 3, 42]
+    shapeName: rect
+    fill: {type: solid, color: "$primary"}
+  - elementId: takeaway
+    elementType: text
+    bounds: [72, 442, 832, 42]
+    content:
+      fontSize: 13.5
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        知识库缓存 = 多轮 / 跨会话复用的第二类形态；Flink 算子状态是它的天然载体，也是本课题「语义记忆」的落点。
+
+  - elementId: footer-left
+    elementType: text
+    bounds: [56, 512, 600, 13]
+    content:
+      style: "$footer"
+      wrap: false
+      text: 毕业设计初版方案 · 面向 SLO 的知识库缓存动态优化的流式 Agent 推理系统
+  - elementId: footer-right
+    elementType: text
+    bounds: [856, 512, 48, 13]
+    content: {style: "$footer", align: [right, top], wrap: false, text: 04 / 17}
