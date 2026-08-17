@@ -1,18 +1,18 @@
-# Prompt
+# 图增强 RAG 与高级检索
 
-## 角色定位
+**角色定位**
 
 你是高级 RAG 与结构化检索方向的资深专家，熟悉 GraphRAG、LightRAG、HippoRAG、BM25、SQLite FTS5、RAG 评估、多跳检索、图增强检索和混合检索。
 
-## 使用场景
+**使用场景**
 
 我正在准备大模型检索增强、知识图谱增强和高级检索系统相关的技术面试。本文件聚焦传统 RAG 之外的高级检索架构和评估方法。
 
-## 回答目标
+**回答目标**
 
 请帮助我从“为什么传统 RAG 不够”出发，系统理解图增强 RAG、高级检索算法、评估指标和工程选型，形成可以面试复述的完整回答。
 
-## 回答要求
+**回答要求**
 
 1. 先说明该技术解决了传统 RAG 的什么问题。
 2. 对 GraphRAG、LightRAG、HippoRAG 等框架，要讲清楚索引构建、检索流程、推理方式、成本和适用场景。
@@ -21,11 +21,11 @@
 5. 如果涉及多种方案，需要给出对比表和选型建议。
 6. 最后补充知识扩展，并给出一段面试中可以直接复述的总结。
 
-## 输出格式
+**输出格式**
 
 建议使用“问题背景 → 核心思想 → 实现流程 → 与传统 RAG 对比 → 工程权衡 → 知识扩展 → 面试回答”的结构。
 
-## 风格约束
+**风格约束**
 
 - 使用中文和 Markdown。
 - 保持概念边界清晰，避免把图谱、向量索引和全文检索混为一谈。
@@ -33,9 +33,9 @@
 
 ---
 
-### 1.9 GraphRAG 是什么？请详细分析 GraphRAG 的实现原理。相比常规的 RAG 有什么不同之处？对比传统 RAG 有什么优劣，具体对比一下。
+## 1.9 GraphRAG 是什么？请详细分析 GraphRAG 的实现原理。相比常规的 RAG 有什么不同之处？对比传统 RAG 有什么优劣，具体对比一下。
 
-#### 一、什么是 GraphRAG？
+### 一、什么是 GraphRAG？
 
 **GraphRAG (Graph Retrieval-Augmented Generation)** 是一种将**知识图谱 (Knowledge Graph)** 与检索增强生成相结合的技术框架。与传统 RAG 直接通过向量相似度检索文档块不同，GraphRAG 先构建知识图谱来编码实体、关系和社区结构，然后在图谱上进行检索与推理，最终将图谱中的结构化知识注入 LLM 的生成过程。
 
@@ -48,11 +48,11 @@ GraphRAG 由微软研究院在 2024 年首次提出 (论文: *From Local to Glob
 
 一句话总结：**GraphRAG = 知识图谱增强的 RAG，让模型拥有了结构化的"全局知识地图"，既能回答局部事实问题，也能完成跨文档多跳推理和全局性摘要。**
 
-#### 二、GraphRAG 的实现原理
+### 二、GraphRAG 的实现原理
 
 GraphRAG 的实现分为两个阶段：**离线索引阶段 (Graph Building)** 和 **在线检索阶段 (Graph Querying + Generation)**。
 
-##### 离线索引阶段：构建实体知识图谱
+#### 离线索引阶段：构建实体知识图谱
 
 ```plaintext
 ┌──────────────────────────────────────────────────────────────┐
@@ -175,7 +175,7 @@ GraphRAG 的实现分为两个阶段：**离线索引阶段 (Graph Building)** �
    """
    ```
 
-##### 在线检索阶段：多级检索与生成
+#### 在线检索阶段：多级检索与生成
 
 GraphRAG 的在线检索采用**两层检索策略**，分别解决**局部查询 (Local Query)** 和**全局查询 (Global Query)**：
 
@@ -243,7 +243,7 @@ GraphRAG 的在线检索采用**两层检索策略**，分别解决**局部查�
 
 3. **混合查询**：同时执行 Local 和 Global 检索，融合双方结果，适用于既需要精确事实又需要宏观背景的复杂问题。
 
-#### 三、GraphRAG 与传统 RAG 的核心区别
+### 三、GraphRAG 与传统 RAG 的核心区别
 
 | 维度             | 传统 RAG (Naive/Advanced RAG)                         | GraphRAG                                                     |
 | ---------------- | ----------------------------------------------------- | ------------------------------------------------------------ |
@@ -258,9 +258,9 @@ GraphRAG 的在线检索采用**两层检索策略**，分别解决**局部查�
 | **检索延迟**     | 低：向量检索 O(log n) 或近似 O(1)                     | 较高：涉及图遍历、子图抽取、多级检索聚合                     |
 | **更新维护**     | 简单：增量 Embedding 即可                             | 复杂：新文档需重新抽取实体、更新图谱结构、可能触发社区重划分 |
 
-#### 四、GraphRAG 的优劣分析
+### 四、GraphRAG 的优劣分析
 
-##### 优势
+#### 优势
 
 1. **强大的多跳推理能力**
    传统 RAG 需要通过多次检索 + LLM 自行串联信息来完成多跳推理，每一步都可能因为检索不准而"断链"。GraphRAG 将关系显式建模为图的边，多跳推理 = 图上路径遍历，天然可靠。
@@ -279,7 +279,7 @@ GraphRAG 的在线检索采用**两层检索策略**，分别解决**局部查�
 4. **更强的知识补全与冲突检测**
    当不同文档对同一实体的描述不一致时，这在图上体现为矛盾的边或属性，可以被显式检测和处理。传统 RAG 则需要 LLM 自行判断，容易产生幻觉。
 
-##### 劣势
+#### 劣势
 
 1. **索引构建成本极高**
    GraphRAG 的离线索引需要大量的 LLM 调用来完成实体抽取、关系抽取、实体消歧、社区摘要生成。对于一个中等规模 (如 10 万篇文档) 的语料库，索引成本可能是传统 RAG 的 **10~100 倍**。
@@ -309,7 +309,7 @@ GraphRAG 的在线检索采用**两层检索策略**，分别解决**局部查�
 5. **依赖 LLM 抽取质量**
    整个图谱的质量上限由实体/关系抽取的 LLM 决定。如果抽取阶段出现实体遗漏、关系错误，错误会在图谱中累积放大。
 
-#### 五、工程实践：何时选择 GraphRAG？
+### 五、工程实践：何时选择 GraphRAG？
 
 ```plaintext
 是否适合用 GraphRAG？
@@ -373,7 +373,7 @@ class HybridRAGRouter:
             return self.hybrid_generate(query)
 ```
 
-#### 六、GraphRAG 的变体与演进
+### 六、GraphRAG 的变体与演进
 
 自微软 GraphRAG 提出后，社区发展出了多种变体：
 
@@ -384,7 +384,7 @@ class HybridRAGRouter:
 | **KAG**           | 知识增强生成，引入专业领域知识图谱 (而非 LLM 自动抽取)      | 垂直领域 (医疗/法律/金融) |
 | **HippoRAG**      | 受海马体记忆机制启发的 RAG，结合图谱实现持久化记忆          | 长对话、个性化 Agent      |
 
-#### 七、与传统 RAG 的具体对比表 (总结)
+### 七、与传统 RAG 的具体对比表 (总结)
 
 | 对比维度            | 传统 RAG                  | GraphRAG                       |
 | ------------------- | ------------------------- | ------------------------------ |
@@ -400,11 +400,11 @@ class HybridRAGRouter:
 | 增量更新            | ⭐⭐⭐⭐⭐ (简单)              | ⭐⭐ (复杂)                      |
 | 幻觉抑制            | ⭐⭐⭐ (-)                   | ⭐⭐⭐⭐ (结构化知识天然约束更强)  |
 
-#### 八、面试中可以怎么总结
+### 八、面试中可以怎么总结
 
 可以这样回答：GraphRAG 是传统 RAG 的"结构化升级版"。传统 RAG 把知识存为向量，靠语义相似度检索；GraphRAG 先把文档转化为知识图谱——抽取实体和关系、检测社区、生成社区摘要——然后在图上进行检索和推理。它的核心优势在于：(1) 通过图遍历天然支持多跳推理，不需要多次检索串联；(2) 通过社区摘要实现全局性理解，能回答需要宏观视角的问题；(3) 可解释性更强，能展示实体关系推理路径。代价是索引构建成本高 (需要大量 LLM 调用做抽取和摘要)、检索延迟较大、图谱维护复杂。在实际工程中，通常采用 Hybrid 架构——简单查询走传统 RAG，复杂推理走 GraphRAG，通过路由模块自动分发。目前主流的实现方案包括微软的 GraphRAG、轻量级的 LightRAG 和垂直领域的 KAG 等变体。
 
-#### 知识扩展
+### 知识扩展
 
 - LightRAG：GraphRAG 的轻量化实现，去掉了社区检测环节，用图检索 + 向量检索双通道替代，适合资源受限场景。
 - Knowledge Graph Construction (知识图谱构建)：实体抽取、关系抽取、实体消歧是 GraphRAG 的技术基础，与 NLP 中的信息抽取 (Information Extraction) 强相关。
@@ -414,15 +414,15 @@ class HybridRAGRouter:
 - Hybrid RAG Architectures：GraphRAG + 传统 RAG 的混合架构是当前业界主流实践，与 Adaptive RAG 和 Router 范式紧密关联。
 - Neo4j / NebulaGraph：常用图数据库，可用于存储和查询 GraphRAG 构建的知识图谱。
 
-### 1.10 在使用 GraphRAG 时会遇到什么问题？你是如何解决的？
+## 1.10 在使用 GraphRAG 时会遇到什么问题？你是如何解决的？
 
 这是一个偏工程实践的问题，面试时建议先给结论：GraphRAG 的核心难点不在"能不能跑通"，而在"跑得好不好、稳不稳、省不省"。实际落地中，问题集中在五个环节：抽取质量、消歧合并、社区粒度、增量维护和查询路由。
 
 一句话总结：**GraphRAG 工程化的本质是把一个"理论上很美好"的图谱管线，变成一个"成本可控、质量稳定、可增量演进"的生产系统。**
 
-#### 一、问题一：实体抽取质量不稳定，直接影响图谱质量上限
+### 一、问题一：实体抽取质量不稳定，直接影响图谱质量上限
 
-##### 问题描述
+#### 问题描述
 
 GraphRAG 整条链路的质量上限由实体抽取决定。用 LLM 做抽取时，常见以下问题：
 
@@ -431,7 +431,7 @@ GraphRAG 整条链路的质量上限由实体抽取决定。用 LLM 做抽取时
 - **抽取粒度不一致**：同一个 Chunk 里，有时抽"北京大学"，有时抽"北大"，有时抽"PKU"，导致后续消歧困难。
 - **LLM 幻觉污染**：模型偶尔会"编造"出文档中根本不存在的实体或关系。
 
-##### 解决方案
+#### 解决方案
 
 **1) 使用结构化 Prompt + Few-shot 示例约束抽取格式**
 
@@ -506,9 +506,9 @@ def validate_extraction(chunk_text, extraction_result):
 | 学术论文  | 重点关注 TECH、METRIC、DATASET，抽取引用关系    |
 | 合同/法律 | 重点关注 PARTY、CLAUSE、DATE，抽取义务-权利关系 |
 
-#### 二、问题二：实体消歧 (Entity Resolution) 困难，图谱中出现大量重复节点
+### 二、问题二：实体消歧 (Entity Resolution) 困难，图谱中出现大量重复节点
 
-##### 问题描述
+#### 问题描述
 
 实体消歧是 GraphRAG 工程中最头疼的问题之一。典型场景：
 
@@ -519,7 +519,7 @@ def validate_extraction(chunk_text, extraction_result):
 
 如果消歧做不好，图谱中会出现大量孤立的重复节点，图遍历检索时"断链"，多跳推理直接失效。
 
-##### 解决方案
+#### 解决方案
 
 **1) 基于 Embedding 相似度 + 规则的混合消歧**
 
@@ -578,9 +578,9 @@ def entity_resolution(entities: list[dict], threshold=0.85) -> dict:
 
 消歧时加上类型一致性约束：只有类型相同的实体才允许合并。这可以避免把 "ML (Machine Learning)" 和 "ML (某个人名)" 合并到一起。
 
-#### 三、问题三：社区检测粒度难调，影响全局查询质量
+### 三、问题三：社区检测粒度难调，影响全局查询质量
 
-##### 问题描述
+#### 问题描述
 
 GraphRAG 的 Global Search 依赖社区摘要来回答宏观问题。但社区检测存在粒度困境：
 
@@ -589,7 +589,7 @@ GraphRAG 的 Global Search 依赖社区摘要来回答宏观问题。但社区�
 - **层级跳跃**：Leiden 算法生成的层级结构中，某些中间层的社区划分不合理，把不相关的实体混在一起。
 - **长尾社区**：大量低质量的小社区 (只有 1~2 个节点) 产生无意义的摘要，浪费 LLM 调用预算。
 
-##### 解决方案
+#### 解决方案
 
 **1) 动态调整 Leiden 参数**
 
@@ -659,9 +659,9 @@ def filter_communities(communities, min_size=5, max_size=200):
 
 这样既保证了粒度的合理，又保留了层次信息。
 
-#### 四、问题四：增量更新图谱极其困难，新文档加入后图谱质量退化
+### 四、问题四：增量更新图谱极其困难，新文档加入后图谱质量退化
 
-##### 问题描述
+#### 问题描述
 
 实际业务中，文档是持续增长的。GraphRAG 的增量更新面临以下挑战：
 
@@ -669,7 +669,7 @@ def filter_communities(communities, min_size=5, max_size=200):
 - 新增的边 (关系) 可能导致社区结构变化，需要重新运行 Leiden 算法，但重运行会改变所有社区编号，导致之前的社区摘要全部失效。
 - 如果选择"定期全量重建"，成本和时间都不允许。如果选择"增量追加"，图谱质量会逐步退化。
 
-##### 解决方案
+#### 解决方案
 
 **1) 增量抽取 + 延迟合并策略**
 
@@ -766,9 +766,9 @@ class VersionedGraph:
         raise ValueError(f"Version {version_tag} not found")
 ```
 
-#### 五、问题五：查询路由判断不准，Local/Global 模式选错导致答案质量差
+### 五、问题五：查询路由判断不准，Local/Global 模式选错导致答案质量差
 
-##### 问题描述
+#### 问题描述
 
 GraphRAG 有两种检索模式 (Local Search 和 Global Search)，实际使用中经常出现路由错误：
 
@@ -776,7 +776,7 @@ GraphRAG 有两种检索模式 (Local Search 和 Global Search)，实际使用�
 - 用户问的是具体事实 (如"AlphaFold 的开发者是谁")，路由到了 Global Search，浪费大量 token 做 Map-Reduce，答案反而不如 Local Search 精准。
 - 用户问题介于局部和全局之间 (如"DeepMind 相关的技术突破有哪些")，两种模式都不完美。
 
-##### 解决方案
+#### 解决方案
 
 **1) 基于特征的分类路由**
 
@@ -852,9 +852,9 @@ def hybrid_search(query, graph_rag):
 
 当路由准确率低于阈值时，自动触发路由策略的回归测试和更新。
 
-#### 六、问题六：关系抽取噪声大，图谱中存在大量冗余和低质量关系
+### 六、问题六：关系抽取噪声大，图谱中存在大量冗余和低质量关系
 
-##### 问题描述
+#### 问题描述
 
 LLM 在抽取关系时的典型问题：
 
@@ -865,7 +865,7 @@ LLM 在抽取关系时的典型问题：
 
 这些问题会导致图遍历时检索到错误路径，最终导致 LLM 生成错误答案。
 
-##### 解决方案
+#### 解决方案
 
 **1) 关系去重与合并**
 
@@ -954,9 +954,9 @@ def prune_hub_nodes(graph, max_edges=50):
             graph.remove_edges_from([(e[0], e[1]) for e in edges_to_remove])
 ```
 
-#### 七、问题七：全局查询 (Global Search) 的 Map-Reduce 流程效果不稳定
+### 七、问题七：全局查询 (Global Search) 的 Map-Reduce 流程效果不稳定
 
-##### 问题描述
+#### 问题描述
 
 Global Search 的 Map-Reduce 流程是 GraphRAG 的核心创新，但在实践中经常出现：
 
@@ -965,7 +965,7 @@ Global Search 的 Map-Reduce 流程是 GraphRAG 的核心创新，但在实践�
 - **社区摘要质量参差不齐**：有些社区的摘要是高质量的概括，有些只是简单罗列实体，缺乏分析。
 - **结果重复和矛盾**：不同社区摘要中对同一事实有不同描述，LLM 在 Reduce 阶段无法有效处理冲突。
 
-##### 解决方案
+#### 解决方案
 
 **1) Map 阶段改为多轮投票**
 
@@ -1036,7 +1036,7 @@ def detect_and_resolve_conflicts(summaries):
     return ""
 ```
 
-#### 八、工程实践总结：常见踩坑清单
+### 八、工程实践总结：常见踩坑清单
 
 | 序号 | 踩坑场景                       | 根本原因                         | 解决方向                          |
 | ---- | ------------------------------ | -------------------------------- | --------------------------------- |
@@ -1049,11 +1049,11 @@ def detect_and_resolve_conflicts(summaries):
 | 7    | 超级节点导致遍历爆炸           | 高频实体连接过多                 | 关系剪枝 + hub node 限制          |
 | 8    | 增量更新后社区编号全变         | Leiden 算法随机性                | 固定随机种子 + 社区 ID 映射表     |
 
-#### 九、面试中可以怎么总结
+### 九、面试中可以怎么总结
 
 可以这样回答：GraphRAG 在工程落地中最大的挑战不在"能不能跑通"，而在"跑得好不好"。我在实践中遇到过七个核心问题：(1) 实体抽取质量不稳定——通过结构化 Prompt、Few-shot 示例和抽取后二次校验来保证质量；(2) 实体消歧困难——用 Embedding 相似度 + 类型约束 + LLM 兜底的三层消歧策略；(3) 社区粒度难调——动态调整 Leiden 的 resolution 参数，过滤长尾社区，用层次化摘要替代单层摘要；(4) 增量更新困难——采用增量抽取 + 延迟合并 + 定期全量校准的策略；(5) 查询路由不准——基于关键词、实体密度和 LLM 的三级路由分类，不确定时走 Hybrid 模式；(6) 关系抽取噪声大——语义去重、质量打分、hub 节点剪枝；(7) 全局查询 Map-Reduce 不稳定——多轮投票提高 Map 精度，分层聚合避免信息丢失，冲突检测确保答案一致。总体策略是：质量治理先行，增量维护保障，路由监控兜底。
 
-#### 知识扩展
+### 知识扩展
 
 - Entity Resolution (实体消歧)：是 NLP 和数据库领域的经典问题，与 GraphRAG 中的实体合并直接相关，常用方法包括字符串匹配、Embedding 聚类和 LLM 判断。
 - Leiden 算法与模块度优化：Leiden 算法的 `resolution_parameter` 是控制社区粒度的核心参数，理解其数学含义 (基于模块度的优化目标) 有助于调参。
@@ -1063,11 +1063,11 @@ def detect_and_resolve_conflicts(summaries):
 - RAG Evaluation Frameworks：RAGAS、TruLens 等评估框架可以量化 GraphRAG 各环节的效果，帮助定位瓶颈。
 - LightRAG：轻量级 GraphRAG 实现，通过去掉社区检测、简化图构建流程来降低工程复杂度，是上述问题的一种"规避"方案。
 
-### 1.11 什么是 LightRAG？请具体说明一下。
+## 1.11 什么是 LightRAG？请具体说明一下。
 
 LightRAG 是由香港大学数据科学实验室 (HKUDS) 提出的一种轻量级图增强检索生成框架，发表论文为 *"LightRAG: Simple and Fast Retrieval-Augmented Generation"*。它的核心目标是：在保留 GraphRAG 结构化知识图谱优势的同时，大幅降低索引构建成本和检索延迟，使其更适合实际工程落地。
 
-#### 一、为什么需要 LightRAG？
+### 一、为什么需要 LightRAG？
 
 在 1.9 节中我们分析了 GraphRAG 的优缺点。GraphRAG 的核心痛点在于：
 
@@ -1078,11 +1078,11 @@ LightRAG 是由香港大学数据科学实验室 (HKUDS) 提出的一种轻量�
 
 LightRAG 的设计哲学是：**去掉 GraphRAG 中最昂贵且不稳定的社区检测环节，用"图检索 + 向量检索"双通道替代，用更简洁的架构达到相近甚至更好的效果。**
 
-#### 二、LightRAG 的核心架构
+### 二、LightRAG 的核心架构
 
 LightRAG 的整体架构可以分为三个阶段：**图索引构建**、**双层检索**和**生成增强**。
 
-##### 阶段一：图索引构建 (Graph Indexing)
+#### 阶段一：图索引构建 (Graph Indexing)
 
 与 GraphRAG 类似，LightRAG 也使用 LLM 从文档中抽取实体和关系构建知识图谱，但有以下关键区别：
 
@@ -1108,7 +1108,7 @@ LightRAG 的整体架构可以分为三个阶段：**图索引构建**、**双�
 └───────────────────────────────────┘
 ```
 
-##### 阶段二：双层检索 (Dual-Level Retrieval)
+#### 阶段二：双层检索 (Dual-Level Retrieval)
 
 这是 LightRAG 最核心的设计创新。它将检索分为两个层次：
 
@@ -1140,11 +1140,11 @@ LightRAG 的整体架构可以分为三个阶段：**图索引构建**、**双�
         拼接进 Prompt → LLM 生成
 ```
 
-##### 阶段三：生成增强 (Generation)
+#### 阶段三：生成增强 (Generation)
 
 将两层检索的结果合并、去重，与用户 Query 一起构建 Prompt，送入 LLM 生成最终答案。
 
-#### 三、LightRAG 与 GraphRAG 的核心区别
+### 三、LightRAG 与 GraphRAG 的核心区别
 
 | 对比维度     | GraphRAG                                 | LightRAG                           |
 | ------------ | ---------------------------------------- | ---------------------------------- |
@@ -1157,9 +1157,9 @@ LightRAG 的整体架构可以分为三个阶段：**图索引构建**、**双�
 | 检索延迟     | 较高 (图遍历 + LLM 调用)                 | **较低** (向量检索为主)            |
 | 适用场景     | 大规模语料、需要全局分析                 | 中小规模、低延迟、成本敏感场景     |
 
-#### 四、LightRAG 的关键实现细节
+### 四、LightRAG 的关键实现细节
 
-##### 1. 实体和关系的描述化存储
+#### 1. 实体和关系的描述化存储
 
 LightRAG 不仅存储实体/关系的名称，还存储 LLM 生成的自然语言描述。这些描述经过 Embedding 后存入向量数据库，是双层检索的基础。
 
@@ -1189,7 +1189,7 @@ class LightRAG:
                 )
 ```
 
-##### 2. 双层检索的具体实现
+#### 2. 双层检索的具体实现
 
 ```python
 # 伪代码：LightRAG 的双层检索
@@ -1223,7 +1223,7 @@ class LightRAG:
         return "\n".join(all_context)
 ```
 
-##### 3. 增量更新机制
+#### 3. 增量更新机制
 
 这是 LightRAG 相比 GraphRAG 的显著优势。新文档到来时：
 
@@ -1256,7 +1256,7 @@ def incremental_update(self, new_documents: list[str]):
                 )
 ```
 
-#### 五、LightRAG 的优劣分析
+### 五、LightRAG 的优劣分析
 
 **优势**
 
@@ -1273,7 +1273,7 @@ def incremental_update(self, new_documents: list[str]):
 - **图谱质量仍依赖 LLM 抽取**：实体和关系的抽取质量仍然是瓶颈，与 GraphRAG 面临相同的问题
 - **复杂多跳推理能力有限**：虽然图结构天然支持多跳，但 LightRAG 的检索策略主要是"找邻居"，对于需要 3 跳以上的深度推理链路支持不够
 
-#### 六、LightRAG 的适用场景
+### 六、LightRAG 的适用场景
 
 | 场景特征                        | 推荐方案    |
 | ------------------------------- | ----------- |
@@ -1286,7 +1286,7 @@ def incremental_update(self, new_documents: list[str]):
 | 复杂多跳推理 (如因果链分析)     | GraphRAG    |
 | 简单查询 + 复杂推理混合         | Hybrid 架构 |
 
-#### 知识扩展
+### 知识扩展
 
 - GraphRAG：LightRAG 的"前身"和对比对象，理解 GraphRAG 的社区检测和全局查询机制有助于理解 LightRAG 做了哪些取舍。
 - Knowledge Graph Embedding：LightRAG 中实体和关系的描述向量化与知识图谱嵌入 (如 TransE、RotatE) 的思路相通，都是将图结构映射到向量空间。
@@ -1295,19 +1295,19 @@ def incremental_update(self, new_documents: list[str]):
 - Graph Neural Networks (GNN)：LightRAG 目前主要用图的拓扑结构做检索，如果引入 GNN 对图谱做表示学习，可能进一步提升图检索的质量。
 - NLP Information Extraction：LightRAG 的实体/关系抽取质量仍然是瓶颈，与 NLP 中的信息抽取 (IE) 技术强相关，结构化 Prompt 和 Few-shot 是当前主流方案。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 LightRAG 是香港大学提出的一种轻量级图增强 RAG 框架，可以理解为 GraphRAG 的"简化版"。它的核心思路是：去掉 GraphRAG 中最昂贵的社区检测环节，保留知识图谱的结构化索引优势，并引入"图检索 + 向量检索"的双层检索机制——低层检索针对具体实体做精确匹配，高层检索针对主题概念做抽象匹配。相比 GraphRAG，LightRAG 的索引构建成本更低 (不需要大量 LLM 调用做社区摘要)、检索延迟更低 (以向量检索为主)、增量更新更简单 (新文档直接插入图谱即可)，工程复杂度也更低。代价是全局性理解能力较弱，没有社区摘要机制，对于需要宏观视角的问题表现不如 GraphRAG。在实际工程中，LightRAG 更适合中小规模语料、对延迟敏感、预算有限的场景；如果需要大规模全局分析，仍然建议用 GraphRAG 或 Hybrid 架构。总体来说，LightRAG 代表了 GraphRAG 技术的一个重要演进方向：在效果和成本之间找到更好的平衡点。
 
-### 1.12 RAG 系统的评估指标有哪些？请从检索质量、生成质量和端到端效果三个维度系统梳理常用评估指标，说明各指标的含义、计算方式及适用场景。
+## 1.12 RAG 系统的评估指标有哪些？请从检索质量、生成质量和端到端效果三个维度系统梳理常用评估指标，说明各指标的含义、计算方式及适用场景。
 
 RAG 系统的评估是一个多维度的问题，因为 RAG 本身是"检索 + 生成"的组合架构，单一指标无法全面反映系统质量。一个完整的 RAG 评估体系应当覆盖三个层面：**检索质量** (找到的内容是否准确)、**生成质量** (模型是否正确利用了检索结果)、**端到端效果** (最终答案是否正确)。
 
-#### 一、检索质量指标
+### 一、检索质量指标
 
 检索质量决定了 RAG 系统的上限——如果检索阶段就没有召回正确文档，后续生成阶段无论如何优化都无法得到正确答案。这就是所谓的 **"Garbage In, Garbage Out"** 原理。
 
-##### 1. Precision@K (精确率@K)
+#### 1. Precision@K (精确率@K)
 
 **含义**：在返回的 Top-K 个检索结果中，有多少比例是真正相关的。
 
@@ -1321,7 +1321,7 @@ Precision@K = (Top-K 中相关文档数) / K
 
 **适用场景**：对检索结果的"纯度"要求较高时使用，比如客服系统中不希望无关文档干扰回答。当 K 较小时，Precision@K 能很好地反映检索的精准度。
 
-##### 2. Recall@K (召回率@K)
+#### 2. Recall@K (召回率@K)
 
 **含义**：在所有相关文档中，有多少比例被 Top-K 检索结果召回。
 
@@ -1335,7 +1335,7 @@ Recall@K = (Top-K 中相关文档数) / (全部相关文档数)
 
 **适用场景**：对信息完整性要求较高时使用，比如法律、医疗等领域，遗漏关键信息可能导致严重后果。通常需要在 Recall 和 Precision 之间做权衡。
 
-##### 3. MRR (Mean Reciprocal Rank，平均倒数排名)
+#### 3. MRR (Mean Reciprocal Rank，平均倒数排名)
 
 **含义**：第一个相关文档出现的位置的倒数，反映检索系统将相关文档排在前面的能力。
 
@@ -1350,7 +1350,7 @@ Recall@K = (Top-K 中相关文档数) / (全部相关文档数)
 
 **适用场景**：特别关注"第一个正确结果出现得有多早"的场景，比如问答系统中用户通常只看前几个结果。MRR 越高，说明系统越能快速定位到正确答案。
 
-##### 4. MAP (Mean Average Precision，平均精确率)
+#### 4. MAP (Mean Average Precision，平均精确率)
 
 **含义**：综合考虑所有相关文档的排序位置，对每个相关文档位置计算精确率再求平均。
 
@@ -1372,7 +1372,7 @@ AP = (1/3) × (1/1 + 2/3 + 3/5) = (1/3) × (1 + 0.667 + 0.6) = 0.756
 
 **适用场景**：需要同时考虑召回率和排序质量的场景，是信息检索领域的经典综合指标。
 
-##### 5. NDCG (Normalized Discounted Cumulative Gain，归一化折损累计增益)
+#### 5. NDCG (Normalized Discounted Cumulative Gain，归一化折损累计增益)
 
 **含义**：考虑了相关性的等级 (如高度相关、一般相关、不相关)，并随排名位置增加而折损，位置越靠后价值越低。
 
@@ -1402,7 +1402,7 @@ NDCG@5 = 3.887 / 3.887 = 1.0
 
 **适用场景**：当相关性有等级区分时使用，比如搜索结果分为"完美匹配"、"部分匹配"、"不匹配"。NDCG 是目前工业界最常用的检索评估指标之一。
 
-##### 6. Hit Rate (命中率)
+#### 6. Hit Rate (命中率)
 
 **含义**：在 Top-K 检索结果中，是否至少包含一个相关文档。
 
@@ -1416,11 +1416,11 @@ Hit Rate = (至少命中一个相关文档的查询数) / (总查询数)
 
 **适用场景**：评估 RAG 系统的基本可用性，是最宽松的检索指标。如果 Hit Rate 很低，说明系统连基本的相关文档都找不到，需要优先优化。
 
-#### 二、生成质量指标
+### 二、生成质量指标
 
 生成质量评估的是 LLM 在给定检索上下文的情况下，生成答案的质量。即使检索到了正确文档，LLM 仍可能忽略、曲解或编造信息。
 
-##### 1. Faithfulness (忠实度)
+#### 1. Faithfulness (忠实度)
 
 **含义**：生成的答案是否忠实于检索到的上下文，即答案中的每个声明是否都能在上下文中找到依据。
 
@@ -1446,7 +1446,7 @@ Faithfulness = 1/2 = 0.5
 
 **适用场景**：对答案可靠性要求高的场景，如医疗、法律咨询。Faithfulness 低说明模型存在"幻觉"问题，生成了上下文未提及的信息。
 
-##### 2. Answer Relevancy (答案相关性)
+#### 2. Answer Relevancy (答案相关性)
 
 **含义**：生成的答案是否与用户的问题相关，是否切题。
 
@@ -1460,7 +1460,7 @@ Answer Relevancy = cosine_similarity(Embedding(问题), Embedding(答案摘要))
 
 **适用场景**：评估模型是否"答非所问"。有时模型会生成流畅但偏离问题的答案，Answer Relevancy 能有效捕捉这类问题。
 
-##### 3. Context Relevancy (上下文相关性)
+#### 3. Context Relevancy (上下文相关性)
 
 **含义**：检索到的上下文中有多少内容与问题相关，反映检索的精确度。
 
@@ -1472,7 +1472,7 @@ Context Relevancy = (上下文中与问题相关的句子数) / (上下文中的
 
 **适用场景**：当检索结果中混入大量无关信息时，即使包含正确信息，也可能因为上下文过长导致 LLM 生成质量下降 (Lost in the Middle 问题)。Context Relevancy 低说明需要优化检索或 Rerank 策略。
 
-##### 4. Hallucination Rate (幻觉率)
+#### 4. Hallucination Rate (幻觉率)
 
 **含义**：答案中有多少内容是上下文未提及的、模型自行编造的。
 
@@ -1485,7 +1485,7 @@ Hallucination Rate = (无上下文支撑的声明数) / (总声明数)
 
 **适用场景**：与 Faithfulness 互补，更直观地反映幻觉问题的严重程度。在对准确性要求极高的场景 (如金融分析、医疗诊断) 中，Hallucination Rate 是核心监控指标。
 
-##### 5. Completeness (完整性)
+#### 5. Completeness (完整性)
 
 **含义**：答案是否涵盖了问题所需的所有关键信息点。
 
@@ -1499,11 +1499,11 @@ Completeness = (答案覆盖的关键信息点数) / (问题所需的总关键�
 
 **适用场景**：评估答案是否遗漏重要信息。比如用户问"Python 的优缺点"，如果答案只说了优点没说缺点，Completeness 就会较低。
 
-#### 三、端到端效果指标
+### 三、端到端效果指标
 
 端到端指标直接评估最终答案的质量，不区分检索和生成阶段的贡献，更贴近用户的实际体验。
 
-##### 1. Answer Correctness (答案正确性)
+#### 1. Answer Correctness (答案正确性)
 
 **含义**：最终答案与标准答案 (Ground Truth) 的一致程度。
 
@@ -1520,7 +1520,7 @@ Answer Correctness = f(生成答案, 标准答案)
 
 **适用场景**：有标准答案的问答场景，是最直接的评估方式。但需要注意，RAG 系统的答案表述可能与标准答案不同但语义正确，因此 LLM 评判通常比精确匹配更合理。
 
-##### 2. Answer Similarity (答案相似度)
+#### 2. Answer Similarity (答案相似度)
 
 **含义**：生成答案与标准答案在语义层面的相似程度。
 
@@ -1532,7 +1532,7 @@ Answer Similarity = cosine_similarity(Embedding(生成答案), Embedding(标准�
 
 **适用场景**：当答案表述可以有多种方式时，比精确匹配更灵活。比如"Python 是一种解释型语言"和"Python 属于解释型编程语言"语义相同但字面不同。
 
-##### 3. RAGAS 综合分数
+#### 3. RAGAS 综合分数
 
 **含义**：RAGAS (Retrieval Augmented Generation Assessment) 是一个综合评估框架，将上述指标整合为一个统一的评估流程。
 
@@ -1546,7 +1546,7 @@ RAGAS Score = (Faithfulness × Answer Relevancy × Context Relevancy × Answer C
 
 **适用场景**：需要快速评估 RAG 系统整体表现的场景，是目前工业界最常用的 RAG 评估框架之一。
 
-#### 四、代码示例：使用 RAGAS 评估 RAG 系统
+### 四、代码示例：使用 RAGAS 评估 RAG 系统
 
 ```python
 from datasets import Dataset
@@ -1612,7 +1612,7 @@ print(f"Answer Correctness:{results['answer_correctness']:.4f}")
 print(f"RAGAS Score:       {results['ragas_score']:.4f}")
 ```
 
-#### 五、指标对比总结
+### 五、指标对比总结
 
 | 维度     | 指标               | 关注点             | 有无 Ground Truth | 适用场景                    |
 | -------- | ------------------ | ------------------ | ----------------- | --------------------------- |
@@ -1629,7 +1629,7 @@ print(f"RAGAS Score:       {results['ragas_score']:.4f}")
 | 端到端   | Answer Similarity  | 语义相似度         | 需要              | 允许表述差异的评测          |
 | 端到端   | RAGAS Score        | 综合评估           | 需要              | 快速整体评估                |
 
-#### 知识扩展
+### 知识扩展
 
 - **RAG 系统的 A/B 测试**：评估指标是 A/B 测试的基础，通过对比不同 RAG 配置 (如不同 Embedding 模型、不同 Chunk Size) 的指标表现来选择最优方案。
 - **LLM-as-Judge**：生成质量指标 (如 Faithfulness、Answer Relevancy) 通常依赖 LLM 自身来评判，这引入了"评估者偏差"问题，与 LLM 评估 (LLM Evaluation) 领域密切相关。
@@ -1637,21 +1637,21 @@ print(f"RAGAS Score:       {results['ragas_score']:.4f}")
 - **检索评估的 Ground Truth 构建**：高质量的评估依赖准确的标注数据，这涉及数据标注 (Data Annotation) 和相关性判断 (Relevance Judgment) 的方法论。
 - **Embedding 模型评估**：检索质量的上限由 Embedding 模型决定，MTEB (Massive Text Embedding Benchmark) 是评估 Embedding 模型的主流基准。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 RAG 系统的评估指标可以从三个维度来梳理。第一是检索质量维度，核心指标包括 Precision@K (检索纯度)、Recall@K (检索覆盖率)、MRR (首个相关结果的排名)、NDCG (考虑相关性等级的排序质量) 等，这些指标衡量的是"是否找到了正确文档"。第二是生成质量维度，核心指标包括 Faithfulness (答案是否忠实于上下文)、Answer Relevancy (答案是否切题)、Context Relevancy (检索结果是否相关) 等，这些指标衡量的是"模型是否正确利用了检索结果"，其中 Faithfulness 是监控幻觉问题的关键指标。第三是端到端效果维度，包括 Answer Correctness (答案正确性)、Answer Similarity (语义相似度) 等，直接评估最终答案质量。在工程实践中，通常使用 RAGAS 框架将上述指标整合为统一的评估流程。选择哪些指标取决于业务场景：对准确性要求高的场景重点关注 Faithfulness 和 Hallucination Rate；对信息完整性要求高的场景重点关注 Recall@K；需要快速迭代的场景可以用 RAGAS 综合分数做整体评估。此外，评估时需要注意 Ground Truth 的构建质量，以及 LLM-as-Judge 带来的评估者偏差问题。
 
-### 1.13 在 RAG 文本分块中，使用 Overlap (重叠窗口) 策略时会引入哪些歧义问题？如何在工程上解决这些问题，实现语义连续性与检索质量的平衡？
+## 1.13 在 RAG 文本分块中，使用 Overlap (重叠窗口) 策略时会引入哪些歧义问题？如何在工程上解决这些问题，实现语义连续性与检索质量的平衡？
 
 Overlap (重叠窗口) 是 RAG 文本分块中最常用的语义连续性保障手段，但它本身不是免费的午餐。引入 overlap 会在**检索质量、索引效率和语义清晰度**三个维度产生新的歧义问题。工程上的核心挑战是：如何用最小的 overlap 代价获得最大的语义连续性收益，同时避免 overlap 本身带来的副作用。
 
 面试里可以先给一句结论：**overlap 是必要的语义桥接手段，但它是一个需要精细调控的双刃剑——太小丢连续性，太大引入冗余和歧义，正确的做法是让 overlap 策略与语义边界、检索去重和索引评估形成闭环。**
 
-#### 一、为什么需要 Overlap
+### 一、为什么需要 Overlap
 
 先理解 overlap 解决了什么问题，才能更好地理解它引入了什么问题。
 
-##### 1. 语义断裂问题
+#### 1. 语义断裂问题
 
 固定长度切分时，一个完整的语义单元 (如一个因果解释、一段代码逻辑) 可能被硬切断在两个 chunk 的边界上：
 
@@ -1667,11 +1667,11 @@ Overlap (重叠窗口) 是 RAG 文本分块中最常用的语义连续性保障�
       Chunk_2 的 "三个向量" 缺少主语，语义不完整。
 ```
 
-##### 2. 检索孤岛问题
+#### 2. 检索孤岛问题
 
 如果 chunk 之间没有任何重叠，检索命中一个 chunk 后，LLM 只能看到这个孤立片段，无法回溯上下文，导致回答不完整或产生幻觉。
 
-##### 3. Overlap 的核心机制
+#### 3. Overlap 的核心机制
 
 overlap 的本质是在相邻 chunk 之间建立一个"语义缓冲区"，让每个 chunk 都携带一部分邻居的上下文：
 
@@ -1684,9 +1684,9 @@ overlap 区域: "它通过 Query、Key、Value 三个向量计算注意力权重
 -> 两个 chunk 都包含了这段，确保检索到任意一个都能获得完整语义。
 ```
 
-#### 二、Overlap 导致的歧义问题
+### 二、Overlap 导致的歧义问题
 
-##### 问题 1：语义重复 (Semantic Redundancy)
+#### 问题 1：语义重复 (Semantic Redundancy)
 
 同一信息出现在多个 chunk 中，导致检索结果冗余。
 
@@ -1704,7 +1704,7 @@ overlap 区域: "Query、Key、Value 三个向量计算注意力权重"
 
 这在向量检索中尤为明显——overlap 区域的向量表示几乎相同，导致两个 chunk 的 embedding 距离极近，检索系统难以区分它们的"独特价值"。
 
-##### 问题 2：上下文边界模糊 (Boundary Ambiguity)
+#### 问题 2：上下文边界模糊 (Boundary Ambiguity)
 
 重叠区域的语义归属不清晰，LLM 可能混淆信息来源。
 
@@ -1722,7 +1722,7 @@ overlap 区域恰好落在 A→B 过渡段:
   -> 答案虽然正确，但上下文主题与问题不匹配，影响 LLM 的推理质量
 ```
 
-##### 问题 3：语义漂移 (Semantic Drift)
+#### 问题 3：语义漂移 (Semantic Drift)
 
 overlap 区域的信息可能与 chunk 的核心主题不一致，造成向量表示偏移。
 
@@ -1737,7 +1737,7 @@ overlap 区域内容:   "计算注意力权重" (来自相邻 chunk)
 
 这个问题在短 chunk (如 200 tokens) 配合大 overlap (如 30%+) 时尤为严重——overlap 区域占 chunk 比例过高，chunk 的"主题纯度"被稀释。
 
-##### 问题 4：索引成本膨胀 (Index Cost Inflation)
+#### 问题 4：索引成本膨胀 (Index Cost Inflation)
 
 重叠内容占用额外的向量存储和检索资源。
 
@@ -1755,9 +1755,9 @@ chunk_size = 500, overlap = 20% (100 tokens)
 
 当文档库规模达到百万级时，这个膨胀率会显著增加向量数据库的存储成本和检索延迟。
 
-#### 三、工程上的解决方案
+### 三、工程上的解决方案
 
-##### 方案 1：动态 Overlap 策略 (语义断点优先)
+#### 方案 1：动态 Overlap 策略 (语义断点优先)
 
 不要使用固定比例的 overlap，而是根据语义断点动态决定重叠范围。
 
@@ -1825,7 +1825,7 @@ def find_last_semantic_boundary(
 
 **核心思想**：overlap 的起点和终点都对齐到语义断点，而不是机械地回溯固定 token 数。这样 overlap 区域本身就是完整的语义单元，不会引入"半句话"的歧义。
 
-##### 方案 2：命题化切割 (Proposition-based Chunking) 避免 Overlap 歧义
+#### 方案 2：命题化切割 (Proposition-based Chunking) 避免 Overlap 歧义
 
 命题化切割从根本上消除了 overlap 的必要性——每个 chunk 由完整的"命题"组成，命题本身就是最小语义单元，不需要通过 overlap 来保障连续性。
 
@@ -1876,7 +1876,7 @@ def proposition_based_chunking(text: str, llm) -> list[str]:
 
 **局限**：需要 LLM 参与预处理，成本较高，适合对质量要求极高的场景。
 
-##### 方案 3：检索侧去重 (MMR + 去重后处理)
+#### 方案 3：检索侧去重 (MMR + 去重后处理)
 
 在检索阶段通过 Maximal Marginal Relevance (MMR) 抑制重复 chunk，让 overlap 导致的冗余不会传递到 LLM。
 
@@ -1936,7 +1936,7 @@ $$
 
 当两个 chunk 因 overlap 高度相似时，MMR 会自动惩罚第二个，优先选择能带来新信息的 chunk。
 
-##### 方案 4：重叠区域标记与感知检索
+#### 方案 4：重叠区域标记与感知检索
 
 在索引阶段标记 overlap 区域，在检索阶段对 overlap 区域做差异化处理。
 
@@ -2015,7 +2015,7 @@ def overlap_aware_retrieval(
     return deduplicated[:top_k]
 ```
 
-##### 方案 5：Parent-Child 检索 + Overlap 解耦
+#### 方案 5：Parent-Child 检索 + Overlap 解耦
 
 将 overlap 的语义保障职责从切分阶段转移到检索阶段，通过 parent-child 关系实现更精确的上下文补全。
 
@@ -2045,11 +2045,11 @@ Parent-Child 方式 (overlap 在检索阶段):
 - **Parent chunk 完整保留上下文**，语义保障更可靠
 - **索引成本更低**：没有 overlap 导致的冗余存储
 
-#### 四、离线评估指标
+### 四、离线评估指标
 
 仅靠主观感觉无法判断 overlap 策略是否合理，需要引入量化指标：
 
-##### 1. Redundancy Ratio (冗余比例)
+#### 1. Redundancy Ratio (冗余比例)
 
 衡量 overlap 带来的重复程度：
 
@@ -2059,7 +2059,7 @@ $$
 
 经验值：10% ~ 20% 为合理区间。低于 10% 可能语义连续性不足；高于 25% 索引成本膨胀明显。
 
-##### 2. Boundary Break Rate (边界截断率)
+#### 2. Boundary Break Rate (边界截断率)
 
 衡量关键语义单元被 chunk 边界切断的比例：
 
@@ -2083,7 +2083,7 @@ def boundary_break_rate(chunks: list[str], key_phrases: list[str]) -> float:
 
 目标：Boundary Break Rate < 5%。
 
-##### 3. Context Completeness (上下文完整性)
+#### 3. Context Completeness (上下文完整性)
 
 衡量问题所需证据是否在同一检索上下文中：
 
@@ -2113,7 +2113,7 @@ def context_completeness(
 
 目标：Context Completeness > 90%。
 
-#### 五、常见误区与边界条件
+### 五、常见误区与边界条件
 
 1. 误区：只要加大 overlap 就能解决语义断裂。
     不完整。overlap 只能缓解边界问题，不能替代结构化切分和检索补偿。过大的 overlap 还会引入新的歧义。
@@ -2124,7 +2124,7 @@ def context_completeness(
 4. 边界：跨文档 overlap。
     当多个文档被切分入库时，不同文档的 chunk 之间不应有 overlap，否则会引入跨文档的语义污染。
 
-#### 知识扩展
+### 知识扩展
 
 - **Parent-Child 检索**：overlap 的语义保障职责可以从切分阶段转移到检索阶段，通过 parent-child 关系实现更灵活的上下文补全，与本节方案 5 直接关联。
 - **MMR (Maximal Marginal Relevance)**：检索侧的经典去重算法，通过平衡相关性和多样性来抑制 overlap 导致的冗余召回，是本节方案 3 的理论基础。
@@ -2132,19 +2132,19 @@ def context_completeness(
 - **Context Compression**：当做了邻接扩展或 parent 回填后，通常需要压缩去噪，避免把冗余上下文带入 LLM，与 overlap 的去重目标一致。
 - **RAG 评估指标**：Boundary Break Rate 和 Context Completeness 是衡量 overlap 策略效果的关键指标，与 1.12 节的评估体系直接关联。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 Overlap 策略是 RAG 文本分块中保障语义连续性的核心手段，但它本身会引入四类歧义问题：语义重复 (同一信息被多个 chunk 包含)、上下文边界模糊 (重叠区域归属不清)、语义漂移 (overlap 稀释 chunk 的主题纯度) 和索引成本膨胀。解决这些问题需要从三个层面入手：切分阶段采用动态 overlap 策略，让重叠边界对齐语义断点，避免"半句话"的歧义；索引阶段标记 overlap 区域，为后续去重提供依据；检索阶段通过 MMR 去重、Parent-Child 回填和 overlap 感知检索来消除冗余。此外，命题化切割可以从源头消除 overlap 的必要性——每个命题本身就是完整语义单元。在评估方面，用 Redundancy Ratio、Boundary Break Rate 和 Context Completeness 三个指标闭环调优，确保 overlap 在 10% ~ 25% 的合理区间内。最终目标是在语义连续性、检索精度和索引成本之间取得稳定平衡。
 
-### 1.14 在 RAG 检索阶段，如何优化 Query 与 Chunk 之间的相似度计算，以提升召回精度和检索效率？从表示层、计算层和索引层三个维度分别有哪些工程方案？
+## 1.14 在 RAG 检索阶段，如何优化 Query 与 Chunk 之间的相似度计算，以提升召回精度和检索效率？从表示层、计算层和索引层三个维度分别有哪些工程方案？
 
 这个问题的本质是：标准 RAG 用 Bi-Encoder 将 Query 和 Chunk 分别编码为向量，再用 cosine similarity 做匹配——这套流程看似简洁，但在实际工程中存在多个根本性瓶颈。优化相似度计算需要从**表示层** (如何让向量更精准)、**计算层** (如何让匹配更鲁棒) 和**索引层** (如何让检索更快) 三个维度同时发力。
 
 面试里可以先给一句结论：**相似度计算不是"算一下 cosine 就完事"，而是一个从 Embedding 质量、度量方式选择到近似检索算法的完整工程链路，每一层都有独立的优化空间，而且它们是乘法关系——任何一层拉胯，整体效果都会被拖垮。**
 
-#### 一、问题本质：为什么标准 cosine similarity 不够用
+### 一、问题本质：为什么标准 cosine similarity 不够用
 
-##### 1. Bi-Encoder 的独立编码缺陷
+#### 1. Bi-Encoder 的独立编码缺陷
 
 标准流程中 Query 和 Chunk 被**独立编码**，两者之间没有 token 级别的交互：
 
@@ -2160,7 +2160,7 @@ cosine(q_vec, d_vec) = 0.94  # 高相似度
 
 问题：两个向量是独立生成的，模型无法在编码阶段捕捉 Query 和 Chunk 之间的细粒度 token 对齐关系。如果 Query 中的关键术语在 Chunk 中被同义替换 (如"自注意力" vs "Self-Attention")，Bi-Encoder 可能无法准确捕捉这种语义等价性。
 
-##### 2. 向量空间的语义坍缩
+#### 2. 向量空间的语义坍缩
 
 将一整段文本压缩为一个固定维度的向量，必然丢失信息：
 
@@ -2174,7 +2174,7 @@ Chunk_B: "BERT 基于 Transformer 架构，使用掩码语言模型预训练"
 
 这就是**语义坍缩** (Semantic Collapse)：长文本的丰富语义被压缩到单一向量后，细粒度差异被抹平。
 
-##### 3. Query-Document 语义分布不对齐
+#### 3. Query-Document 语义分布不对齐
 
 用户 Query 通常很短 (5~20 tokens)，而 Chunk 通常较长 (200~500 tokens)，两者在向量空间中的分布存在天然差异：
 
@@ -2186,9 +2186,9 @@ Chunk 向量: 位于向量空间的"陈述区域" (陈述句式、长文本)
 因为它们在向量空间中的"位置"天然不同。
 ```
 
-#### 二、表示层优化：让向量更精准
+### 二、表示层优化：让向量更精准
 
-##### 1. Embedding 模型选型与领域微调
+#### 1. Embedding 模型选型与领域微调
 
 不同 Embedding 模型对不同领域的语义捕捉能力差异很大。
 
@@ -2234,7 +2234,7 @@ model.fit(
 
 **微调的核心思想**：用领域内的 (query, relevant_doc) 对训练模型，让向量空间在该领域内更好地对齐 Query 和 Document 的语义分布。
 
-##### 2. HyDE (Hypothetical Document Embeddings)
+#### 2. HyDE (Hypothetical Document Embeddings)
 
 HyDE 的核心洞察是：**Document 和 Document 之间的语义相似度，天然高于 Query 和 Document 之间的相似度**。因此，与其直接用 Query 的 Embedding 去检索，不如先让 LLM 生成一个"假设性答案文档"，再用该文档的 Embedding 去检索。
 
@@ -2272,7 +2272,7 @@ Hypothetical: "自注意力机制通过 Query、Key、Value 三个矩阵计算�
 
 **局限**：如果 LLM 的假设与真实文档偏差太大 (如领域知识不足)，HyDE 可能引入噪声。可以通过生成多个假设文档取并集来缓解。
 
-##### 3. Contextual Embeddings (上下文感知 Embedding)
+#### 3. Contextual Embeddings (上下文感知 Embedding)
 
 标准 Embedding 只编码 chunk 本身的内容，丢失了 chunk 在文档中的上下文信息。Contextual Embeddings 将标题、章节路径、邻接块等上下文信息编码进向量。
 
@@ -2301,7 +2301,7 @@ def build_contextual_embedding(
 
 **Anthropic 的 Contextual Retrieval** 就是这个思路的工程实践：在每个 chunk 前面拼接一段 LLM 生成的上下文说明，再做 Embedding，实测可将检索失败率降低 35%。
 
-##### 4. 多粒度表示
+#### 4. 多粒度表示
 
 同一段文档同时建立多种粒度的向量表示，适配不同类型的 Query：
 
@@ -2326,9 +2326,9 @@ def build_contextual_embedding(
   "第3章讲了什么？"            -> 命中 Document 级 (结构查询)
 ```
 
-#### 三、计算层优化：让匹配更鲁棒
+### 三、计算层优化：让匹配更鲁棒
 
-##### 1. 度量方式选择
+#### 1. 度量方式选择
 
 不同的距离度量方式对向量的几何性质有不同的假设，选择合适的度量方式可以显著影响检索效果。
 
@@ -2360,7 +2360,7 @@ def l2_distance(a: np.ndarray, b: np.ndarray) -> float:
 - 如果向量未归一化，且模长包含有意义的信息 (如 TF-IDF 向量)，用 cosine 避免模长干扰。
 - 如果需要区分"语义相近但强度不同"的场景 (如情感强度)，用 L2。
 
-##### 2. Late Interaction —— ColBERT
+#### 2. Late Interaction —— ColBERT
 
 ColBERT 的核心思想是：**不要把文本压缩成一个向量，而是保留每个 token 的向量，用 token 级别的细粒度匹配来计算相似度**。
 
@@ -2412,7 +2412,7 @@ def colbert_score(query_tokens: list[list[float]], doc_tokens: list[list[float]]
 
 **局限**：存储开销大——每个 chunk 需要存储 N 个向量 (N 为 token 数)，而非 1 个向量。通常用量化压缩来缓解。
 
-##### 3. 学习型稀疏表示 —— SPLADE
+#### 3. 学习型稀疏表示 —— SPLADE
 
 传统 BM25 是基于词频的稀疏检索，无法捕捉语义。SPLADE (Sparse Lexical And Expansion Model) 通过学习得到**稀疏但语义感知**的表示，让稀疏检索也能捕捉语义。
 
@@ -2458,7 +2458,7 @@ def splade_encode(text: str, model) -> dict[str, float]:
 - **可解释性**：稀疏表示可以直接看到哪些词项被激活，比稠密向量更透明
 - **高效检索**：稀疏检索可以用倒排索引实现，检索速度远快于稠密向量检索
 
-##### 4. Cross-Encoder Rerank (精排弥补粗排)
+#### 4. Cross-Encoder Rerank (精排弥补粗排)
 
 粗排阶段 (Bi-Encoder) 的相似度计算是独立编码的，精度有限。用 Cross-Encoder 做精排，让 Query 和 Chunk 的 token 充分交互，可以显著提升排序质量。
 
@@ -2508,11 +2508,11 @@ Cross-Encoder (精排):
 
 **为什么 Cross-Encoder 更准**：因为 Query 和 Chunk 的每个 token 都能通过 Self-Attention 直接交互，模型可以捕捉细粒度的语义对齐关系 (如"自注意力"和"Self-Attention"的对应)，而不是依赖独立编码后的向量相似度。
 
-#### 四、索引层优化：让检索更快
+### 四、索引层优化：让检索更快
 
 当文档库规模达到百万甚至亿级时，精确最近邻搜索 (Exact NN) 的计算量不可接受。需要使用近似最近邻 (Approximate Nearest Neighbor, ANN) 算法在精度和速度之间做权衡。
 
-##### 1. HNSW (Hierarchical Navigable Small World)
+#### 1. HNSW (Hierarchical Navigable Small World)
 
 HNSW 是当前最常用的 ANN 算法，核心思想是构建一个多层图结构，上层稀疏用于快速定位，下层稠密用于精确搜索。
 
@@ -2576,7 +2576,7 @@ labels, distances = index.knn_query(query_vector, k=10)
 - 查询: O(log(N) * ef_search)
 - 空间: O(N * M * dim)
 
-##### 2. IVF (Inverted File Index)
+#### 2. IVF (Inverted File Index)
 
 IVF 的核心思想是先用聚类将向量空间划分为若干区域，检索时只在最近的几个区域内搜索。
 
@@ -2630,7 +2630,7 @@ def build_ivf_index(vectors: list[list[float]], dim: int, nlist: int = 1000) -> 
 | 内存     | 低                 | 高 (需存储图结构) |
 | 动态增删 | 支持               | 支持但较复杂      |
 
-##### 3. 乘积量化 (Product Quantization, PQ)
+#### 3. 乘积量化 (Product Quantization, PQ)
 
 PQ 的核心思想是将高维向量切分为若干子空间，每个子空间独立量化为一个码本索引，从而大幅压缩存储。
 
@@ -2679,7 +2679,7 @@ def build_pq_index(vectors: list[list[float]], dim: int, m: int = 8) -> faiss.In
 - **精度**: 有量化损失，但通过增加子空间数 m 可以提高精度
 - **速度**: 查询时用查表法 (ADC) 计算距离，比精确计算快得多
 
-##### 4. 组合优化：IVF + PQ + HNSW
+#### 4. 组合优化：IVF + PQ + HNSW
 
 实际工程中通常组合多种技术：
 
@@ -2710,7 +2710,7 @@ def build_optimized_index(vectors: list[list[float]], dim: int) -> faiss.Index:
     return index
 ```
 
-#### 五、工程实践中的综合方案
+### 五、工程实践中的综合方案
 
 实际生产环境中，通常不是选择某一种优化，而是将多种技术组合成一个完整的检索链路：
 
@@ -2745,7 +2745,7 @@ Query
 Top-N 结果 -> Context Assembly -> LLM 生成
 ```
 
-#### 六、常见误区与边界条件
+### 六、常见误区与边界条件
 
 1. 误区：换了更好的 Embedding 模型就能解决所有问题。
     不完整。模型只是表示层，如果度量方式、索引算法或 Rerank 策略不合理，再好的模型也会被拖累。
@@ -2756,7 +2756,7 @@ Top-N 结果 -> Context Assembly -> LLM 生成
 4. 边界：跨语言检索。
     当 Query 和 Chunk 使用不同语言时，需要使用多语言 Embedding 模型 (如 mE5、multilingual-e5)，或在检索前做 Query 翻译。
 
-#### 知识扩展
+### 知识扩展
 
 - **Rerank (1.2 节)**：Cross-Encoder Rerank 是相似度计算优化的最后一环，用精排模型弥补 Bi-Encoder 粗排的不足，与本节计算层优化直接关联。
 - **HyDE (1.6 节)**：HyDE 是表示层优化的经典方案，通过生成假设文档来对齐 Query 和 Document 的语义分布，在 1.6 节的检索前优化中有更详细的介绍。
@@ -2764,17 +2764,17 @@ Top-N 结果 -> Context Assembly -> LLM 生成
 - **向量数据库选型**：索引层优化的工程落地依赖向量数据库的能力，FAISS 适合离线研究，Milvus/Qdrant 适合生产环境，Pinecone 适合全托管场景。
 - **Embedding 模型评估 (MTEB)**：选择和微调 Embedding 模型需要标准化的评估基准，MTEB (Massive Text Embedding Benchmark) 是当前最主流的评估框架。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 优化 RAG 检索阶段的相似度计算，需要从表示层、计算层和索引层三个维度系统性地做。表示层的核心是让 Query 和 Chunk 的向量表示更精准：可以通过领域微调 Embedding 模型让向量空间在目标领域内更好地对齐；用 HyDE 生成假设文档来拉近 Query-space 和 Document-space 的分布差异；用 Contextual Embedding 将 chunk 的上下文信息编码进向量；用多粒度表示适配不同粒度的查询。计算层的核心是让匹配更鲁棒：选择合适的度量方式 (cosine/inner product/L2)；用 ColBERT 的 Late Interaction 做 token 级别的细粒度匹配；用 SPLADE 让稀疏检索也能捕捉语义；最后用 Cross-Encoder 做精排弥补粗排的不足。索引层的核心是让检索更快：用 HNSW、IVF+PQ 等 ANN 算法在精度和速度之间做权衡。在工程实践中，这些优化是组合使用的——比如先用 HyDE 优化 Query 表示，再用 HNSW 做近似检索，最后用 Cross-Encoder 精排。关键是理解每一层的瓶颈在哪里，有针对性地优化，而不是盲目堆叠技术。
 
-### 1.15 什么是 Agentic RAG？与传统 RAG 相比有哪些核心区别和优势？请详细说明其实现原理、工作流程和典型应用场景。
+## 1.15 什么是 Agentic RAG？与传统 RAG 相比有哪些核心区别和优势？请详细说明其实现原理、工作流程和典型应用场景。
 
 Agentic RAG (Agentic Retrieval-Augmented Generation) 是将 **Agent 的自主决策能力** 与 **RAG 的检索增强生成** 相结合的技术范式。它的核心思想是：**让 LLM 充当"智能调度员"，自主决定何时检索、检索什么、如何检索，以及是否需要多次迭代检索来获取足够信息**。
 
 与传统 RAG 的"一次性检索 + 生成"不同，Agentic RAG 将 RAG 流程从一个**静态的管道 (Pipeline)** 转变为一个**动态的决策循环 (Agent Loop)**——模型可以根据当前的信息状态，自主决定下一步是继续检索、换个角度检索、还是直接生成答案。
 
-#### 一、传统 RAG 的局限性
+### 一、传统 RAG 的局限性
 
 要理解 Agentic RAG 的价值，先看传统 RAG 的根本性瓶颈：
 
@@ -2809,9 +2809,9 @@ Agentic RAG (Agentic Retrieval-Augmented Generation) 是将 **Agent 的自主决
 4. 综合所有信息，生成结构化对比
 ```
 
-#### 二、Agentic RAG 的核心架构
+### 二、Agentic RAG 的核心架构
 
-##### 1. Agent 作为"智能调度员"
+#### 1. Agent 作为"智能调度员"
 
 Agentic RAG 的本质是用 **Agent 的决策循环** 来驱动 RAG 流程：
 
@@ -2853,7 +2853,7 @@ Agentic RAG 的本质是用 **Agent 的决策循环** 来驱动 RAG 流程：
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-##### 2. 与传统 RAG 的核心区别
+#### 2. 与传统 RAG 的核心区别
 
 | 维度         | 传统 RAG               | Agentic RAG                          |
 | ------------ | ---------------------- | ------------------------------------ |
@@ -2865,7 +2865,7 @@ Agentic RAG 的本质是用 **Agent 的决策循环** 来驱动 RAG 流程：
 | **错误处理** | 无                     | 可检测检索失败，自动换策略           |
 | **适用场景** | 简单问答               | 复杂推理、多跳问答、需要综合多源信息 |
 
-##### 3. 为什么需要 Agent 驱动 RAG
+#### 3. 为什么需要 Agent 驱动 RAG
 
 ```plaintext
 场景：用户问 "Python 的 GIL 对多线程爬虫性能有什么影响？如何绕过？"
@@ -2885,9 +2885,9 @@ Agentic RAG 的处理：
 5. 综合所有信息，生成结构化回答
 ```
 
-#### 三、Agentic RAG 的实现原理
+### 三、Agentic RAG 的实现原理
 
-##### 1. 核心组件：ReAct 范式
+#### 1. 核心组件：ReAct 范式
 
 Agentic RAG 通常基于 **ReAct (Reasoning + Acting)** 范式实现：
 
@@ -2906,7 +2906,7 @@ Thought: 信息足够了，可以生成最终答案
 Action: generate_answer(...)
 ```
 
-##### 2. Query 改写与扩展
+#### 2. Query 改写与扩展
 
 Agent 的一个重要能力是**动态调整检索 Query**：
 
@@ -3002,7 +3002,7 @@ class IterativeRetriever:
         return is_sufficient, missing_info
 ```
 
-##### 3. 工具选择与调用
+#### 3. 工具选择与调用
 
 Agentic RAG 的 Agent 可以根据问题类型选择合适的检索工具：
 
@@ -3081,7 +3081,7 @@ class AgenticRAGAgent:
         return "\n".join(formatted)
 ```
 
-#### 四、完整工作流程
+### 四、完整工作流程
 
 ```plaintext
 Agentic RAG 完整流程图：
@@ -3129,9 +3129,9 @@ Agentic RAG 完整流程图：
 最终答案
 ```
 
-#### 五、典型应用场景
+### 五、典型应用场景
 
-##### 1. 多跳问答 (Multi-hop QA)
+#### 1. 多跳问答 (Multi-hop QA)
 
 ```plaintext
 问题: "《三体》的作者毕业于哪所大学？"
@@ -3147,7 +3147,7 @@ Agentic RAG:
 3. 获取答案: 华北水利水电大学
 ```
 
-##### 2. 对比分析类问题
+#### 2. 对比分析类问题
 
 ```plaintext
 问题: "PyTorch 和 TensorFlow 的动态图机制有什么区别？"
@@ -3159,7 +3159,7 @@ Agentic RAG:
 4. 综合生成对比分析
 ```
 
-##### 3. 需要实时数据的问题
+#### 3. 需要实时数据的问题
 
 ```plaintext
 问题: "当前 Bitcoin 的价格是多少？"
@@ -3170,7 +3170,7 @@ Agentic RAG:
 3. 生成答案
 ```
 
-##### 4. 代码调试与问题排查
+#### 4. 代码调试与问题排查
 
 ```plaintext
 问题: "我的 Python 代码报错 'RecursionError: maximum recursion depth exceeded'，怎么解决？"
@@ -3183,7 +3183,7 @@ Agentic RAG:
 5. 综合生成解决方案
 ```
 
-#### 六、代码示例：基于 LangGraph 的 Agentic RAG
+### 六、代码示例：基于 LangGraph 的 Agentic RAG
 
 ```python
 from typing import TypedDict, Annotated, Sequence
@@ -3323,7 +3323,7 @@ answer = run_agentic_rag("对比 Kafka 和 RabbitMQ 在高吞吐场景下的性�
 print(answer)
 ```
 
-#### 七、优缺点分析
+### 七、优缺点分析
 
 **优点**
 
@@ -3352,7 +3352,7 @@ print(answer)
 | 对延迟敏感   | 传统 RAG    | Agentic RAG 延迟不可控   |
 | 对成本敏感   | 传统 RAG    | Agentic RAG Token 消耗大 |
 
-#### 知识扩展
+### 知识扩展
 
 - **Agent 推理模式 (2.6 节)**：Agentic RAG 的核心是 Agent 的推理能力，通常基于 ReAct (Reasoning + Acting) 范式实现。理解 2.6 节的推理模式有助于深入理解 Agentic RAG 的决策机制。
 - **RAG 检索优化 (1.6 节)**：Agentic RAG 的检索质量依赖于底层检索器的性能。1.6 节介绍的 Query 改写、混合检索等优化技术可以直接应用于 Agentic RAG 的各个检索步骤。
@@ -3360,11 +3360,11 @@ print(answer)
 - **多 Agent 协作 (2.20 节)**：更复杂的 Agentic RAG 系统可能使用多个 Agent 协作，如一个 Agent 负责检索、一个 Agent 负责验证、一个 Agent 负责生成。
 - **RAG 幻觉问题 (1.8 节)**：Agentic RAG 的信息验证机制可以有效缓解幻觉问题，通过多次检索和交叉验证确保信息准确性。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 Agentic RAG 是将 Agent 的自主决策能力与 RAG 的检索增强生成相结合的技术范式。与传统 RAG 的"一次性检索 + 生成"不同，Agentic RAG 让 LLM 充当智能调度员，自主决定何时检索、检索什么、如何检索，以及是否需要多次迭代检索。核心区别在于：传统 RAG 是固定管道，开发者预定义流程；Agentic RAG 是动态循环，模型自主决策。实现上通常基于 ReAct 范式，Agent 通过 Thought-Action-Observation 循环不断评估信息是否足够，不够就改写 Query 继续检索，足够就生成答案。典型应用场景包括多跳问答（需要关联多份文档）、对比分析（需要分别检索多个主题）、实时数据查询（需要调用外部 API）等。优势是自适应能力强、支持多跳推理、信息质量可控；局限是延迟更高、成本更高、可控性降低。在工程实现上，通常使用 LangGraph 构建状态图，定义检索、改写、生成等节点，通过条件边实现循环决策。选择 Agentic RAG 还是传统 RAG 取决于问题复杂度：简单事实问答用传统 RAG 即可，复杂推理场景才需要 Agentic RAG。
 
-### 1.16 什么是 BM25 算法？它的核心原理和计算公式是什么？在 RAG 中它起到了什么作用？
+## 1.16 什么是 BM25 算法？它的核心原理和计算公式是什么？在 RAG 中它起到了什么作用？
 
 BM25 (Best Matching 25) 是信息检索领域最经典的**词袋检索 (Bag-of-Words Retrieval)** 排序函数之一，由 Stephen Robertson 和 Karen Sparck Jones 等人在 20 世纪 70~90 年代逐步发展完善，属于概率检索模型 (Probabilistic Relevance Framework) 的核心成果。
 
@@ -3384,9 +3384,9 @@ $$
 
 ---
 
-#### 一、核心组件拆解
+### 一、核心组件拆解
 
-##### 1. IDF (Inverse Document Frequency) —— 词的辨识度
+#### 1. IDF (Inverse Document Frequency) —— 词的辨识度
 
 $$
 \text{IDF}(t) = \log \left( \frac{N - df(t) + 0.5}{df(t) + 0.5} \right)
@@ -3399,7 +3399,7 @@ $$
 
 > 公式中的 +0.5 是为了平滑，避免 $df(t) = 0$（未登录词）时出现除零问题。
 
-##### 2. TF 项 (Term Frequency Saturation) —— 词频饱和
+#### 2. TF 项 (Term Frequency Saturation) —— 词频饱和
 
 BM25 对 TF-IDF 最关键的改进在于**词频饱和 (TF Saturation)**。TF-IDF 中词频是线性增长的——一个词出现 10 次就是出现 1 次的 10 倍得分。但直觉上：一个文档中出现 1 次"反向传播"说明它可能与深度学习相关；出现 10 次"反向传播"并不代表它的相关性是前者的 10 倍，可能只是文档更长或者反复提及而已。
 
@@ -3417,7 +3417,7 @@ $$
 - 当 $f$ 增大时，得分单调递增但逐渐趋于 $k_1 + 1$ 的上限
 - $k_1$ 越小，饱和越快；$k_1 = 0$ 时完全忽略词频（只看是否出现）
 
-##### 3. 文档长度归一化 (Document Length Normalization) —— 消除长文档优势
+#### 3. 文档长度归一化 (Document Length Normalization) —— 消除长文档优势
 
 长文档天然有更大的词表、更高的词频，如果不做长度修正，在排序中会系统性地优于短文档。BM25 通过参数 $b$ 控制长度修正的强度：
 
@@ -3439,7 +3439,7 @@ $$
 
 ---
 
-#### 二、BM25 vs TF-IDF：核心区别
+### 二、BM25 vs TF-IDF：核心区别
 
 | 维度       | TF-IDF                            | BM25                                   |
 | ---------- | --------------------------------- | -------------------------------------- |
@@ -3451,7 +3451,7 @@ $$
 
 ---
 
-#### 三、从公式到工程：倒排索引
+### 三、从公式到工程：倒排索引
 
 BM25 之所以在工业界被广泛采用，除了排序效果好，还有一个工程原因：它可以基于**倒排索引 (Inverted Index)** 高效检索。
 
@@ -3574,7 +3574,7 @@ if __name__ == "__main__":
 
 ---
 
-#### 四、BM25 在 RAG 中的角色：稀疏检索 + 混合检索
+### 四、BM25 在 RAG 中的角色：稀疏检索 + 混合检索
 
 在 RAG 系统中，BM25 扮演的是**稀疏检索 (Sparse Retrieval)** 的角色，与 Embedding-based 的**稠密检索 (Dense Retrieval)** 形成互补：
 
@@ -3629,7 +3629,7 @@ $$
 
 其中 $r_i(d)$ 是文档 $d$ 在第 $i$ 路检索结果中的排名，$c$ 是常数（通常取 60），用于平滑排名差异过大时的影响。
 
-#### 五、BM25 的局限与适用边界
+### 五、BM25 的局限与适用边界
 
 - **无法处理语义匹配**：对同义词、近义词、跨语言查询无能为力。"轿车"和"汽车"在 BM25 眼里是两个完全不同的词项。
 - **词袋假设**：完全忽略词序和上下文，将文档视为词的集合（Bag of Words），因此无法捕捉短语语义。
@@ -3641,7 +3641,7 @@ $$
 - 需要精确匹配的法律条文、合同条款检索
 - 作为混合检索的其中一路，弥补 Embedding 检索对精确词项召回不足的问题
 
-#### 知识扩展
+### 知识扩展
 
 - **TF-IDF 与 BM25**：TF-IDF 是 BM25 的前身，BM25 在其基础上引入了词频饱和与文档长度归一化。理解 TF-IDF 的计算方式有助于理解 BM25 为什么做这些改进。详见 1.3 节中关于 TF-IDF 向量的讨论。
 - **SPLADE (学习型稀疏检索)**：BM25 的词项匹配是纯统计的，无法捕捉语义。SPLADE 通过学习得到稀疏但语义感知的词项权重，在保留倒排索引高效检索的同时获得了语义匹配能力，是 BM25 的现代升级版。详见 1.14 节。
@@ -3650,7 +3650,7 @@ $$
 - **倒排索引与 ANN 索引**：BM25 依赖倒排索引实现高效检索，向量检索依赖 HNSW/IVF 等 ANN 索引。两者的索引结构、检索效率和适用场景各有不同。详见 1.14 节。
 - **Elasticsearch/Lucene**：BM25 是 Elasticsearch 的默认相似度算法（自 5.0 起替代 TF-IDF）。在工程实践中，通常用 ES 的 BM25 实现作为稀疏检索的底层引擎。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 BM25 是一种基于概率检索模型的词袋排序函数，核心思想是用三个信号给文档打分：词的辨识度 (IDF)、词的匹配度 (词频，带饱和)、文档长度修正。具体来说：
 
@@ -3660,13 +3660,13 @@ BM25 是一种基于概率检索模型的词袋排序函数，核心思想是用
 
 BM25 相比 TF-IDF 的核心改进就在 TF 饱和和长度归一化这两点上。在 RAG 中，BM25 作为稀疏检索（精确词项匹配）与向量检索（语义匹配）形成互补，构成混合检索的两条腿。典型做法是 BM25 和向量检索各召回 Top-K，再通过 RRF 融合排序后送入 LLM。BM25 的工程优势在于：基于倒排索引，检索速度非常快；不依赖 Embedding 模型，零推理成本；对专有名词、编号、代码符号等精确匹配场景尤其可靠。但它不能捕捉语义（同义词/近义词），因此通常不单独使用，而是与稠密检索一起构成混合检索的基础设施。
 
-### 1.17 什么是 SQLite FTS5？它的全文搜索机制是如何工作的？内部使用了哪些数据结构和排序算法？
+## 1.17 什么是 SQLite FTS5？它的全文搜索机制是如何工作的？内部使用了哪些数据结构和排序算法？
 
 FTS5 (Full-Text Search version 5) 是 SQLite 内置的全文搜索引擎扩展，用于在大量文本中高效地做**关键词搜索和排序**。它是 SQLite 全文搜索模块的第五个版本，也是目前推荐使用的版本。
 
 先给一个直观对比：普通的 `LIKE '%keyword%'` 查询需要全表扫描，时间复杂度 O(n)；FTS5 基于倒排索引，查询时间复杂度接近 O(log n)，在海量文本场景下有数量级的性能差异。
 
-#### 一、FTS5 的架构概览
+### 一、FTS5 的架构概览
 
 FTS5 在 SQLite 中以**虚拟表 (Virtual Table)** 的形式存在。当用户创建一张 FTS5 表时，SQLite 实际上创建了多张**影子表 (Shadow Tables)** 来存储索引数据：
 
@@ -3707,7 +3707,7 @@ FTS5 在 SQLite 中以**虚拟表 (Virtual Table)** 的形式存在。当用户�
 
 ---
 
-#### 二、倒排索引的内部结构：Segment B-Tree
+### 二、倒排索引的内部结构：Segment B-Tree
 
 FTS5 的核心数据结构是**基于段的倒排索引 (Segmented Inverted Index)**，以 B-Tree 的形式存储在 `docs_idx` 表中：
 
@@ -3745,7 +3745,7 @@ FTS5 对 doclist 使用了**变长编码**来压缩存储——docid 之间用�
 
 ---
 
-#### 三、分词 (Tokenization)：文本如何变成词项
+### 三、分词 (Tokenization)：文本如何变成词项
 
 分词器 (Tokenizer) 是 FTS5 的入口组件，决定了一段文本如何被切分成可索引的词项：
 
@@ -3778,7 +3778,7 @@ INSERT INTO docs VALUES ('Transformer 自注意力 机制 详解');
 
 ---
 
-#### 四、查询语法：MATCH 操作符
+### 四、查询语法：MATCH 操作符
 
 FTS5 的查询语言设计简洁但功能完备：
 
@@ -3808,7 +3808,7 @@ FTS5 将这些查询语法编译为内部执行计划：先对每个词项查倒
 
 ---
 
-#### 五、排序算法：从 TF-IDF 到 BM25
+### 五、排序算法：从 TF-IDF 到 BM25
 
 FTS5 的默认排序算法是 **BM25**（FTS3/FTS4 当时默认是 TF-IDF）。
 
@@ -3840,7 +3840,7 @@ WHERE docs MATCH 'transformer';
 
 ---
 
-#### 六、Python 实战示例
+### 六、Python 实战示例
 
 ```python
 import sqlite3
@@ -3951,7 +3951,7 @@ if __name__ == "__main__":
 
 ---
 
-#### 七、FTS5 在 LLM/AI 系统中的典型应用场景
+### 七、FTS5 在 LLM/AI 系统中的典型应用场景
 
 在 LLM 应用和 Agent 系统中，FTS5 有三个典型的落地场景：
 
@@ -4003,7 +4003,7 @@ CREATE VIRTUAL TABLE conversations USING fts5(
 
 ---
 
-#### 八、FTS5 的局限与适用边界
+### 八、FTS5 的局限与适用边界
 
 - **不支持语义搜索**：FTS5 只能做基于词项匹配的搜索，无法理解同义词或语义相近但用词不同的查询。
 - **分词语言依赖**：对中文等无空格分隔词的语言，默认分词器效果差，需要额外处理分词逻辑。
@@ -4011,7 +4011,7 @@ CREATE VIRTUAL TABLE conversations USING fts5(
 - **写入性能**：大量频繁的写入会生成多个小段，需要定期触发 `optimize` 合并段以保持查询性能。
 - **不适合大规模分布式场景**：FTS5 是嵌入式单机引擎，无法横向扩展。海量文档的搜索需求应选择 Elasticsearch（分布式倒排索引）或 Milvus（分布式向量索引）。
 
-#### 知识扩展
+### 知识扩展
 
 - **BM25 算法 (1.16 节)**：FTS5 的默认排序算法就是 BM25。理解 BM25 的 TF 饱和、长度归一化和 IDF 计算，有助于理解 FTS5 返回的 rank 分数的含义和调参策略。
 - **倒排索引与向量检索 (1.14 节)**：FTS5 的倒排索引属于稀疏检索（词项匹配），与 HNSW/IVF 等向量 ANN 索引形成互补。详见 1.14 节关于混合检索的讨论。
@@ -4021,7 +4021,7 @@ CREATE VIRTUAL TABLE conversations USING fts5(
 - **trigram 分词与模糊搜索**：FTS5 的 trigram 分词器可以将文本切分为固定长度的字符 n-gram，天然支持子串匹配和拼写容错。这与 Embedding 向量的语义模糊搜索是两种不同维度的"模糊"——trigram 是字符层面的，Embedding 是语义层面的。
 - **SQLite 在 LLM 应用中的角色**：SQLite + FTS5 的组合在 LLM Agent 系统中越来越常见——被用作轻量级会话记忆、知识缓存、元数据存储，因为它是单文件零配置的嵌入式数据库，非常适合本地运行的 Agent 系统。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 SQLite FTS5 是 SQLite 内置的全文搜索扩展，核心原理是**基于段的倒排索引 (Segment B-Tree)**。它的工作流程可以拆成三块：
 
@@ -4033,11 +4033,11 @@ SQLite FTS5 是 SQLite 内置的全文搜索扩展，核心原理是**基于段�
 
 在 LLM 系统中，FTS5 的典型角色是**稀疏检索引擎**：作为混合检索的 BM25 一路，与向量检索形成互补；或者作为 Agent 的会话记忆搜索引擎，用关键词快速定位历史对话。它的核心优势是零外部依赖（SQLite 自带的）、轻量（单文件）、对精确词项命中可靠。局限是不能做语义搜索（分不清同义词），对中文分词需要额外处理。
 
-### 1.18 什么是 HippoRAG 2.0？它与传统 RAG 和 GraphRAG 相比有哪些核心改进？请详细说明其受海马体记忆机制启发的设计思想、整体架构与实现逻辑。
+## 1.18 什么是 HippoRAG 2.0？它与传统 RAG 和 GraphRAG 相比有哪些核心改进？请详细说明其受海马体记忆机制启发的设计思想、整体架构与实现逻辑。
 
 HippoRAG 2.0 是由俄亥俄州立大学 NLP 组提出的图增强检索生成框架，论文为 *"HippoRAG 2.0: Continual Memory Integration for Multi-Hop Retrieval"*(2025)。它受神经科学中**海马体记忆索引理论 (Hippocampal Memory Indexing Theory)** 启发，将人脑的记忆编码-检索机制映射到 RAG 系统中，核心目标是解决传统 RAG 和 GraphRAG 在**多跳推理 (Multi-Hop Reasoning)** 和**持续记忆整合 (Continual Memory Integration)** 场景下的不足。
 
-#### 一、为什么需要 HippoRAG？核心动机是什么？
+### 一、为什么需要 HippoRAG？核心动机是什么？
 
 在 1.9 节和 1.11 节中我们分别分析了 GraphRAG 和 LightRAG。它们虽然通过知识图谱增强了多跳推理能力，但仍存在以下根本性问题：
 
@@ -4047,11 +4047,11 @@ HippoRAG 2.0 是由俄亥俄州立大学 NLP 组提出的图增强检索生成�
 
 HippoRAG 的核心动机是：**让 RAG 系统拥有人类海马体一样的记忆能力——不仅能检索，还能联想；不仅能存储，还能持续整合新旧知识。**
 
-#### 二、海马体记忆机制与 HippoRAG 的映射
+### 二、海马体记忆机制与 HippoRAG 的映射
 
 要理解 HippoRAG，首先要理解神经科学中的海马体记忆理论。
 
-##### 海马体的两大核心功能
+#### 海马体的两大核心功能
 
 **(1) Pattern Separation (模式分离)**
 
@@ -4065,7 +4065,7 @@ HippoRAG 的核心动机是：**让 RAG 系统拥有人类海马体一样的记�
 
 类比：你只看到一个红色的"对勾"标志，就能自动联想到 Nike 品牌、运动鞋、"Just Do It" 等一整套关联信息。
 
-##### 从海马体到 HippoRAG 的映射
+#### 从海马体到 HippoRAG 的映射
 
 | 海马体机制                     | HippoRAG 中的映射                                        | 技术实现                      |
 | ------------------------------ | -------------------------------------------------------- | ----------------------------- |
@@ -4075,11 +4075,11 @@ HippoRAG 的核心动机是：**让 RAG 系统拥有人类海马体一样的记�
 | 内嗅皮层 (Entorhinal Cortex)   | 向量检索作为"入口"，将查询映射到图谱中的相关节点         | Dense Retrieval → KG 锚点定位 |
 | 海马体索引 (Hippocampal Index) | 知识图谱本身作为记忆索引，存储实体-关系-实体的结构化关联 | Neo4j / NetworkX 图存储       |
 
-#### 三、HippoRAG 1.0 的整体架构
+### 三、HippoRAG 1.0 的整体架构
 
 HippoRAG 1.0 的架构可以分为**离线索引**和**在线检索**两个阶段。
 
-##### 离线索引阶段：构建海马体式记忆索引
+#### 离线索引阶段：构建海马体式记忆索引
 
 ```text
 原始文档 Chunks
@@ -4103,7 +4103,7 @@ HippoRAG 1.0 的架构可以分为**离线索引**和**在线检索**两个阶�
 - **LLM 作为"感觉皮层"**：使用 LLM 从非结构化文本中抽取结构化的实体和关系三元组，类似大脑将感官输入转化为神经表征。
 - **实体 Embedding 作为"内嗅皮层入口"**：每个实体节点的描述文本被编码为向量，用于后续的向量检索定位。
 
-##### 在线检索阶段：Pattern Completion 式检索
+#### 在线检索阶段：Pattern Completion 式检索
 
 这是 HippoRAG 与传统 RAG 最大的区别所在。传统 RAG 做的是"找到最相似的文档块"，而 HippoRAG 做的是"从部分线索联想出完整知识链"。
 
@@ -4153,11 +4153,11 @@ PPR 公式: r^(t+1) = α · M · r^(t) + (1-α) · p
 
 PPR 的精妙之处在于：它不需要显式地枚举所有可能的多跳路径，而是通过概率传播自动发现与锚点节点关联度最高的所有节点——无论是一跳、两跳还是多跳关联。这与海马体 CA3 的 Pattern Completion 机制高度一致：**从一个局部线索出发，自动"脑补"出完整的关联记忆网络。**
 
-#### 四、HippoRAG 2.0 的关键改进
+### 四、HippoRAG 2.0 的关键改进
 
 HippoRAG 2.0 在 1.0 的基础上做了多项重要改进，核心目标是实现**持续记忆整合 (Continual Memory Integration)**。
 
-##### 改进一：OpenIE 增强的图谱构建
+#### 改进一：OpenIE 增强的图谱构建
 
 HippoRAG 1.0 使用 LLM 的封闭式信息抽取 (ClosedIE)，即预先定义好实体类型和关系类型，LLM 在约束范围内抽取。这种方式的问题是：
 - 预定义的 schema 可能覆盖不全
@@ -4165,7 +4165,7 @@ HippoRAG 1.0 使用 LLM 的封闭式信息抽取 (ClosedIE)，即预先定义好
 
 HippoRAG 2.0 改用 **OpenIE (Open Information Extraction)**，让 LLM 自由抽取任意实体和关系，再通过后处理做归一化。这使得图谱构建更灵活、覆盖面更广。
 
-##### 改进二：双层记忆架构
+#### 改进二：双层记忆架构
 
 HippoRAG 2.0 引入了类似人脑的**短期记忆 (STM)** 和 **长期记忆 (LTM)** 双层架构：
 
@@ -4176,7 +4176,7 @@ HippoRAG 2.0 引入了类似人脑的**短期记忆 (STM)** 和 **长期记忆 (
 
 新文档先写入 STM，系统通过**记忆整合 (Memory Integration)** 流程将 STM 中的新知识与 LTM 中的已有知识做**对齐、合并和去重**——这与海马体在睡眠期间将短期记忆巩固为长期记忆的过程类似。
 
-##### 改进三：检索策略优化
+#### 改进三：检索策略优化
 
 HippoRAG 2.0 在检索阶段做了以下优化：
 
@@ -4217,7 +4217,7 @@ HippoRAG 2.0 检索流程:
 └──────────────────────────────────────────────┘
 ```
 
-##### 改进四：持续记忆整合的工程实现
+#### 改进四：持续记忆整合的工程实现
 
 HippoRAG 2.0 的持续记忆整合流程如下：
 
@@ -4248,7 +4248,7 @@ HippoRAG 2.0 的持续记忆整合流程如下：
 
 这个设计使得 HippoRAG 2.0 能够**像人脑一样持续积累和整合知识**，而不是像传统 RAG 那样每次都要重新索引整个文档库。
 
-#### 五、与传统 RAG 和 GraphRAG 的对比
+### 五、与传统 RAG 和 GraphRAG 的对比
 
 | 对比维度     | 传统 RAG        | GraphRAG            | HippoRAG 2.0                       |
 | ------------ | --------------- | ------------------- | ---------------------------------- |
@@ -4263,7 +4263,7 @@ HippoRAG 2.0 的持续记忆整合流程如下：
 | 增量更新     | 简单            | 复杂                | ✅ 自然支持 (记忆整合)              |
 | 可解释性     | ⭐⭐              | ⭐⭐⭐⭐⭐               | ⭐⭐⭐⭐ (PPR 得分可追溯关联路径)      |
 
-#### 六、适用场景与局限性
+### 六、适用场景与局限性
 
 **适用场景：**
 
@@ -4279,7 +4279,7 @@ HippoRAG 2.0 的持续记忆整合流程如下：
 - **记忆整合的冲突处理**：当新旧知识矛盾时（如"公司CEO换了"），如何正确更新而非简单合并，仍是一个开放问题。
 - **冷启动问题**：文档库较小时，图谱过于稀疏，PPR 的优势无法发挥，此时传统 RAG 反而更高效。
 
-#### 知识扩展
+### 知识扩展
 
 - **GraphRAG (1.9 节)**：HippoRAG 的图谱构建部分与 GraphRAG 类似，但检索方式从图遍历改为 PPR 概率传播，且引入了持续记忆整合。
 - **LightRAG (1.11 节)**：LightRAG 通过去掉社区检测来降低成本，HippoRAG 则通过引入 PPR 替代显式图遍历来增强多跳推理，两者优化方向不同。
@@ -4287,7 +4287,7 @@ HippoRAG 2.0 的持续记忆整合流程如下：
 - **Agent 记忆机制 (3.x 节)**：HippoRAG 的短期/长期记忆架构与 Agent 系统中的记忆设计高度相关，可作为 Agent 长期记忆的底层实现方案。
 - **向量数据库 (4.x 节)**：HippoRAG 的向量索引部分依赖向量数据库存储实体 Embedding，HNSW 等 ANN 索引的性能直接影响锚点定位的速度。
 
-#### 面试中可以这样回答
+### 面试中可以这样回答
 
 HippoRAG 2.0 是一个受海马体记忆机制启发的图增强检索框架，核心创新在于将人脑的记忆编码-检索模式映射到 RAG 系统中。
 
