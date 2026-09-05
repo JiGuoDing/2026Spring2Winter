@@ -1,0 +1,259 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect x="0" y="0" width="1600" height="900" fill="#F7F9F8"/>
+  <circle cx="1470" cy="88" r="52" fill="#E8F7F4"/>
+  <circle cx="1518" cy="136" r="12" fill="#BDEBE4"/>
+  <circle cx="75" cy="780" r="34" fill="#FFF0E5"/>
+
+  <!-- Header -->
+  <text x="80" y="72" fill="#1F2A2A" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="42" font-weight="700">小云个人助理，如何帮助生活服务一线同学</text>
+  <path d="M82 98 C240 94 350 103 498 97" fill="none" stroke="#12A99B"
+        stroke-width="6" stroke-linecap="round"/>
+  <text x="80" y="130" fill="#667170" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="17">从高频工作出发，把业务语境与系统能力带到每一次自然语言交互中</text>
+  <rect x="1240" y="50" width="310" height="42" rx="21" fill="#FFFFFF" stroke="#D9E1DF" stroke-width="1.5"/>
+  <circle cx="1270" cy="71" r="7" fill="#12A99B"/>
+  <text x="1290" y="77" fill="#465251" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="16" font-weight="600">一线 BD · 管理者 · 销支</text>
+
+  <!-- Section dividers -->
+  <path d="M548 160 L548 724" fill="none" stroke="#DDE4E2" stroke-width="2" stroke-dasharray="4 10"/>
+  <path d="M1044 160 L1044 724" fill="none" stroke="#DDE4E2" stroke-width="2" stroke-dasharray="4 10"/>
+
+  <!-- Left: frontline work -->
+  <circle cx="102" cy="178" r="13" fill="#F28A43"/>
+  <text x="126" y="185" fill="#283332" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="20" font-weight="700">一线现场：高频、碎片、强业务语境</text>
+
+  <!-- People silhouettes -->
+  <path d="M108 318 C108 274 143 243 186 243 C229 243 264 274 264 318 L264 492
+           C264 512 248 528 228 528 L144 528 C124 528 108 512 108 492 Z"
+        fill="#EEF2F1"/>
+  <circle cx="151" cy="299" r="25" fill="#485655"/>
+  <path d="M110 376 C116 334 133 320 151 320 C169 320 186 334 192 376 Z" fill="#485655"/>
+  <circle cx="214" cy="323" r="22" fill="#8D9896"/>
+  <path d="M179 392 C184 351 198 339 214 339 C231 339 246 352 251 392 Z" fill="#8D9896"/>
+  <circle cx="180" cy="405" r="20" fill="#12A99B"/>
+  <path d="M146 466 C151 427 164 416 180 416 C196 416 210 428 215 466 Z" fill="#12A99B"/>
+
+  <rect x="116" y="476" width="58" height="29" rx="14.5" fill="#FFFFFF"/>
+  <text x="145" y="497" text-anchor="middle" fill="#394544"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="14" font-weight="600">BD</text>
+  <rect x="178" y="476" width="76" height="29" rx="14.5" fill="#FFFFFF"/>
+  <text x="216" y="497" text-anchor="middle" fill="#394544"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="14" font-weight="600">管理者</text>
+  <rect x="145" y="511" width="70" height="29" rx="14.5" fill="#FFFFFF"/>
+  <text x="180" y="532" text-anchor="middle" fill="#087E74"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="14" font-weight="700">销支</text>
+
+  <!-- Work spokes -->
+  <path d="M260 306 C292 300 305 278 326 258" fill="none" stroke="#AAB5B3" stroke-width="2"/>
+  <path d="M264 352 C296 352 308 348 330 348" fill="none" stroke="#AAB5B3" stroke-width="2"/>
+  <path d="M260 409 C292 414 307 427 329 440" fill="none" stroke="#AAB5B3" stroke-width="2"/>
+  <path d="M250 470 C286 478 306 504 328 523" fill="none" stroke="#AAB5B3" stroke-width="2"/>
+
+  <circle cx="351" cy="242" r="32" fill="#FFFFFF" stroke="#D4DCDA" stroke-width="2"/>
+  <path d="M335 250 L343 240 L352 245 L365 230" fill="none" stroke="#12A99B" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="335" cy="250" r="3" fill="#12A99B"/>
+  <circle cx="343" cy="240" r="3" fill="#12A99B"/>
+  <circle cx="352" cy="245" r="3" fill="#12A99B"/>
+  <circle cx="365" cy="230" r="3" fill="#12A99B"/>
+  <text x="394" y="239" fill="#263130" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="20" font-weight="700">看数与明细查询</text>
+  <text x="394" y="263" fill="#74807E" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="14">指标、门店、商户、订单</text>
+
+  <circle cx="351" cy="348" r="32" fill="#FFFFFF" stroke="#D4DCDA" stroke-width="2"/>
+  <circle cx="351" cy="348" r="15" fill="none" stroke="#12A99B" stroke-width="3"/>
+  <path d="M351 333 L351 348 L363 356" fill="none" stroke="#12A99B" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="394" y="345" fill="#263130" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="20" font-weight="700">经营分析</text>
+  <text x="394" y="369" fill="#74807E" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="14">趋势、结构、差异、原因</text>
+
+  <circle cx="351" cy="448" r="32" fill="#FFFFFF" stroke="#D4DCDA" stroke-width="2"/>
+  <path d="M337 456 L337 444 L347 444 L347 436 L358 436 L358 426 L368 426"
+        fill="none" stroke="#12A99B" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M337 460 L368 460" fill="none" stroke="#12A99B" stroke-width="3" stroke-linecap="round"/>
+  <text x="394" y="445" fill="#263130" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="20" font-weight="700">过程管理</text>
+  <text x="394" y="469" fill="#74807E" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="14">目标追踪、进度复盘、动作跟进</text>
+
+  <circle cx="351" cy="548" r="32" fill="#FFFFFF" stroke="#D4DCDA" stroke-width="2"/>
+  <path d="M339 530 L360 530 L366 536 L366 565 L339 565 Z" fill="none"
+        stroke="#12A99B" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M346 542 L359 542 M346 550 L359 550 M346 558 L355 558" fill="none"
+        stroke="#12A99B" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="394" y="545" fill="#263130" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="20" font-weight="700">报告撰写</text>
+  <text x="394" y="569" fill="#74807E" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="14">周报、复盘、专项汇报</text>
+
+  <!-- Pain wave -->
+  <path d="M88 612 C156 578 230 625 298 604 C366 583 428 620 516 592
+           L516 716 C430 737 361 706 292 722 C220 740 153 704 88 728 Z"
+        fill="#FFF0E5"/>
+  <text x="112" y="635" fill="#C86729" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="16" font-weight="700">现实阻碍</text>
+  <circle cx="120" cy="668" r="15" fill="#F28A43"/>
+  <text x="120" y="674" text-anchor="middle" fill="#FFFFFF"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="16" font-weight="700">1</text>
+  <text x="145" y="674" fill="#5A3A28" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="15" font-weight="600">传统 CRM 偏标准流程</text>
+  <circle cx="120" cy="706" r="15" fill="#F28A43"/>
+  <text x="120" y="712" text-anchor="middle" fill="#FFFFFF"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="16" font-weight="700">2</text>
+  <text x="145" y="712" fill="#5A3A28" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="15" font-weight="600">通用 Agent 使用门槛</text>
+  <circle cx="333" cy="668" r="15" fill="#F28A43"/>
+  <text x="333" y="674" text-anchor="middle" fill="#FFFFFF"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="16" font-weight="700">3</text>
+  <text x="358" y="665" fill="#5A3A28" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="15" font-weight="600">业务语境与系统</text>
+  <text x="358" y="686" fill="#5A3A28" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="15" font-weight="600">连接不足</text>
+
+  <!-- Flow into assistant -->
+  <path d="M523 418 C556 418 565 418 590 418" fill="none" stroke="#F28A43"
+        stroke-width="5" stroke-linecap="round"/>
+  <polygon points="590,408 606,418 590,428" fill="#F28A43"/>
+  <text x="566" y="397" text-anchor="middle" fill="#A86132"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="13" font-weight="600">需求汇入</text>
+
+  <!-- Center: assistant -->
+  <circle cx="796" cy="178" r="13" fill="#12A99B"/>
+  <text x="820" y="185" fill="#283332" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="20" font-weight="700">统一自然语言入口</text>
+  <path d="M679 213 C679 195 694 181 712 181 L878 181 C897 181 912 195 912 213
+           C912 231 897 246 878 246 L780 246 L748 267 L757 246 L712 246
+           C694 246 679 231 679 213 Z"
+        fill="#E3F6F2" stroke="#7FD2C8" stroke-width="2"/>
+  <text x="796" y="221" text-anchor="middle" fill="#087E74"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="19" font-weight="700">一句话提出业务问题</text>
+
+  <circle cx="796" cy="414" r="145" fill="#EDF9F7" stroke="#9BDBD3" stroke-width="2"/>
+  <circle cx="796" cy="414" r="112" fill="#FFFFFF" stroke="#45BEB2" stroke-width="4"/>
+  <circle cx="796" cy="414" r="92" fill="#12A99B"/>
+
+  <!-- Cloud symbol -->
+  <path d="M748 375 C751 358 768 346 787 346 C805 346 820 356 826 371
+           C845 370 861 384 861 401 C861 419 846 433 827 433
+           L758 433 C739 433 725 420 725 403 C725 389 735 378 748 375 Z"
+        fill="#FFFFFF"/>
+  <circle cx="766" cy="395" r="4.5" fill="#12A99B"/>
+  <circle cx="793" cy="395" r="4.5" fill="#12A99B"/>
+  <circle cx="820" cy="395" r="4.5" fill="#12A99B"/>
+  <path d="M769 412 C784 423 803 423 817 412" fill="none" stroke="#12A99B"
+        stroke-width="4" stroke-linecap="round"/>
+
+  <text x="796" y="465" text-anchor="middle" fill="#FFFFFF"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="24" font-weight="700">小云个人助理</text>
+  <text x="796" y="490" text-anchor="middle" fill="#D9F7F3"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="12">理解 · 调用 · 编排</text>
+
+  <!-- Assistant foundation -->
+  <path d="M678 557 C705 535 744 542 758 573 C771 603 752 634 719 638
+           C686 642 660 616 664 585 C665 574 670 564 678 557 Z"
+        fill="#DDF4F0" stroke="#74CDC2" stroke-width="2"/>
+  <path d="M761 570 C780 541 820 539 841 566 C863 594 847 632 814 639
+           C781 646 752 622 753 591 C753 584 756 576 761 570 Z"
+        fill="#CDEDE8" stroke="#55BFB4" stroke-width="2"/>
+  <path d="M846 558 C873 537 913 545 925 578 C936 608 916 637 883 639
+           C850 642 826 614 832 583 C834 573 838 565 846 558 Z"
+        fill="#B8E5DF" stroke="#33ADA1" stroke-width="2"/>
+  <text x="712" y="592" text-anchor="middle" fill="#176F68"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="17" font-weight="700">业务语境</text>
+  <text x="798" y="592" text-anchor="middle" fill="#176F68"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="17" font-weight="700">CRM</text>
+  <text x="798" y="615" text-anchor="middle" fill="#176F68"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="15" font-weight="700">CLI 化</text>
+  <text x="882" y="592" text-anchor="middle" fill="#176F68"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="17" font-weight="700">业务</text>
+  <text x="882" y="615" text-anchor="middle" fill="#176F68"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="15" font-weight="700">Skill 化</text>
+  <text x="796" y="681" text-anchor="middle" fill="#65716F"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="14">把分散的数据能力与流程，封装成可调用工具</text>
+
+  <!-- Flow out of assistant -->
+  <path d="M943 418 C975 418 986 418 1013 418" fill="none" stroke="#12A99B"
+        stroke-width="5" stroke-linecap="round"/>
+  <polygon points="1013,408 1029,418 1013,428" fill="#12A99B"/>
+  <text x="982" y="397" text-anchor="middle" fill="#087E74"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="13" font-weight="600">能力交付</text>
+
+  <!-- Right: outcomes -->
+  <circle cx="1088" cy="178" r="13" fill="#12A99B"/>
+  <text x="1112" y="185" fill="#283332" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="20" font-weight="700">面向工作结果，而非工具学习</text>
+
+  <path d="M1058 418 L1104 418 L1104 282 L1151 282" fill="none" stroke="#B9C5C3"
+        stroke-width="3" stroke-linejoin="round"/>
+  <path d="M1104 418 L1151 418" fill="none" stroke="#B9C5C3" stroke-width="3"/>
+  <path d="M1104 418 L1104 554 L1151 554" fill="none" stroke="#B9C5C3"
+        stroke-width="3" stroke-linejoin="round"/>
+  <polygon points="1147,273 1163,282 1147,291" fill="#12A99B"/>
+  <polygon points="1147,409 1163,418 1147,427" fill="#12A99B"/>
+  <polygon points="1147,545 1163,554 1147,563" fill="#12A99B"/>
+
+  <!-- Outcome 1 -->
+  <circle cx="1207" cy="282" r="50" fill="#E7F7F4" stroke="#42BBAF" stroke-width="3"/>
+  <path d="M1185 297 L1194 284 L1204 291 L1225 264" fill="none" stroke="#087E74"
+        stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1184 305 L1230 305" fill="none" stroke="#087E74" stroke-width="3" stroke-linecap="round"/>
+  <text x="1280" y="276" fill="#24302F" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="23" font-weight="700">取数分析</text>
+  <text x="1280" y="304" fill="#6B7775" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="16">明细直达 · 指标可追溯</text>
+  <path d="M1280 320 C1350 328 1428 322 1490 313" fill="none" stroke="#B8E4DE"
+        stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Outcome 2 -->
+  <circle cx="1207" cy="418" r="50" fill="#E7F7F4" stroke="#42BBAF" stroke-width="3"/>
+  <circle cx="1207" cy="418" r="22" fill="none" stroke="#087E74" stroke-width="3"/>
+  <path d="M1223 402 L1238 387" fill="none" stroke="#087E74" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1193 421 L1203 429 L1221 406" fill="none" stroke="#087E74"
+        stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="1280" y="412" fill="#24302F" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="23" font-weight="700">经营诊断</text>
+  <text x="1280" y="440" fill="#6B7775" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="16">定位波动 · 给出行动线索</text>
+  <path d="M1280 456 C1352 464 1426 458 1490 449" fill="none" stroke="#B8E4DE"
+        stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Outcome 3 -->
+  <circle cx="1207" cy="554" r="50" fill="#E7F7F4" stroke="#42BBAF" stroke-width="3"/>
+  <path d="M1189 529 L1219 529 L1227 537 L1227 578 L1189 578 Z" fill="#FFFFFF"
+        stroke="#087E74" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M1198 544 L1218 544 M1198 553 L1218 553 M1198 562 L1213 562" fill="none"
+        stroke="#087E74" stroke-width="3" stroke-linecap="round"/>
+  <text x="1280" y="548" fill="#24302F" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="23" font-weight="700">报告生成</text>
+  <text x="1280" y="576" fill="#6B7775" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="16">自动组织 · 结构化表达</text>
+  <path d="M1280 592 C1350 600 1429 594 1490 585" fill="none" stroke="#B8E4DE"
+        stroke-width="4" stroke-linecap="round"/>
+
+  <text x="1182" y="670" fill="#8A9492" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="15">更少跳转</text>
+  <circle cx="1270" cy="665" r="4" fill="#C8D2D0"/>
+  <text x="1290" y="670" fill="#8A9492" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="15">更快反馈</text>
+  <circle cx="1382" cy="665" r="4" fill="#C8D2D0"/>
+  <text x="1402" y="670" fill="#8A9492" font-family="Noto Sans SC, PingFang SC, sans-serif"
+        font-size="15">更易复用</text>
+
+  <!-- Bottom value statement -->
+  <path d="M190 793 C442 774 570 798 760 790 C960 782 1125 771 1395 791"
+        fill="none" stroke="#CDE7E3" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="190" cy="793" r="12" fill="#F28A43"/>
+  <circle cx="1395" cy="791" r="12" fill="#12A99B"/>
+  <polygon points="1386,770 1420,791 1386,812" fill="#12A99B"/>
+  <rect x="430" y="748" width="740" height="92" rx="46" fill="#FFFFFF" stroke="#B9E4DE" stroke-width="2"/>
+  <text x="800" y="787" text-anchor="middle" fill="#697573"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="16" font-weight="600">核心价值</text>
+  <text x="800" y="820" text-anchor="middle" fill="#087E74"
+        font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="30" font-weight="700">打通 AI 落地业务一线的最后一公里</text>
+</svg>

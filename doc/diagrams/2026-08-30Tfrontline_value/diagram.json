@@ -1,0 +1,3881 @@
+{
+  "code": 0,
+  "data": {
+    "to": "openapi",
+    "result": {
+      "nodes": [
+        {
+          "id": "o001:1",
+          "type": "composite_shape",
+          "x": 0,
+          "y": 0,
+          "width": 1600,
+          "height": 900,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#f7f9f8",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "rect"
+          }
+        },
+        {
+          "id": "o001:2",
+          "type": "composite_shape",
+          "x": 1418,
+          "y": 36,
+          "width": 104,
+          "height": 104,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#e8f7f4",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:3",
+          "type": "composite_shape",
+          "x": 1506,
+          "y": 124,
+          "width": 24,
+          "height": 24,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#bdebe4",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:4",
+          "type": "composite_shape",
+          "x": 41,
+          "y": 746,
+          "width": 68,
+          "height": 68,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#fff0e5",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:1",
+          "type": "text_shape",
+          "x": 80,
+          "y": 22.587002336978912,
+          "width": 978,
+          "height": 60.81599712371826,
+          "text": {
+            "text": "小云个人助理，如何帮助生活服务一线同学",
+            "font_weight": "bold",
+            "font_size": 42,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2a2a",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:1",
+          "type": "connector",
+          "x": 82,
+          "y": 97,
+          "width": 416,
+          "height": 1,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "bold",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 82,
+                "y": 98
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 498,
+                "y": 97
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 145.1851851851852,
+                "y": 0.29629629629629606
+              },
+              {
+                "x": 277.48148148148147,
+                "y": 2.0370370370370368
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "a001:2",
+          "type": "text_shape",
+          "x": 80,
+          "y": 109.99950063228607,
+          "width": 533,
+          "height": 24.615999221801758,
+          "text": {
+            "text": "从高频工作出发，把业务语境与系统能力带到每一次自然语言交互中",
+            "font_weight": "regular",
+            "font_size": 17,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#667170",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:5",
+          "type": "composite_shape",
+          "x": 1240,
+          "y": 50,
+          "width": 310,
+          "height": 42,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#d9e1df",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "round_rect2"
+          }
+        },
+        {
+          "id": "o001:6",
+          "type": "composite_shape",
+          "x": 1263,
+          "y": 64,
+          "width": 14,
+          "height": 14,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:3",
+          "type": "text_shape",
+          "x": 1290,
+          "y": 58.17600059509277,
+          "width": 230,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "一线 BD · 管理者 · 销支",
+            "font_weight": "bold",
+            "font_size": 16,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#465251",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:2",
+          "type": "connector",
+          "x": 548,
+          "y": 160,
+          "width": 0,
+          "height": 564,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#dde4e2",
+            "border_color_type": 1,
+            "border_style": "dash"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 548,
+                "y": 160
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 548,
+                "y": 724
+              },
+              "arrow_style": "none"
+            },
+            "shape": "straight",
+            "turning_points": [],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:3",
+          "type": "connector",
+          "x": 1044,
+          "y": 160,
+          "width": 0,
+          "height": 564,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#dde4e2",
+            "border_color_type": 1,
+            "border_style": "dash"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1044,
+                "y": 160
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1044,
+                "y": 724
+              },
+              "arrow_style": "none"
+            },
+            "shape": "straight",
+            "turning_points": [],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "o001:7",
+          "type": "composite_shape",
+          "x": 89,
+          "y": 165,
+          "width": 26,
+          "height": 26,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#f28a43",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:4",
+          "type": "text_shape",
+          "x": 126,
+          "y": 161.47000113129616,
+          "width": 395,
+          "height": 28.959998607635498,
+          "text": {
+            "text": "一线现场：高频、碎片、强业务语境",
+            "font_weight": "bold",
+            "font_size": 20,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#283332",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "d001:1",
+          "type": "svg",
+          "x": 105.5,
+          "y": 240.5,
+          "width": 161,
+          "height": 290,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"105.5 240.5 161 290\" width=\"161\" height=\"290\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M108 318 C108 274 143 243 186 243 C229 243 264 274 264 318 L264 492            C264 512 248 528 228 528 L144 528 C124 528 108 512 108 492 Z\" fill=\"#EEF2F1\" /></svg>"
+          }
+        },
+        {
+          "id": "o001:8",
+          "type": "composite_shape",
+          "x": 126,
+          "y": 274,
+          "width": 50,
+          "height": 50,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#ffffff",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#485655",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "d001:2",
+          "type": "svg",
+          "x": 107.5,
+          "y": 317.5,
+          "width": 87,
+          "height": 61,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"107.5 317.5 87 61\" width=\"87\" height=\"61\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M110 376 C116 334 133 320 151 320 C169 320 186 334 192 376 Z\" fill=\"#485655\" /></svg>"
+          }
+        },
+        {
+          "id": "o001:9",
+          "type": "composite_shape",
+          "x": 192,
+          "y": 301,
+          "width": 44,
+          "height": 44,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#8d9896",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "d001:3",
+          "type": "svg",
+          "x": 176.5,
+          "y": 336.5,
+          "width": 77,
+          "height": 58,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"176.5 336.5 77 58\" width=\"77\" height=\"58\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M179 392 C184 351 198 339 214 339 C231 339 246 352 251 392 Z\" fill=\"#8D9896\" /></svg>"
+          }
+        },
+        {
+          "id": "o001:10",
+          "type": "composite_shape",
+          "x": 160,
+          "y": 385,
+          "width": 40,
+          "height": 40,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "d001:4",
+          "type": "svg",
+          "x": 143.5,
+          "y": 413.5,
+          "width": 74,
+          "height": 55,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"143.5 413.5 74 55\" width=\"74\" height=\"55\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M146 466 C151 427 164 416 180 416 C196 416 210 428 215 466 Z\" fill=\"#12A99B\" /></svg>"
+          }
+        },
+        {
+          "id": "o001:11",
+          "type": "composite_shape",
+          "x": 116,
+          "y": 476,
+          "width": 58,
+          "height": 29,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "round_rect2"
+          }
+        },
+        {
+          "id": "a001:5",
+          "type": "text_shape",
+          "x": 135,
+          "y": 480.5290005207062,
+          "width": 20,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "BD",
+            "font_weight": "bold",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#394544",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:12",
+          "type": "composite_shape",
+          "x": 178,
+          "y": 476,
+          "width": 76,
+          "height": 29,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "round_rect2"
+          }
+        },
+        {
+          "id": "a001:6",
+          "type": "text_shape",
+          "x": 195,
+          "y": 480.5290005207062,
+          "width": 42,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "管理者",
+            "font_weight": "bold",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#394544",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:13",
+          "type": "composite_shape",
+          "x": 145,
+          "y": 511,
+          "width": 70,
+          "height": 29,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "round_rect2"
+          }
+        },
+        {
+          "id": "a001:7",
+          "type": "text_shape",
+          "x": 166,
+          "y": 515.5290005207062,
+          "width": 28,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "销支",
+            "font_weight": "bold",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#087e74",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:4",
+          "type": "connector",
+          "x": 260,
+          "y": 258,
+          "width": 66,
+          "height": 48,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#aab5b3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 260,
+                "y": 306
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 326,
+                "y": 258
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 26.666666666666664,
+                "y": 37.333333333333336
+              },
+              {
+                "x": 46.666666666666664,
+                "y": 20
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:5",
+          "type": "connector",
+          "x": 264,
+          "y": 348,
+          "width": 66,
+          "height": 4,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#aab5b3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 264,
+                "y": 352
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 330,
+                "y": 348
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 26.444444444444443,
+                "y": 2.9629629629629637
+              },
+              {
+                "x": 46.222222222222214,
+                "y": 1.0370370370370372
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:6",
+          "type": "connector",
+          "x": 260,
+          "y": 409,
+          "width": 69,
+          "height": 31,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#aab5b3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 260,
+                "y": 409
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 329,
+                "y": 440
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 27.22222222222222,
+                "y": 7.37037037037037
+              },
+              {
+                "x": 48.44444444444444,
+                "y": 18.296296296296298
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:7",
+          "type": "connector",
+          "x": 250,
+          "y": 470,
+          "width": 78,
+          "height": 53,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#aab5b3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 250,
+                "y": 470
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 328,
+                "y": 523
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 31.333333333333332,
+                "y": 13.074074074074073
+              },
+              {
+                "x": 56,
+                "y": 32.592592592592595
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "o001:14",
+          "type": "composite_shape",
+          "x": 319,
+          "y": 210,
+          "width": 64,
+          "height": 64,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#d4dcda",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "c001:8",
+          "type": "connector",
+          "x": 335,
+          "y": 230,
+          "width": 30,
+          "height": 20,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 335,
+                "y": 250
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 365,
+                "y": 230
+              },
+              "arrow_style": "none"
+            },
+            "shape": "right_angled_polyline",
+            "turning_points": [
+              {
+                "x": 8,
+                "y": 10
+              },
+              {
+                "x": 17,
+                "y": 15
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "o001:15",
+          "type": "composite_shape",
+          "x": 332,
+          "y": 247,
+          "width": 6,
+          "height": 6,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:16",
+          "type": "composite_shape",
+          "x": 340,
+          "y": 237,
+          "width": 6,
+          "height": 6,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:17",
+          "type": "composite_shape",
+          "x": 349,
+          "y": 242,
+          "width": 6,
+          "height": 6,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:18",
+          "type": "composite_shape",
+          "x": 362,
+          "y": 227,
+          "width": 6,
+          "height": 6,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:8",
+          "type": "text_shape",
+          "x": 394,
+          "y": 215.47000113129616,
+          "width": 175,
+          "height": 28.959998607635498,
+          "text": {
+            "text": "看数与明细查询",
+            "font_weight": "bold",
+            "font_size": 20,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#263130",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:9",
+          "type": "text_shape",
+          "x": 394,
+          "y": 246.52900052070618,
+          "width": 163,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "指标、门店、商户、订单",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#74807e",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:19",
+          "type": "composite_shape",
+          "x": 319,
+          "y": 316,
+          "width": 64,
+          "height": 64,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#d4dcda",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:20",
+          "type": "composite_shape",
+          "x": 336,
+          "y": 333,
+          "width": 30,
+          "height": 30,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color_type": 0,
+            "theme_fill_color_code": 0
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "c001:9",
+          "type": "connector",
+          "x": 351,
+          "y": 333,
+          "width": 12,
+          "height": 23,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 351,
+                "y": 333
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 363,
+                "y": 356
+              },
+              "arrow_style": "none"
+            },
+            "shape": "right_angled_polyline",
+            "turning_points": [
+              {
+                "x": 0,
+                "y": 15
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "a001:10",
+          "type": "text_shape",
+          "x": 394,
+          "y": 321.47000113129616,
+          "width": 102,
+          "height": 28.959998607635498,
+          "text": {
+            "text": "经营分析",
+            "font_weight": "bold",
+            "font_size": 20,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#263130",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:11",
+          "type": "text_shape",
+          "x": 394,
+          "y": 352.5290005207062,
+          "width": 163,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "趋势、结构、差异、原因",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#74807e",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:21",
+          "type": "composite_shape",
+          "x": 319,
+          "y": 416,
+          "width": 64,
+          "height": 64,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#d4dcda",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "c001:10",
+          "type": "connector",
+          "x": 337,
+          "y": 426,
+          "width": 31,
+          "height": 30,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 337,
+                "y": 456
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 368,
+                "y": 426
+              },
+              "arrow_style": "none"
+            },
+            "shape": "right_angled_polyline",
+            "turning_points": [
+              {
+                "x": 0,
+                "y": 18
+              },
+              {
+                "x": 10,
+                "y": 18
+              },
+              {
+                "x": 10,
+                "y": 10
+              },
+              {
+                "x": 21,
+                "y": 10
+              },
+              {
+                "x": 21,
+                "y": 0
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:11",
+          "type": "connector",
+          "x": 337,
+          "y": 460,
+          "width": 31,
+          "height": 0,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 337,
+                "y": 460
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 368,
+                "y": 460
+              },
+              "arrow_style": "none"
+            },
+            "shape": "straight",
+            "turning_points": [],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "a001:12",
+          "type": "text_shape",
+          "x": 394,
+          "y": 421.47000113129616,
+          "width": 102,
+          "height": 28.959998607635498,
+          "text": {
+            "text": "过程管理",
+            "font_weight": "bold",
+            "font_size": 20,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#263130",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:13",
+          "type": "text_shape",
+          "x": 394,
+          "y": 452.5290005207062,
+          "width": 206,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "目标追踪、进度复盘、动作跟进",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#74807e",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:22",
+          "type": "composite_shape",
+          "x": 319,
+          "y": 516,
+          "width": 64,
+          "height": 64,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#d4dcda",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "d001:5",
+          "type": "svg",
+          "x": 336.5,
+          "y": 527.5,
+          "width": 32,
+          "height": 40,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"336.5 527.5 32 40\" width=\"32\" height=\"40\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M339 530 L360 530 L366 536 L366 565 L339 565 Z\" fill=\"none\" stroke=\"#12A99B\" stroke-width=\"2.5\" stroke-linejoin=\"round\" /></svg>"
+          }
+        },
+        {
+          "id": "d001:6",
+          "type": "svg",
+          "x": 339.75,
+          "y": 535.75,
+          "width": 25.5,
+          "height": 28.5,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"339.75 535.75 25.5 28.5\" width=\"25.5\" height=\"28.5\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M346 542 L359 542 M346 550 L359 550 M346 558 L355 558\" fill=\"none\" stroke=\"#12A99B\" stroke-width=\"2.5\" stroke-linecap=\"round\" /></svg>"
+          }
+        },
+        {
+          "id": "a001:14",
+          "type": "text_shape",
+          "x": 394,
+          "y": 521.4700011312962,
+          "width": 102,
+          "height": 28.959998607635498,
+          "text": {
+            "text": "报告撰写",
+            "font_weight": "bold",
+            "font_size": 20,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#263130",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:15",
+          "type": "text_shape",
+          "x": 394,
+          "y": 552.5290005207062,
+          "width": 148,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "周报、复盘、专项汇报",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#74807e",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "d001:7",
+          "type": "svg",
+          "x": 85.5,
+          "y": 589.5,
+          "width": 433,
+          "height": 141,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"85.5 589.5 433 141\" width=\"433\" height=\"141\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M88 612 C156 578 230 625 298 604 C366 583 428 620 516 592            L516 716 C430 737 361 706 292 722 C220 740 153 704 88 728 Z\" fill=\"#FFF0E5\" /></svg>"
+          }
+        },
+        {
+          "id": "a001:16",
+          "type": "text_shape",
+          "x": 112,
+          "y": 616.1760005950928,
+          "width": 83,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "现实阻碍",
+            "font_weight": "bold",
+            "font_size": 16,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#c86729",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:23",
+          "type": "composite_shape",
+          "x": 105,
+          "y": 653,
+          "width": 30,
+          "height": 30,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#f28a43",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:17",
+          "type": "text_shape",
+          "x": 115,
+          "y": 655.1760005950928,
+          "width": 10,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "1",
+            "font_weight": "bold",
+            "font_size": 16,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#ffffff",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:18",
+          "type": "text_shape",
+          "x": 145,
+          "y": 656.3525005578995,
+          "width": 181,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "传统 CRM 偏标准流程",
+            "font_weight": "bold",
+            "font_size": 15,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#5a3a28",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:24",
+          "type": "composite_shape",
+          "x": 105,
+          "y": 691,
+          "width": 30,
+          "height": 30,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#f28a43",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:19",
+          "type": "text_shape",
+          "x": 115,
+          "y": 693.1760005950928,
+          "width": 10,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "2",
+            "font_weight": "bold",
+            "font_size": 16,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#ffffff",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:20",
+          "type": "text_shape",
+          "x": 145,
+          "y": 694.3525005578995,
+          "width": 175,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "通用 Agent 使用门槛",
+            "font_weight": "bold",
+            "font_size": 15,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#5a3a28",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:25",
+          "type": "composite_shape",
+          "x": 318,
+          "y": 653,
+          "width": 30,
+          "height": 30,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#f28a43",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:21",
+          "type": "text_shape",
+          "x": 328,
+          "y": 655.1760005950928,
+          "width": 10,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "3",
+            "font_weight": "bold",
+            "font_size": 16,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#ffffff",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:22",
+          "type": "text_shape",
+          "x": 358,
+          "y": 647.3525005578995,
+          "width": 133,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "业务语境与系统",
+            "font_weight": "bold",
+            "font_size": 15,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#5a3a28",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:23",
+          "type": "text_shape",
+          "x": 358,
+          "y": 668.3525005578995,
+          "width": 78,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "连接不足",
+            "font_weight": "bold",
+            "font_size": 15,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#5a3a28",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:12",
+          "type": "connector",
+          "x": 523,
+          "y": 418,
+          "width": 67,
+          "height": 0,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "bold",
+            "border_color": "#f28a43",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 523,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 590,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 26.48148148148148,
+                "y": 0
+              },
+              {
+                "x": 45.85185185185185,
+                "y": 0
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "d001:8",
+          "type": "svg",
+          "x": 587.5,
+          "y": 405.5,
+          "width": 21,
+          "height": 25,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"587.5 405.5 21 25\" width=\"21\" height=\"25\" xmlns=\"http://www.w3.org/2000/svg\"><polygon points=\"590,408 606,418 590,428\" fill=\"#F28A43\" /></svg>"
+          }
+        },
+        {
+          "id": "a001:24",
+          "type": "text_shape",
+          "x": 540,
+          "y": 381.7055000960827,
+          "width": 52,
+          "height": 18.823999881744385,
+          "text": {
+            "text": "需求汇入",
+            "font_weight": "bold",
+            "font_size": 13,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#a86132",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:26",
+          "type": "composite_shape",
+          "x": 783,
+          "y": 165,
+          "width": 26,
+          "height": 26,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:25",
+          "type": "text_shape",
+          "x": 820,
+          "y": 161.47000113129616,
+          "width": 200,
+          "height": 28.959998607635498,
+          "text": {
+            "text": "统一自然语言入口",
+            "font_weight": "bold",
+            "font_size": 20,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#283332",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:27",
+          "type": "composite_shape",
+          "x": 679,
+          "y": 181,
+          "width": 233,
+          "height": 86,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#7fd2c8",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#e3f6f2",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "round_rect"
+          }
+        },
+        {
+          "id": "a001:26",
+          "type": "text_shape",
+          "x": 710.5,
+          "y": 198.64650109410286,
+          "width": 171,
+          "height": 27.511998653411865,
+          "text": {
+            "text": "一句话提出业务问题",
+            "font_weight": "bold",
+            "font_size": 19,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#087e74",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:28",
+          "type": "composite_shape",
+          "x": 651,
+          "y": 269,
+          "width": 290,
+          "height": 290,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#9bdbd3",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#edf9f7",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:29",
+          "type": "composite_shape",
+          "x": 684,
+          "y": 302,
+          "width": 224,
+          "height": 224,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#45beb2",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:30",
+          "type": "composite_shape",
+          "x": 704,
+          "y": 322,
+          "width": 184,
+          "height": 184,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "d001:9",
+          "type": "svg",
+          "x": 722.5,
+          "y": 343.5,
+          "width": 141,
+          "height": 92,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"722.5 343.5 141 92\" width=\"141\" height=\"92\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M748 375 C751 358 768 346 787 346 C805 346 820 356 826 371            C845 370 861 384 861 401 C861 419 846 433 827 433            L758 433 C739 433 725 420 725 403 C725 389 735 378 748 375 Z\" fill=\"#FFFFFF\" /></svg>"
+          }
+        },
+        {
+          "id": "o001:31",
+          "type": "composite_shape",
+          "x": 761.5,
+          "y": 390.5,
+          "width": 9,
+          "height": 9,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:32",
+          "type": "composite_shape",
+          "x": 788.5,
+          "y": 390.5,
+          "width": 9,
+          "height": 9,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:33",
+          "type": "composite_shape",
+          "x": 815.5,
+          "y": 390.5,
+          "width": 9,
+          "height": 9,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "c001:13",
+          "type": "connector",
+          "x": 769,
+          "y": 412,
+          "width": 48,
+          "height": 0,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 769,
+                "y": 412
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 817,
+                "y": 412
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 16,
+                "y": 7.333333333333334
+              },
+              {
+                "x": 32.666666666666664,
+                "y": 7.333333333333333
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "a001:27",
+          "type": "text_shape",
+          "x": 724,
+          "y": 436.7640001177788,
+          "width": 144,
+          "height": 34.751999855041504,
+          "text": {
+            "text": "小云个人助理",
+            "font_weight": "bold",
+            "font_size": 24,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#ffffff",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:28",
+          "type": "text_shape",
+          "x": 742.5,
+          "y": 475.8820000588894,
+          "width": 107,
+          "height": 17.375999927520752,
+          "text": {
+            "text": "理解 · 调用 · 编排",
+            "font_weight": "regular",
+            "font_size": 12,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#d9f7f3",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "d001:10",
+          "type": "svg",
+          "x": 658.5929097461631,
+          "y": 539.1955575856782,
+          "width": 108.53351944912833,
+          "height": 104.21217680782433,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"658.5929097461631 539.1955575856782 108.53351944912833 104.21217680782433\" width=\"108.53351944912833\" height=\"104.21217680782433\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M678 557 C705 535 744 542 758 573 C771 603 752 634 719 638            C686 642 660 616 664 585 C665 574 670 564 678 557 Z\" fill=\"#DDF4F0\" stroke=\"#74CDC2\" stroke-width=\"2\" /></svg>"
+          }
+        },
+        {
+          "id": "d001:11",
+          "type": "svg",
+          "x": 747.9748783064582,
+          "y": 541.9397705239419,
+          "width": 108.16033895344674,
+          "height": 103.28273904120181,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"747.9748783064582 541.9397705239419 108.16033895344674 103.28273904120181\" width=\"108.16033895344674\" height=\"103.28273904120181\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M761 570 C780 541 820 539 841 566 C863 594 847 632 814 639            C781 646 752 622 753 591 C753 584 756 576 761 570 Z\" fill=\"#CDEDE8\" stroke=\"#55BFB4\" stroke-width=\"2\" /></svg>"
+          }
+        },
+        {
+          "id": "d001:12",
+          "type": "svg",
+          "x": 826.0778133943717,
+          "y": 541.3974788516034,
+          "width": 106.95880935649222,
+          "height": 102.82354394880804,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"826.0778133943717 541.3974788516034 106.95880935649222 102.82354394880804\" width=\"106.95880935649222\" height=\"102.82354394880804\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M846 558 C873 537 913 545 925 578 C936 608 916 637 883 639            C850 642 826 614 832 583 C834 573 838 565 846 558 Z\" fill=\"#B8E5DF\" stroke=\"#33ADA1\" stroke-width=\"2\" /></svg>"
+          }
+        },
+        {
+          "id": "a001:29",
+          "type": "text_shape",
+          "x": 678,
+          "y": 571.9995006322861,
+          "width": 68,
+          "height": 24.615999221801758,
+          "text": {
+            "text": "业务语境",
+            "font_weight": "bold",
+            "font_size": 17,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#176f68",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:30",
+          "type": "text_shape",
+          "x": 779,
+          "y": 571.9995006322861,
+          "width": 38,
+          "height": 24.615999221801758,
+          "text": {
+            "text": "CRM",
+            "font_weight": "bold",
+            "font_size": 17,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#176f68",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:31",
+          "type": "text_shape",
+          "x": 777,
+          "y": 597.3525005578995,
+          "width": 42,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "CLI 化",
+            "font_weight": "bold",
+            "font_size": 15,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#176f68",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:32",
+          "type": "text_shape",
+          "x": 865,
+          "y": 571.9995006322861,
+          "width": 34,
+          "height": 24.615999221801758,
+          "text": {
+            "text": "业务",
+            "font_weight": "bold",
+            "font_size": 17,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#176f68",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:33",
+          "type": "text_shape",
+          "x": 856.5,
+          "y": 597.3525005578995,
+          "width": 51,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "Skill 化",
+            "font_weight": "bold",
+            "font_size": 15,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#176f68",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:34",
+          "type": "text_shape",
+          "x": 656,
+          "y": 664.5290005207062,
+          "width": 280,
+          "height": 20.27199935913086,
+          "text": {
+            "text": "把分散的数据能力与流程，封装成可调用工具",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#65716f",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:14",
+          "type": "connector",
+          "x": 943,
+          "y": 418,
+          "width": 70,
+          "height": 0,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "bold",
+            "border_color": "#12a99b",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 943,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1013,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 26.37037037037037,
+                "y": 0
+              },
+              {
+                "x": 46.96296296296296,
+                "y": 0
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "d001:13",
+          "type": "svg",
+          "x": 1010.5,
+          "y": 405.5,
+          "width": 21,
+          "height": 25,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"1010.5 405.5 21 25\" width=\"21\" height=\"25\" xmlns=\"http://www.w3.org/2000/svg\"><polygon points=\"1013,408 1029,418 1013,428\" fill=\"#12A99B\" /></svg>"
+          }
+        },
+        {
+          "id": "a001:35",
+          "type": "text_shape",
+          "x": 956,
+          "y": 381.7055000960827,
+          "width": 52,
+          "height": 18.823999881744385,
+          "text": {
+            "text": "能力交付",
+            "font_weight": "bold",
+            "font_size": 13,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#087e74",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:34",
+          "type": "composite_shape",
+          "x": 1075,
+          "y": 165,
+          "width": 26,
+          "height": 26,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:36",
+          "type": "text_shape",
+          "x": 1112,
+          "y": 161.47000113129616,
+          "width": 322,
+          "height": 28.959998607635498,
+          "text": {
+            "text": "面向工作结果，而非工具学习",
+            "font_weight": "bold",
+            "font_size": 20,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#283332",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:15",
+          "type": "connector",
+          "x": 1058,
+          "y": 282,
+          "width": 93,
+          "height": 136,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#b9c5c3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1058,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1151,
+                "y": 282
+              },
+              "arrow_style": "none"
+            },
+            "shape": "right_angled_polyline",
+            "turning_points": [
+              {
+                "x": 46,
+                "y": 136
+              },
+              {
+                "x": 46,
+                "y": 0
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:16",
+          "type": "connector",
+          "x": 1104,
+          "y": 418,
+          "width": 47,
+          "height": 0,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#b9c5c3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1104,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1151,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "shape": "straight",
+            "turning_points": [],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:17",
+          "type": "connector",
+          "x": 1104,
+          "y": 418,
+          "width": 47,
+          "height": 136,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#b9c5c3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1104,
+                "y": 418
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1151,
+                "y": 554
+              },
+              "arrow_style": "none"
+            },
+            "shape": "right_angled_polyline",
+            "turning_points": [
+              {
+                "x": 0,
+                "y": 136
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "d001:14",
+          "type": "svg",
+          "x": 1144.5,
+          "y": 270.5,
+          "width": 21,
+          "height": 23,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"1144.5 270.5 21 23\" width=\"21\" height=\"23\" xmlns=\"http://www.w3.org/2000/svg\"><polygon points=\"1147,273 1163,282 1147,291\" fill=\"#12A99B\" /></svg>"
+          }
+        },
+        {
+          "id": "d001:15",
+          "type": "svg",
+          "x": 1144.5,
+          "y": 406.5,
+          "width": 21,
+          "height": 23,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"1144.5 406.5 21 23\" width=\"21\" height=\"23\" xmlns=\"http://www.w3.org/2000/svg\"><polygon points=\"1147,409 1163,418 1147,427\" fill=\"#12A99B\" /></svg>"
+          }
+        },
+        {
+          "id": "d001:16",
+          "type": "svg",
+          "x": 1144.5,
+          "y": 542.5,
+          "width": 21,
+          "height": 23,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"1144.5 542.5 21 23\" width=\"21\" height=\"23\" xmlns=\"http://www.w3.org/2000/svg\"><polygon points=\"1147,545 1163,554 1147,563\" fill=\"#12A99B\" /></svg>"
+          }
+        },
+        {
+          "id": "o001:35",
+          "type": "composite_shape",
+          "x": 1157,
+          "y": 232,
+          "width": 100,
+          "height": 100,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#42bbaf",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#e7f7f4",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "c001:18",
+          "type": "connector",
+          "x": 1185,
+          "y": 264,
+          "width": 40,
+          "height": 33,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#087e74",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1185,
+                "y": 297
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1225,
+                "y": 264
+              },
+              "arrow_style": "none"
+            },
+            "shape": "right_angled_polyline",
+            "turning_points": [
+              {
+                "x": 9,
+                "y": 20
+              },
+              {
+                "x": 19,
+                "y": 27
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:19",
+          "type": "connector",
+          "x": 1184,
+          "y": 305,
+          "width": 46,
+          "height": 0,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#087e74",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1184,
+                "y": 305
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1230,
+                "y": 305
+              },
+              "arrow_style": "none"
+            },
+            "shape": "straight",
+            "turning_points": [],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "a001:37",
+          "type": "text_shape",
+          "x": 1280,
+          "y": 248.94050163030624,
+          "width": 117,
+          "height": 33.30399799346924,
+          "text": {
+            "text": "取数分析",
+            "font_weight": "bold",
+            "font_size": 23,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#24302f",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:38",
+          "type": "text_shape",
+          "x": 1280,
+          "y": 285.1760005950928,
+          "width": 176,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "明细直达 · 指标可追溯",
+            "font_weight": "regular",
+            "font_size": 16,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#6b7775",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:20",
+          "type": "connector",
+          "x": 1280,
+          "y": 313,
+          "width": 210,
+          "height": 7,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#b8e4de",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1280,
+                "y": 320
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1490,
+                "y": 313
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 71.77777777777777,
+                "y": 10.740740740740742
+              },
+              {
+                "x": 143.55555555555554,
+                "y": 7.5925925925925934
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "o001:36",
+          "type": "composite_shape",
+          "x": 1157,
+          "y": 368,
+          "width": 100,
+          "height": 100,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#42bbaf",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#e7f7f4",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:37",
+          "type": "composite_shape",
+          "x": 1185,
+          "y": 396,
+          "width": 44,
+          "height": 44,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#087e74",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color_type": 0,
+            "theme_fill_color_code": 0
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "c001:21",
+          "type": "connector",
+          "x": 1223,
+          "y": 387,
+          "width": 15,
+          "height": 15,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#087e74",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1223,
+                "y": 402
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1238,
+                "y": 387
+              },
+              "arrow_style": "none"
+            },
+            "shape": "straight",
+            "turning_points": [],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "c001:22",
+          "type": "connector",
+          "x": 1193,
+          "y": 406,
+          "width": 28,
+          "height": 23,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#087e74",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1193,
+                "y": 421
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1221,
+                "y": 406
+              },
+              "arrow_style": "none"
+            },
+            "shape": "right_angled_polyline",
+            "turning_points": [
+              {
+                "x": 10,
+                "y": 23
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "a001:39",
+          "type": "text_shape",
+          "x": 1280,
+          "y": 384.94050163030624,
+          "width": 117,
+          "height": 33.30399799346924,
+          "text": {
+            "text": "经营诊断",
+            "font_weight": "bold",
+            "font_size": 23,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#24302f",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:40",
+          "type": "text_shape",
+          "x": 1280,
+          "y": 421.1760005950928,
+          "width": 193,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "定位波动 · 给出行动线索",
+            "font_weight": "regular",
+            "font_size": 16,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#6b7775",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:23",
+          "type": "connector",
+          "x": 1280,
+          "y": 449,
+          "width": 210,
+          "height": 7,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#b8e4de",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1280,
+                "y": 456
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1490,
+                "y": 449
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 72.22222222222221,
+                "y": 10.740740740740742
+              },
+              {
+                "x": 143.11111111111111,
+                "y": 7.5925925925925934
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "o001:38",
+          "type": "composite_shape",
+          "x": 1157,
+          "y": 504,
+          "width": 100,
+          "height": 100,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#42bbaf",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#e7f7f4",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "d001:17",
+          "type": "svg",
+          "x": 1186,
+          "y": 526,
+          "width": 44,
+          "height": 55,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"1186 526 44 55\" width=\"44\" height=\"55\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M1189 529 L1219 529 L1227 537 L1227 578 L1189 578 Z\" fill=\"#FFFFFF\" stroke=\"#087E74\" stroke-width=\"3\" stroke-linejoin=\"round\" /></svg>"
+          }
+        },
+        {
+          "id": "d001:18",
+          "type": "svg",
+          "x": 1190.5,
+          "y": 536.5,
+          "width": 35,
+          "height": 33,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"1190.5 536.5 35 33\" width=\"35\" height=\"33\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M1198 544 L1218 544 M1198 553 L1218 553 M1198 562 L1213 562\" fill=\"none\" stroke=\"#087E74\" stroke-width=\"3\" stroke-linecap=\"round\" /></svg>"
+          }
+        },
+        {
+          "id": "a001:41",
+          "type": "text_shape",
+          "x": 1280,
+          "y": 520.9405016303062,
+          "width": 117,
+          "height": 33.30399799346924,
+          "text": {
+            "text": "报告生成",
+            "font_weight": "bold",
+            "font_size": 23,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#24302f",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:42",
+          "type": "text_shape",
+          "x": 1280,
+          "y": 557.1760005950928,
+          "width": 176,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "自动组织 · 结构化表达",
+            "font_weight": "regular",
+            "font_size": 16,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#6b7775",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:24",
+          "type": "connector",
+          "x": 1280,
+          "y": 585,
+          "width": 210,
+          "height": 7,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "medium",
+            "border_color": "#b8e4de",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 1280,
+                "y": 592
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1490,
+                "y": 585
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 72,
+                "y": 10.740740740740742
+              },
+              {
+                "x": 144,
+                "y": 7.5925925925925934
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "a001:43",
+          "type": "text_shape",
+          "x": 1182,
+          "y": 652.3525005578995,
+          "width": 65,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "更少跳转",
+            "font_weight": "regular",
+            "font_size": 15,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#8a9492",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:39",
+          "type": "composite_shape",
+          "x": 1266,
+          "y": 661,
+          "width": 8,
+          "height": 8,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#c8d2d0",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:44",
+          "type": "text_shape",
+          "x": 1290,
+          "y": 652.3525005578995,
+          "width": 65,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "更快反馈",
+            "font_weight": "regular",
+            "font_size": 15,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#8a9492",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "o001:40",
+          "type": "composite_shape",
+          "x": 1378,
+          "y": 661,
+          "width": 8,
+          "height": 8,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#c8d2d0",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "a001:45",
+          "type": "text_shape",
+          "x": 1402,
+          "y": 652.3525005578995,
+          "width": 65,
+          "height": 21.719999313354492,
+          "text": {
+            "text": "更易复用",
+            "font_weight": "regular",
+            "font_size": 15,
+            "horizontal_align": "left",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#8a9492",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "c001:25",
+          "type": "connector",
+          "x": 190,
+          "y": 790,
+          "width": 1205,
+          "height": 3,
+          "style": {
+            "border_opacity": 100,
+            "border_width": "bold",
+            "border_color": "#cde7e3",
+            "border_color_type": 1,
+            "border_style": "solid"
+          },
+          "connector": {
+            "start": {
+              "position": {
+                "x": 190,
+                "y": 793
+              },
+              "arrow_style": "none"
+            },
+            "end": {
+              "position": {
+                "x": 1395,
+                "y": 791
+              },
+              "arrow_style": "none"
+            },
+            "shape": "curve",
+            "turning_points": [
+              {
+                "x": 570,
+                "y": 0
+              }
+            ],
+            "caption_auto_direction": false,
+            "specified_coordinate": true
+          }
+        },
+        {
+          "id": "o001:41",
+          "type": "composite_shape",
+          "x": 178,
+          "y": 781,
+          "width": 24,
+          "height": 24,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#f28a43",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "o001:42",
+          "type": "composite_shape",
+          "x": 1383,
+          "y": 779,
+          "width": 24,
+          "height": 24,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_style": "none",
+            "fill_opacity": 100,
+            "fill_color": "#12a99b",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "ellipse"
+          }
+        },
+        {
+          "id": "d001:19",
+          "type": "svg",
+          "x": 1383.5,
+          "y": 767.5,
+          "width": 39,
+          "height": 47,
+          "style": {
+            "border_style": "none"
+          },
+          "svg": {
+            "svg_code": "<svg viewBox=\"1383.5 767.5 39 47\" width=\"39\" height=\"47\" xmlns=\"http://www.w3.org/2000/svg\"><polygon points=\"1386,770 1420,791 1386,812\" fill=\"#12A99B\" /></svg>"
+          }
+        },
+        {
+          "id": "o001:43",
+          "type": "composite_shape",
+          "x": 430,
+          "y": 748,
+          "width": 740,
+          "height": 92,
+          "text": {
+            "text": "",
+            "font_weight": "regular",
+            "font_size": 14,
+            "horizontal_align": "center",
+            "vertical_align": "mid",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#1f2329",
+            "text_color_type": 0,
+            "text_background_color_type": 0,
+            "theme_text_color_code": -1,
+            "theme_text_background_color_code": -1
+          },
+          "style": {
+            "border_opacity": 100,
+            "border_width": "narrow",
+            "border_color": "#b9e4de",
+            "border_color_type": 1,
+            "border_style": "solid",
+            "fill_opacity": 100,
+            "fill_color": "#ffffff",
+            "fill_color_type": 1
+          },
+          "composite_shape": {
+            "type": "round_rect2"
+          }
+        },
+        {
+          "id": "a001:46",
+          "type": "text_shape",
+          "x": 768,
+          "y": 768.1760005950928,
+          "width": 64,
+          "height": 23.167999267578125,
+          "text": {
+            "text": "核心价值",
+            "font_weight": "bold",
+            "font_size": 16,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#697573",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        },
+        {
+          "id": "a001:47",
+          "type": "text_shape",
+          "x": 568.5,
+          "y": 784.705001115799,
+          "width": 463,
+          "height": 43.439998626708984,
+          "text": {
+            "text": "打通 AI 落地业务一线的最后一公里",
+            "font_weight": "bold",
+            "font_size": 30,
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "line_through": false,
+            "underline": false,
+            "italic": false,
+            "angle": 0,
+            "text_color": "#087e74",
+            "text_color_type": 1,
+            "text_background_color_type": 0,
+            "theme_text_background_color_code": -1
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "width": 0,
+      "height": 0,
+      "nodeCount": 134,
+      "connectorCount": 25
+    }
+  },
+  "error": ""
+}

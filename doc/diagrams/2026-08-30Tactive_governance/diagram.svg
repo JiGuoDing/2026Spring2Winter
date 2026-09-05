@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <!-- Background and title -->
+  <rect x="0" y="0" width="1600" height="900" fill="#F7F8F7"/>
+  <circle cx="1512" cy="74" r="34" fill="#E7F4F1"/>
+  <circle cx="45" cy="854" r="22" fill="#FDE8DC"/>
+  <text x="70" y="50" fill="#5D6670" font-family="Noto Sans SC, sans-serif" font-size="17" font-weight="600" letter-spacing="2">小云 iDA · 异常治理升级</text>
+  <text x="70" y="105" fill="#20272E" font-family="Noto Sans SC, sans-serif" font-size="42" font-weight="700">从</text>
+  <text x="126" y="105" fill="#C95131" font-family="Noto Sans SC, sans-serif" font-size="42" font-weight="700">被动响应</text>
+  <text x="303" y="105" fill="#20272E" font-family="Noto Sans SC, sans-serif" font-size="42" font-weight="700">，到</text>
+  <text x="400" y="105" fill="#14856F" font-family="Noto Sans SC, sans-serif" font-size="42" font-weight="700">主动发现</text>
+  <text x="70" y="140" fill="#6B747D" font-family="Noto Sans SC, sans-serif" font-size="17">以对话指标与 Trace 明细为观测底座，把异常治理前移到用户反馈之前</text>
+  <line x1="70" y1="165" x2="1530" y2="165" stroke="#CBD1D5" stroke-width="2"/>
+
+  <!-- Left field: passive response -->
+  <path d="M70 195 Q78 180 98 184 L674 184 Q700 186 700 212 L700 704 Q694 726 670 728 L105 728 Q74 724 76 696 Z" fill="#FFF2EB"/>
+  <circle cx="108" cy="226" r="23" fill="#D95B3A"/>
+  <text x="108" y="233" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="19" font-weight="700">过</text>
+  <text x="145" y="233" fill="#9D3C27" font-family="Noto Sans SC, sans-serif" font-size="26" font-weight="700">过去｜被动响应</text>
+  <text x="145" y="260" fill="#9B6A5B" font-family="Noto Sans SC, sans-serif" font-size="15">异常已发生，发现仍依赖用户感知</text>
+
+  <!-- Incident source cluster -->
+  <polygon points="100,297 112,277 218,277 230,297 218,317 112,317" fill="#FFFFFF" stroke="#E8794E" stroke-width="2"/>
+  <circle cx="124" cy="297" r="8" fill="#E45936"/>
+  <path d="M120 297 L128 297 M124 293 L124 301" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <text x="142" y="303" fill="#7F3525" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">模型异常</text>
+
+  <polygon points="247,297 259,277 365,277 377,297 365,317 259,317" fill="#FFFFFF" stroke="#E8794E" stroke-width="2"/>
+  <path d="M271 288 L271 304 M267 292 L271 288 L275 292 M267 300 L271 304 L275 300" fill="none" stroke="#E45936" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="289" y="303" fill="#7F3525" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">接口限流</text>
+
+  <polygon points="100,350 112,330 248,330 260,350 248,370 112,370" fill="#FFFFFF" stroke="#F19A55" stroke-width="2"/>
+  <path d="M119 342 L129 358 M129 342 L119 358" stroke="#E97A3F" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="142" y="356" fill="#7F4A25" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">回复质量下降</text>
+
+  <polygon points="285,350 297,330 433,330 445,350 433,370 297,370" fill="#FFFFFF" stroke="#F19A55" stroke-width="2"/>
+  <circle cx="310" cy="350" r="9" fill="none" stroke="#E97A3F" stroke-width="2"/>
+  <path d="M310 344 L310 350 L315 353" fill="none" stroke="#E97A3F" stroke-width="2" stroke-linecap="round"/>
+  <text x="328" y="356" fill="#7F4A25" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">响应耗时攀升</text>
+
+  <text x="100" y="397" fill="#B55A3D" font-family="Noto Sans SC, sans-serif" font-size="14" font-weight="600">线上信号持续劣化</text>
+  <polyline points="103,414 168,414 183,395 211,438 237,408 263,441 289,415 331,415" fill="none" stroke="#D95B3A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="340" y1="415" x2="365" y2="415" stroke="#D95B3A" stroke-width="5" stroke-linecap="round"/>
+  <line x1="382" y1="415" x2="408" y2="415" stroke="#D95B3A" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="408,408 421,415 408,422" fill="#D95B3A"/>
+  <text x="339" y="399" fill="#C14F31" font-family="Noto Sans SC, sans-serif" font-size="13">信号断点</text>
+
+  <!-- User perception -->
+  <ellipse cx="500" cy="415" rx="72" ry="48" fill="#FFFFFF" stroke="#DD6848" stroke-width="3"/>
+  <circle cx="477" cy="403" r="9" fill="#F6C1AF"/>
+  <path d="M463 427 Q477 414 491 427" fill="none" stroke="#D95B3A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M503 394 Q526 385 537 400 Q544 411 534 421 L539 432 L525 426 Q510 429 502 417 Z" fill="#FDE1D5" stroke="#D95B3A" stroke-width="2"/>
+  <text x="500" y="454" text-anchor="middle" fill="#843A29" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="700">用户感知与反馈</text>
+
+  <!-- Broken route to manual investigation -->
+  <polyline points="548,454 548,474 584,474 584,491" fill="none" stroke="#D56B4C" stroke-width="3" stroke-dasharray="10 9"/>
+  <polygon points="576,491 584,504 592,491" fill="#D56B4C"/>
+  <text x="487" y="487" fill="#A65B44" font-family="Noto Sans SC, sans-serif" font-size="13">反馈触发排查</text>
+
+  <ellipse cx="584" cy="555" rx="67" ry="68" fill="#FFF8F3" stroke="#D56B4C" stroke-width="3"/>
+  <circle cx="584" cy="528" r="17" fill="none" stroke="#C65538" stroke-width="4"/>
+  <line x1="596" y1="540" x2="610" y2="554" stroke="#C65538" stroke-width="5" stroke-linecap="round"/>
+  <text x="584" y="586" text-anchor="middle" fill="#843A29" font-family="Noto Sans SC, sans-serif" font-size="17" font-weight="700">人工排查</text>
+  <text x="584" y="610" text-anchor="middle" fill="#A16C5E" font-family="Noto Sans SC, sans-serif" font-size="13">跨日志、链路逐层定位</text>
+
+  <!-- Delayed detection -->
+  <polyline points="517,563 478,563 478,590 430,590 430,620" fill="none" stroke="#C95A3E" stroke-width="3" stroke-dasharray="7 10"/>
+  <polygon points="422,619 430,633 438,619" fill="#C95A3E"/>
+  <path d="M300 652 Q300 636 316 636 L509 636 Q525 636 525 652 L525 688 Q525 704 509 704 L316 704 Q300 704 300 688 Z" fill="#D85638"/>
+  <path d="M324 643 L347 643 L343 652 Q340 660 332 663 Q340 666 343 674 L347 683 L324 683 L328 674 Q331 666 339 663 Q331 660 328 652 Z" fill="#FFFFFF"/>
+  <text x="367" y="657" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="14">发现时延</text>
+  <text x="367" y="685" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="20" font-weight="700">小时级 / 天级</text>
+  <text x="100" y="687" fill="#AD4931" font-family="Noto Sans SC, sans-serif" font-size="17" font-weight="700">体验先受损，治理再追赶</text>
+  <path d="M102 701 L280 701" stroke="#E08B72" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 10"/>
+
+  <!-- Center transition bridge -->
+  <path d="M716 270 Q716 250 736 250 L842 250 Q862 250 862 270 L862 650 Q862 670 842 670 L736 670 Q716 670 716 650 Z" fill="#39434C"/>
+  <text x="789" y="299" text-anchor="middle" fill="#DCE2E5" font-family="Noto Sans SC, sans-serif" font-size="14" font-weight="600" letter-spacing="2">驱动方式</text>
+  <line x1="744" y1="317" x2="834" y2="317" stroke="#65717B" stroke-width="1.5"/>
+  <text x="789" y="353" text-anchor="middle" fill="#F7C2AF" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">用户反馈</text>
+  <text x="789" y="375" text-anchor="middle" fill="#F7C2AF" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">驱动</text>
+  <path d="M746 421 L806 421 L806 399 L842 433 L806 467 L806 445 L746 445 Z" fill="#FFFFFF"/>
+  <text x="789" y="493" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="18" font-weight="700">治理跃迁</text>
+  <circle cx="789" cy="526" r="4" fill="#9AA4AC"/>
+  <circle cx="789" cy="543" r="4" fill="#9AA4AC"/>
+  <circle cx="789" cy="560" r="4" fill="#9AA4AC"/>
+  <text x="789" y="600" text-anchor="middle" fill="#A7E5D8" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">观测信号</text>
+  <text x="789" y="622" text-anchor="middle" fill="#A7E5D8" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="600">驱动</text>
+
+  <!-- Right field: active governance -->
+  <path d="M878 195 Q888 184 908 184 L1504 184 Q1528 184 1530 210 L1524 701 Q1520 726 1495 728 L906 728 Q880 724 878 701 Z" fill="#EAF8F4"/>
+  <circle cx="918" cy="226" r="23" fill="#168D76"/>
+  <text x="918" y="233" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="19" font-weight="700">今</text>
+  <text x="955" y="233" fill="#116D5C" font-family="Noto Sans SC, sans-serif" font-size="26" font-weight="700">现在｜主动治理</text>
+  <text x="955" y="260" fill="#518478" font-family="Noto Sans SC, sans-serif" font-size="15">持续观测，异常在用户反馈前进入处置闭环</text>
+
+  <!-- Radar and signal inputs -->
+  <circle cx="982" cy="407" r="82" fill="#F8FFFD" stroke="#65BEAA" stroke-width="2"/>
+  <circle cx="982" cy="407" r="58" fill="none" stroke="#9DD5C9" stroke-width="2"/>
+  <circle cx="982" cy="407" r="32" fill="none" stroke="#BDE4DC" stroke-width="2"/>
+  <line x1="900" y1="407" x2="1064" y2="407" stroke="#B3DCD3" stroke-width="2"/>
+  <line x1="982" y1="325" x2="982" y2="489" stroke="#B3DCD3" stroke-width="2"/>
+  <path d="M982 407 L982 327 A80 80 0 0 1 1053 370 Z" fill="#9FDFD1" fill-opacity="0.72"/>
+  <line x1="982" y1="407" x2="1049" y2="369" stroke="#178E77" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="1028" cy="381" r="7" fill="#0F9B80"/>
+  <circle cx="947" cy="446" r="6" fill="#47B79F"/>
+  <circle cx="1008" cy="432" r="5" fill="#47B79F"/>
+  <text x="982" y="516" text-anchor="middle" fill="#126E5C" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="700">异常雷达 · 持续扫描</text>
+
+  <path d="M900 286 Q900 275 912 275 L1036 275 Q1048 275 1048 286 L1048 310 Q1048 321 1036 321 L912 321 Q900 321 900 310 Z" fill="#FFFFFF" stroke="#64B9A6" stroke-width="2"/>
+  <polyline points="925,305 935,295 946,302 958,288" fill="none" stroke="#168D76" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="970" y="304" fill="#176A5B" font-family="Noto Sans SC, sans-serif" font-size="14" font-weight="600">对话指标</text>
+
+  <path d="M1060 286 Q1060 275 1072 275 L1180 275 Q1192 275 1192 286 L1192 310 Q1192 321 1180 321 L1072 321 Q1060 321 1060 310 Z" fill="#FFFFFF" stroke="#64B9A6" stroke-width="2"/>
+  <circle cx="1078" cy="298" r="3.5" fill="#168D76"/>
+  <circle cx="1092" cy="291" r="3.5" fill="#168D76"/>
+  <circle cx="1092" cy="305" r="3.5" fill="#168D76"/>
+  <line x1="1081" y1="297" x2="1089" y2="292" stroke="#168D76" stroke-width="2"/>
+  <line x1="1081" y1="300" x2="1089" y2="304" stroke="#168D76" stroke-width="2"/>
+  <text x="1104" y="304" fill="#176A5B" font-family="Noto Sans SC, sans-serif" font-size="14" font-weight="600">Trace 明细</text>
+
+  <!-- Smooth governance loop -->
+  <path d="M1070 368 C1111 323 1161 302 1212 309 C1303 320 1380 382 1393 468 C1407 561 1343 638 1254 651 C1164 664 1086 612 1055 540" fill="none" stroke="#2CA58D" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="1050,547 1052,525 1070,538" fill="#2CA58D"/>
+
+  <!-- Label taxonomy -->
+  <polygon points="1100,354 1121,333 1274,333 1295,354 1274,404 1121,404 1100,383" fill="#FFFFFF" stroke="#259C84" stroke-width="3"/>
+  <circle cx="1133" cy="365" r="10" fill="#75CDBA"/>
+  <circle cx="1133" cy="389" r="6" fill="#B8E6DC"/>
+  <text x="1153" y="365" fill="#126E5C" font-family="Noto Sans SC, sans-serif" font-size="17" font-weight="700">异常标签</text>
+  <text x="1153" y="390" fill="#4C7A70" font-family="Noto Sans SC, sans-serif" font-size="12">类型 · 环节 · 影响程度</text>
+
+  <!-- Real-time alert -->
+  <circle cx="1370" cy="379" r="49" fill="#FFFFFF" stroke="#2AA98E" stroke-width="3"/>
+  <path d="M1355 389 Q1362 381 1362 369 Q1362 356 1370 352 Q1378 356 1378 369 Q1378 381 1385 389 Z" fill="#43B59E"/>
+  <circle cx="1370" cy="394" r="4" fill="#168D76"/>
+  <path d="M1352 350 Q1370 332 1388 350" fill="none" stroke="#76CDBB" stroke-width="3" stroke-linecap="round"/>
+  <text x="1370" y="416" text-anchor="middle" fill="#126E5C" font-family="Noto Sans SC, sans-serif" font-size="14" font-weight="700">实时告警</text>
+
+  <!-- Rapid location and handling -->
+  <path d="M1330 485 Q1330 469 1346 469 L1466 469 Q1482 469 1482 485 L1482 547 Q1482 563 1466 563 L1346 563 Q1330 563 1330 547 Z" fill="#147F6A"/>
+  <path d="M1353 494 L1369 510 L1392 486" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="1413" y="505" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="17" font-weight="700">快速定位</text>
+  <text x="1413" y="531" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="17" font-weight="700">与处置</text>
+  <text x="1413" y="550" text-anchor="middle" fill="#BFE9DF" font-family="Noto Sans SC, sans-serif" font-size="12">链路归因 · 定向止损</text>
+
+  <!-- Retrospective -->
+  <circle cx="1246" cy="610" r="55" fill="#FFFFFF" stroke="#4CB59F" stroke-width="3"/>
+  <path d="M1222 605 A26 26 0 1 1 1236 631" fill="none" stroke="#168D76" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="1220,593 1235,597 1225,608" fill="#168D76"/>
+  <path d="M1237 631 L1249 617 L1252 635 Z" fill="#168D76"/>
+  <text x="1246" y="613" text-anchor="middle" fill="#126E5C" font-family="Noto Sans SC, sans-serif" font-size="16" font-weight="700">复盘优化</text>
+  <text x="1246" y="681" text-anchor="middle" fill="#4C7A70" font-family="Noto Sans SC, sans-serif" font-size="13">规则沉淀，反哺下一轮识别</text>
+
+  <!-- Loop arrow hints -->
+  <polygon points="1277,316 1293,314 1285,329" fill="#2CA58D"/>
+  <polygon points="1398,452 1407,468 1389,469" fill="#2CA58D"/>
+  <polygon points="1344,621 1329,632 1327,614" fill="#2CA58D"/>
+  <text x="1090" y="590" fill="#257A69" font-family="Noto Sans SC, sans-serif" font-size="14" font-weight="600">闭环持续运转</text>
+
+  <!-- Outcome band -->
+  <path d="M70 758 Q70 742 88 742 L1512 742 Q1530 742 1530 760 L1530 838 Q1530 856 1512 856 L88 856 Q70 856 70 838 Z" fill="#223C3A"/>
+  <text x="112" y="789" fill="#9DDDD0" font-family="Noto Sans SC, sans-serif" font-size="15" font-weight="600" letter-spacing="2">治理结果</text>
+  <text x="112" y="825" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="24" font-weight="700">异常治理前移</text>
+  <line x1="307" y1="770" x2="307" y2="828" stroke="#52716D" stroke-width="2"/>
+
+  <circle cx="414" cy="799" r="34" fill="#2D514D" stroke="#61C7B3" stroke-width="2"/>
+  <text x="414" y="805" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="20" font-weight="700">01</text>
+  <text x="466" y="793" fill="#A4E1D5" font-family="Noto Sans SC, sans-serif" font-size="14">从用户反馈之前捕获</text>
+  <text x="466" y="822" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="24" font-weight="700">更早发现</text>
+
+  <circle cx="820" cy="799" r="34" fill="#2D514D" stroke="#61C7B3" stroke-width="2"/>
+  <text x="820" y="805" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="20" font-weight="700">02</text>
+  <text x="872" y="793" fill="#A4E1D5" font-family="Noto Sans SC, sans-serif" font-size="14">从散点排查到链路归因</text>
+  <text x="872" y="822" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="24" font-weight="700">更快定位</text>
+
+  <circle cx="1226" cy="799" r="34" fill="#2D514D" stroke="#61C7B3" stroke-width="2"/>
+  <text x="1226" y="805" text-anchor="middle" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="20" font-weight="700">03</text>
+  <text x="1278" y="793" fill="#A4E1D5" font-family="Noto Sans SC, sans-serif" font-size="14">从影响扩散到快速止损</text>
+  <text x="1278" y="822" fill="#FFFFFF" font-family="Noto Sans SC, sans-serif" font-size="24" font-weight="700">更短止损</text>
+</svg>

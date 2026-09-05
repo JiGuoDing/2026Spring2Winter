@@ -59,7 +59,6 @@
   "markdown.validate.enabled": true,
   "editor.wordWrap": "on",
   "markdown.preview.wordWrap": "on",
-  "window.zoomLevel": 0.75,
   "files.autoSave": "afterDelay",
   "editor.fontSize": 14,
   "editor.fontFamily": "Maple Mono NF CN",
