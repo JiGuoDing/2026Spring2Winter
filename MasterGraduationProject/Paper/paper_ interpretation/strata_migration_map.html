@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="use-iframe" content="true">
+<meta name="html-box-height-mode" content="auto">
+<meta name="description" content="Strata 引擎内机制与 Flink 控制面可迁移层的边界示意：左侧单节点 SGLang 内的 GPU-assisted I/O、HiRadixtree、cache-aware scheduler 与三级写策略；右侧跨 worker 的 Flink 控制面元数据、delay-hit-aware 路由、balanced batch 聚合与写策略映射；中间标注层次边界。">
+<title>Strata 架构与 Flink 迁移边界图</title>
+</head>
+<body style="margin:0;padding:0;background:#ffffff;">
+<div style="width:100%;max-width:100%;box-sizing:border-box;font-family:-apple-system,'PingFang SC',Arial,sans-serif;background:#ffffff;padding:16px;color:#1f2329;">
+  <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Strata 引擎内机制 vs. Flink 控制面可迁移层（示意）</div>
+  <div style="font-size:12px;color:#8a8f99;margin-bottom:14px;">左：单节点 SGLang 引擎内（Strata 论文实测，OSDI'26）；中：层次边界；右：跨实例 Flink 控制面（本课题可迁移层）。图为示意，数字见精读报告第 4 节。</div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;">
+
+    <div style="flex:1 1 340px;min-width:300px;border:1.5px solid #3b6ea5;border-radius:8px;padding:10px;background:#f4f8fc;">
+      <div style="font-size:14px;font-weight:700;color:#2b5a8c;margin-bottom:8px;">左侧 · Strata（SGLang 引擎内，单节点）</div>
+
+      <div style="border:1px solid #b9cfe6;border-radius:6px;padding:6px 8px;margin-bottom:6px;background:#fff;">
+        <div style="font-weight:600;font-size:13px;">Request Queue → Scheduler</div>
+        <div style="font-size:11px;color:#555;margin-top:2px;">持续估计资源与延迟，选子批</div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-bottom:6px;">
+        <div style="flex:1;border:1px solid #b9cfe6;border-radius:6px;padding:6px 8px;background:#fff;">
+          <div style="font-weight:600;font-size:12px;">Cache Controller</div>
+          <div style="font-size:11px;color:#555;margin-top:2px;">GPU-assisted I/O（CUDA kernel，512 blocks×1024 threads）</div>
+          <div style="font-size:11px;color:#555;">layer-first↔page-first 在线布局变换</div>
+          <div style="font-size:11px;color:#555;">三级写策略：write-back / write-through / selective-write</div>
+        </div>
+        <div style="flex:1;border:1px solid #b9cfe6;border-radius:6px;padding:6px 8px;background:#fff;">
+          <div style="font-weight:600;font-size:12px;">HiRadixtree</div>
+          <div style="font-size:11px;color:#555;margin-top:2px;">radix 树扩展，兼作 KV 页表与元数据</div>
+          <div style="font-size:11px;color:#555;">transient node 标记 in-queue / in-flight</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid #b9cfe6;border-radius:6px;padding:6px 8px;margin-bottom:6px;background:#fff;">
+        <div style="font-weight:600;font-size:12px;">Cache-Aware Scheduler（C++ 热路径）</div>
+        <div style="font-size:11px;color:#555;margin-top:2px;">① deferral on delay hit（同前缀并发合并）</div>
+        <div style="font-size:11px;color:#555;">② balanced batch formation（load/compute 比阈值 100）</div>
+        <div style="font-size:11px;color:#555;">③ bubble filling（decode 填 prefill stall）</div>
+      </div>
+
+      <div style="border:1px dashed #9bb8d6;border-radius:6px;padding:6px 8px;background:#eaf2fa;">
+        <div style="font-weight:600;font-size:12px;">GPU Executor（HBM）→ CPU DRAM → SSD</div>
+        <div style="font-size:11px;color:#555;margin-top:2px;">prefill 逐层与 Cache Controller 同步</div>
+      </div>
+    </div>
+
+    <div style="flex:0 0 150px;min-width:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+      <div style="font-size:12px;font-weight:700;color:#b54708;text-align:center;background:#fff7ed;border:1.5px dashed #f08c3c;border-radius:8px;padding:10px 6px;line-height:1.5;">
+        层次边界<br><span style="font-size:11px;font-weight:400;">单节点引擎内<br>vs<br>跨实例控制面</span>
+      </div>
+      <div style="font-size:11px;color:#8a8f99;margin-top:8px;text-align:center;">不碰 GPU kernel<br>不管理 KV 张量布局<br>不重造 radix 树</div>
+    </div>
+
+    <div style="flex:1 1 340px;min-width:300px;border:1.5px solid #2f8f5b;border-radius:8px;padding:10px;background:#f3faf5;">
+      <div style="font-size:14px;font-weight:700;color:#237a4c;margin-bottom:8px;">右侧 · Flink 控制面（跨 worker 实例，本课题）</div>
+
+      <div style="border:1px solid #a9d4bc;border-radius:6px;padding:6px 8px;margin-bottom:6px;background:#fff;">
+        <div style="font-weight:600;font-size:13px;">Keyed State（按 session_id）</div>
+        <div style="font-size:11px;color:#555;margin-top:2px;">{前缀哈希, token 长度, 持有 worker, 加载状态, TTL}</div>
+        <div style="font-size:11px;color:#555;">checkpoint 持久化元数据（不包外部 KV 驻留）</div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-bottom:6px;">
+        <div style="flex:1;border:1px solid #a9d4bc;border-radius:6px;padding:6px 8px;background:#fff;">
+          <div style="font-weight:600;font-size:12px;">delay-hit-aware 路由</div>
+          <div style="font-size:11px;color:#555;margin-top:2px;">同 session KV 在 A 加载时：defer 到 A 还是 route 到 B？</div>
+          <div style="font-size:11px;color:#555;">决策：A 剩余加载 vs A 排队 vs B 重算 prefill</div>
+        </div>
+        <div style="flex:1;border:1px solid #a9d4bc;border-radius:6px;padding:6px 8px;background:#fff;">
+          <div style="font-weight:600;font-size:12px;">balanced batch 聚合</div>
+          <div style="font-size:11px;color:#555;margin-top:2px;">同 worker 命中已有 KV 的请求优先聚合下发</div>
+          <div style="font-size:11px;color:#555;">权衡：KV 亲和 vs 跨 worker 负载均衡</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid #a9d4bc;border-radius:6px;padding:6px 8px;margin-bottom:6px;background:#fff;">
+        <div style="font-weight:600;font-size:12px;">写策略映射</div>
+        <div style="font-size:11px;color:#555;margin-top:2px;">会话状态 write-through；全局前缀元数据 selective-write（计数器阈值）；驱逐 write-back</div>
+        <div style="font-size:11px;color:#555;">Flink StateBackend ↔ 外部 KV 池（LMCache/Mooncake）</div>
+      </div>
+
+      <div style="border:1px dashed #8fc7a8;border-radius:6px;padding:6px 8px;background:#e9f6ee;">
+        <div style="font-weight:600;font-size:12px;">下发到数据面</div>
+        <div style="font-size:11px;color:#555;margin-top:2px;">多个 vLLM/SGLang worker（各自引擎内仍跑 Strata 式 I/O 与调度）</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;border-top:1px solid #e5e6eb;padding-top:10px;">
+    <div style="font-size:12px;font-weight:700;margin-bottom:6px;">五维度结合判断</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;font-size:11px;">
+      <span style="background:#eef4fb;border:1px solid #b9cfe6;border-radius:4px;padding:3px 8px;">分层缓存 → 控制面元数据层结合</span>
+      <span style="background:#fbecec;border:1px solid #e6a3a3;border-radius:4px;padding:3px 8px;">GPU 辅助 I/O → 不结合（baseline）</span>
+      <span style="background:#e9f6ee;border:1px solid #8fc7a8;border-radius:4px;padding:3px 8px;">调度/分流 → 核心增量</span>
+      <span style="background:#e9f6ee;border:1px solid #8fc7a8;border-radius:4px;padding:3px 8px;">控制面/数据面 → 立足点</span>
+      <span style="background:#fff8e6;border:1px solid #e6cf7a;border-radius:4px;padding:3px 8px;">时延建模 → 借鉴启发式</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
