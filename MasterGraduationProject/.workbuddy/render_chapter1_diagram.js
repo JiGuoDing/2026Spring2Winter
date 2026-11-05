@@ -1,0 +1,216 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const sharp = require('sharp');
+const outDir = 'C:/workspace/2026Spring2Winter/MasterGraduationProject/Design/figures';
+const svgPath = path.join(outDir, 'chapter1_cache_value_lifecycle.svg');
+const pngPath = path.join(outDir, 'chapter1_cache_value_lifecycle.png');
+
+const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1800" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">第一章：缓存价值建模与生命周期管理</title>
+  <desc id="desc">流式 Agent 系统中，会话语义、RAG 知识与历史回答三类状态具有不同收益和风险；用净价值函数量化后，通过准入、复用门控、刷新失效和淘汰进行生命周期管理，并用运行日志回灌校准价值模型。</desc>
+  <defs>
+    <style><![CDATA[
+      text { font-family: 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif; }
+      .kicker { font-size: 18px; font-weight: 700; fill: #0F766E; letter-spacing: 1.4px; }
+      .title { font-size: 36px; font-weight: 800; fill: #1F2D2A; letter-spacing: 0.4px; }
+      .subtitle { font-size: 19px; fill: #5F6B72; }
+      .tag { font-size: 15px; fill: #52615D; }
+      .col-no { font-size: 18px; font-weight: 800; fill: #0F766E; }
+      .col-title { font-size: 23px; font-weight: 750; fill: #1F2D2A; }
+      .col-hint { font-size: 15px; fill: #73807B; }
+      .card-title { font-size: 22px; font-weight: 750; fill: #1F2D2A; }
+      .card-sub { font-size: 15px; fill: #68746F; }
+      .label { font-size: 15px; font-weight: 700; }
+      .body { font-size: 16px; fill: #36433F; }
+      .small { font-size: 15px; fill: #5E6B66; }
+      .tiny { font-size: 13.5px; fill: #78847F; }
+      .formula { font-family: 'Cambria Math', 'Times New Roman', 'Microsoft YaHei', serif; font-size: 23px; fill: #1F2D2A; }
+      .formula-small { font-family: 'Cambria Math', 'Times New Roman', 'Microsoft YaHei', serif; font-size: 19px; fill: #1F2D2A; }
+      .formula-strong { font-family: 'Cambria Math', 'Times New Roman', 'Microsoft YaHei', serif; font-size: 19px; font-weight: 700; }
+      .action { font-size: 20px; font-weight: 800; }
+      .action-en { font-size: 12.5px; font-weight: 700; letter-spacing: 0.7px; }
+      .row-title { font-size: 18px; font-weight: 750; fill: #25332F; }
+      .row-rule { font-size: 17px; font-weight: 650; fill: #0F766E; }
+      .row-note { font-size: 14.5px; fill: #6B7772; }
+      .green { fill: #0F766E; }
+      .blue { fill: #356B8C; }
+      .amber { fill: #BB641F; }
+      .red { fill: #B4473F; }
+      .muted { fill: #64716C; }
+      .rule { stroke: #D8E2DC; stroke-width: 1.5; }
+      .hair { stroke: #E6ECE8; stroke-width: 1; }
+      .card { fill: #FFFFFF; stroke: #DDE6E0; stroke-width: 1.4; }
+      .soft-green { fill: #EEF6F2; stroke: #CFE7DC; stroke-width: 1.4; }
+      .soft-blue { fill: #EEF4F7; stroke: #D3E1E8; stroke-width: 1.4; }
+      .soft-amber { fill: #FFF7ED; stroke: #F2D8BA; stroke-width: 1.4; }
+      .soft-red { fill: #FCF0EE; stroke: #EFD3CF; stroke-width: 1.4; }
+      .flow { fill: none; stroke: #0F766E; stroke-width: 3; stroke-linecap: round; }
+      .feedback { fill: none; stroke: #BB641F; stroke-width: 2.5; stroke-dasharray: 7 6; stroke-linecap: round; }
+    ]]></style>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10.5" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L10.5,6 L1,11 Z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="12" markerHeight="12" refX="10.5" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L10.5,6 L1,11 Z" fill="#BB641F"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-20%" width="120%" height="150%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#18352C" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="#FBFCFA"/>
+  <rect x="0" y="0" width="1600" height="5" fill="#0F766E"/>
+
+  <g id="header">
+    <text x="50" y="45" class="kicker">第一章｜缓存价值建模与生命周期管理</text>
+    <text x="50" y="89" class="title">缓存价值建模与生命周期管理</text>
+    <text x="50" y="122" class="subtitle">核心逻辑：识别可复用状态 → 量化净价值 → 在质量与容量约束下执行建、用、刷、删</text>
+    <rect x="1235" y="37" width="315" height="34" rx="17" fill="#EDF5F1" stroke="#CFE5DB"/>
+    <text x="1392.5" y="59" text-anchor="middle" class="tag">流式 Agent · 多租户 · 动态负载</text>
+    <line x1="50" y1="146" x2="1550" y2="146" class="rule"/>
+  </g>
+
+  <g id="column-headings">
+    <circle cx="62" cy="176" r="14" fill="#0F766E"/>
+    <text x="62" y="181" text-anchor="middle" font-size="13" font-weight="800" fill="#FFFFFF">01</text>
+    <text x="86" y="183" class="col-title">流式 Agent 中的缓存价值</text>
+    <circle cx="482" cy="176" r="14" fill="#0F766E"/>
+    <text x="482" y="181" text-anchor="middle" font-size="13" font-weight="800" fill="#FFFFFF">02</text>
+    <text x="506" y="183" class="col-title">怎样量化缓存价值</text>
+    <circle cx="967" cy="176" r="14" fill="#0F766E"/>
+    <text x="967" y="181" text-anchor="middle" font-size="13" font-weight="800" fill="#FFFFFF">03</text>
+    <text x="991" y="183" class="col-title">怎样管理缓存</text>
+    <text x="1548" y="183" text-anchor="end" class="col-hint">统一决策信号：V(x,t,c)</text>
+  </g>
+
+  <g id="cache-objects">
+    <rect x="50" y="205" width="390" height="170" rx="14" class="card" filter="url(#shadow)"/>
+    <rect x="50" y="205" width="5" height="170" rx="2.5" fill="#356B8C"/>
+    <rect x="72" y="225" width="48" height="48" rx="12" fill="#EAF2F6"/>
+    <text x="96" y="256" text-anchor="middle" font-size="16" font-weight="800" fill="#356B8C">ctx</text>
+    <text x="136" y="243" class="card-title">会话语义状态</text>
+    <text x="136" y="268" class="card-sub">近期历史 · 冻结摘要 · 事实/约束</text>
+    <line x1="72" y1="290" x2="418" y2="290" class="hair"/>
+    <text x="72" y="319" class="label green">收益</text>
+    <text x="112" y="319" class="body">省上下文恢复与拼装</text>
+    <text x="72" y="348" class="label red">风险</text>
+    <text x="112" y="348" class="body">语义冲突 · 过期 · 质量损失</text>
+
+    <rect x="50" y="390" width="390" height="170" rx="14" class="card" filter="url(#shadow)"/>
+    <rect x="50" y="390" width="5" height="170" rx="2.5" fill="#0F766E"/>
+    <rect x="72" y="410" width="48" height="48" rx="12" fill="#EAF5F0"/>
+    <text x="96" y="441" text-anchor="middle" font-size="16" font-weight="800" fill="#0F766E">rag</text>
+    <text x="136" y="428" class="card-title">RAG 知识状态</text>
+    <text x="136" y="453" class="card-sub">数据表 · 文档块 · 召回结果</text>
+    <line x1="72" y1="475" x2="418" y2="475" class="hair"/>
+    <text x="72" y="504" class="label green">收益</text>
+    <text x="112" y="504" class="body">省重复检索与远端读取</text>
+    <text x="72" y="533" class="label red">风险</text>
+    <text x="112" y="533" class="body">知识过期 · 访问越权</text>
+
+    <rect x="50" y="575" width="390" height="170" rx="14" class="card" filter="url(#shadow)"/>
+    <rect x="50" y="575" width="5" height="170" rx="2.5" fill="#BB641F"/>
+    <rect x="72" y="595" width="48" height="48" rx="12" fill="#FFF1E3"/>
+    <text x="96" y="626" text-anchor="middle" font-size="15" font-weight="800" fill="#BB641F">resp</text>
+    <text x="136" y="613" class="card-title">历史回答状态</text>
+    <text x="136" y="638" class="card-sub">跨用户 / 会话的问答结果</text>
+    <line x1="72" y1="660" x2="418" y2="660" class="hair"/>
+    <text x="72" y="689" class="label green">收益</text>
+    <text x="112" y="689" class="body">命中时短路整次推理</text>
+    <text x="72" y="718" class="label red">风险</text>
+    <text x="112" y="718" class="body">错误复用 · 质量损失</text>
+
+    <text x="50" y="783" class="small">收益：少做工作 · 风险：错误复用旧状态</text>
+  </g>
+
+  <path d="M442 475 H466" class="flow" marker-end="url(#arrow-green)"/>
+  <g id="valuation">
+    <rect x="470" y="205" width="455" height="205" rx="14" class="soft-green" filter="url(#shadow)"/>
+    <text x="494" y="236" class="card-title">净价值函数</text>
+    <text x="494" y="260" class="card-sub">同一对象在不同请求与时刻，价值不同</text>
+    <text x="494" y="298" class="formula">V(x,t,c) = <tspan class="green" font-weight="700">p_use · B</tspan></text>
+    <text x="494" y="329" class="formula-small"><tspan class="red">− C_verify − q_wrong · L</tspan></text>
+    <text x="494" y="356" class="formula-small"><tspan class="amber">− C_hold − C_churn</tspan></text>
+    <line x1="494" y1="375" x2="901" y2="375" class="hair"/>
+    <text x="494" y="397" class="tiny">净收益 = 复用收益 − 质量风险 − 验证/持有/失效成本</text>
+
+    <rect x="470" y="430" width="455" height="230" rx="14" class="card" filter="url(#shadow)"/>
+    <text x="494" y="459" class="card-title">关键价值因子</text>
+    <circle cx="500" cy="490" r="5" fill="#0F766E"/>
+    <text x="516" y="496" class="formula-strong green">p_use · B</text>
+    <text x="494" y="520" class="small">复用概率 × 可节省的 Token、GPU-ms、检索与远端读取</text>
+    <line x1="494" y1="534" x2="901" y2="534" class="hair"/>
+    <circle cx="500" cy="558" r="5" fill="#B4473F"/>
+    <text x="516" y="564" class="formula-strong red">q_wrong · L</text>
+    <text x="494" y="588" class="small">错误、过期或越权概率 × 一次误复用的质量损失</text>
+    <line x1="494" y1="602" x2="901" y2="602" class="hair"/>
+    <circle cx="500" cy="626" r="5" fill="#BB641F"/>
+    <text x="516" y="632" class="formula-strong amber">C_verify + C_hold + C_churn</text>
+    <text x="494" y="652" class="small">验证成本 + 持有成本 + 失效/重建成本</text>
+
+    <rect x="470" y="680" width="455" height="95" rx="14" fill="#183F37" filter="url(#shadow)"/>
+    <text x="494" y="709" font-size="18" font-weight="800" fill="#FFFFFF">决策目标与约束</text>
+    <text x="494" y="735" font-size="16" font-weight="650" fill="#EAF7F1">max  单位容量净收益（而非单纯命中率）</text>
+    <text x="494" y="759" font-size="14.5" fill="#CBE2D9">s.t.  错误复用率 ≤ δ   ·   Σ size ≤ S   ·   复用率 ≤ r_max</text>
+  </g>
+
+  <g id="lifecycle">
+    <rect x="955" y="205" width="595" height="118" rx="14" class="card" filter="url(#shadow)"/>
+    <rect x="975" y="224" width="132" height="52" rx="12" class="soft-green"/>
+    <text x="1041" y="246" text-anchor="middle" class="action green">准入</text>
+    <text x="1041" y="265" text-anchor="middle" class="action-en green">ADMIT</text>
+    <text x="1130" y="236" class="row-title">请求完成时：决定是否写入</text>
+    <text x="1130" y="263" class="row-rule">p_use · V̄ &gt; C_create</text>
+    <text x="1130" y="290" class="row-note">未来复用价值高于创建与存储成本</text>
+
+    <rect x="955" y="338" width="595" height="118" rx="14" class="card" filter="url(#shadow)"/>
+    <rect x="975" y="357" width="132" height="52" rx="12" class="soft-blue"/>
+    <text x="1041" y="379" text-anchor="middle" class="action blue">复用</text>
+    <text x="1041" y="398" text-anchor="middle" class="action-en blue">REUSE / GATE</text>
+    <text x="1130" y="369" class="row-title">请求命中时：先校验，再复用</text>
+    <text x="1130" y="396" class="row-rule">valid &amp;&amp; V &gt; 0 &amp;&amp; 质量门控通过</text>
+    <text x="1130" y="423" class="row-note">控制复用频率，避免质量随命中率上升而下降</text>
+
+    <rect x="955" y="471" width="595" height="118" rx="14" class="card" filter="url(#shadow)"/>
+    <rect x="975" y="490" width="132" height="52" rx="12" class="soft-amber"/>
+    <text x="1041" y="512" text-anchor="middle" class="action amber">刷新 / 失效</text>
+    <text x="1041" y="531" text-anchor="middle" class="action-en amber">REFRESH / INVALIDATE</text>
+    <text x="1130" y="502" class="row-title">版本变化或到期时：更新状态</text>
+    <text x="1130" y="529" class="row-rule">热对象刷新 · 冷对象惰性失效</text>
+    <text x="1130" y="556" class="row-note">由版本、ACL、TTL 或语义漂移触发</text>
+
+    <rect x="955" y="604" width="595" height="118" rx="14" class="card" filter="url(#shadow)"/>
+    <rect x="975" y="623" width="132" height="52" rx="12" class="soft-red"/>
+    <text x="1041" y="645" text-anchor="middle" class="action red">淘汰</text>
+    <text x="1041" y="664" text-anchor="middle" class="action-en red">EVICT</text>
+    <text x="1130" y="635" class="row-title">容量不足时：释放最低价值项</text>
+    <text x="1130" y="662" class="row-rule">优先淘汰 V / size 最低者</text>
+    <text x="1130" y="689" class="row-note">在质量预算 δ 与容量 S 的共同约束下决策</text>
+
+    <rect x="955" y="742" width="595" height="43" rx="12" fill="#F1F5F2" stroke="#DCE5DF"/>
+    <text x="975" y="769" class="small"><tspan font-weight="700" fill="#0F766E">管理原则：</tspan>让每个对象在对的时刻做对的动作，而不是盲目多缓存。</text>
+  </g>
+
+  <g id="feedback-loop">
+    <path d="M1525 792 V836 Q1525 846 1515 846 H470 Q460 846 460 836 V324 H466" class="feedback" marker-end="url(#arrow-amber)"/>
+    <rect x="770" y="828" width="560" height="30" rx="15" fill="#FBFCFA"/>
+    <text x="1050" y="848" text-anchor="middle" font-size="14.5" font-weight="650" fill="#BB641F">运行日志回灌：命中 · 节省 · 质量 · 时延 → 校准 p_use、q_wrong、B、C_*</text>
+  </g>
+
+  <text x="50" y="880" class="tiny">第一章｜核心逻辑示意图</text>
+  <text x="1550" y="880" text-anchor="end" class="tiny">示意：非实测数据</text>
+</svg>`;
+
+fs.writeFileSync(svgPath, svg, 'utf8');
+sharp(Buffer.from(svg), { density: 144 })
+  .resize(3200, 1800)
+  .png({ compressionLevel: 9, adaptiveFiltering: true })
+  .toFile(pngPath)
+  .then(async () => {
+    const meta = await sharp(pngPath).metadata();
+    console.log(JSON.stringify({ svgPath, pngPath, width: meta.width, height: meta.height, svgBytes: Buffer.byteLength(svg), pngBytes: fs.statSync(pngPath).size }, null, 2));
+  })
+  .catch(err => { console.error(err); process.exit(1); });
+
+
