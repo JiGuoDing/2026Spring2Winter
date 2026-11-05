@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>毕业设计相关领域与研究点图谱</title>
+  <style>
+    :root {
+      --bg: #0b101b;
+      --surface: #111827;
+      --surface-2: #162033;
+      --surface-3: #1b2740;
+      --text: #edf2fb;
+      --muted: #aab6cb;
+      --faint: #7f8da6;
+      --line: #2a3852;
+      --blue: #83aaff;
+      --blue-soft: #182c52;
+      --teal: #62d7bd;
+      --teal-soft: #123b3b;
+      --amber: #e7bd72;
+      --amber-soft: #3b2e1a;
+      --coral: #ef9b8e;
+      --coral-soft: #422624;
+      --purple: #b6a1ff;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 28px; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.78;
+      letter-spacing: 0.01em;
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    .progress {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: var(--teal);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1040px);
+      gap: 42px;
+      max-width: 1370px;
+      margin: 0 auto;
+      padding: 32px 28px 80px;
+    }
+    .sidebar {
+      position: sticky;
+      top: 28px;
+      align-self: start;
+      max-height: calc(100vh - 56px);
+      overflow: auto;
+      padding: 20px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(17, 24, 39, 0.92);
+    }
+    .brand {
+      padding: 2px 10px 18px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .brand-mark::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--teal);
+      border-radius: 3px;
+      transform: rotate(45deg);
+    }
+    .brand small { display: block; margin-top: 6px; color: var(--faint); }
+    .toc { display: grid; gap: 4px; }
+    .toc a {
+      padding: 8px 10px;
+      border-left: 2px solid transparent;
+      border-radius: 0 8px 8px 0;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: 160ms ease;
+    }
+    .toc a:hover, .toc a.active {
+      color: var(--text);
+      border-left-color: var(--teal);
+      background: var(--surface-2);
+    }
+    .toc .sub { padding-left: 24px; font-size: 13px; }
+    .sidebar-actions { display: grid; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 9px 12px;
+      cursor: pointer;
+    }
+    .btn:hover { border-color: var(--blue); }
+    main { min-width: 0; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 46px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -90px;
+      top: -110px;
+      width: 330px;
+      height: 330px;
+      border: 1px solid #29476f;
+      border-radius: 50%;
+      box-shadow: 0 0 0 44px rgba(42, 71, 111, 0.12), 0 0 0 88px rgba(42, 71, 111, 0.08);
+      pointer-events: none;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+    .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--teal); }
+    h1, h2, h3, h4 { line-height: 1.38; margin: 0; letter-spacing: -0.015em; }
+    h1 { position: relative; z-index: 1; max-width: 760px; font-size: clamp(32px, 5vw, 52px); }
+    h2 { font-size: 29px; margin-bottom: 14px; }
+    h3 { font-size: 22px; }
+  h4 { font-size: 17px; }
+    .hero .lead { position: relative; z-index: 1; max-width: 770px; margin: 22px 0 0; color: var(--muted); font-size: 18px; }
+    .source { position: relative; z-index: 1; margin-top: 24px; color: var(--faint); font-size: 13px; overflow-wrap: anywhere; }
+    .source code { color: var(--blue); }
+    .stats { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 32px; }
+    .stat { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: rgba(11, 16, 27, 0.65); }
+    .stat strong { display: block; font-size: 26px; color: var(--text); line-height: 1.2; }
+    .stat span { color: var(--muted); font-size: 13px; }
+    section { margin-top: 76px; }
+    .section-head { margin-bottom: 26px; }
+    .section-kicker { color: var(--teal); font-size: 13px; font-weight: 700; letter-spacing: 0.12em; margin-bottom: 8px; }
+    .section-head p { max-width: 850px; color: var(--muted); margin: 10px 0 0; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 24px;
+    }
+    .thesis {
+      margin-top: 24px;
+      padding: 28px 30px;
+      border-left: 3px solid var(--teal);
+      background: var(--teal-soft);
+    }
+    .thesis p { margin: 0; font-size: 19px; line-height: 1.8; }
+    .thesis small { display: block; margin-top: 12px; color: var(--muted); }
+    figure { margin: 24px 0 0; }
+    .figure-card { padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: #0e1626; }
+    .figure-card svg { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 12px; color: var(--faint); font-size: 13px; text-align: center; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th, td { padding: 16px 18px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { color: var(--blue); background: var(--surface-2); font-size: 13px; letter-spacing: 0.05em; }
+    td { color: var(--muted); }
+    td:first-child { color: var(--text); font-weight: 650; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: rgba(131, 170, 255, 0.035); }
+    .tag {
+      display: inline-block;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--surface-2);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .tag.blue { color: var(--blue); border-color: #315185; background: var(--blue-soft); }
+    .tag.teal { color: var(--teal); border-color: #28685e; background: var(--teal-soft); }
+    .tag.amber { color: var(--amber); border-color: #6a522c; background: var(--amber-soft); }
+    .tag.coral { color: var(--coral); border-color: #75473f; background: var(--coral-soft); }
+    .positioning { margin-top: 18px; color: var(--muted); }
+    .positioning strong { color: var(--text); }
+    .research-group { margin-top: 46px; }
+    .group-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px; }
+    .group-index {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid #315185;
+      border-radius: 10px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-weight: 700;
+    }
+    .group-head p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+    .research-list { display: grid; gap: 12px; margin-top: 18px; }
+    .research-item {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 16px;
+      padding: 20px 22px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+    .research-item:hover { border-color: #3b5175; }
+    .number { color: var(--teal); font-size: 24px; font-weight: 750; line-height: 1.3; font-variant-numeric: tabular-nums; }
+    .research-item p { margin: 7px 0 0; color: var(--muted); }
+    .research-item .idea { color: var(--blue); }
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .inspiration-grid { display: grid; gap: 16px; }
+    .inspiration {
+      position: relative;
+      overflow: hidden;
+      padding: 26px 28px 26px 88px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .inspiration .big-no {
+      position: absolute;
+      left: 24px;
+      top: 24px;
+      color: var(--purple);
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .inspiration p { color: var(--muted); margin: 10px 0 0; }
+    .inspiration .question { color: var(--text); font-size: 17px; }
+    .experiment-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .experiment { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .experiment .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .experiment .index { color: var(--amber); font-size: 28px; font-weight: 800; }
+    .experiment p { color: var(--muted); margin: 10px 0 0; }
+    .recommendation {
+      margin-top: 26px;
+      padding: 34px;
+      border: 1px solid #28685e;
+      border-radius: var(--radius);
+      background: var(--teal-soft);
+      text-align: center;
+    }
+    .recommendation .label { color: var(--teal); font-size: 13px; letter-spacing: 0.1em; }
+    .recommendation blockquote { margin: 14px auto; max-width: 760px; font-size: 25px; line-height: 1.6; font-weight: 700; }
+    .recommendation p { margin: 0 auto; max-width: 800px; color: var(--muted); }
+    .note { margin-top: 20px; padding: 18px 20px; border: 1px solid #6a522c; border-radius: 12px; background: var(--amber-soft); color: var(--muted); }
+    .note strong { color: var(--amber); }
+    footer { margin-top: 70px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; }
+    .back-top { position: fixed; right: 24px; bottom: 24px; width: 42px; height: 42px; border-radius: 50%; padding: 0; opacity: 0; pointer-events: none; transition: 160ms ease; }
+    .back-top.show { opacity: 1; pointer-events: auto; }
+    .svg-label { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; fill: #edf2fb; font-size: 14px; font-weight: 600; }
+    .svg-small { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; fill: #aab6cb; font-size: 12px; }
+    .svg-line { stroke: #486385; stroke-width: 1.5; fill: none; }
+    @media (max-width: 1120px) {
+      .layout { grid-template-columns: 1fr; max-width: 1040px; }
+      .sidebar { display: none; }
+    }
+    @media (max-width: 760px) {
+      .layout { padding: 16px 14px 60px; }
+      .hero { padding: 28px 22px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .experiment-grid, .two-col { grid-template-columns: 1fr; }
+      section { margin-top: 56px; }
+      .research-item { grid-template-columns: 38px minmax(0, 1fr); padding: 18px 16px; gap: 10px; }
+      .inspiration { padding: 74px 22px 24px; }
+      .inspiration .big-no { left: 22px; }
+      h2 { font-size: 25px; }
+      .recommendation blockquote { font-size: 21px; }
+    }
+    @media print {
+      :root { --bg: #fff; --surface: #fff; --surface-2: #f3f5f8; --text: #172033; --muted: #43506a; --faint: #667085; --line: #d5dbe5; }
+      body { font-size: 11pt; }
+      .layout { display: block; max-width: none; padding: 0; }
+      .sidebar, .back-top, .progress { display: none !important; }
+      .hero { box-shadow: none; }
+      .card, .research-item, .experiment, .inspiration, .table-wrap, figure { break-inside: avoid; }
+      section { margin-top: 40px; }
+      .figure-card { background: #f7f9fc; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <div class="layout">
+    <aside class="sidebar" aria-label="章节目录">
+      <div class="brand">
+        <div class="brand-mark">研究图谱</div>
+        <small>毕业设计方案解读</small>
+      </div>
+      <nav class="toc">
+        <a href="#overview">课题总体定位</a>
+        <a href="#fields">一、相关领域与方向</a>
+        <a href="#core">二、核心研究点</a>
+        <a class="sub" href="#state">1. 状态价值与生命周期</a>
+        <a class="sub" href="#memory">2. 记忆压缩与前缀 KV</a>
+        <a class="sub" href="#planning">3. 缓存—算力联合配置</a>
+        <a class="sub" href="#scheduling">4. 调度与多租户公平</a>
+        <a href="#extensions">三、拓展研究点</a>
+        <a href="#inspirations">四、五个灵感切口</a>
+        <a href="#judgement">五、选题判断与预实验</a>
+      </nav>
+      <div class="sidebar-actions">
+        <button class="btn" type="button" onclick="window.print()">打印 / 导出 PDF</button>
+      </div>
+    </aside>
+
+    <main>
+      <header class="hero" id="overview">
+        <div class="eyebrow">研究地图 · 方案讨论稿解读</div>
+        <h1>毕业设计相关领域<br>与研究点图谱</h1>
+        <p class="lead">从 Agent 记忆到大模型推理，从 Flink 状态管理到多租户调度：把分散的研究问题放进同一张跨层系统地图。</p>
+        <div class="source">解读来源：<code>Design/design_prototype/毕业设计选题细化与研究方案讨论稿.md</code><br>文档形成日期：2026-10-08</div>
+        <div class="stats" aria-label="内容统计">
+          <div class="stat"><strong>13</strong><span>相关领域</span></div>
+          <div class="stat"><strong>20</strong><span>核心研究点</span></div>
+          <div class="stat"><strong>12</strong><span>拓展研究点</span></div>
+          <div class="stat"><strong>5</strong><span>重点灵感切口</span></div>
+        </div>
+      </header>
+
+      <div class="thesis">
+        <p>把多轮 Agent 中可复用的<strong>语义状态、知识、回答和前缀 KV</strong> 统一纳入资源管理，研究状态复用与<strong>推理成本、SLO、质量、公平和故障恢复</strong>之间的矛盾。</p>
+        <small>因此，它不只是“缓存研究”，而是一个典型的 MLSys + 分布式系统 + 数据管理 + 在线调度优化交叉课题。</small>
+      </div>
+
+      <figure class="figure-card">
+        <svg viewBox="0 0 920 500" role="img" aria-labelledby="domain-title domain-desc">
+          <title id="domain-title">毕业设计相关领域图谱</title>
+          <desc id="domain-desc">课题位于 Agent 系统、大模型推理、RAG、流处理、调度、数据库、性能优化和容错安全的交叉位置。</desc>
+          <defs>
+            <marker id="arrow-domain" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#486385" stroke-width="1.5"/>
+            </marker>
+          </defs>
+          <path class="svg-line" d="M370 225L220 125M460 210L460 125M550 225L700 125M350 265L220 265M570 265L700 265M370 320L220 405M460 335L460 405M550 320L700 405" marker-end="url(#arrow-domain)"/>
+          <g><rect x="90" y="65" width="240" height="70" rx="13" fill="#182c52" stroke="#315185"/><text class="svg-label" x="210" y="94" text-anchor="middle">Agent 系统与记忆</text><text class="svg-small" x="210" y="116" text-anchor="middle">摘要、事实、会话状态</text></g>
+          <g><rect x="340" y="55" width="240" height="70" rx="13" fill="#182c52" stroke="#315185"/><text class="svg-label" x="460" y="84" text-anchor="middle">LLM 推理服务</text><text class="svg-small" x="460" y="106" text-anchor="middle">Prefill、Decode、KV</text></g>
+          <g><rect x="590" y="65" width="240" height="70" rx="13" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="710" y="94" text-anchor="middle">RAG 与语义缓存</text><text class="svg-small" x="710" y="116" text-anchor="middle">检索、验证、回答复用</text></g>
+          <g><rect x="80" y="230" width="250" height="70" rx="13" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="205" y="259" text-anchor="middle">流处理与分布式状态</text><text class="svg-small" x="205" y="281" text-anchor="middle">Flink、控制面、恢复</text></g>
+          <g><rect x="335" y="205" width="250" height="135" rx="18" fill="#182c52" stroke="#83aaff" stroke-width="2"/><text class="svg-label" x="460" y="245" text-anchor="middle" style="font-size:19px">流式 Agent 推理</text><text class="svg-label" x="460" y="275" text-anchor="middle" style="font-size:19px">跨层状态协同优化</text><text class="svg-small" x="460" y="308" text-anchor="middle" style="fill:#62d7bd">状态 × 资源 × 调度</text></g>
+          <g><rect x="590" y="230" width="250" height="70" rx="13" fill="#182c52" stroke="#315185"/><text class="svg-label" x="715" y="259" text-anchor="middle">调度与多租户公平</text><text class="svg-small" x="715" y="281" text-anchor="middle">SLO、亲和、饥饿保护</text></g>
+          <g><rect x="80" y="395" width="250" height="70" rx="13" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="205" y="424" text-anchor="middle">数据库与缓存管理</text><text class="svg-small" x="205" y="446" text-anchor="middle">准入、替换、失效</text></g>
+          <g><rect x="335" y="395" width="250" height="70" rx="13" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="460" y="424" text-anchor="middle">性能建模与优化</text><text class="svg-small" x="460" y="446" text-anchor="middle">队列、预测、组合优化</text></g>
+          <g><rect x="590" y="395" width="250" height="70" rx="13" fill="#182c52" stroke="#315185"/><text class="svg-label" x="715" y="424" text-anchor="middle">容错、安全与隐私</text><text class="svg-small" x="715" y="446" text-anchor="middle">版本、ACL、故障语义</text></g>
+        </svg>
+        <figcaption>图 1｜课题领域定位：Agent 应用、大模型推理系统、流式数据管理与资源优化的交叉点</figcaption>
+      </figure>
+
+      <section id="fields">
+        <div class="section-head">
+          <div class="section-kicker">01 · RESEARCH LANDSCAPE</div>
+          <h2>最相关的领域与方向</h2>
+          <p>每个领域都对应不同的研究语言。理解这些连接，有助于从数据库、操作系统、机器学习系统和调度优化中寻找可迁移的方法。</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>相关领域</th><th>与课题的结合点</th><th>可以重点关注的概念</th></tr></thead>
+            <tbody>
+              <tr><td>MLSys／大模型推理系统</td><td>提高 vLLM 推理效率、降低 GPU 成本</td><td>Prefill/Decode、连续组批、Prefix Cache、SLO goodput、推理服务控制面</td></tr>
+              <tr><td>Agent 系统与长期记忆</td><td>管理多轮会话中的摘要、事实、偏好、目标和历史回答</td><td>会话记忆、状态演化、事实 supersession、记忆压缩、上下文保真度</td></tr>
+              <tr><td>分布式流处理</td><td>用 Flink 管理会话状态、缓存目录、配置和调度状态</td><td>Keyed State、Broadcast State、Checkpoint、Rescale、事件时间、异步 I/O</td></tr>
+              <tr><td>数据库与缓存管理</td><td>决定缓存什么、何时刷新、淘汰和重建</td><td>准入、替换、价值密度、物化结果、依赖失效、冷热数据、分层存储</td></tr>
+              <tr><td>云计算资源管理</td><td>联合配置缓存容量、worker 并行度和 batch size</td><td>弹性伸缩、资源分配、容量规划、重配置成本、负载漂移</td></tr>
+              <tr><td>调度与多租户公平</td><td>平衡缓存亲和、负载均衡、SLO 和租户公平</td><td>Deficit scheduling、EDF/slack、局部性感知调度、饥饿保护、准入控制</td></tr>
+              <tr><td>RAG 与信息检索</td><td>缓存文档、embedding、检索结果及其版本和权限</td><td>ANN、知识新鲜度、检索复用、版本一致性、语义验证</td></tr>
+              <tr><td>NLP 与语义质量保障</td><td>控制摘要压缩和语义回答复用带来的质量损失</td><td>语义相似度、事实一致性、轻量 verifier、错误预算、上下文压缩</td></tr>
+              <tr><td>性能建模与排队论</td><td>预测不同缓存命中路径下的尾时延和队列稳定性</td><td>混合时延分布、状态相关服务时间、P95/P99、工作量队列、输出长度预测</td></tr>
+              <tr><td>运筹优化与在线决策</td><td>求解多层预算和推理配置，并控制配置切换</td><td>多重选择背包、离散搜索、机会约束、切换成本、在线优化、Pareto 分析</td></tr>
+              <tr><td>可靠性与容错系统</td><td>区分 Flink 可恢复状态和 vLLM 易失状态，处理陈旧目录</td><td>故障恢复、幂等、不确定性状态、控制面/数据面一致性</td></tr>
+              <tr><td>安全、隐私与多租户隔离</td><td>防止跨租户 KV、知识和回答被错误复用</td><td>ACL、信任域、cache salt、权限失效、缓存侧信道</td></tr>
+              <tr><td>计算机体系结构与内存层次</td><td>理解 HBM、CPU 内存和外部 KV 层之间的收益与成本</td><td>Memory hierarchy、KV offloading、数据迁移、HBM 压力、存算分离</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="positioning">从论文归属看，最自然的主标签是 <strong>“面向 Agent 工作负载的大模型推理系统”</strong>；Flink 是控制面实现基础，缓存、调度和优化是核心机制。</p>
+      </section>
+
+      <section id="core">
+        <div class="section-head">
+          <div class="section-kicker">02 · CORE RESEARCH QUESTIONS</div>
+          <h2>与当前主线最贴合的 20 个研究点</h2>
+          <p>这些研究点不是 20 个待实现模块，而是同一主线下可以检验的机制问题。真正进入论文的，应当是少数有清晰变量、反例和实验闭环的问题。</p>
+        </div>
+
+        <div class="research-group" id="state">
+          <div class="group-head"><div class="group-index">1</div><div><h3>跨层状态价值建模与生命周期</h3><p>从“缓存是否命中”推进到“保留状态是否真正节省系统成本”。</p></div></div>
+          <figure class="figure-card">
+            <svg viewBox="0 0 920 270" role="img" aria-labelledby="state-title state-desc">
+              <title id="state-title">跨层状态生命周期</title>
+              <desc id="state-desc">四层状态经过观测、估值、准入、驻留、刷新或失效和重建的统一生命周期。</desc>
+              <defs><marker id="arrow-state" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#486385" stroke-width="1.5"/></marker></defs>
+              <g><rect x="35" y="30" width="185" height="45" rx="10" fill="#182c52" stroke="#315185"/><text class="svg-label" x="127" y="58" text-anchor="middle">会话语义状态</text></g>
+              <g><rect x="255" y="30" width="185" height="45" rx="10" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="347" y="58" text-anchor="middle">RAG 知识状态</text></g>
+              <g><rect x="475" y="30" width="185" height="45" rx="10" fill="#182c52" stroke="#315185"/><text class="svg-label" x="567" y="58" text-anchor="middle">历史回答状态</text></g>
+              <g><rect x="695" y="30" width="185" height="45" rx="10" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="787" y="58" text-anchor="middle">前缀 KV 状态</text></g>
+              <path class="svg-line" d="M127 75L127 105L450 105M347 75L347 105M567 75L567 105L470 105M787 75L787 105L490 105M460 105L460 130" marker-end="url(#arrow-state)"/>
+              <g><rect x="35" y="145" width="120" height="58" rx="10" fill="#162033" stroke="#2a3852"/><text class="svg-label" x="95" y="170" text-anchor="middle">观测</text><text class="svg-small" x="95" y="190" text-anchor="middle">复用与成本</text></g>
+              <g><rect x="185" y="145" width="120" height="58" rx="10" fill="#162033" stroke="#2a3852"/><text class="svg-label" x="245" y="170" text-anchor="middle">估值</text><text class="svg-small" x="245" y="190" text-anchor="middle">净收益与风险</text></g>
+              <g><rect x="335" y="145" width="120" height="58" rx="10" fill="#182c52" stroke="#315185"/><text class="svg-label" x="395" y="170" text-anchor="middle">准入</text><text class="svg-small" x="395" y="190" text-anchor="middle">多介质预算</text></g>
+              <g><rect x="485" y="145" width="120" height="58" rx="10" fill="#182c52" stroke="#315185"/><text class="svg-label" x="545" y="170" text-anchor="middle">驻留</text><text class="svg-small" x="545" y="190" text-anchor="middle">稳定与抗抖动</text></g>
+              <g><rect x="635" y="145" width="120" height="58" rx="10" fill="#3b2e1a" stroke="#6a522c"/><text class="svg-label" x="695" y="170" text-anchor="middle">刷新 / 失效</text><text class="svg-small" x="695" y="190" text-anchor="middle">依赖与版本</text></g>
+              <g><rect x="785" y="145" width="100" height="58" rx="10" fill="#422624" stroke="#75473f"/><text class="svg-label" x="835" y="170" text-anchor="middle">重建</text><text class="svg-small" x="835" y="190" text-anchor="middle">恢复代价</text></g>
+              <path class="svg-line" d="M155 174L180 174M305 174L330 174M455 174L480 174M605 174L630 174M755 174L780 174" marker-end="url(#arrow-state)"/>
+              <text class="svg-small" x="460" y="242" text-anchor="middle" style="fill:#62d7bd">统一目标：可避免成本 − 状态管理税 − 质量与陈旧风险</text>
+            </svg>
+            <figcaption>图 2｜四类状态共享生命周期，但介质、失效条件和重建成本并不相同</figcaption>
+          </figure>
+          <div class="research-list">
+            <article class="research-item"><div class="number">01</div><div><h4>从“命中率”转向“可避免成本”</h4><p>研究一次命中究竟省了多少 GPU-ms、prefill token、远端读取和网络传输，再扣除查询、验证、维护和重建成本。可以形成统一的“状态净收益”模型，而不是四套独立缓存评分。</p></div></article>
+            <article class="research-item"><div class="number">02</div><div><h4>多介质约束下的分层缓存分配</h4><p>HBM、CPU 内存、Flink 状态和 ANN 索引不能合并成一个容量池。可以研究“多背包、多状态层”的预算分配，以及不同介质之间何时值得迁移或重建。</p></div></article>
+            <article class="research-item"><div class="number">03</div><div><h4>冷启动到暖态的复用概率估计</h4><p>新条目缺少历史时依靠内容、租户和会话特征；观测增多后转向在线统计。进一步可研究置信区间、漂移检测和不确定性感知淘汰，而不只是 LightGBM 与频率分数加权。</p></div></article>
+            <article class="research-item"><div class="number">04</div><div><h4>缓存抗抖动与稳定生命周期</h4><p>预算频繁变化会造成缓存 churn。最短驻留时间、替换比例限制、扩缩容滞后都可以成为独立实验：稳定机制究竟减少了多少重建和尾时延？</p></div></article>
+            <article class="research-item"><div class="number">05</div><div><h4>依赖图驱动的失效传播</h4><p>把 transcript、摘要、RAG、回答和 KV 建模为依赖 DAG，研究知识版本、ACL、模型、tokenizer、prompt 模板变化时，哪些派生状态必须失效，哪些仍可安全保留。</p></div></article>
+          </div>
+        </div>
+
+        <div class="research-group" id="memory">
+          <div class="group-head"><div class="group-index">2</div><div><h3>Agent 记忆压缩与前缀 KV 的协同</h3><p>压缩并不总是降低成本：它既可能减少未来 prefill，也可能立即摧毁已有前缀。</p></div></div>
+          <figure class="figure-card">
+            <svg viewBox="0 0 920 300" role="img" aria-labelledby="memory-title memory-desc">
+              <title id="memory-title">摘要压缩与前缀 KV 重建的权衡</title>
+              <desc id="memory-desc">原始长上下文保留已有 KV，摘要重写降低未来输入长度，却需要重建 KV，并提出何时压缩才划算的问题。</desc>
+              <defs><marker id="arrow-memory" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#486385" stroke-width="1.5"/></marker></defs>
+              <g><rect x="40" y="48" width="240" height="88" rx="14" fill="#182c52" stroke="#315185"/><text class="svg-label" x="160" y="78" text-anchor="middle">原始长上下文</text><text class="svg-small" x="160" y="102" text-anchor="middle">旧前缀 KV 可继续使用</text><text class="svg-small" x="160" y="122" text-anchor="middle">未来 prefill 持续偏长</text></g>
+              <g><rect x="640" y="48" width="240" height="88" rx="14" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="760" y="78" text-anchor="middle">压缩后的摘要上下文</text><text class="svg-small" x="760" y="102" text-anchor="middle">未来输入变短</text><text class="svg-small" x="760" y="122" text-anchor="middle">旧前缀失效，需要重建</text></g>
+              <path class="svg-line" d="M290 92L625 92" marker-end="url(#arrow-memory)"/>
+              <g><rect x="345" y="52" width="230" height="80" rx="12" fill="#3b2e1a" stroke="#6a522c"/><text class="svg-label" x="460" y="82" text-anchor="middle">摘要生成与语义重写</text><text class="svg-small" x="460" y="108" text-anchor="middle">立即成本 + 质量风险</text></g>
+              <g><rect x="105" y="190" width="710" height="70" rx="14" fill="#162033" stroke="#2a3852"/><text class="svg-label" x="460" y="220" text-anchor="middle">何时压缩才划算？</text><text class="svg-small" x="460" y="244" text-anchor="middle">未来剩余轮数 × 节省的 prefill ＞ 摘要生成 + KV 重建 + 质量损失</text></g>
+              <path class="svg-line" d="M160 136L160 175L300 175L300 190M760 136L760 175L620 175L620 190"/>
+            </svg>
+            <figcaption>图 3｜摘要—KV 联合决策：用跨轮收益摊销一次性的压缩与重建成本</figcaption>
+          </figure>
+          <div class="research-list">
+            <article class="research-item"><div class="number">06</div><div><h4>摘要压缩与 KV 重建的联合决策</h4><p>这是文档里很有辨识度的问题：摘要缩短未来 prompt，但会立即破坏旧前缀。可以研究“何时压缩才划算”，用未来剩余轮数、上下文长度、重建成本和质量损失共同触发。</p></div></article>
+            <article class="research-item"><div class="number">07</div><div><h4>冻结摘要与增量事实的双层记忆</h4><p>冻结摘要维持稳定 KV 前缀，结构化事实通过追加或 supersession 表达变化。可以比较“反复重写摘要”“完全冻结摘要”“冻结摘要＋增量事实”在质量、KV 命中和成本上的差异。</p></div></article>
+            <article class="research-item"><div class="number">08</div><div><h4>面向 SLO 的自适应上下文保真度</h4><p>不是所有会话都需要相同摘要精度。可根据租户质量预算、当前负载和会话价值选择原始历史、粗摘要、细摘要或结构化事实，研究质量—时延—资源三者关系。</p></div></article>
+            <article class="research-item"><div class="number">09</div><div><h4>会话未来价值预测</h4><p>预测一个会话是否还会继续、还会多少轮、是否可能复用当前状态。它可统一指导摘要生成、缓存准入、KV 保留和预热，避免为“一次性会话”支付管理成本。</p></div></article>
+          </div>
+        </div>
+
+        <div class="research-group" id="planning">
+          <div class="group-head"><div class="group-index">3</div><div><h3>缓存—算力联合配置</h3><p>缓存不是独立于推理资源的旁路模块，它会改变排队、服务时间和最优推理配置。</p></div></div>
+          <figure class="figure-card">
+            <svg viewBox="0 0 920 270" role="img" aria-labelledby="planning-title planning-desc">
+              <title id="planning-title">状态层、规划层与执行层的闭环</title>
+              <desc id="planning-desc">状态层输出收益曲线，规划层选择缓存预算和推理配置，执行层反馈命中、时延、错误和服务份额。</desc>
+              <defs><marker id="arrow-planning" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#486385" stroke-width="1.5"/></marker></defs>
+              <g><rect x="55" y="58" width="235" height="115" rx="16" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="172" y="88" text-anchor="middle" style="font-size:17px">状态层</text><text class="svg-small" x="172" y="116" text-anchor="middle">估计复用价值与管理税</text><text class="svg-small" x="172" y="141" text-anchor="middle">输出：预算—收益—风险曲线</text></g>
+              <g><rect x="345" y="58" width="235" height="115" rx="16" fill="#182c52" stroke="#315185"/><text class="svg-label" x="462" y="88" text-anchor="middle" style="font-size:17px">规划层</text><text class="svg-small" x="462" y="116" text-anchor="middle">联合选择缓存与推理资源</text><text class="svg-small" x="462" y="141" text-anchor="middle">输出：p、b、四层预算</text></g>
+              <g><rect x="635" y="58" width="235" height="115" rx="16" fill="#182c52" stroke="#315185"/><text class="svg-label" x="752" y="88" text-anchor="middle" style="font-size:17px">执行层</text><text class="svg-small" x="752" y="116" text-anchor="middle">准入、复用、组批与路由</text><text class="svg-small" x="752" y="141" text-anchor="middle">输出：SLO goodput 与公平</text></g>
+              <path class="svg-line" d="M290 115L335 115M580 115L625 115" marker-end="url(#arrow-planning)"/>
+              <path class="svg-line" d="M752 173L752 220L172 220L172 183" marker-end="url(#arrow-planning)"/>
+              <text class="svg-small" x="462" y="242" text-anchor="middle">反馈：命中、尾时延、错误率、队列、服务份额与重配置成本</text>
+            </svg>
+            <figcaption>图 4｜三层分解的核心闭环：慢环规划与快环调度相互反馈</figcaption>
+          </figure>
+          <div class="research-list">
+            <article class="research-item"><div class="number">10</div><div><h4>缓存预算是否改变最优并行度和 batch size</h4><p>这是研究点二能否成立的关键预实验。如果缓存增大后最优 <span class="idea">(p,b)</span> 基本不变，联合规划的必要性就弱；如果明显变化，就能形成很强的因果证据链。</p></div></article>
+            <article class="research-item"><div class="number">11</div><div><h4>基于收益曲线的分层优化</h4><p>状态层先压缩成有限的“预算—收益—风险”曲线，规划器再选择各层 operating point。可以研究这种分解相对联合 oracle 损失多少最优性，以及为何能降低在线求解成本。</p></div></article>
+            <article class="research-item"><div class="number">12</div><div><h4>混合路径下的尾时延预测</h4><p>回答命中、KV 命中和完全未命中对应不同服务时间分布。可研究分支感知预测、分位数校准和保守安全裕量，避免“平均预测很准，P95 完全失真”。</p></div></article>
+            <article class="research-item"><div class="number">13</div><div><h4>带切换成本的在线重配置</h4><p>新配置不仅要更优，还要足以覆盖 rescale、索引重建、KV 冷失效和队列扰动成本。可进一步抽象为“带切换成本的在线优化”，比较立即切换、冷却期和预测性切换。</p></div></article>
+            <article class="research-item"><div class="number">14</div><div><h4>不可行 SLO 下的过载决策</h4><p>当所有配置都无法满足约束时，研究排队、降级和快速拒绝的选择。重点不是提高报表上的达成率，而是最大化真正满足质量和时延要求的 SLO goodput。</p></div></article>
+          </div>
+        </div>
+
+        <div class="research-group" id="scheduling">
+          <div class="group-head"><div class="group-index">4</div><div><h3>缓存感知调度与公平</h3><p>请求应该何时等待本地缓存、何时异地重算，以及如何避免容易命中的租户长期占优。</p></div></div>
+          <figure class="figure-card">
+            <svg viewBox="0 0 920 330" role="img" aria-labelledby="scheduler-title scheduler-desc">
+              <title id="scheduler-title">缓存感知两级调度与路由</title>
+              <desc id="scheduler-desc">请求先经过租户公平与饥饿保护，再根据剩余 slack 排序，最后比较本地等待加剩余 prefill 和异地立即重算。</desc>
+              <defs><marker id="arrow-scheduler" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#486385" stroke-width="1.5"/></marker></defs>
+              <g><rect x="40" y="110" width="140" height="80" rx="14" fill="#162033" stroke="#2a3852"/><text class="svg-label" x="110" y="140" text-anchor="middle">多租户请求</text><text class="svg-small" x="110" y="165" text-anchor="middle">SLO、质量、工作量</text></g>
+              <g><rect x="225" y="50" width="200" height="90" rx="14" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="325" y="80" text-anchor="middle">第一级：公平资格</text><text class="svg-small" x="325" y="105" text-anchor="middle">Weighted deficit</text><text class="svg-small" x="325" y="125" text-anchor="middle">饿死保护与服务成本</text></g>
+              <g><rect x="225" y="185" width="200" height="90" rx="14" fill="#182c52" stroke="#315185"/><text class="svg-label" x="325" y="215" text-anchor="middle">第二级：紧迫度</text><text class="svg-small" x="325" y="240" text-anchor="middle">剩余 slack 与 P95 预测</text><text class="svg-small" x="325" y="260" text-anchor="middle">有界等待与过载决策</text></g>
+              <g><rect x="485" y="110" width="175" height="90" rx="14" fill="#182c52" stroke="#315185"/><text class="svg-label" x="572" y="140" text-anchor="middle">缓存感知路由</text><text class="svg-small" x="572" y="165" text-anchor="middle">位置 × 置信度 × 亲和</text></g>
+              <g><rect x="720" y="38" width="160" height="80" rx="14" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="800" y="68" text-anchor="middle">本地执行</text><text class="svg-small" x="800" y="93" text-anchor="middle">排队 + 剩余 prefill</text></g>
+              <g><rect x="720" y="202" width="160" height="80" rx="14" fill="#3b2e1a" stroke="#6a522c"/><text class="svg-label" x="800" y="232" text-anchor="middle">异地重算</text><text class="svg-small" x="800" y="257" text-anchor="middle">更短队列 + 完整 prefill</text></g>
+              <path class="svg-line" d="M180 150L205 150L205 95L215 95M180 150L205 150L205 230L215 230M425 95L452 95L452 150L475 150M425 230L452 230L452 160L475 160M660 140L690 140L690 78L710 78M660 170L690 170L690 242L710 242" marker-end="url(#arrow-scheduler)"/>
+              <text class="svg-small" x="572" y="310" text-anchor="middle">核心比较：本地等待 + 复用收益，是否优于异地立即重算？</text>
+            </svg>
+            <figcaption>图 5｜公平、SLO 与局部性的解耦：先保证资格，再选择顺序，最后计算位置收益</figcaption>
+          </figure>
+          <div class="research-list">
+            <article class="research-item"><div class="number">15</div><div><h4>公平资格＋SLO 紧迫度的两级调度</h4><p>先通过 weighted deficit 保证租户不会被长期饿死，再按剩余 slack 选择请求。可以研究严格公平、严格 EDF 和两级机制在不同过载程度下的适用区间。</p></div></article>
+            <article class="research-item"><div class="number">16</div><div><h4>按真实工作量计量的公平</h4><p>长回答和短回答不能都计为“一次服务”。可比较请求数、token 数、GPU-ms、显存占用时间等公平计量方式，研究哪种最接近资源公平与体验公平。</p></div></article>
+            <article class="research-item"><div class="number">17</div><div><h4>缓存亲和性的显式放弃条件</h4><p>不只问“哪个 worker 有缓存”，而是比较本地排队＋剩余 prefill 与异地立即重算。可以加入滞后阈值，形成可解释的 local/recompute 路由机制。</p></div></article>
+            <article class="research-item"><div class="number">18</div><div><h4>不确定驻留感知的路由</h4><p>Flink 目录只能表示“最近观察到 KV 在某 worker”，并不能保证仍存在。可以为目录记录维护置信度或年龄，让路由器在“相信目录、保守重算、主动探测”之间选择。</p></div></article>
+            <article class="research-item"><div class="number">19</div><div><h4>缓存感知组批与最大等待时间</h4><p>相同前缀、相近输出长度和相近 SLO 的请求组批可能更高效，但等待会增加尾时延。这里可以量化“多少组批收益值得多少额外等待”。</p></div></article>
+            <article class="research-item"><div class="number">20</div><div><h4>公平、局部性和效率的 Pareto 边界</h4><p>与其只证明某个算法更好，不如画出不同公平强度下的 locality 损失和 SLO goodput 变化，回答“公平究竟要付出多少缓存效率代价”。</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="extensions">
+        <div class="section-head">
+          <div class="section-kicker">03 · EXTENSIONS</div>
+          <h2>可以继续激发的 12 个拓展研究点</h2>
+          <p>这些不一定都应纳入当前论文，但很适合作为创新候选或后续工作。定位标签用于判断与主线的距离和实施风险，不代表已经验证的新颖性。</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>拓展点</th><th>核心问题</th><th>建议定位</th></tr></thead>
+            <tbody>
+              <tr><td>选择性语义验证</td><td>verifier 本身可能比回源推理更贵；能否只对高风险、高价值回答验证？</td><td><span class="tag teal">很自然的中等规模扩展</span></td></tr>
+              <tr><td>质量预算的跨层分配</td><td>上下文、RAG、回答三层应该各分到多少错误预算？能否随负载动态调整？</td><td><span class="tag amber">创新潜力高，扩大优化空间</span></td></tr>
+              <tr><td>管理税感知控制</td><td>ANN、验证、checkpoint、状态 I/O 开销何时超过缓存收益？</td><td><span class="tag teal">适合形成适用边界</span></td></tr>
+              <tr><td>漂移触发的重规划</td><td>热点、租户比例和上下文长度变化达到什么程度才值得重配？</td><td><span class="tag blue">与慢环规划自然结合</span></td></tr>
+              <tr><td>空闲时段会话预热</td><td>预测会话即将继续时，能否利用空闲 GPU 预先恢复前缀 KV？</td><td><span class="tag amber">预测错误会浪费资源</span></td></tr>
+              <tr><td>状态重建与数据迁移的选择</td><td>异地重算、外部加载、本地等待三者如何比较？</td><td><span class="tag coral">外部 KV 层，工程风险较高</span></td></tr>
+              <tr><td>恢复期的特殊调度策略</td><td>故障后缓存大量失效，是否应临时降低亲和权重、限制预热并保护高优先级租户？</td><td><span class="tag blue">区别于普通稳态调度</span></td></tr>
+              <tr><td>缓存权限变更的及时性</td><td>ACL 收紧后，如何保证旧回答、知识和 KV 不再被复用？</td><td><span class="tag coral">需明确威胁模型</span></td></tr>
+              <tr><td>能耗与成本感知优化</td><td>最小 GPU-hours 是否也意味着最低能耗？缓存管理产生的 CPU/网络能耗是否值得？</td><td><span class="tag blue">额外评价维度</span></td></tr>
+              <tr><td>基准与负载生成器</td><td>如何可重复地生成多轮会话、版本更新、漂移、故障和多租户局部性？</td><td><span class="tag teal">辅助贡献</span></td></tr>
+              <tr><td>可解释控制与归因</td><td>每次调度为什么保留或放弃亲和、为什么拒绝或降级？</td><td><span class="tag blue">系统可观测性亮点</span></td></tr>
+              <tr><td>分解方法的 optimality gap</td><td>状态层、规划层、调度层分开优化，相对全局 oracle 损失多少？</td><td><span class="tag teal">增强理论与方法论</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="inspirations">
+        <div class="section-head">
+          <div class="section-kicker">04 · FIVE ENTRY POINTS</div>
+          <h2>最值得进一步思考的五个“灵感切口”</h2>
+          <p>它们分别从不确定性、质量、系统开销、重配置和适用边界切入，比简单增加一种缓存更容易形成机制级贡献。</p>
+        </div>
+        <div class="inspiration-grid">
+          <article class="inspiration"><div class="big-no">01</div><h3>把“状态是否可信”也变成调度输入</h3><p>现有调度通常关注缓存在哪里；你的方案还可以问：<span class="question">这个驻留记录有多大概率已经过时？</span></p><p>由此可发展出“带不确定性的缓存感知路由”，连接缓存系统、在线决策和故障恢复。</p></article>
+          <article class="inspiration"><div class="big-no">02</div><h3>把“质量预算”看成一种资源</h3><p>GPU、内存是硬资源，允许的错误率也是一种可分配预算。可以研究：<span class="question">应该把质量风险花在高收益回答复用上，还是花在更激进的上下文压缩上？</span></p><p>这会把 NLP 质量与系统资源优化真正连起来。</p></article>
+          <article class="inspiration"><div class="big-no">03</div><h3>把“缓存管理税”提升为一等公民</h3><p>很多系统只报告命中收益，你的方案可以同时测量查询、验证、刷新、checkpoint 和恢复成本。即使最终结论是“小状态规模不需要复杂 ML/CMS”，也是很有价值的边界性发现。</p></article>
+          <article class="inspiration"><div class="big-no">04</div><h3>把“重配置后的冷启动”纳入优化</h3><p>配置切换不是瞬时完成的，KV 丢失、缓存重建和索引迁移会形成短暂的性能低谷。可以研究：<span class="question">一次配置切换需要多长时间才能摊销？未来负载至少持续多久才值得切换？</span></p></article>
+          <article class="inspiration"><div class="big-no">05</div><h3>把“何时没有收益”做成核心结论</h3><p>例如 decode-bound 时 KV 亲和收益弱、短回答时 verifier 不划算、高更新知识不适合缓存、严格公平会削弱 locality。</p><p>这类结果能让论文从“又一个加速系统”升级为<strong>解释机制适用范围的系统研究</strong>。</p></article>
+        </div>
+      </section>
+
+      <section id="judgement">
+        <div class="section-head">
+          <div class="section-kicker">05 · PRIORITY & VALIDATION</div>
+          <h2>对当前选题的判断</h2>
+          <p>当前文档已经覆盖了足够多的方向，不建议继续增加并列模块。优先验证下面三个机制级矛盾，它们决定整篇论文是否真正成立。</p>
+        </div>
+        <div class="experiment-grid">
+          <article class="experiment"><div class="top"><span class="index">01</span><span class="tag amber">预实验 A</span></div><h3>摘要是否值得压缩</h3><p>摘要缩短上下文的收益，能否覆盖摘要生成和 KV 重建成本？</p></article>
+          <article class="experiment"><div class="top"><span class="index">02</span><span class="tag amber">预实验 B</span></div><h3>缓存是否改变资源配置</h3><p>缓存预算变化，是否足以改变最优推理并行度与 batch size？</p></article>
+          <article class="experiment"><div class="top"><span class="index">03</span><span class="tag amber">预实验 C</span></div><h3>局部性冲突是否真实存在</h3><p>在 2–4 GPU 上，缓存亲和、负载均衡和租户公平的冲突是否稳定存在？</p></article>
+        </div>
+        <figure class="figure-card">
+          <svg viewBox="0 0 920 250" role="img" aria-labelledby="roadmap-title roadmap-desc">
+            <title id="roadmap-title">从预实验到论文机制的验证路线</title>
+            <desc id="roadmap-desc">先验证机制是否存在，再固定接口和实现，然后构建求解与调度机制，最后做消融和适用边界分析。</desc>
+            <defs><marker id="arrow-roadmap" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#486385" stroke-width="1.5"/></marker></defs>
+            <g><rect x="45" y="65" width="180" height="100" rx="14" fill="#3b2e1a" stroke="#6a522c"/><text class="svg-label" x="135" y="96" text-anchor="middle">机制预实验</text><text class="svg-small" x="135" y="122" text-anchor="middle">矛盾是否稳定存在</text><text class="svg-small" x="135" y="143" text-anchor="middle">决定必要性与范围</text></g>
+            <g><rect x="275" y="65" width="180" height="100" rx="14" fill="#162033" stroke="#2a3852"/><text class="svg-label" x="365" y="96" text-anchor="middle">接口与实现</text><text class="svg-small" x="365" y="122" text-anchor="middle">状态 ID 与依赖记录</text><text class="svg-small" x="365" y="143" text-anchor="middle">测量、队列、故障口径</text></g>
+            <g><rect x="505" y="65" width="180" height="100" rx="14" fill="#182c52" stroke="#315185"/><text class="svg-label" x="595" y="96" text-anchor="middle">核心机制</text><text class="svg-small" x="595" y="122" text-anchor="middle">生命周期、规划、调度</text><text class="svg-small" x="595" y="143" text-anchor="middle">慢环与快环闭环</text></g>
+            <g><rect x="735" y="65" width="150" height="100" rx="14" fill="#123b3b" stroke="#28685e"/><text class="svg-label" x="810" y="96" text-anchor="middle">证据闭环</text><text class="svg-small" x="810" y="122" text-anchor="middle">消融与适用边界</text><text class="svg-small" x="810" y="143" text-anchor="middle">SLO、成本、公平</text></g>
+            <path class="svg-line" d="M225 115L265 115M455 115L495 115M685 115L725 115" marker-end="url(#arrow-roadmap)"/>
+            <text class="svg-small" x="460" y="210" text-anchor="middle">原则：先证明问题存在，再实现系统；先固定科学问题，再选择算法。</text>
+          </svg>
+          <figcaption>图 6｜建议的研究推进顺序：避免系统完成后才发现核心矛盾并不显著</figcaption>
+        </figure>
+        <div class="recommendation">
+          <div class="label">如果希望进一步突出一个鲜明特色</div>
+          <blockquote>“不确定状态与质量风险约束下的<br>跨层缓存协同控制”</blockquote>
+          <p>它能把现有的状态目录、版本失效、语义验证、缓存路由和故障恢复串起来，与单纯做 prefix-aware scheduling 或 semantic cache 的工作形成更清楚的差异。</p>
+        </div>
+        <div class="note"><strong>关于创新性表述：</strong>以上“创新潜力”是基于文档内容的选题判断；正式写成论文贡献前，仍需要针对具体问题进行系统文献检索，避免使用“首次”“首个”等未经验证的表述。</div>
+      </section>
+
+      <footer>
+        <div>毕业设计相关领域与研究点图谱 · 单页离线报告</div>
+        <div>内容依据：2026-10-08《毕业设计选题细化与研究方案讨论稿》及配套缓存探索文档。</div>
+      </footer>
+    </main>
+  </div>
+  <button class="btn back-top" id="backTop" type="button" aria-label="返回顶部">↑</button>
+  <script>
+    const progress = document.getElementById("progress");
+    const backTop = document.getElementById("backTop");
+    const navLinks = Array.from(document.querySelectorAll(".toc a"));
+    const sections = navLinks.map(link => document.querySelector(link.getAttribute("href"))).filter(Boolean);
+    function updateScroll() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? window.scrollY / max : 0;
+      progress.style.width = `${Math.min(100, Math.max(0, ratio * 100))}%`;
+      backTop.classList.toggle("show", window.scrollY > 600);
+    }
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      if (!visible) return;
+      navLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`));
+    }, { rootMargin: "-12% 0px -72% 0px", threshold: 0 });
+    sections.forEach(section => observer.observe(section));
+    backTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("resize", updateScroll);
+    updateScroll();
+  </script>
+</body>
+</html>

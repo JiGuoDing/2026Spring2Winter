@@ -1,0 +1,315 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
+  <title id="title">问题背景：请求会结束，状态不会</title>
+  <desc id="desc">从请求流、状态流到决策流的三层剖面。请求跨轮、跨会话、跨租户产生可复用状态；复用收益与管理税、质量风险并存，且价值随负载变化。三个耦合决策分别是状态生命周期、容量配置、调度路由。</desc>
+
+  <defs>
+    <style><![CDATA[
+      text { font-family: 'Source Han Sans SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; }
+      .kicker { font-size: 22px; font-weight: 700; fill: #155E52; letter-spacing: 2.5px; }
+      .thesis { font-size: 34px; font-weight: 700; fill: #23292E; letter-spacing: 0.5px; }
+      .goal { font-size: 20px; fill: #5F6B72; }
+      .num { font-size: 30px; font-weight: 700; fill: #B9C3BE; letter-spacing: 1px; }
+      .col-title { font-size: 31px; font-weight: 700; fill: #23292E; letter-spacing: 0.5px; }
+      .col-sub { font-size: 20px; fill: #5F6B72; }
+      .section { font-size: 24px; font-weight: 700; fill: #23292E; }
+      .label { font-size: 20px; fill: #5F6B72; }
+      .label-strong { font-size: 22px; font-weight: 700; fill: #23292E; }
+      .small { font-size: 18px; fill: #5F6B72; }
+      .tiny { font-size: 16px; fill: #7A868C; }
+      .mono { font-family: Consolas, 'IBM Plex Mono', monospace; }
+      .green { fill: #155E52; }
+      .amber { fill: #C9752F; }
+      .blue { fill: #4F6D8A; }
+      .red { fill: #B5544A; }
+      .gray { fill: #5F6B72; }
+      .faint { fill: #9AA5A1; }
+      .rule { stroke: #DDE3DE; stroke-width: 1.5; }
+      .hair { stroke: #E8ECE8; stroke-width: 1; }
+      .flow { fill: none; stroke: #155E52; stroke-width: 2.4; stroke-linecap: round; }
+      .flow-thin { fill: none; stroke: #155E52; stroke-width: 1.6; stroke-linecap: round; }
+      .reuse { fill: none; stroke: #155E52; stroke-width: 2; stroke-dasharray: 6 5; stroke-linecap: round; }
+      .feedback { fill: none; stroke: #155E52; stroke-width: 2; stroke-dasharray: 5 5; stroke-linecap: round; }
+      .riskline { fill: none; stroke: #B5544A; stroke-width: 1.8; stroke-dasharray: 5 4; stroke-linecap: round; }
+      .axis { fill: none; stroke: #9AA5A1; stroke-width: 1.4; stroke-linecap: round; }
+      .dash { fill: none; stroke: #9AA5A1; stroke-width: 1.6; stroke-dasharray: 5 5; stroke-linecap: round; }
+    ]]></style>
+
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#155E52"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#5F6B72"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#C9752F"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#B5544A"/>
+    </marker>
+
+    <pattern id="riskHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#D9A79F" stroke-width="2"/>
+    </pattern>
+    <pattern id="ragHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#9FB3C8" stroke-width="1.6"/>
+    </pattern>
+    <pattern id="respTaxHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#D9A79F" stroke-width="1.6"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="960" fill="#FFFFFF"/>
+
+  <!-- Top band -->
+  <g id="top-band">
+    <text x="40" y="48" class="kicker">问题背景</text>
+    <text x="156" y="52" class="thesis">请求会结束，状态不会</text>
+    <text x="1560" y="49" text-anchor="end" class="goal">目标：时延 / 质量 / 公平约束下降低单位成本</text>
+    <line x1="40" y1="72" x2="1560" y2="72" class="rule"/>
+  </g>
+
+  <!-- Panel headers -->
+  <g id="headers">
+    <text x="40" y="116" class="num">01</text>
+    <text x="82" y="115" class="col-title">请求流</text>
+    <text x="40" y="152" class="col-sub">不是独立请求</text>
+    <line x1="40" y1="164" x2="440" y2="164" class="rule"/>
+
+    <text x="460" y="116" class="num">02</text>
+    <text x="502" y="115" class="col-title">状态流</text>
+    <text x="460" y="152" class="col-sub">请求结束，状态仍在</text>
+    <line x1="460" y1="164" x2="1000" y2="164" class="rule"/>
+
+    <text x="1020" y="116" class="num">03</text>
+    <text x="1062" y="115" class="col-title">决策流</text>
+    <text x="1020" y="152" class="col-sub">三个耦合决策</text>
+    <line x1="1020" y1="164" x2="1560" y2="164" class="rule"/>
+  </g>
+
+  <!-- Left: request stream -->
+  <g id="request-stream">
+    <!-- load wave -->
+    <text x="40" y="202" class="small">多租户负载</text>
+    <path d="M40 228 C110 228 130 210 200 214 C270 218 300 200 380 204 C410 206 426 212 440 214" fill="none" stroke="#9FB3A8" stroke-width="2.4" stroke-linecap="round" opacity="0.75"/>
+    <line x1="40" y1="250" x2="440" y2="250" class="hair"/>
+
+    <!-- session lanes -->
+    <g>
+      <text x="40" y="306" class="label-strong">会话 1</text>
+      <line x1="130" y1="300" x2="440" y2="300" stroke="#DDE3DE" stroke-width="2"/>
+      <circle cx="160" cy="300" r="7" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="230" cy="300" r="7" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="300" cy="300" r="7" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="370" cy="300" r="7" fill="#FFFFFF" stroke="#155E52" stroke-width="2.4"/>
+
+      <text x="40" y="386" class="label-strong">会话 2</text>
+      <line x1="130" y1="380" x2="440" y2="380" stroke="#DDE3DE" stroke-width="2"/>
+      <circle cx="160" cy="380" r="7" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="230" cy="380" r="7" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="300" cy="380" r="7" fill="#FFFFFF" stroke="#155E52" stroke-width="2.4"/>
+      <circle cx="370" cy="380" r="7" fill="#FFFFFF" stroke="#155E52" stroke-width="2.4"/>
+
+      <text x="40" y="466" class="label-strong">会话 3</text>
+      <line x1="130" y1="460" x2="440" y2="460" stroke="#DDE3DE" stroke-width="2"/>
+      <circle cx="160" cy="460" r="7" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="230" cy="460" r="7" fill="#FFFFFF" stroke="#155E52" stroke-width="2.4"/>
+      <circle cx="300" cy="460" r="7" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="370" cy="460" r="7" fill="#FFFFFF" stroke="#155E52" stroke-width="2.4"/>
+    </g>
+
+    <!-- cross-session similarity -->
+    <path d="M160 300 H116 V460 H160" fill="none" stroke="#9AA5A1" stroke-width="1.4" stroke-dasharray="4 5" stroke-linecap="round"/>
+    <circle cx="116" cy="380" r="11" fill="#FFFFFF" stroke="none"/>
+    <text x="116" y="386" text-anchor="middle" class="small green">≈</text>
+    <text x="132" y="356" class="small">跨会话</text>
+
+    <!-- problem statement -->
+    <line x1="40" y1="520" x2="43" y2="520" stroke="#155E52" stroke-width="3"/>
+    <line x1="40" y1="520" x2="40" y2="588" stroke="#155E52" stroke-width="3"/>
+    <text x="58" y="548" class="label-strong green">同一状态，服务很多请求；</text>
+    <text x="58" y="580" class="label-strong red">一次错用，污染很多请求。</text>
+  </g>
+
+  <!-- Middle: state stream -->
+  <g id="state-stream">
+    <!-- state labels -->
+    <g>
+      <rect x="480" y="252" width="60" height="24" rx="12" fill="#E4EEE9" stroke="#155E52" stroke-width="2"/>
+      <text x="510" y="264" text-anchor="middle" dominant-baseline="central" class="mono green" font-size="19" font-weight="700">ctx</text>
+
+      <rect x="480" y="342" width="60" height="24" rx="4" fill="#E8EEF5" stroke="#4F6D8A" stroke-width="2"/>
+      <text x="510" y="354" text-anchor="middle" dominant-baseline="central" class="mono blue" font-size="19" font-weight="700">rag</text>
+
+      <path d="M486 432 L534 432 L544 444 L534 456 L486 456 L476 444 Z" fill="#F7EBDD" stroke="#C9752F" stroke-width="2"/>
+      <text x="510" y="444" text-anchor="middle" dominant-baseline="central" class="mono amber" font-size="18" font-weight="700">resp</text>
+    </g>
+
+    <!-- session boundary -->
+    <line x1="760" y1="230" x2="760" y2="480" class="dash"/>
+    <rect x="722" y="218" width="76" height="20" fill="#FFFFFF"/>
+    <text x="760" y="233" text-anchor="middle" class="small">会话边界</text>
+
+    <!-- ctx lifespan -->
+    <rect x="560" y="258" width="170" height="14" rx="7" fill="#E4EEE9" stroke="#155E52" stroke-width="1.8"/>
+    <line x1="730" y1="265" x2="744" y2="265" stroke="#9AA5A1" stroke-width="1.4" stroke-dasharray="3 4"/>
+    <path d="M740 259 L750 271 M750 259 L740 271" stroke="#C9752F" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- rag lifespan -->
+    <rect x="550" y="348" width="310" height="14" rx="7" fill="#E8EEF5" stroke="#4F6D8A" stroke-width="1.8"/>
+    <rect x="860" y="348" width="100" height="14" rx="7" fill="url(#ragHatch)" stroke="#4F6D8A" stroke-width="1.8"/>
+    <line x1="860" y1="326" x2="860" y2="372" class="riskline"/>
+    <text x="860" y="318" text-anchor="middle" class="small red">版本 / ACL</text>
+    <path d="M854 355 L866 367 M866 355 L854 367" stroke="#B5544A" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- resp lifespan -->
+    <rect x="560" y="438" width="200" height="14" rx="7" fill="#F7EBDD" stroke="#C9752F" stroke-width="1.8"/>
+    <rect x="760" y="438" width="180" height="14" rx="7" fill="url(#respTaxHatch)" stroke="#C9752F" stroke-width="1.8"/>
+    <path d="M760 430 L770 445 L750 445 Z" fill="#FFFFFF" stroke="#C9752F" stroke-width="1.8"/>
+    <text x="760" y="424" text-anchor="middle" class="small amber">验证</text>
+    <path d="M894 448 l8 14 h-16 Z" fill="#FFFFFF" stroke="#B5544A" stroke-width="1.8"/>
+    <text x="898" y="478" text-anchor="middle" class="small red">错用</text>
+
+    <!-- reuse bridges -->
+    <path d="M560 265 C520 265 490 280 454 280" class="reuse" marker-end="url(#arrow-green)"/>
+    <path d="M560 445 C520 445 490 460 454 460" class="reuse" marker-end="url(#arrow-green)"/>
+
+    <!-- rag feeds ctx -->
+    <path d="M700 348 V272" class="flow-thin" stroke-dasharray="3 4" marker-end="url(#arrow-green)"/>
+
+    <!-- value balance -->
+    <text x="460" y="538" class="section">同一命中，价值随负载变</text>
+    <line x1="460" y1="552" x2="1000" y2="552" class="hair"/>
+    <text x="460" y="576" class="small green">低负载 ≈ 0　→　高负载 &gt; 0</text>
+
+    <line x1="520" y1="620" x2="900" y2="592" stroke="#155E52" stroke-width="4" stroke-linecap="round"/>
+    <path d="M710 620 L690 648 H730 Z" fill="#5F6B72"/>
+
+    <rect x="498" y="586" width="96" height="34" rx="8" fill="#E4EEE9" stroke="#155E52" stroke-width="1.8"/>
+    <text x="546" y="603" text-anchor="middle" dominant-baseline="central" class="small green" font-weight="700">收益</text>
+
+    <rect x="830" y="558" width="110" height="34" rx="8" fill="url(#respTaxHatch)" stroke="#C9752F" stroke-width="1.8"/>
+    <text x="885" y="575" text-anchor="middle" dominant-baseline="central" class="small amber" font-weight="700">税 + 风险</text>
+  </g>
+
+  <!-- Right: decision stream -->
+  <g id="decision-stream">
+    <!-- Flink control plane bracket -->
+    <line x1="1520" y1="200" x2="1520" y2="640" stroke="#DDE3DE" stroke-width="2"/>
+    <line x1="1512" y1="280" x2="1520" y2="280" stroke="#DDE3DE" stroke-width="1.6"/>
+    <line x1="1512" y1="428" x2="1520" y2="428" stroke="#DDE3DE" stroke-width="1.6"/>
+    <line x1="1512" y1="598" x2="1520" y2="598" stroke="#DDE3DE" stroke-width="1.6"/>
+    <text transform="translate(1540,420) rotate(-90)" text-anchor="middle" class="small green" font-weight="700">Flink 控制面</text>
+
+    <!-- loop 1 -->
+    <g>
+      <text x="1020" y="218" class="col-title green">①</text>
+      <text x="1066" y="216" class="section">留什么 / 何时换</text>
+
+      <g>
+        <rect x="1030" y="266" width="72" height="30" rx="15" fill="#FFFFFF" stroke="#155E52" stroke-width="1.5"/>
+        <text x="1066" y="281" text-anchor="middle" dominant-baseline="central" class="green" font-size="18">复用</text>
+        <rect x="1114" y="266" width="72" height="30" rx="15" fill="#FFFFFF" stroke="#155E52" stroke-width="1.5"/>
+        <text x="1150" y="281" text-anchor="middle" dominant-baseline="central" class="green" font-size="18">刷新</text>
+        <rect x="1198" y="266" width="72" height="30" rx="15" fill="#FFFFFF" stroke="#155E52" stroke-width="1.5"/>
+        <text x="1234" y="281" text-anchor="middle" dominant-baseline="central" class="green" font-size="18">淘汰</text>
+
+        <line x1="1104" y1="281" x2="1112" y2="281" class="flow-thin" marker-end="url(#arrow-green)"/>
+        <line x1="1188" y1="281" x2="1196" y2="281" class="flow-thin" marker-end="url(#arrow-green)"/>
+
+        <path d="M1270 281 H1286 V310 H1030 V302" fill="none" stroke="#155E52" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow-green)"/>
+        <text x="1450" y="281" text-anchor="end" class="small amber">质量预算 δ</text>
+      </g>
+    </g>
+
+    <!-- loop 2 -->
+    <g>
+      <text x="1020" y="370" class="col-title green">②</text>
+      <text x="1066" y="368" class="section">给多少算力</text>
+
+      <g>
+        <rect x="1030" y="418" width="68" height="30" rx="15" fill="#FFFFFF" stroke="#155E52" stroke-width="1.5"/>
+        <text x="1064" y="433" text-anchor="middle" dominant-baseline="central" class="green" font-size="18">观测</text>
+        <rect x="1110" y="418" width="68" height="30" rx="15" fill="#FFFFFF" stroke="#155E52" stroke-width="1.5"/>
+        <text x="1144" y="433" text-anchor="middle" dominant-baseline="central" class="green" font-size="18">归因</text>
+        <rect x="1190" y="418" width="68" height="30" rx="15" fill="#FFFFFF" stroke="#155E52" stroke-width="1.5"/>
+        <text x="1224" y="433" text-anchor="middle" dominant-baseline="central" class="green" font-size="18">调参</text>
+
+        <line x1="1100" y1="433" x2="1108" y2="433" class="flow-thin" marker-end="url(#arrow-green)"/>
+        <line x1="1180" y1="433" x2="1188" y2="433" class="flow-thin" marker-end="url(#arrow-green)"/>
+
+        <path d="M1258 433 H1274 V462 H1030 V454" fill="none" stroke="#155E52" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow-green)"/>
+        <text x="1030" y="492" class="small green">归因，不预测</text>
+      </g>
+    </g>
+
+    <!-- loop 3 -->
+    <g>
+      <text x="1020" y="540" class="col-title green">③</text>
+      <text x="1066" y="538" class="section">先服务谁 / 送到哪</text>
+
+      <!-- tension triangle -->
+      <path d="M1092 570 L1042 630 L1142 630 Z" fill="none" stroke="#155E52" stroke-width="1.8" stroke-linejoin="round"/>
+      <text x="1092" y="562" text-anchor="middle" class="small green">亲和</text>
+      <text x="1042" y="648" text-anchor="middle" class="small green">均衡</text>
+      <text x="1142" y="648" text-anchor="middle" class="small green">公平</text>
+      <text x="1092" y="608" text-anchor="middle" class="small gray">权衡</text>
+
+      <!-- dispatcher -->
+      <rect x="1190" y="586" width="62" height="28" rx="8" fill="#155E52"/>
+      <text x="1221" y="600" text-anchor="middle" dominant-baseline="central" fill="#FFFFFF" font-size="18">调度</text>
+      <path d="M1252 600 C1290 600 1300 570 1320 570" class="flow-thin" marker-end="url(#arrow-green)"/>
+      <path d="M1252 600 H1320" class="flow-thin" marker-end="url(#arrow-green)"/>
+      <path d="M1252 600 C1290 600 1300 630 1320 630" class="flow-thin" marker-end="url(#arrow-green)"/>
+      <circle cx="1330" cy="570" r="11" fill="#FFFFFF" stroke="#5F6B72" stroke-width="1.6"/>
+      <circle cx="1330" cy="600" r="11" fill="#FFFFFF" stroke="#5F6B72" stroke-width="1.6"/>
+      <circle cx="1330" cy="630" r="11" fill="#FFFFFF" stroke="#5F6B72" stroke-width="1.6"/>
+    </g>
+
+    <!-- coupling arrows -->
+    <line x1="1240" y1="326" x2="1240" y2="360" class="flow-thin" marker-end="url(#arrow-green)"/>
+    <text x="1250" y="348" class="small">负载</text>
+    <line x1="1240" y1="500" x2="1240" y2="528" class="flow-thin" marker-end="url(#arrow-green)"/>
+    <text x="1250" y="516" class="small">迁移</text>
+  </g>
+
+  <!-- feedback loop -->
+  <g id="feedback-loop">
+    <path d="M1530 640 V676 H280 V632" fill="none" stroke="#155E52" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round" marker-end="url(#arrow-green)"/>
+    <rect x="720" y="666" width="156" height="20" fill="#FFFFFF"/>
+    <text x="798" y="681" text-anchor="middle" class="small green">观测反馈</text>
+  </g>
+
+  <!-- Bottom band -->
+  <g id="bottom-band">
+    <rect x="40" y="688" width="1520" height="212" rx="14" fill="#FAFBF9" stroke="#DDE3DE" stroke-width="1.5"/>
+
+    <!-- constraints -->
+    <text x="68" y="716" class="section">约束</text>
+    <g>
+      <rect x="68" y="730" width="196" height="36" rx="18" fill="#FFFFFF" stroke="#155E52" stroke-width="1.5"/>
+      <text x="166" y="752" text-anchor="middle" class="small green">时延 · 进度型 SLA</text>
+      <rect x="280" y="730" width="216" height="36" rx="18" fill="#FFFFFF" stroke="#C9752F" stroke-width="1.5"/>
+      <text x="388" y="752" text-anchor="middle" class="small amber">质量 · 错误复用 ≤ δ</text>
+      <rect x="512" y="730" width="206" height="36" rx="18" fill="#FFFFFF" stroke="#4F6D8A" stroke-width="1.5"/>
+      <text x="615" y="752" text-anchor="middle" class="small blue">公平 · 租户最低份额</text>
+    </g>
+    <text x="68" y="820" class="small">目标场景：问答型 · 云端事件驱动 · 宽松时延</text>
+
+    <!-- objective -->
+    <text x="760" y="716" class="section">目标</text>
+    <text x="760" y="756" class="label-strong green" font-size="24">min 单位请求资源成本</text>
+    <text x="760" y="786" class="small">s.t. 时延 · 质量 · 公平</text>
+
+    <!-- minimal frontier -->
+    <text x="1140" y="716" class="small green" font-weight="700">约束内前沿</text>
+    <path d="M1180 850 C1240 820 1320 785 1420 750 L1420 880 L1180 880 Z" fill="#F2F5F0" stroke="none"/>
+    <path d="M1180 850 C1240 820 1320 785 1420 750" fill="none" stroke="#155E52" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="1340" cy="775" r="6" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+    <text x="1352" y="770" class="small green">前沿</text>
+    <text x="1240" y="850" class="tiny">可行域</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="40" y="936" class="tiny faint">问题背景｜请求—状态—决策</text>
+  <text x="1560" y="936" text-anchor="end" class="tiny faint">示意图，非实测数据</text>
+</svg>

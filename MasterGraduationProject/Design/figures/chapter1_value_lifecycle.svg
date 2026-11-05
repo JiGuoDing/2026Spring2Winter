@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">第一章：估值决定动作，动作校准估值</title>
+  <desc id="desc">缓存价值建模与生命周期管理构成一个闭环。估值用 V(x,t,c) 计算状态项的净收益；生命周期按价值选择 ADMIT、KEEP、REFRESH、INVALIDATE、EVICT；动作结果与日志再回灌校准价值模型。目标是在质量预算和容量约束下最大化单位资源净收益。</desc>
+
+  <defs>
+    <style><![CDATA[
+      text { font-family: 'Source Han Sans SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; }
+      .kicker { font-size: 22px; font-weight: 700; fill: #155E52; letter-spacing: 2.5px; }
+      .thesis { font-size: 34px; font-weight: 700; fill: #23292E; letter-spacing: 0.5px; }
+      .goal { font-size: 20px; fill: #5F6B72; }
+      .card-title { font-size: 24px; font-weight: 700; fill: #155E52; }
+      .card-sub { font-size: 18px; fill: #5F6B72; }
+      .eq { font-size: 18px; fill: #23292E; }
+      .eq-green { font-size: 18px; fill: #155E52; font-weight: 700; }
+      .eq-red { font-size: 18px; fill: #B5544A; }
+      .eq-amber { font-size: 18px; fill: #C9752F; }
+      .action { font-size: 17px; font-weight: 700; fill: #155E52; }
+      .trigger { font-size: 17px; fill: #5F6B72; }
+      .center-title { font-size: 18px; font-weight: 700; fill: #155E52; }
+      .center-line { font-size: 17px; fill: #5F6B72; }
+      .center-obj { font-size: 18px; font-weight: 700; fill: #155E52; }
+      .arrow-label { font-size: 18px; fill: #155E52; font-weight: 700; }
+      .arrow-label-amber { font-size: 18px; fill: #C9752F; font-weight: 700; }
+      .small { font-size: 17px; fill: #5F6B72; }
+      .tiny { font-size: 15px; fill: #7A868C; }
+      .mono { font-family: Consolas, 'IBM Plex Mono', monospace; }
+      .green { fill: #155E52; }
+      .amber { fill: #C9752F; }
+      .blue { fill: #4F6D8A; }
+      .red { fill: #B5544A; }
+      .gray { fill: #5F6B72; }
+      .faint { fill: #9AA5A1; }
+      .rule { stroke: #DDE3DE; stroke-width: 1.5; }
+      .hair { stroke: #E8ECE8; stroke-width: 1; }
+      .flow { fill: none; stroke: #155E52; stroke-width: 3.2; stroke-linecap: round; }
+      .feedback { fill: none; stroke: #C9752F; stroke-width: 2.4; stroke-dasharray: 6 5; stroke-linecap: round; }
+    ]]></style>
+
+    <marker id="arrow-green" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L10,5.5 L1,10 Z" fill="#155E52"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L10,5.5 L1,10 Z" fill="#C9752F"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="#FFFFFF"/>
+
+  <!-- Top band -->
+  <g id="top-band">
+    <text x="40" y="46" class="kicker">第一章</text>
+    <text x="156" y="50" class="thesis">估值决定动作，动作校准估值</text>
+    <text x="1560" y="47" text-anchor="end" class="goal">从命中率到单位资源净收益</text>
+    <line x1="40" y1="70" x2="1560" y2="70" class="rule"/>
+  </g>
+
+  <!-- Valuation card -->
+  <g id="valuation">
+    <rect x="570" y="186" width="460" height="186" rx="16" fill="#FFFFFF" stroke="#155E52" stroke-width="2"/>
+    <rect x="570" y="186" width="6" height="186" rx="3" fill="#155E52"/>
+    <text x="596" y="220" class="card-title">1.1 估值</text>
+    <text x="596" y="246" class="card-sub">一个状态项值多少钱？</text>
+
+    <text x="596" y="286" class="eq-green">V(x,t,c) = p_use · B</text>
+    <text x="596" y="312" class="eq-red">− C_verify − q_wrong · L</text>
+    <text x="596" y="338" class="eq-red">− C_hold − C_churn</text>
+
+    <g>
+      <circle cx="600" cy="356" r="5" fill="#155E52"/>
+      <text x="612" y="361" class="tiny">ctx 摘要</text>
+      <circle cx="690" cy="356" r="5" fill="#4F6D8A"/>
+      <text x="702" y="361" class="tiny">rag 知识</text>
+      <circle cx="780" cy="356" r="5" fill="#C9752F"/>
+      <text x="792" y="361" class="tiny">resp 回答</text>
+    </g>
+  </g>
+
+  <!-- Lifecycle card -->
+  <g id="lifecycle">
+    <rect x="160" y="520" width="420" height="240" rx="16" fill="#FFFFFF" stroke="#155E52" stroke-width="2"/>
+    <rect x="160" y="520" width="6" height="240" rx="3" fill="#155E52"/>
+    <text x="186" y="554" class="card-title">1.2 生命周期</text>
+    <text x="186" y="580" class="card-sub">什么时候对它做什么？</text>
+
+    <g>
+      <text x="186" y="612" class="action">ADMIT</text>
+      <text x="330" y="612" class="trigger">V &gt; 0</text>
+      <line x1="186" y1="620" x2="554" y2="620" class="hair"/>
+
+      <text x="186" y="640" class="action">KEEP / REUSE</text>
+      <text x="330" y="640" class="trigger">V &gt; 0 且有效</text>
+      <line x1="186" y1="648" x2="554" y2="648" class="hair"/>
+
+      <text x="186" y="668" class="action">REFRESH</text>
+      <text x="330" y="668" class="trigger">漂移 / 过期</text>
+      <line x1="186" y1="676" x2="554" y2="676" class="hair"/>
+
+      <text x="186" y="696" class="action">INVALIDATE</text>
+      <text x="330" y="696" class="trigger">版本 / ACL 变化</text>
+      <line x1="186" y1="704" x2="554" y2="704" class="hair"/>
+
+      <text x="186" y="724" class="action">EVICT</text>
+      <text x="330" y="724" class="trigger">V &lt; 0 / 容量压力</text>
+    </g>
+
+    <text x="186" y="750" class="tiny">另：MIGRATE / REBUILD 处理扩缩容与故障</text>
+  </g>
+
+  <!-- Calibration card -->
+  <g id="calibration">
+    <rect x="1020" y="520" width="420" height="240" rx="16" fill="#FFFFFF" stroke="#C9752F" stroke-width="1.8" stroke-dasharray="6 5"/>
+    <rect x="1020" y="520" width="6" height="240" rx="3" fill="#C9752F"/>
+    <text x="1046" y="554" class="card-title" fill="#C9752F">校准</text>
+    <text x="1046" y="580" class="card-sub">动作结果如何回灌？</text>
+
+    <text x="1046" y="620" class="small">观测：命中 / 质量 / 成本 / 时延</text>
+    <text x="1046" y="652" class="small">更新：p_use · q_wrong · B · C_*</text>
+    <text x="1046" y="684" class="small">目的：让 V 越来越准</text>
+    <text x="1046" y="716" class="tiny">闭环：下一轮估值更准</text>
+  </g>
+
+  <!-- Center objective -->
+  <g id="objective">
+    <rect x="680" y="430" width="240" height="150" rx="14" fill="#F2F5F0" stroke="none"/>
+    <text x="800" y="460" text-anchor="middle" class="center-title">约束与目标</text>
+    <text x="800" y="490" text-anchor="middle" class="center-line">质量预算 δ</text>
+    <text x="800" y="514" text-anchor="middle" class="center-line">容量 S　·　影子价格 λ(ρ)</text>
+    <text x="800" y="548" text-anchor="middle" class="center-obj">max 单位资源净收益</text>
+    <text x="800" y="570" text-anchor="middle" class="tiny">命中率只是中间量</text>
+  </g>
+
+  <!-- Loop arrows -->
+  <g id="loop">
+    <path d="M620 372 C560 420 500 470 480 520" class="flow" marker-end="url(#arrow-green)"/>
+    <text x="500" y="445" text-anchor="middle" class="arrow-label">价值 V → 动作 π</text>
+
+    <path d="M580 760 V780 Q580 790 590 790 H1010 Q1020 790 1020 780 V760" class="flow" marker-end="url(#arrow-green)"/>
+    <text x="800" y="776" text-anchor="middle" class="arrow-label">动作结果 / 日志</text>
+
+    <path d="M1220 520 C1180 470 1080 420 980 372" class="feedback" marker-end="url(#arrow-amber)"/>
+    <text x="1100" y="445" text-anchor="middle" class="arrow-label-amber">更新 V / 校准</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="40" y="860" class="tiny faint">第一章｜估值—动作—校准</text>
+  <text x="1560" y="860" text-anchor="end" class="tiny faint">示意图，非实测数据</text>
+</svg>

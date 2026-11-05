@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="600" viewBox="0 0 1280 600">
+  <defs>
+    <marker id="ax" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 z" fill="#8A97A6"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="600" fill="#FFFFFF"/>
+
+  <text x="60" y="50" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="24" font-weight="700" fill="#1F2328">第一章：缓存价值是一条会移动的曲线</text>
+  <text x="60" y="80" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="14" fill="#5B6672">同一个对象，负载不同则曲线不同；估值是量出这条曲线，管理是在曲线上做三个决定。</text>
+
+  <!-- 图例 -->
+  <line x1="880" y1="122" x2="912" y2="122" stroke="#C4813A" stroke-width="3"/>
+  <text x="922" y="127" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif" font-size="13" fill="#5B6672">低负载</text>
+  <line x1="1000" y1="122" x2="1032" y2="122" stroke="#2F5D8A" stroke-width="3"/>
+  <text x="1042" y="127" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif" font-size="13" fill="#5B6672">高负载</text>
+
+  <!-- 坐标轴 -->
+  <line x1="100" y1="460" x2="1200" y2="460" stroke="#8A97A6" stroke-width="1.6" marker-end="url(#ax)"/>
+  <line x1="100" y1="460" x2="100" y2="106" stroke="#8A97A6" stroke-width="1.6" marker-end="url(#ax)"/>
+  <text x="76" y="285" text-anchor="middle" transform="rotate(-90 76 285)"
+        font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif" font-size="13" fill="#5B6672">净价值</text>
+  <text x="108" y="450" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif" font-size="12" fill="#8A97A6">0（盈亏线）</text>
+  <text x="1200" y="450" text-anchor="end" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="13" fill="#5B6672">时间</text>
+
+  <!-- 时间刻度 -->
+  <g stroke="#8A97A6" stroke-width="1.4">
+    <line x1="180" y1="460" x2="180" y2="469"/>
+    <line x1="480" y1="460" x2="480" y2="469"/>
+    <line x1="780" y1="460" x2="780" y2="469"/>
+    <line x1="1080" y1="460" x2="1080" y2="469"/>
+  </g>
+  <g font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif" font-size="12.5" fill="#8A97A6" text-anchor="middle">
+    <text x="180" y="486">刚建</text>
+    <text x="480" y="486">一周</text>
+    <text x="780" y="486">一月</text>
+    <text x="1080" y="486">三月</text>
+  </g>
+
+  <!-- 低负载曲线 -->
+  <path d="M174,460 L174,318 C258,322 400,392 480,460"
+        fill="none" stroke="#C4813A" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="174" cy="318" r="5.5" fill="#C4813A"/>
+
+  <!-- 高负载曲线 -->
+  <path d="M180,460 L180,190 C332,196 612,288 780,352 L780,288 C900,293 1030,408 1080,460"
+        fill="none" stroke="#2F5D8A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="180" cy="190" r="5.5" fill="#2F5D8A"/>
+
+  <!-- 决策点 -->
+  <text x="196" y="182" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="15" font-weight="700" fill="#2F5D8A">建</text>
+
+  <circle cx="780" cy="288" r="5.5" fill="#2F5D8A"/>
+  <text x="796" y="280" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="15" font-weight="700" fill="#2F5D8A">刷</text>
+
+  <circle cx="480" cy="460" r="5.5" fill="#C4813A"/>
+  <text x="480" y="444" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="15" font-weight="700" fill="#C4813A">删</text>
+
+  <circle cx="1080" cy="460" r="5.5" fill="#2F5D8A"/>
+  <text x="1080" y="444" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="15" font-weight="700" fill="#2F5D8A">删</text>
+
+  <!-- 对比括号 -->
+  <path d="M480,512 L480,504 L1080,504 L1080,512" fill="none" stroke="#B08968" stroke-width="1.6"/>
+  <text x="780" y="538" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, Noto Sans SC, sans-serif"
+        font-size="13.5" fill="#8A6D1F">同一个对象：低负载一周就该删，高负载能撑到三个月</text>
+
+</svg>

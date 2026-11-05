@@ -1,0 +1,242 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1000" viewBox="0 0 1800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">约束下的状态复用可达决策空间</title>
+  <desc id="desc">以单位时间资源成本和质量达标的 SLO 达成率构成决策空间。固定复用、固定容量或固定阈值策略落在违约区或可行但被支配区；负载升高使可达前沿下移并提高容量影子价格，从而改变同一复用动作的净值。观测反馈下的联合决策把运行点推向约束内的可达前沿。</desc>
+  <defs>
+    <style><![CDATA[
+      text { font-family: 'Microsoft YaHei', 'Noto Sans CJK SC', 'Source Han Sans SC', Arial, sans-serif; }
+      .kicker { font-size: 17px; font-weight: 700; fill: #155E52; letter-spacing: 1px; }
+      .panel { font-size: 21px; font-weight: 700; fill: #23292E; }
+      .axis { font-size: 19px; fill: #23292E; }
+      .label { font-size: 17px; fill: #23292E; }
+      .small { font-size: 15px; fill: #5F6B72; }
+      .tiny { font-size: 15px; fill: #9AA5A1; }
+      .primary { fill: #155E52; }
+      .accent { fill: #C9752F; }
+      .primary-bold { font-size: 17px; font-weight: 700; fill: #155E52; }
+      .code { font-family: Consolas, 'SFMono-Regular', monospace; }
+      .axis-line { fill: none; stroke: #5F6B72; stroke-width: 2.2; }
+      .frontier { fill: none; stroke: #155E52; stroke-width: 4; stroke-linecap: round; }
+      .ghost { fill: none; stroke: #9AA5A1; stroke-width: 2.6; stroke-dasharray: 10 8; stroke-linecap: round; }
+      .guide { fill: none; stroke: #9AA5A1; stroke-width: 2; stroke-dasharray: 7 6; }
+      .reuse { fill: none; stroke: #155E52; stroke-width: 2.2; stroke-dasharray: 7 6; marker-end: url(#arrow-green); }
+      .move { fill: none; stroke: #155E52; stroke-width: 3.4; marker-end: url(#arrow-green); }
+      .feedback { fill: none; stroke: #155E52; stroke-width: 1.8; stroke-dasharray: 5 5; marker-end: url(#arrow-green); }
+      .dotline { fill: none; stroke: #9AA5A1; stroke-width: 2; stroke-dasharray: 2 7; stroke-linecap: round; }
+    ]]></style>
+    <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#5F6B72"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#155E52"/>
+    </marker>
+    <pattern id="violationHatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#DDE3DE" stroke-width="3"/>
+    </pattern>
+    <pattern id="taxHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#9AA5A1" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <rect width="1800" height="1000" fill="#FFFFFF"/>
+
+  <!-- Top kicker: no large in-figure title -->
+  <g id="top-band">
+    <text x="48" y="54" class="kicker">问题背景 · 状态复用与联合决策空间</text>
+    <text x="1752" y="54" text-anchor="end" class="small">口径转换：命中率 → 质量预算下单位资源净收益</text>
+    <line x1="48" y1="68" x2="1752" y2="68" stroke="#DDE3DE" stroke-width="1.5"/>
+  </g>
+
+  <!-- Main decision space -->
+  <g id="frontier-main">
+    <rect x="48" y="82" width="1704" height="636" rx="16" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="2"/>
+    <text x="76" y="118" class="panel">约束下的可达决策空间</text>
+    <text x="1724" y="118" text-anchor="end" class="small">纵轴只计质量达标请求；横轴含缓存管理税折算</text>
+
+    <!-- Regions -->
+    <rect x="190" y="430" width="1470" height="230" fill="#FAFBFA"/>
+    <rect x="190" y="430" width="1470" height="230" fill="url(#violationHatch)" opacity="0.62"/>
+    <path d="M800 430 C1040 340 1300 270 1600 220 L1600 430 Z" fill="#F2F5F0"/>
+    <text x="1320" y="392" text-anchor="middle" class="small">可行但未必最优</text>
+    <text x="410" y="630" class="small">违约区：质量 / 时延 / 公平约束未满足</text>
+    <text x="1460" y="178" text-anchor="end" class="tiny">超出现有技术包络</text>
+
+    <!-- Axes -->
+    <path d="M190 660 H1660" class="axis-line" marker-end="url(#arrow-gray)"/>
+    <path d="M190 660 V150" class="axis-line" marker-end="url(#arrow-gray)"/>
+    <text x="925" y="700" text-anchor="middle" class="axis">单位时间资源成本（缓存管理税 + 推理算力）→</text>
+    <text transform="translate(126 405) rotate(-90)" text-anchor="middle" class="axis">质量达标的 SLO 达成率 A →</text>
+    <line x1="190" y1="430" x2="1660" y2="430" stroke="#9AA5A1" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="178" y="436" text-anchor="end" class="label" fill="#5F6B72">A*</text>
+    <text x="1650" y="418" text-anchor="end" class="small">约束边界 A*（时延 · 质量 · 公平性）</text>
+
+    <!-- Current and high-load frontiers -->
+    <path d="M280 620 C480 600 640 500 800 430 C1040 340 1300 270 1600 220" class="frontier"/>
+    <path d="M340 646 C540 625 700 535 860 470 C1100 385 1360 310 1640 265" class="ghost"/>
+    <path d="M760 225 L800 225 L800 255" fill="none" stroke="#9AA5A1" stroke-width="1.5"/>
+    <text x="810" y="220" class="primary-bold">当前负载的可达前沿</text>
+    <text x="810" y="246" class="small">同成本下能买到的最高达成率</text>
+    <path d="M920 405 C950 425 965 450 990 470" fill="none" stroke="#9AA5A1" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow-gray)"/>
+    <text x="1260" y="520" text-anchor="middle" class="small">负载 ρ 升高：前沿下移，容量影子价格 λ 变大</text>
+
+    <!-- Fixed strategy points -->
+    <g id="fixed-strategies">
+      <!-- always reuse: violation zone -->
+      <rect x="418" y="548" width="24" height="24" rx="3" fill="#FFFFFF" stroke="#C9752F" stroke-width="2.5"/>
+      <text x="430" y="600" text-anchor="middle" class="small accent">总是复用：质量违约</text>
+
+      <!-- no reuse: feasible but dominated -->
+      <circle cx="1450" cy="390" r="12" fill="#FFFFFF" stroke="#5F6B72" stroke-width="2.5"/>
+      <text x="1470" y="382" class="small">无复用：达标但被支配</text>
+
+      <!-- only expand cache: feasible but dominated -->
+      <path d="M900 389 l13 16 -13 16 -13 -16 Z" fill="#FFFFFF" stroke="#5F6B72" stroke-width="2.5"/>
+      <text x="880" y="468" text-anchor="end" class="small">只扩缓存：被支配</text>
+
+      <!-- only add compute: feasible but expensive -->
+      <path d="M1540 320 l14 24 -28 0 Z" fill="#FFFFFF" stroke="#5F6B72" stroke-width="2.5"/>
+      <text x="1520" y="310" text-anchor="end" class="small">只加算力：达标但昂贵</text>
+
+      <!-- fixed threshold under two load levels -->
+      <path d="M1000 365 v22 M989 376 h22" stroke="#5F6B72" stroke-width="2.6"/>
+      <path d="M1200 489 v22 M1189 500 h22" stroke="#C9752F" stroke-width="2.6"/>
+      <path d="M1000 376 C1080 396 1130 455 1200 500" class="dotline"/>
+      <text x="950" y="520" text-anchor="middle" class="label">同一固定阈值</text>
+      <text x="950" y="546" text-anchor="middle" class="small">负载一变即偏离前沿</text>
+    </g>
+
+    <!-- Joint closed-loop operating point -->
+    <g id="run-point">
+      <path d="M900 430 C1010 400 1090 345 1166 316" class="move"/>
+      <text x="880" y="350" text-anchor="end" class="primary-bold">观测 — 联合决策 — 执行</text>
+      <circle cx="1178" cy="310" r="19" fill="none" stroke="#9AA5A1" stroke-width="1.5"/>
+      <circle cx="1178" cy="310" r="12" fill="#155E52" stroke="#FFFFFF" stroke-width="3"/>
+      <path d="M1140 278 A46 46 0 1 1 1208 344" class="feedback"/>
+      <text x="1212" y="258" class="primary-bold">联合闭环运行点</text>
+      <text x="1212" y="282" class="small">贴近约束内的可达前沿</text>
+      <text x="1240" y="238" class="tiny">观测回注</text>
+
+      <!-- Mini net-value glyph tied to the operating point -->
+      <rect x="1212" y="326" width="42" height="10" rx="2" fill="#155E52"/>
+      <rect x="1256" y="326" width="18" height="10" rx="2" fill="#9AA5A1"/>
+      <rect x="1276" y="326" width="18" height="10" rx="2" fill="#C9752F"/>
+      <path d="M1300 342 H1368" fill="none" stroke="#155E52" stroke-width="1.8" stroke-dasharray="6 6" marker-end="url(#arrow-green)"/>
+      <text x="1212" y="356" class="tiny">净值切片见右下</text>
+    </g>
+  </g>
+
+  <!-- Bottom analytical band -->
+  <!-- B1 state lifespan -->
+  <g id="lifespan">
+    <rect x="48" y="742" width="600" height="208" rx="14" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="2"/>
+    <text x="72" y="776" class="panel">跨轮 / 跨会话：派生状态的寿命</text>
+    <text x="72" y="800" class="small">实线＝存活期　虚线＝复用窗口　橙色 ✕＝失效</text>
+
+    <text x="72" y="838" class="small">ctx　会话语义</text>
+    <text x="72" y="878" class="small">rag　RAG 知识</text>
+    <text x="72" y="918" class="small">resp　历史回答</text>
+
+    <line x1="220" y1="822" x2="620" y2="822" stroke="#DDE3DE" stroke-width="1"/>
+    <line x1="220" y1="862" x2="620" y2="862" stroke="#DDE3DE" stroke-width="1"/>
+    <line x1="220" y1="902" x2="620" y2="902" stroke="#DDE3DE" stroke-width="1"/>
+
+    <rect x="220" y="828" width="200" height="14" rx="7" fill="#E4EEE9" stroke="#155E52" stroke-width="1.5"/>
+    <path d="M420 835 H470" class="reuse" stroke-width="2"/>
+    <path d="M476 827 l12 16 M488 827 l-12 16" stroke="#C9752F" stroke-width="2.4"/>
+    <text x="500" y="840" class="tiny">会话结束</text>
+
+    <rect x="220" y="868" width="340" height="14" rx="7" fill="#E4EEE9" stroke="#155E52" stroke-width="1.5"/>
+    <line x1="350" y1="862" x2="350" y2="888" stroke="#9AA5A1" stroke-width="1.5"/>
+    <line x1="470" y1="862" x2="470" y2="888" stroke="#9AA5A1" stroke-width="1.5"/>
+    <path d="M560 875 H600" class="reuse" stroke-width="2"/>
+    <path d="M606 867 l12 16 M618 867 l-12 16" stroke="#C9752F" stroke-width="2.4"/>
+
+    <rect x="300" y="908" width="270" height="14" rx="7" fill="#E4EEE9" stroke="#155E52" stroke-width="1.5"/>
+    <path d="M570 915 H610" class="reuse" stroke-width="2"/>
+    <path d="M616 907 l12 16 M628 907 l-12 16" stroke="#C9752F" stroke-width="2.4"/>
+    <line x1="430" y1="812" x2="430" y2="932" stroke="#9AA5A1" stroke-width="1.8" stroke-dasharray="3 7"/>
+    <text x="438" y="822" class="tiny">会话边界</text>
+    <path d="M300 828 C370 792 420 880 500 908" class="reuse" stroke-width="2"/>
+    <text x="382" y="802" class="tiny">跨会话复用</text>
+
+    <text x="220" y="942" class="tiny">轮 1</text>
+    <text x="320" y="942" class="tiny">轮 2</text>
+    <text x="420" y="942" class="tiny">轮 3</text>
+    <text x="520" y="942" class="tiny">轮 4</text>
+    <text x="610" y="942" class="tiny">轮 5 → 时间</text>
+  </g>
+
+  <!-- B2 lambda curve -->
+  <g id="lambda">
+    <rect x="668" y="742" width="470" height="208" rx="14" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="2"/>
+    <text x="692" y="776" class="panel">负载改变同一命中的价值</text>
+    <text x="692" y="800" class="small">容量影子价格 λ 随利用率 ρ 上升</text>
+
+    <path d="M730 910 H1110" class="axis-line" marker-end="url(#arrow-gray)"/>
+    <path d="M730 910 V818" class="axis-line" marker-end="url(#arrow-gray)"/>
+    <text x="1080" y="936" class="small">负载 ρ →</text>
+    <text x="740" y="812" class="small">λ(ρ)</text>
+    <path d="M740 904 C860 900 980 870 1090 822" fill="none" stroke="#155E52" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="790" cy="902" r="7" fill="#FFFFFF" stroke="#155E52" stroke-width="2.2"/>
+    <circle cx="1035" cy="850" r="8" fill="#155E52"/>
+    <line x1="790" y1="902" x2="790" y2="910" stroke="#9AA5A1" stroke-width="1.5" stroke-dasharray="3 5"/>
+    <line x1="1035" y1="850" x2="1035" y2="910" stroke="#9AA5A1" stroke-width="1.5" stroke-dasharray="3 5"/>
+    <text x="760" y="884" class="small">低负载：λ≈0</text>
+    <text x="960" y="824" class="small">高负载：λ 大</text>
+    <text x="760" y="928" class="tiny">命中主要买时延</text>
+    <text x="990" y="928" class="tiny">命中还省吞吐</text>
+
+    <path d="M1112 890 C1134 890 1138 840 1162 840" class="reuse" stroke-width="2"/>
+    <path d="M1112 850 C1134 850 1138 900 1162 900" class="reuse" stroke-width="2"/>
+  </g>
+
+  <!-- B3 net-value ledger -->
+  <g id="ledger">
+    <rect x="1158" y="742" width="594" height="208" rx="14" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="2"/>
+    <text x="1182" y="776" class="panel">同一复用动作的净值账本</text>
+    <text x="1182" y="800" class="small">正＝避免的工作 λ(ρ)·w　负＝四类管理税与质量风险</text>
+
+    <line x1="1390" y1="812" x2="1390" y2="938" stroke="#5F6B72" stroke-width="2"/>
+    <text x="1390" y="806" text-anchor="middle" class="tiny">零线</text>
+    <text x="1182" y="850" class="small">低负载</text>
+    <text x="1182" y="920" class="small">高负载</text>
+
+    <!-- Low-load row: short positive, fixed negative costs -->
+    <rect x="1220" y="830" width="45" height="28" fill="#C9752F"/>
+    <rect x="1267" y="830" width="40" height="28" fill="url(#taxHatch)" stroke="#9AA5A1" stroke-width="1"/>
+    <rect x="1309" y="830" width="40" height="28" fill="#F2F5F0" stroke="#9AA5A1" stroke-width="1"/>
+    <rect x="1351" y="830" width="37" height="28" fill="#FFFFFF" stroke="#9AA5A1" stroke-width="1"/>
+    <rect x="1392" y="830" width="80" height="28" rx="3" fill="#155E52"/>
+    <text x="1484" y="850" class="small accent">净值 ≈ 0 / 为负</text>
+
+    <!-- High-load row: three-times positive, identical negative costs -->
+    <rect x="1220" y="900" width="45" height="28" fill="#C9752F"/>
+    <rect x="1267" y="900" width="40" height="28" fill="url(#taxHatch)" stroke="#9AA5A1" stroke-width="1"/>
+    <rect x="1309" y="900" width="40" height="28" fill="#F2F5F0" stroke="#9AA5A1" stroke-width="1"/>
+    <rect x="1351" y="900" width="37" height="28" fill="#FFFFFF" stroke="#9AA5A1" stroke-width="1"/>
+    <rect x="1392" y="900" width="240" height="28" rx="3" fill="#155E52"/>
+    <text x="1512" y="890" text-anchor="middle" class="primary-bold">净值明显翻正</text>
+
+    <text x="1182" y="940" class="tiny">负段：错误风险 / 刷新恢复 / 持有摊销 / 验证在线税</text>
+  </g>
+
+  <!-- Footer legend -->
+  <g id="legend">
+    <line x1="48" y1="978" x2="88" y2="978" stroke="#155E52" stroke-width="3.5"/>
+    <text x="98" y="984" class="tiny">当前前沿 / 主决策</text>
+    <line x1="238" y1="978" x2="278" y2="978" stroke="#9AA5A1" stroke-width="2.5" stroke-dasharray="8 6"/>
+    <text x="288" y="984" class="tiny">高负载前沿 / 复用 / 反馈</text>
+    <line x1="478" y1="978" x2="518" y2="978" stroke="#9AA5A1" stroke-width="2" stroke-dasharray="2 7" stroke-linecap="round"/>
+    <text x="528" y="984" class="tiny">同一策略跨负载</text>
+    <circle cx="676" cy="978" r="7" fill="#FFFFFF" stroke="#5F6B72" stroke-width="2"/>
+    <text x="690" y="984" class="tiny">固定策略（不同形状）</text>
+    <circle cx="882" cy="978" r="8" fill="#155E52" stroke="#FFFFFF" stroke-width="2"/>
+    <text x="898" y="984" class="tiny">联合闭环运行点</text>
+    <rect x="1050" y="970" width="16" height="16" fill="#155E52"/>
+    <text x="1072" y="984" class="tiny">避免的工作</text>
+    <rect x="1190" y="970" width="16" height="16" fill="#9AA5A1"/>
+    <text x="1212" y="984" class="tiny">管理税</text>
+    <rect x="1292" y="970" width="16" height="16" fill="#C9752F"/>
+    <text x="1314" y="984" class="tiny">质量风险</text>
+    <text x="1752" y="984" text-anchor="end" class="tiny">适用：事件驱动 · 云端执行 · 偏问答 Agent · 宽松时延约束；不含引擎内 KV 缓存</text>
+  </g>
+</svg>

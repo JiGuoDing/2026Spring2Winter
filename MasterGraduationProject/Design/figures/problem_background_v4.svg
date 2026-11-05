@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">问题背景：Agent 请求的复用有机会，但有条件</title>
+  <desc id="desc">Agent 请求之间存在上下文、知识和历史回答的复用机会；复用需要语义、版本权限、新鲜度和质量预算的门控，并支付验证、存储、失效与迁移代价；把复用决策放进 Flink 流处理算子与状态底座，可形成流式 Agent 系统的高效资源管理与优化研究。</desc>
+
+  <defs>
+    <style><![CDATA[
+      text { font-family: 'Source Han Sans SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif; }
+      .kicker { font-size: 22px; font-weight: 700; fill: #155E52; letter-spacing: 2.5px; }
+      .thesis { font-size: 34px; font-weight: 700; fill: #23292E; letter-spacing: 0.5px; }
+      .goal { font-size: 20px; fill: #5F6B72; }
+      .num { font-size: 28px; font-weight: 700; fill: #B9C3BE; letter-spacing: 1px; }
+      .col-title { font-size: 31px; font-weight: 700; fill: #23292E; letter-spacing: 0.5px; }
+      .col-sub { font-size: 20px; fill: #5F6B72; }
+      .section { font-size: 23px; font-weight: 700; fill: #23292E; }
+      .label { font-size: 20px; fill: #5F6B72; }
+      .label-strong { font-size: 21px; font-weight: 700; fill: #23292E; }
+      .small { font-size: 18px; fill: #5F6B72; }
+      .tiny { font-size: 16px; fill: #7A868C; }
+      .mono { font-family: Consolas, 'IBM Plex Mono', monospace; }
+      .green { fill: #155E52; }
+      .amber { fill: #C9752F; }
+      .blue { fill: #4F6D8A; }
+      .red { fill: #B5544A; }
+      .gray { fill: #5F6B72; }
+      .faint { fill: #9AA5A1; }
+      .rule { stroke: #DDE3DE; stroke-width: 1.5; }
+      .hair { stroke: #E8ECE8; stroke-width: 1; }
+      .flow { fill: none; stroke: #155E52; stroke-width: 2.2; stroke-linecap: round; }
+      .flow-thin { fill: none; stroke: #155E52; stroke-width: 1.6; stroke-linecap: round; }
+      .reuse { fill: none; stroke: #155E52; stroke-width: 2.2; stroke-dasharray: 6 5; stroke-linecap: round; }
+      .dash { fill: none; stroke: #9AA5A1; stroke-width: 1.6; stroke-dasharray: 5 5; stroke-linecap: round; }
+      .axis { fill: none; stroke: #9AA5A1; stroke-width: 1.4; stroke-linecap: round; }
+    ]]></style>
+
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#155E52"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#5F6B72"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#C9752F"/>
+    </marker>
+
+    <pattern id="taxHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#D9A79F" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="900" fill="#FFFFFF"/>
+
+  <!-- Top band -->
+  <g id="top-band">
+    <text x="40" y="46" class="kicker">问题背景</text>
+    <text x="156" y="50" class="thesis">Agent 请求的复用：有机会，但有条件</text>
+    <text x="1560" y="47" text-anchor="end" class="goal">与流处理系统结合 → 流式 Agent 的高效资源管理</text>
+    <line x1="40" y1="70" x2="1560" y2="70" class="rule"/>
+  </g>
+
+  <!-- Panel headers -->
+  <g id="headers">
+    <text x="40" y="108" class="num">01</text>
+    <text x="82" y="107" class="col-title">机会</text>
+    <text x="40" y="140" class="col-sub">请求之间可复用</text>
+    <line x1="40" y1="152" x2="480" y2="152" class="rule"/>
+
+    <text x="500" y="108" class="num">02</text>
+    <text x="542" y="107" class="col-title">条件</text>
+    <text x="500" y="140" class="col-sub">复用有代价、有条件</text>
+    <line x1="500" y1="152" x2="1060" y2="152" class="rule"/>
+
+    <text x="1080" y="108" class="num">03</text>
+    <text x="1122" y="107" class="col-title">底座</text>
+    <text x="1080" y="140" class="col-sub">与流处理系统结合</text>
+    <line x1="1080" y1="152" x2="1560" y2="152" class="rule"/>
+  </g>
+
+  <!-- Left: opportunity -->
+  <g id="opportunity">
+    <!-- request bubbles -->
+    <g>
+      <rect x="60" y="185" width="230" height="58" rx="12" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="1.6"/>
+      <text x="80" y="219" class="small">请求 1：问 A</text>
+
+      <rect x="60" y="295" width="230" height="58" rx="12" fill="#FFFFFF" stroke="#155E52" stroke-width="2"/>
+      <text x="80" y="329" class="small">请求 2：再问 A</text>
+
+      <rect x="60" y="405" width="230" height="58" rx="12" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="1.6"/>
+      <text x="80" y="439" class="small">请求 3：换会话问 A</text>
+    </g>
+
+    <!-- similarity / cross-session tags -->
+    <rect x="74" y="258" width="72" height="24" rx="12" fill="#E4EEE9" stroke="none"/>
+    <text x="110" y="275" text-anchor="middle" class="tiny green">相似 / 重复</text>
+    <rect x="74" y="368" width="72" height="24" rx="12" fill="#E8EEF5" stroke="none"/>
+    <text x="110" y="385" text-anchor="middle" class="tiny blue">跨会话</text>
+
+    <!-- cache pool -->
+    <rect x="330" y="185" width="130" height="278" rx="14" fill="#FAFBF9" stroke="#DDE3DE" stroke-width="1.5"/>
+    <text x="345" y="212" class="tiny" font-weight="700">可复用状态</text>
+
+    <rect x="345" y="230" width="100" height="64" rx="10" fill="#E4EEE9" stroke="#155E52" stroke-width="1.6"/>
+    <text x="395" y="254" text-anchor="middle" class="mono green" font-size="16" font-weight="700">ctx</text>
+    <text x="395" y="278" text-anchor="middle" class="tiny">摘要 / 事实</text>
+
+    <rect x="345" y="306" width="100" height="64" rx="6" fill="#E8EEF5" stroke="#4F6D8A" stroke-width="1.6"/>
+    <text x="395" y="330" text-anchor="middle" class="mono blue" font-size="16" font-weight="700">rag</text>
+    <text x="395" y="354" text-anchor="middle" class="tiny">文档 / 检索</text>
+
+    <path d="M351 392 L439 392 L447 404 L439 416 L351 416 L343 404 Z" fill="#F7EBDD" stroke="#C9752F" stroke-width="1.6"/>
+    <text x="395" y="404" text-anchor="middle" dominant-baseline="central" class="mono amber" font-size="16" font-weight="700">resp</text>
+    <text x="395" y="436" text-anchor="middle" class="tiny">历史回答</text>
+
+    <!-- write / reuse arrows -->
+    <path d="M290 214 C310 214 322 250 343 250" class="dash" marker-end="url(#arrow-gray)"/>
+    <path d="M343 404 C322 404 310 434 292 434" class="reuse" marker-end="url(#arrow-green)"/>
+    <text x="300" y="452" text-anchor="middle" class="tiny green">复用</text>
+
+    <!-- takeaway -->
+    <line x1="60" y1="535" x2="63" y2="535" stroke="#155E52" stroke-width="3"/>
+    <line x1="60" y1="535" x2="60" y2="600" stroke="#155E52" stroke-width="3"/>
+    <text x="78" y="563" class="label-strong green">请求不是孤立的</text>
+    <text x="78" y="592" class="small">状态可以跨轮、跨会话复用</text>
+  </g>
+
+  <!-- Center: conditions and costs -->
+  <g id="conditions">
+    <!-- gate -->
+    <text x="500" y="185" class="section">复用门控</text>
+    <rect x="720" y="200" width="160" height="200" rx="16" fill="#FFFFFF" stroke="#155E52" stroke-width="2"/>
+    <text x="800" y="228" text-anchor="middle" class="tiny green" font-weight="700">条件</text>
+
+    <g>
+      <circle cx="745" cy="258" r="8" fill="#E4EEE9" stroke="#155E52" stroke-width="1.5"/>
+      <path d="M741 258 l3 3 l5 -6" fill="none" stroke="#155E52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="762" y="264" class="tiny">语义匹配</text>
+
+      <circle cx="745" cy="298" r="8" fill="#E4EEE9" stroke="#155E52" stroke-width="1.5"/>
+      <path d="M741 298 l3 3 l5 -6" fill="none" stroke="#155E52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="762" y="304" class="tiny">版本 / 权限</text>
+
+      <circle cx="745" cy="338" r="8" fill="#E4EEE9" stroke="#155E52" stroke-width="1.5"/>
+      <path d="M741 338 l3 3 l5 -6" fill="none" stroke="#155E52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="762" y="344" class="tiny">新鲜度</text>
+
+      <circle cx="745" cy="378" r="8" fill="#F7EBDD" stroke="#C9752F" stroke-width="1.5"/>
+      <path d="M741 378 l3 3 l5 -6" fill="none" stroke="#C9752F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="762" y="384" class="tiny amber">质量预算 δ</text>
+    </g>
+
+    <!-- gate input / outputs -->
+    <path d="M620 300 H720" class="flow" marker-end="url(#arrow-green)"/>
+    <text x="630" y="285" class="tiny">候选复用</text>
+
+    <path d="M880 270 C910 270 930 250 960 250" class="flow" marker-end="url(#arrow-green)"/>
+    <text x="900" y="240" class="small green">复用</text>
+
+    <path d="M880 330 C910 330 930 350 960 350" fill="none" stroke="#9AA5A1" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow-gray)"/>
+    <text x="900" y="372" class="small">重算</text>
+
+    <!-- net value -->
+    <text x="500" y="462" class="section">净值 &gt; 0 才复用</text>
+    <line x1="500" y1="476" x2="1060" y2="476" class="hair"/>
+
+    <line x1="600" y1="600" x2="1000" y2="580" stroke="#155E52" stroke-width="4" stroke-linecap="round"/>
+    <path d="M800 600 L780 630 H820 Z" fill="#5F6B72"/>
+
+    <rect x="580" y="558" width="100" height="36" rx="8" fill="#E4EEE9" stroke="#155E52" stroke-width="1.8"/>
+    <text x="630" y="576" text-anchor="middle" dominant-baseline="central" class="small green" font-weight="700">收益</text>
+    <text x="580" y="650" class="tiny">省 GPU / 检索 / 上下文</text>
+
+    <rect x="920" y="540" width="100" height="36" rx="8" fill="url(#taxHatch)" stroke="#C9752F" stroke-width="1.8"/>
+    <text x="970" y="558" text-anchor="middle" dominant-baseline="central" class="small amber" font-weight="700">代价</text>
+    <text x="1020" y="616" text-anchor="end" class="tiny">验证 / 存储</text>
+    <text x="1020" y="638" text-anchor="end" class="tiny">失效 / 迁移</text>
+  </g>
+
+  <!-- Right: stream processing base -->
+  <g id="stream-base">
+    <!-- stream line -->
+    <line x1="1100" y1="300" x2="1540" y2="300" stroke="#DDE3DE" stroke-width="2"/>
+    <g fill="#9FB3A8">
+      <circle cx="1112" cy="300" r="4"/>
+      <circle cx="1142" cy="300" r="4"/>
+      <circle cx="1172" cy="300" r="4"/>
+      <circle cx="1202" cy="300" r="4"/>
+      <circle cx="1232" cy="300" r="4"/>
+    </g>
+    <g fill="#155E52">
+      <circle cx="1448" cy="300" r="4"/>
+      <circle cx="1478" cy="300" r="4"/>
+      <circle cx="1508" cy="300" r="4"/>
+    </g>
+    <text x="1100" y="276" class="tiny">请求流</text>
+    <text x="1540" y="276" text-anchor="end" class="tiny">结果流</text>
+
+    <!-- agent operator -->
+    <rect x="1260" y="238" width="160" height="124" rx="14" fill="#E4EEE9" stroke="#155E52" stroke-width="2"/>
+    <text x="1340" y="282" text-anchor="middle" class="label-strong green">Agent 算子</text>
+    <text x="1340" y="308" text-anchor="middle" class="tiny green">复用门控 + 状态</text>
+    <text x="1340" y="332" text-anchor="middle" class="tiny">Flink 运行时</text>
+
+    <!-- state store -->
+    <rect x="1260" y="392" width="160" height="82" rx="12" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="1.5"/>
+    <text x="1340" y="418" text-anchor="middle" class="small green" font-weight="700">Flink 状态</text>
+    <text x="1340" y="446" text-anchor="middle" class="mono tiny">ctx · rag · resp</text>
+
+    <!-- state read/write -->
+    <line x1="1340" y1="362" x2="1340" y2="392" stroke="#155E52" stroke-width="1.8" marker-start="url(#arrow-green)" marker-end="url(#arrow-green)"/>
+
+    <!-- tags -->
+    <text x="1340" y="512" text-anchor="middle" class="tiny">事件驱动 · 状态底座 · 在线控制</text>
+
+    <!-- takeaway -->
+    <line x1="1100" y1="560" x2="1103" y2="560" stroke="#155E52" stroke-width="3"/>
+    <line x1="1100" y1="560" x2="1100" y2="625" stroke="#155E52" stroke-width="3"/>
+    <text x="1118" y="588" class="label-strong green">把复用放进流里</text>
+    <text x="1118" y="616" class="small">缓存、状态与调度在同一条流里闭环</text>
+  </g>
+
+  <!-- Bottom conclusion -->
+  <g id="bottom-band">
+    <rect x="40" y="740" width="1520" height="120" rx="14" fill="#FAFBF9" stroke="#DDE3DE" stroke-width="1.5"/>
+    <rect x="40" y="740" width="4" height="120" rx="2" fill="#155E52"/>
+
+    <text x="80" y="790" class="section green">复用机会</text>
+    <text x="224" y="790" class="section gray">×</text>
+    <text x="256" y="790" class="section amber">条件化复用</text>
+    <text x="432" y="790" class="section gray">×</text>
+    <text x="464" y="790" class="section blue">流处理底座</text>
+    <text x="620" y="790" class="section green">→</text>
+    <text x="660" y="790" class="section">流式 Agent 的高效资源管理与优化</text>
+
+    <text x="80" y="826" class="tiny">研究落点：价值 / 生命周期　·　容量 / 配置　·　调度 / 路由</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="40" y="885" class="tiny faint">问题背景｜机会—条件—底座</text>
+  <text x="1560" y="885" text-anchor="end" class="tiny faint">示意图，非实测数据</text>
+</svg>
