@@ -120,3 +120,5 @@ Yu, Lingfan, Jinkun Lin, and Jinyang Li. “Stateful Large Language Model Servin
 ```
 
 来源页面：PDF 第 1 页标题、作者、摘要；第 3–8 页设计；第 8–11 页实验；第 11 页结论。
+
+更聚焦的缓存逻辑详解见 [Pensieve_缓存逻辑详解.html](Pensieve_缓存逻辑详解.html)。
