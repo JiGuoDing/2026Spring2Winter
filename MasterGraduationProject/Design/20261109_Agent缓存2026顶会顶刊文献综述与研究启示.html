@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light" style="--rec-label: '★ 推荐'">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>2026 年 Agent 缓存顶会顶刊文献综述与研究启示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       TOKENS
+       ============================================================ */
+    :root {
+      --bg: #FAFAF7;
+      --surface: #FFFFFF;
+      --surface-2: #F5F5F0;
+      --surface-3: #EFEEE8;
+      --text: #1A1A1A;
+      --text-muted: #4A4A45;
+      --text-subtle: #6B6B66;
+      --accent: #D97757;
+      --accent-hover: #C56843;
+      --accent-soft: #FBEEE6;
+      --accent-border: #F0D5C4;
+      --accent-strong: #A85533;
+      --border: #E5E4DC;
+      --border-strong: #CDCDC4;
+      --code-bg: #F5F2EC;
+      --code-text: #2A2A2A;
+      --info: #2563EB;
+      --info-soft: #EFF6FF;
+      --info-border: #BFDBFE;
+      --warn: #B45309;
+      --warn-soft: #FFFBEB;
+      --warn-border: #FDE68A;
+      --danger: #B91C1C;
+      --danger-soft: #FEF2F2;
+      --danger-border: #FECACA;
+      --success: #047857;
+      --success-soft: #ECFDF5;
+      --success-border: #A7F3D0;
+      --decision: #6D28D9;
+      --decision-soft: #F5F3FF;
+      --decision-border: #DDD6FE;
+      --shadow-sm: 0 1px 2px rgba(20, 14, 8, 0.04);
+      --shadow: 0 1px 2px rgba(20, 14, 8, 0.04), 0 4px 12px rgba(20, 14, 8, 0.06);
+      --shadow-lg: 0 8px 24px rgba(20, 14, 8, 0.10);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'Noto Sans CJK KR', sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+      --z-progress: 200;
+      --z-topbar: 100;
+      --z-drawer: 300;
+      --z-backdrop: 250;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1A1714;
+      --surface: #221E1A;
+      --surface-2: #2A2520;
+      --surface-3: #322C26;
+      --text: #F5F0E8;
+      --text-muted: #C8C0B6;
+      --text-subtle: #9A938A;
+      --accent: #E89572;
+      --accent-hover: #F2A87F;
+      --accent-soft: #3A2A22;
+      --accent-border: #5A3D2E;
+      --accent-strong: #F5B493;
+      --border: #2E2924;
+      --border-strong: #463F38;
+      --code-bg: #1E1B17;
+      --code-text: #E8E2D8;
+      --info: #93C5FD;
+      --info-soft: #1E2A3D;
+      --info-border: #2A4365;
+      --warn: #FBBF24;
+      --warn-soft: #332817;
+      --warn-border: #5C4520;
+      --danger: #FCA5A5;
+      --danger-soft: #3A1F1F;
+      --danger-border: #5C2A2A;
+      --success: #6EE7B7;
+      --success-soft: #1A3329;
+      --success-border: #1F5C45;
+      --decision: #C4B5FD;
+      --decision-soft: #2A1F40;
+      --decision-border: #4A3870;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ============================================================
+       BASE
+       ============================================================ */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    ::selection { background: var(--accent-soft); color: var(--accent-strong); }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -100px; left: 8px;
+      padding: 10px 16px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      z-index: 1000;
+      transition: top 0.15s;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* SVG sprite container (hidden) */
+    .icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .icon { display: inline-block; flex-shrink: 0; vertical-align: middle; stroke: currentColor; fill: none; }
+
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0;
+      background: var(--accent);
+      z-index: var(--z-progress);
+      transition: width 0.05s linear;
+    }
+
+    /* ============================================================
+       TOPBAR
+       ============================================================ */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-topbar);
+      background: rgba(250, 250, 247, 0.85);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="dark"] .topbar { background: rgba(26, 23, 20, 0.85); }
+    .topbar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .brand-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+      animation: brand-pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes brand-pulse {
+      0%, 100% { box-shadow: 0 0 0 4px var(--accent-soft); }
+      50%      { box-shadow: 0 0 0 7px transparent; }
+    }
+    .topbar-actions { display: flex; gap: 6px; align-items: center; }
+    .icon-btn {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+      padding: 0;
+    }
+    .icon-btn .icon { width: 18px; height: 18px; stroke-width: 2; }
+    .icon-btn[hidden] { display: none; }
+
+    /* ============================================================
+       LAYOUT
+       ============================================================ */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      padding: 32px 24px 96px;
+    }
+    .content { min-width: 0; }
+
+    /* ============================================================
+       TOC (desktop + mobile drawer)
+       ============================================================ */
+    .toc {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .toc::-webkit-scrollbar { width: 6px; }
+    .toc::-webkit-scrollbar-track { background: transparent; }
+    .toc::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    .toc-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px 12px;
+    }
+    .toc-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-subtle);
+      margin: 0;
+    }
+    .toc-close { display: none; }
+    .toc-nav { display: flex; flex-direction: column; gap: 2px; }
+    .toc-nav a {
+      display: flex; align-items: center;
+      min-height: 36px;
+      padding: 8px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 2px solid transparent;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+      line-height: 1.4;
+    }
+    .toc-nav a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 500;
+    }
+    .toc-nav a.lvl-3 { padding-left: 26px; font-size: 12.5px; }
+    .toc-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: var(--z-backdrop);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    /* ============================================================
+       DOC HEADER
+       ============================================================ */
+    .doc-header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-eyebrow {
+      display: inline-flex; align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      border: 1px solid var(--accent-border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+    .doc-title {
+      font-size: clamp(28px, 3vw + 16px, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+      color: var(--text);
+      text-wrap: balance;
+    }
+    .doc-subtitle {
+      font-size: clamp(15px, 0.6vw + 13px, 18px);
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0 0 20px;
+      max-width: 75ch;
+      text-wrap: pretty;
+    }
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-subtle);
+    }
+    .doc-meta-item { display: inline-flex; align-items: center; gap: 6px; }
+    .doc-meta .icon { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* ============================================================
+       CONTENT (typography)
+       ============================================================ */
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      scroll-margin-top: 80px;
+      text-wrap: balance;
+    }
+    .content h2 {
+      font-size: 26px;
+      font-weight: 600;
+      margin: 56px 0 16px;
+      padding-top: 8px;
+      position: relative;
+    }
+    .content h3 {
+      font-size: 19px;
+      font-weight: 600;
+      margin: 36px 0 12px;
+      position: relative;
+    }
+    .content h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 24px 0 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .content > p,
+    .content > ul,
+    .content > ol,
+    .content > blockquote { max-width: 75ch; }
+    .content p { margin: 0 0 16px; text-wrap: pretty; overflow-wrap: anywhere; }
+    .content a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-border); }
+    .content ul, .content ol { padding-left: 24px; margin: 0 0 16px; }
+    .content li { margin: 4px 0; }
+    .content strong { color: var(--text); font-weight: 600; }
+    .content em { color: var(--text-muted); }
+    .content hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* Anchor links injected by JS on h2/h3 with id */
+    .anchor {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px;
+      margin-left: 6px;
+      color: var(--text-subtle);
+      opacity: 0;
+      transform: translateY(-1px);
+      transition: opacity 0.15s, color 0.15s;
+      border-bottom: none !important;
+      border-radius: var(--radius-sm);
+    }
+    .anchor .icon { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* Images */
+    .content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      display: block;
+    }
+    .content figure { margin: 20px 0; }
+    .content figure img { margin: 0; }
+    .content figcaption {
+      font-size: 13px;
+      color: var(--text-subtle);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* Task lists (- [ ] / - [x]) */
+    .content .task-list-item { list-style: none; margin-left: -22px; }
+    .content .task-list-item-checkbox {
+      margin-right: 8px;
+      vertical-align: -2px;
+      accent-color: var(--accent);
+    }
+
+    /* Footnotes */
+    .content .footnote-ref a,
+    .content sup a {
+      font-size: 0.75em;
+      vertical-align: super;
+      border-bottom: none;
+      padding: 0 2px;
+    }
+    .content .footnotes {
+      margin-top: 56px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       CODE
+       ============================================================ */
+    .content code {
+      font-family: var(--font-mono);
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: var(--code-text);
+      border: 1px solid var(--border);
+      overflow-wrap: anywhere;
+    }
+    .content pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin: 16px 0;
+      position: relative;
+    }
+    .content pre code {
+      background: none; padding: 0; border: none;
+      color: var(--code-text);
+      font-size: inherit;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-subtle);
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+      padding: 0;
+    }
+    .copy-btn .icon { width: 14px; height: 14px; stroke-width: 2; }
+    .copy-btn.copied { color: var(--success); border-color: var(--success-border); opacity: 1; }
+
+    /* ============================================================
+       TIMELINE / STEPS
+       ============================================================ */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 24px 0;
+      position: relative;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 19px;
+      top: 20px;
+      bottom: 20px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-border), var(--border));
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 16px 4px;
+      position: relative;
+      border-radius: var(--radius);
+      transition: background-color 0.15s;
+    }
+    .step-num {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      border-radius: 50%;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      z-index: 1;
+      transition: background-color 0.15s, color 0.15s, transform 0.15s;
+    }
+    .step.done .step-num { background: var(--accent); color: #fff; }
+    .step-body { padding-top: 6px; min-width: 0; }
+    .step-body h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .step-body p { margin: 0 0 8px; color: var(--text-muted); font-size: 14.5px; max-width: 75ch; }
+    .step-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* ============================================================
+       CALLOUTS
+       ============================================================ */
+    .callout {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      border: 1px solid;
+      margin: 20px 0;
+      font-size: 14.5px;
+      line-height: 1.6;
+      max-width: 75ch;
+    }
+    .callout-icon { width: 20px; height: 20px; margin-top: 2px; stroke-width: 2; }
+    .callout-body { min-width: 0; }
+    .callout-title { font-weight: 600; margin: 0 0 4px; font-size: 14px; }
+    .callout-body p:last-child { margin-bottom: 0; }
+    .callout-body code { background: rgba(0,0,0,0.04); }
+    [data-theme="dark"] .callout-body code { background: rgba(255,255,255,0.06); }
+
+    .callout-info     { background: var(--info-soft);     border-color: var(--info-border);     color: var(--text); }
+    .callout-info     .callout-title, .callout-info     .callout-icon { color: var(--info); }
+    .callout-warn     { background: var(--warn-soft);     border-color: var(--warn-border);     color: var(--text); }
+    .callout-warn     .callout-title, .callout-warn     .callout-icon { color: var(--warn); }
+    .callout-danger   { background: var(--danger-soft);   border-color: var(--danger-border);   color: var(--text); }
+    .callout-danger   .callout-title, .callout-danger   .callout-icon { color: var(--danger); }
+    .callout-success  { background: var(--success-soft);  border-color: var(--success-border);  color: var(--text); }
+    .callout-success  .callout-title, .callout-success  .callout-icon { color: var(--success); }
+    .callout-decision { background: var(--decision-soft); border-color: var(--decision-border); color: var(--text); }
+    .callout-decision .callout-title, .callout-decision .callout-icon { color: var(--decision); }
+    .callout-tip      { background: var(--accent-soft);   border-color: var(--accent-border);   color: var(--text); }
+    .callout-tip      .callout-title, .callout-tip      .callout-icon { color: var(--accent-strong); }
+
+    /* ============================================================
+       KEY-POINT HIGHLIGHT
+       ============================================================ */
+    .highlight {
+      background: linear-gradient(135deg, var(--accent-soft), var(--surface-2));
+      border-left: 4px solid var(--accent);
+      padding: 18px 22px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 24px 0;
+      font-size: 16px;
+      line-height: 1.65;
+      max-width: 75ch;
+    }
+    .highlight-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-strong);
+      margin-bottom: 6px;
+    }
+
+    /* ============================================================
+       MERMAID
+       ============================================================ */
+    .diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+    .diagram-caption {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-align: center;
+    }
+    .mermaid { text-align: center; min-height: 80px; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    .mermaid:not([data-processed]) {
+      opacity: 0.4;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-subtle);
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    /* ============================================================
+       PROS / CONS
+       ============================================================ */
+    .proscons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .proscons-col {
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      border: 1px solid;
+    }
+    .proscons-col h4 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .proscons-col ul { margin: 0; padding-left: 18px; }
+    .proscons-col li { margin: 6px 0; }
+    .pros { background: var(--success-soft); border-color: var(--success-border); }
+    .pros h4 { color: var(--success); }
+    .cons { background: var(--danger-soft); border-color: var(--danger-border); }
+    .cons h4 { color: var(--danger); }
+
+    /* ============================================================
+       COMPARISON CARDS
+       ============================================================ */
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .compare-card {
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.18s, box-shadow 0.18s;
+      position: relative;
+    }
+    .compare-card.recommended { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .compare-card.recommended::before {
+      content: var(--rec-label, "★ Recommended");
+      position: absolute; top: -10px; right: 14px;
+      background: var(--accent); color: #fff;
+      padding: 2px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+    }
+    .compare-card h4 { margin: 0 0 8px; font-size: 15px; color: var(--text); text-transform: none; letter-spacing: normal; }
+    .compare-card p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+    /* ============================================================
+       COLLAPSIBLE
+       ============================================================ */
+    details.collapsible {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin: 16px 0;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    details.collapsible[open] { box-shadow: var(--shadow-sm); }
+    details.collapsible > summary {
+      cursor: pointer;
+      padding: 14px 18px;
+      font-weight: 500;
+      color: var(--text);
+      list-style: none;
+      display: flex; align-items: center; gap: 10px;
+      user-select: none;
+      transition: background 0.15s;
+      min-height: 44px;
+    }
+    details.collapsible > summary::-webkit-details-marker { display: none; }
+    details.collapsible > summary::before {
+      content: "›";
+      display: inline-block;
+      transition: transform 0.18s;
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    details.collapsible[open] > summary::before { transform: rotate(90deg); }
+    .collapsible-body { padding: 4px 18px 18px; border-top: 1px solid var(--border); }
+    .collapsible-body > *:first-child { margin-top: 12px; }
+
+    /* ============================================================
+       TABLES (wrapped via .table-wrap or naturally responsive)
+       ============================================================ */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: var(--surface);
+      margin: 0;
+    }
+    /* Standalone tables (not inside .table-wrap) keep visual border */
+    .content > table {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 20px 0;
+      display: block;
+      overflow-x: auto;
+    }
+    .content th {
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .content td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .content tr:last-child td { border-bottom: none; }
+
+    /* ============================================================
+       BLOCKQUOTE
+       ============================================================ */
+    .content blockquote {
+      margin: 20px 0;
+      padding: 4px 20px;
+      border-left: 3px solid var(--accent-border);
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .doc-footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-subtle);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .doc-footer a { color: var(--accent); text-decoration: none; }
+
+    /* ============================================================
+       FOCUS-VISIBLE (a11y)
+       ============================================================ */
+    *:focus { outline: none; }
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+    .toc-nav a:focus-visible { outline-offset: -2px; }
+    .icon-btn:focus-visible { outline-offset: 2px; }
+    .anchor:focus-visible { opacity: 1; outline-offset: 2px; }
+    details.collapsible > summary:focus-visible { outline-offset: -2px; }
+
+    /* ============================================================
+       HOVER (only on hover-capable devices to avoid sticky-tap on mobile)
+       ============================================================ */
+    @media (hover: hover) {
+      .icon-btn:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-soft); }
+      .toc-nav a:hover { color: var(--accent); background: var(--accent-soft); }
+      .content a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+      .compare-card:hover { border-color: var(--accent-border); box-shadow: var(--shadow); }
+      .compare-card.recommended:hover { border-color: var(--accent); }
+      .content tr:hover td { background: var(--surface-2); }
+      details.collapsible > summary:hover { background: var(--surface-2); }
+      .step:hover { background: var(--surface-2); }
+      .step:hover .step-num { transform: scale(1.05); }
+      .anchor:hover { color: var(--accent); }
+      .content h2:hover .anchor,
+      .content h3:hover .anchor { opacity: 1; }
+      .copy-btn:hover { color: var(--accent); border-color: var(--accent-border); }
+      .content pre:hover .copy-btn { opacity: 1; }
+    }
+    /* On touch devices, copy-btn is always visible at low opacity */
+    @media (hover: none) {
+      .copy-btn { opacity: 0.6; }
+      .anchor { opacity: 0.4; }
+    }
+
+    /* ============================================================
+       MOBILE (≤900px) — TOC becomes off-canvas drawer
+       ============================================================ */
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px 16px 80px;
+      }
+      .topbar-inner { padding: 8px 12px; }
+      .doc-header { margin-bottom: 28px; padding-bottom: 20px; }
+
+      .toc-mobile-trigger { display: inline-flex !important; }
+
+      .toc {
+        position: fixed;
+        top: 0; left: 0;
+        width: min(300px, 82vw);
+        height: 100dvh;
+        max-height: 100dvh;
+        background: var(--surface);
+        z-index: var(--z-drawer);
+        padding: 16px 8px 24px 16px;
+        box-shadow: var(--shadow-lg);
+        transform: translateX(-105%);
+        transition: transform 0.25s ease;
+      }
+      .toc-head { padding: 4px 4px 12px 8px; }
+      .toc-close {
+        display: inline-flex !important;
+        width: 36px; height: 36px;
+        align-items: center; justify-content: center;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0;
+      }
+      .toc-close .icon { width: 18px; height: 18px; stroke-width: 2; }
+      body.toc-open .toc { transform: translateX(0); }
+      body.toc-open .toc-backdrop {
+        display: block;
+        opacity: 1;
+      }
+      .toc-backdrop {
+        display: block;
+        opacity: 0;
+        pointer-events: none;
+      }
+      body.toc-open .toc-backdrop { pointer-events: auto; }
+      body.toc-open { overflow: hidden; }
+    }
+    @media (min-width: 901px) {
+      .toc-mobile-trigger { display: none !important; }
+    }
+
+    /* ============================================================
+       REDUCED MOTION (a11y)
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      html { scroll-behavior: auto; }
+      .brand-dot { animation: none; box-shadow: 0 0 0 4px var(--accent-soft); }
+    }
+
+    /* ============================================================
+       PRINT
+       ============================================================ */
+    @media print {
+      .topbar, .toc, .toc-backdrop, .icon-btn, .copy-btn, .anchor, .scroll-progress { display: none !important; }
+      .layout { grid-template-columns: 1fr; padding: 0; max-width: 100%; }
+      body { background: #fff; color: #000; }
+      a { color: #000; }
+      .content pre, .callout, .compare-card, .step, .diagram { break-inside: avoid; }
+      .doc-footer { break-before: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip link for keyboard users -->
+  <a href="#main" class="skip-link">跳到正文</a>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- SVG icon sprite (Lucide-style) -->
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="i-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></symbol>
+    <symbol id="i-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="i-decision" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-tip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14a5 5 0 1 0-6.18 0 4 4 0 0 1 1.59 2h2.99a4 4 0 0 1 1.6-2Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  </svg>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <button class="icon-btn toc-mobile-trigger" id="toc-toggle" onclick="openToc()" aria-label="目录" title="目录">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>2026 Agent 缓存综述</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" onclick="window.print()" title="打印 / 保存 PDF" aria-label="打印 / 保存 PDF">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-printer"/></svg>
+        </button>
+        <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="切换主题" aria-label="切换主题">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use id="theme-icon-use" href="#i-moon"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOC drawer backdrop (mobile) -->
+  <div class="toc-backdrop" onclick="closeToc()" aria-hidden="true"></div>
+
+  <div class="layout">
+    <aside class="toc" id="toc" aria-label="目录">
+      <div class="toc-head">
+        <p class="toc-title">目录</p>
+        <button class="toc-close" onclick="closeToc()" aria-label="关闭目录">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+      <nav class="toc-nav" id="toc-nav">
+        <a href="#section-1" class="lvl-2">0. 结论摘要</a>
+<a href="#section-2" class="lvl-2">1. 收录与分类口径</a>
+<a href="#subsection-1" class="lvl-3">1.1 缓存对象</a>
+<a href="#subsection-2" class="lvl-3">1.2 发表层级</a>
+<a href="#subsection-3" class="lvl-3">1.3 状态说明</a>
+<a href="#section-3" class="lvl-2">2. 核心文献</a>
+<a href="#subsection-4" class="lvl-3">2.1 2026 年 CCF-B 以上正式主会/期刊</a>
+<a href="#subsection-5" class="lvl-3">2.2 CCF-B 场次中的非主会或待确认 Track</a>
+<a href="#section-4" class="lvl-2">3. 上下文与记忆生命周期近邻</a>
+<a href="#section-5" class="lvl-2">4. 边界与跟踪列表</a>
+<a href="#section-6" class="lvl-2">5. 容易误收的 KV/prefix cache 工作</a>
+<a href="#section-7" class="lvl-2">6. 五维研究地图</a>
+<a href="#subsection-6" class="lvl-3">6.1 文献到价值因子的映射</a>
+<a href="#section-8" class="lvl-2">7. 现有第一章设计的主要缺口</a>
+<a href="#subsection-7" class="lvl-3">7.1 从“命中价值”转向“净复用价值”</a>
+<a href="#subsection-8" class="lvl-3">7.2 从“语义相似”转向“依赖有效”</a>
+<a href="#subsection-9" class="lvl-3">7.3 从“固定淘汰”转向“风险预算下的生命周期”</a>
+<a href="#subsection-10" class="lvl-3">7.4 从“单对象”转向“依赖闭包和失效传播”</a>
+<a href="#subsection-11" class="lvl-3">7.5 从“离线命中率”转向“流式有效 goodput”</a>
+<a href="#section-9" class="lvl-2">8. 建议的研究框架</a>
+<a href="#subsection-12" class="lvl-3">8.1 建议标题</a>
+<a href="#subsection-13" class="lvl-3">8.2 三个研究问题</a>
+<a href="#subsection-14" class="lvl-3">8.3 统一的缓存对象接口</a>
+<a href="#subsection-15" class="lvl-3">8.4 扩展价值函数</a>
+<a href="#subsection-16" class="lvl-3">8.5 建议的 MVP</a>
+<a href="#section-10" class="lvl-2">9. 实验与验证建议</a>
+<a href="#subsection-17" class="lvl-3">9.1 预实验</a>
+<a href="#subsection-18" class="lvl-3">9.2 对比基线</a>
+<a href="#subsection-19" class="lvl-3">9.3 核心指标</a>
+<a href="#subsection-20" class="lvl-3">9.4 消融</a>
+<a href="#section-11" class="lvl-2">10. 与现有项目材料的关系</a>
+<a href="#subsection-21" class="lvl-3">10.1 保留的部分</a>
+<a href="#subsection-22" class="lvl-3">10.2 需要调整的部分</a>
+<a href="#section-12" class="lvl-2">11. 证据边界与后续核验</a>
+      </nav>
+    </aside>
+
+    <main class="content" id="main">
+      <header class="doc-header">
+        <span class="doc-eyebrow">NOTES</span>
+        <h1 class="doc-title">2026 年 Agent 缓存顶会顶刊文献综述与研究启示</h1>
+        <p class="doc-subtitle">2026 年 CCF-B+ 文献清单、五维研究地图，以及面向毕业设计第一章的独立修订建议。</p>
+        <div class="doc-meta">
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-file"/></svg>
+            20261109_Agent缓存2026顶会顶刊文献综述与研究启示.md
+          </span>
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>
+            2026-11-09
+          </span>
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg>
+            ~18 分钟阅读
+          </span>
+        </div>
+      </header>
+
+      <!-- CONTENT_START -->
+<aside class="callout callout-info">
+  <svg class="callout-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-info"/></svg>
+  <div class="callout-body">
+    <p class="callout-title">文档信息与边界</p>
+    <p><strong>独立性：</strong>本页是新文档的可视化版本，不改写原设计稿。</p>
+    <p><strong>核验：</strong>截至 2026-11-09，CCF 等级依据 2022 推荐目录。</p>
+    <p><strong>边界：</strong>只讨论 Agent 执行产物缓存，不把 KV、prefix KV 或 attention cache 作为核心对象。</p>
+  </div>
+</aside>
+<h2 id="section-1">0. 结论摘要</h2>
+<p>2026 年与 Agent 缓存相关的研究已经从“相同请求复用”明显转向四类问题：</p>
+<ol>
+<li><strong>语义命中是否可信</strong>：vCache、MVR-cache、LaCache、缓存投毒研究分别从逐条目错误率保证、多向量匹配、响应侧验证和对抗攻击角度处理正确性。</li>
+<li><strong>缓存集合如何优化</strong>：INFOCOM 2026 与 MobiHoc 2026 的工作把语义缓存从阈值问题推进到带失配成本、未知分布、连续查询空间和切换成本的优化问题。</li>
+<li><strong>缓存生命周期如何管理</strong>：Cortex、RAG-Cache、TVCACHE、C-DIC 以及一批 Agent memory 工作分别覆盖知识缓存、工具结果、上下文压缩、记忆合并和失效更新。</li>
+<li><strong>缓存如何评测与治理</strong>：Closing the Operational Gap、NDSS、LDPCache 等工作说明命中率、准确率和原始成本都不够，还要看可用命中、陈旧风险、安全风险和隐私预算。</li>
+</ol>
+<p>对当前毕业设计第一章最有利的定位不是“再做一个多层缓存”，而是：</p>
+<div class="highlight">
+  <span class="highlight-label">推荐定位</span>
+  <p><strong>面向流式 Agent 的依赖感知缓存价值建模与生命周期控制。</strong> 研究重点从“相似度阈值”转向“净复用价值 + 状态有效性 + 生命周期动作”。</p>
+</div>
+<p>核心问题应从“相似度阈值是多少”推进为：</p>
+<ul>
+<li>这个缓存对象的未来复用概率有多大？</li>
+<li>命中它能节省多少真实工作，在动态负载下这些工作值多少钱？</li>
+<li>它的语义、来源、会话状态和工具环境是否仍然有效？</li>
+<li>验证、刷新、迁移和错误复用分别引入多少管理税与风险？</li>
+<li>在容量和质量预算约束下，什么时候准入、复用、刷新、降级和淘汰？</li>
+</ul>
+<h2 id="section-2">1. 收录与分类口径</h2>
+<h3 id="subsection-1">1.1 缓存对象</h3>
+<p>本文使用以下五类逻辑对象描述 Agent 缓存：</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">典型对象</th>
+<th align="left">主要收益</th>
+<th align="left">主要风险</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>resp</code></td>
+<td align="left">最终回答、回答模板、生成程序</td>
+<td align="left">短路完整推理或降低模型档位</td>
+<td align="left">语义误命中、答案过时、缓存投毒</td>
+</tr>
+<tr>
+<td align="left"><code>rag</code></td>
+<td align="left">文档块、检索结果、知识子图、远端查询结果</td>
+<td align="left">避免重复检索、远端 I/O 和上下文拼装</td>
+<td align="left">来源版本变化、权限越界、证据不足</td>
+</tr>
+<tr>
+<td align="left"><code>act</code></td>
+<td align="left">工具调用结果、执行观察、API 返回</td>
+<td align="left">避免重复调用和等待</td>
+<td align="left">环境状态不同导致相同调用产生不同结果</td>
+</tr>
+<tr>
+<td align="left"><code>ctx</code></td>
+<td align="left">会话摘要、事实/约束、工作记忆、计划草案</td>
+<td align="left">减少上下文长度和重复压缩</td>
+<td align="left">摘要失真、事实冲突、旧状态未失效</td>
+</tr>
+<tr>
+<td align="left"><code>control</code></td>
+<td align="left">准入、验证、刷新、淘汰、分层和路由决策</td>
+<td align="left">把缓存价值转化为系统动作</td>
+<td align="left">管理税、策略抖动、负载变化下失效</td>
+</tr>
+</tbody></table>
+</div>
+<h3 id="subsection-2">1.2 发表层级</h3>
+<ul>
+<li><strong>正式主会/期刊</strong>：2026 年 CCF-B 以上主会或期刊，单独作为核心证据。</li>
+<li><strong>同 venue 非主会</strong>：EMNLP Industry、Findings 等单独标注，不冒充主会论文。</li>
+<li><strong>未入 CCF 目录的强相关场次</strong>：MLSys、COLM、EuroMLSys workshop 单独列出。</li>
+<li><strong>预印本</strong>：保留高研究价值，但不计入“正式 CCF-B+”数量。</li>
+<li><strong>KV 边界</strong>：题目即使包含 cache、semantic cache 或 agent，只要主要操作对象是 KV/prefix/attention，就放入排除表。</li>
+</ul>
+<h3 id="subsection-3">1.3 状态说明</h3>
+<ul>
+<li>NeurIPS 2026 论文按官方 virtual 页面标注为“已录用/Poster”，会议召开时间为 2026 年 12 月。</li>
+<li>MobiHoc 2026 的连续语义缓存论文已录用并有 DOI，会议时间晚于本文截止日期，因此不写成“已完成会议报告”。</li>
+<li>对 EMNLP 2026 中 arXiv 未明确 track 的论文，单独标注“Track 待 proceedings 最终确认”。</li>
+</ul>
+<h2 id="section-3">2. 核心文献</h2>
+<aside class="callout callout-success">
+  <svg class="callout-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-success"/></svg>
+  <div class="callout-body">
+    <p class="callout-title">文献规模</p>
+    <p>正式主会或期刊 13 篇；上下文与记忆近邻 10 篇；另有 12 篇边界跟踪项和 8 篇 KV/prefix cache 排除项。</p>
+  </div>
+</aside>
+<h3 id="subsection-4">2.1 2026 年 CCF-B 以上正式主会/期刊</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">论文与作者</th>
+<th align="left">出处与状态</th>
+<th align="left">缓存对象与核心机制</th>
+<th align="left">对第一章的用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://iclr.cc/virtual/2026/poster/10006471">vCache: Verified Semantic Prompt Caching</a> — Luis Gaspar Schroeder et al.</td>
+<td align="left">ICLR 2026 Poster；CCF-A；arXiv:2502.03771</td>
+<td align="left">为每个缓存回答在线学习独立相似度阈值，并用随机探索和悲观置信界满足用户指定的错误率上界。</td>
+<td align="left">直接支撑 <code>q_wrong</code>、质量预算和“不可见反事实”下的探索；是回答缓存质量门控的强基线。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/63545">MVR-cache: Optimizing Semantic Caching via Multi-Vector Retrieval and Learned Prompt Segmentation</a> — Ali Noshad, Zishan Zheng, Yinjun Wu</td>
+<td align="left">ICML 2026 Regular；CCF-A；arXiv:2605.24914</td>
+<td align="left">将 Prompt 学习式分段，以多向量检索和 MaxSim 做细粒度匹配，在正确性约束下最大化缓存命中。</td>
+<td align="left">说明“单 embedding + 单阈值”不足以表示复杂请求；可作为语义 key 设计和匹配成本的参考。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://doi.org/10.1109/infocom59046.2026.11571467">Semantic Caching for Low-Cost LLM Serving: From Offline Learning to Online Adaptation</a> — Xutong Liu et al.</td>
+<td align="left">INFOCOM 2026；CCF-A；DOI:10.1109/INFOCOM59046.2026.11571467</td>
+<td align="left">将语义缓存淘汰写成带查询失配代价的集合优化，并在查询分布和回源成本未知时学习缓存集合。</td>
+<td align="left">与净收益和淘汰问题最接近；可用于构造 <code>p_use × saved_work − mismatch_loss</code> 的理论基线。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2604.20021">Continuous Semantic Caching for Low-Cost LLM Serving</a> — Baran Atalar et al.</td>
+<td align="left">ACM MobiHoc 2026，已录用/DOI 在线；CCF-B；会议日期 2026-11-22</td>
+<td align="left">在连续 embedding 空间中对语义响应缓存建模，用动态 ε-net、Kernel Ridge Regression 处理不确定性和切换成本，并给出 sublinear regret。</td>
+<td align="left">为“查询空间连续、负载和回源成本随时间变化”提供理论接口，适合连接第一章与负载控制。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.usenix.org/conference/nsdi26/presentation/ruan-cortex">Cortex: Achieving Low-Latency, Cost-Efficient Remote Data Access for LLM via Semantic-Aware Knowledge Caching</a> — Chaoyi Ruan et al.</td>
+<td align="left">NSDI 2026；CCF-A；正式 proceedings pp. 2407–2421</td>
+<td align="left">缓存 Agent 发往远端搜索、RAG 或数据服务的“工具查询 → 知识结果”；ANN 召回、小模型 judger 验证、LCFU 淘汰、TTL 和预取组合。</td>
+<td align="left"><code>rag</code> 层最完整基线；提供命中验证、成本感知淘汰和预取的生命周期模板。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://doi.org/10.1007/978-981-92-0378-9_46">RAG-Cache: Efficient Query-Specific Knowledge Caching for Retrieval Augmented Generation</a> — Haoying Jin, Haoyang Feng</td>
+<td align="left">DASFAA 2026 Short Paper；CCF-B；First Online 2026-05-10</td>
+<td align="left">三层非冗余 RAG 知识缓存，使用 HARF（Hotness-Aware Rechecked FIFO）结合二次机会 FIFO 和 2-bit 引用计数。</td>
+<td align="left">补充 RAG 缓存的容量结构、并发吞吐和轻量替换策略；适合与传统 LRU/LFU/HARF 对比。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/61148">TVCACHE: A Stateful Tool-Value Cache for Post-Training LLM Agents</a> — Abhishek Vijaya Kumar et al.</td>
+<td align="left">ICML 2026 Regular；CCF-A；arXiv:2602.10986</td>
+<td align="left">用完整工具调用历史树做最长前缀匹配，只有 Agent 的工具调用历史一致时才复用工具结果，以保证环境状态一致。</td>
+<td align="left">工具结果不能只用“工具名 + 参数”做 key；是 <code>act</code> 依赖闭包、执行前缀和状态有效性建模的直接依据。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/152812">LaCache: Robust Semantic Caching for LLM Serving</a> — Jiacheng Liang et al.</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A；arXiv:2608.01718</td>
+<td align="left">同时检查查询和推测生成的前 k 个 token 是否命中，用响应侧语义约束抵御 cache collision，并提升检索相关性。</td>
+<td align="left">说明命中判断应包含“响应是否可安全复用”的验证；可支撑 <code>VERIFY_THEN_REUSE</code> 动作。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/65663">From Similarity to Vulnerability: Key Collision Attack on LLM Semantic Caching</a> — Zhixiang Zhang et al.</td>
+<td align="left">ICML 2026 Regular；CCF-A；arXiv:2601.23088</td>
+<td align="left">将语义 key 看成 fuzzy hash，研究局部性与抗碰撞性之间的根本冲突，并在 Agentic workflow 中实施响应劫持。</td>
+<td align="left">把 key 完整性、租户隔离和对抗投毒纳入缓存价值；不能只以相似度估计正确率。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.ndss-symposium.org/ndss-paper/when-cache-poisoning-meets-llm-systems-semantic-cache-poisoning-and-its-countermeasures/">When Cache Poisoning Meets LLM Systems: Semantic Cache Poisoning and Its Countermeasures</a> — Guanlong Wu et al.</td>
+<td align="left">NDSS 2026；CCF-A；DOI:10.14722/ndss.2026.240200</td>
+<td align="left">系统展示语义缓存投毒攻击，在主流公有云环境中验证可行性，并评估现有提示注入防御为何失效。</td>
+<td align="left">支撑显式风险项 <code>q_poison × L_security</code>；说明“高命中”可能意味着更大的共享攻击面。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/155246">LDPCache: Locally Differentially Private Multi-Query Processing with Cache Optimization for Large Language Models</a> — Haoqiang Shi et al.</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">在多查询 LLM 服务中结合本地差分隐私、历史响应复用、期望准确率收益和多因素淘汰。</td>
+<td align="left">证明缓存复用必须受隐私预算约束；可扩展价值函数中的租户隔离和隐私成本。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/63188">Context-Driven Incremental Compression for Multi-Turn Dialogue Generation</a> — Yeongseo Jung et al.</td>
+<td align="left">ICML 2026 Regular；CCF-A；arXiv:2606.12411</td>
+<td align="left">把对话看成多个上下文线程，保存可修订的线程级压缩状态，通过 retrieve → revise → write-back 更新旧记忆。</td>
+<td align="left">支撑 <code>ctx</code> 的增量刷新和局部失效；避免每次版本变化都全量重写上下文。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2608.28476">ContextPilot: Teaching Agents for Proactive Context Management via Fine-grained RL</a> — Zhuoshi Pan et al.</td>
+<td align="left">EMNLP 2026 Main Track；CCF-B；arXiv:2608.28476</td>
+<td align="left">用细粒度强化学习训练 Agent 主动执行检索、删除、摘要、压缩和长期记忆管理。</td>
+<td align="left">说明生命周期动作可以由状态相关策略学习，而不是依赖固定 TTL 或启发式阈值。</td>
+</tr>
+</tbody></table>
+</div>
+<p><strong>主表小结</strong>：正式主会/期刊共 13 篇，其中 CCF-A 10 篇、CCF-B 3 篇；已满足“至少 12 篇 2026 年 CCF-B+ 主会/期刊”的目标。</p>
+<h3 id="subsection-5">2.2 CCF-B 场次中的非主会或待确认 Track</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">论文与作者</th>
+<th align="left">出处与状态</th>
+<th align="left">缓存对象与机制</th>
+<th align="left">对第一章的用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://arxiv.org/abs/2606.19719">Closing the Operational Gap in Semantic Caching</a> — Aditeya Baral et al.</td>
+<td align="left">EMNLP 2026 Industry Track；CCF-B 场次但非主会；arXiv:2606.19719</td>
+<td align="left">提出 Precision–Cache Hit Ratio AUC 和 Operational Retention Rate，揭示离线 PR-AUC 与在线部署可用性之间的偏差。</td>
+<td align="left">第一章必须同时报告“命中了多少”和“在固定操作区间内有多少命中真正可用”。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2606.18947">Decoupling Search from Reasoning: A Vendor-Agnostic Grounding Architecture for LLM Agents</a> — Emmanuel Aboah Boateng et al.</td>
+<td align="left">EMNLP 2026 已录用；CCF-B；Track 待 proceedings 最终确认</td>
+<td align="left">将实时搜索从推理模型中解耦到 MCP-compatible gateway，并把 exact cache、semantic cache、检索深度和上下文渲染作为一等控制项。</td>
+<td align="left">直接对应 Agent 执行链中的 <code>rag</code>/搜索缓存边界，也说明缓存应位于工具网关而非推理算子内部。</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="section-4">3. 上下文与记忆生命周期近邻</h2>
+<p>这些论文不一定以 cache 命名，但它们直接处理“保留什么、压缩到什么保真度、何时重写、如何恢复”的问题，适合补强 <code>ctx</code> 层。</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">论文与作者</th>
+<th align="left">出处与状态</th>
+<th align="left">可借鉴内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://iclr.cc/virtual/2026/poster/10010394">Sculptor: Empowering LLMs with Cognitive Agency via Active Context Management</a> — Mo Li et al.</td>
+<td align="left">ICLR 2026 Poster；CCF-A</td>
+<td align="left">给 Agent 提供分段、摘要、隐藏、恢复和精确搜索工具；对应上下文缓存中的 HIDE/RESTORE/COMPRESS 动作。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/148407">MemForest: Efficient Agent Memory Management via EventTree Partitioning and Progressive Merging</a> — JunXi Wang et al.</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">用事件树分区和渐进合并压缩冗余记忆；论文报告 50% 压缩下保留 99.7% 性能并获得 2.24× 检索加速。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/155641">MemCoRe: Recovering Evidence from Progressively Compressed Factual Knowledge for Agent Memory</a> — Zhenyuan Zhang et al.</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">研究从渐进压缩的事实记忆中恢复证据，适合建模“压缩保真度—恢复成本—质量损失”三角关系。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/151505">MGMem: An Efficient, Deterministic, and Provenance-Preserving Framework for Long-Horizon Agent Memory</a> — Junhong Huang, Xin Tong, Jun Xia</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">强调确定性、来源保留和长程记忆管理，可直接借鉴到缓存 provenance、版本和审计字段。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/150643">Remember the Decision, Not the Description: A Rate-Distortion Framework for Agent Memory</a> — Mingxi Zou et al.</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">只保留会影响后续决策的信息，并按决策冲突在线细化记忆分区；对应“缓存价值取决于未来决策”而非描述完整性。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/150607">Beyond RAG for Agent Memory: Retrieval by Decoupling and Aggregation</a> — Zhanghao Hu et al.</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">xMemory 先从历史中解耦事实、更新和区分性细节，再聚合成可增量修订的层级记忆。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/66266">Learning Query-Aware Budget-Tier Routing for Runtime Agent Memory</a> — Haozhen Zhang et al.</td>
+<td align="left">ICML 2026 Regular；CCF-A</td>
+<td align="left">按查询和预算选择不同记忆层，为跨层容量分配、分层存储和缓存感知路由提供直接参考。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/66270">ACON: Optimizing Context Compression for Long-horizon LLM Agents</a> — Minki Kang et al.</td>
+<td align="left">ICML 2026 Regular；CCF-A</td>
+<td align="left">面向长程 Agent 优化上下文压缩，可作为 <code>ctx</code> 状态表示和 token 预算控制基线。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://iclr.cc/virtual/2026/poster/10009801">COMI: Coarse-to-fine Context Compression via Marginal Information Gain</a> — Jiwei Tang et al.</td>
+<td align="left">ICLR 2026 Poster；CCF-A</td>
+<td align="left">以 Marginal Information Gain 联合考虑相关性和冗余，说明“信息单元的价值”不能只由相似度衡量。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2606.17016">TokenPilot: Cache-Efficient Context Management for LLM Agents</a> — Buqiang Xu et al.</td>
+<td align="left">EMNLP 2026 Findings；CCF-B 场次但非主会</td>
+<td align="left">同时做 ingestion compaction 和生命周期驱逐，并显式权衡文本稀疏性与 prompt-prefix 连续性。</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="section-5">4. 边界与跟踪列表</h2>
+<p>以下工作与 Agent 缓存高度相关，但不属于严格 CCF-B+ 主表，建议在第一章中作为“相关工作/待观察方向”，不用于支撑核心新颖性主张。</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">论文与作者</th>
+<th align="left">出处与状态</th>
+<th align="left">跟踪价值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://mlsys.org/virtual/2026/poster/3583">AgenticCache: Cache-Driven Asynchronous Planning for Embodied AI Agents</a> — Hojoon Kim, Yuheng Wu, Thierry Tambe</td>
+<td align="left">MLSys 2026 Research Track Oral；MLSys 未在 CCF 2022 正式列表中</td>
+<td align="left">缓存计划转移，后台 Cache Updater 异步验证和细化；是最直接的 Agent plan cache 系统之一。</td>
+</tr>
+<tr>
+<td align="left">TierCache: A Multi-Granularity Semantic Caching Framework for Structured Query Generation</td>
+<td align="left">COLM 2026；未在 CCF 2022 列表中</td>
+<td align="left">面向结构化查询生成的语义缓存，可作为 NL-to-SQL/数据分析 Agent 的领域化参考。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://doi.org/10.1145/3805621.3807627">Asynchronous Verified Semantic Caching for Tiered LLM Architectures</a> — Asmit Kumar Singh et al.</td>
+<td align="left">EuroMLSys 2026 Workshop；DOI:10.1145/3805621.3807627</td>
+<td align="left">静态/动态两层回答缓存、灰色区间验证和异步提升；适合作为风险分层和后台验证机制参考。</td>
+</tr>
+<tr>
+<td align="left">Risk-Constrained Freshness-Aware Semantic Caching for Open-Web Retrieval-Augmented LLMs（FreshCache） — Muhammad Mansoor et al.</td>
+<td align="left">arXiv:2607.04281；预印本</td>
+<td align="left">将新鲜度概率、风险约束和分层错误预算结合，是第一章“过期风险”建模最直接的预印本。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2607.26076">FinCacheServe: Dependency-Consistent Answer Reuse for Cost-Efficient RAG Serving over Mutable Enterprise Documents</a> — Lingteng Zeng, Yifan Jin</td>
+<td align="left">arXiv:2607.26076；预印本</td>
+<td align="left">研究可变企业文档下的依赖一致答案复用；可支撑 <code>rag → resp</code> 失效传播和 refresh 设计。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2609.11515">ChurnBench: A Drift-Aware Benchmark Demonstrating That Refresh Scheduling, Not Cache Age, Governs Staleness in Agentic AI</a> — Vivek Kumar Singh et al.</td>
+<td align="left">arXiv:2609.11515；预印本</td>
+<td align="left">用时间线和真实变更 ledger 区分检索错误与新鲜度错误，指出刷新调度比缓存年龄更重要。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2607.20495">Workload-Aware Caching for Multi-Agent Systems</a> — Anas Mohamed et al.</td>
+<td align="left">arXiv:2607.20495；预印本</td>
+<td align="left">淘汰分数同时考虑重算成本、DAG 依赖数和 Agent 调用频率；与第一章价值密度公式高度同构。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2605.19932">PEEK: Context Map as an Orientation Cache for Long-Context LLM Agents</a> — Zhuohan Gu et al.</td>
+<td align="left">arXiv:2605.19932；预印本</td>
+<td align="left">把 recurring context 的“定位知识”作为小型 orientation cache，而不是重存原始全文。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2601.16286">SemanticALLI: Caching Reasoning, Not Just Responses, in Agentic Systems</a> — Varun Chillara et al.</td>
+<td align="left">arXiv:2601.16286；预印本</td>
+<td align="left">试图缓存 reasoning/plan 而非最终答案，可作为 plan cache 与 response cache 的中间形态。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2602.18922">Why Agent Caching Fails and How to Fix It: Structured Intent Canonicalization with Few-Shot Learning</a> — Abhinaba Basu</td>
+<td align="left">arXiv:2602.18922；预印本</td>
+<td align="left">从 cache key consistency、意图规范化和聚类指标解释 Agent 缓存为何失效。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://arxiv.org/abs/2611.02498">Semantic Caches for LLM Web Services Leave Their Error Budget Unspent</a> — Hanshuai Cui et al.</td>
+<td align="left">arXiv:2611.02498；预印本，2026-11</td>
+<td align="left">直接质疑现有语义缓存对错误预算的利用效率，适合作为最新反向证据和实验动机。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://mlsys.org/virtual/2026/poster/3587">ContextPilot: Fast Long-Context Inference via Context Reuse</a> — Yinsicheng Jiang et al.</td>
+<td align="left">MLSys 2026；未在 CCF 2022 正式列表中</td>
+<td align="left">逻辑层重排、去重并注释上下文块，以构造更好的共享前缀；是“逻辑上下文复用”和“KV/prefix 加速”的边界项。</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="section-6">5. 容易误收的 KV/prefix cache 工作</h2>
+<aside class="callout callout-warn">
+  <svg class="callout-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-warn"/></svg>
+  <div class="callout-body">
+    <p class="callout-title">不要按题名判断研究边界</p>
+    <p>这些论文可能包含 semantic cache、agent cache 或 workflow cache，但主要操作对象仍是 KV、attention、prefix 或 prefill。它们适合作为推理引擎背景，不进入第一章核心算法对比。</p>
+  </div>
+</aside>
+<p>这些论文的题目可能包含 semantic cache、agent cache、workflow cache 或 response cache，但主要优化对象仍是 KV、attention、prefix 或 prefill。它们可以作为推理引擎数据面背景，不应进入第一章核心算法对比。</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">论文与作者</th>
+<th align="left">出处与状态</th>
+<th align="left">排除原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/63533">Semantic Cache Distillation: Efficient State Transfer via Reuse and Selective Patching</a> — Qianli Ma et al.</td>
+<td align="left">ICML 2026 Regular；CCF-A</td>
+<td align="left">用低秩语义码替代原始 KV 传输，并通过选择性 patching 重建层状态；对象仍是 KV。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/150630">Intent-Aware Caching for Efficient LLM Serving</a> — Kazi Hasan Ibn Arif et al.</td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">根据用户意图和多轮继续概率做 prefix KV eviction。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://iclr.cc/virtual/2026/poster/10010915">AdaCache: Adaptive Caching and Context Augmentation for Efficient LLM Serving</a> — Zihao Zeng et al.</td>
+<td align="left">ICLR 2026 Poster；CCF-A</td>
+<td align="left">通过 attention pattern 构造 selective cache variants 并做 partial recomputation，核心是 RAG 场景的 KV 复用。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/62313">Functional Cache Grafting: Robust and Rapid Code-Policy Synthesis for Embodied Agents</a></td>
+<td align="left">ICML 2026 Regular；CCF-A</td>
+<td align="left">缓存函数骨架及其 KV cache，通过 stitching 和 patching 合成代码策略。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://neurips.cc/virtual/2026/poster/154215">CacheMAS: Cache Communication for Single-Pass, Jointly-Optimized Multi-Agent Systems</a></td>
+<td align="left">NeurIPS 2026 Poster，已录用；CCF-A</td>
+<td align="left">把 prefill KV cache 作为多 Agent 之间的 latent communication。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://icml.cc/virtual/2026/poster/66432">GraphFlow: A Graph-Based Workflow Management for Efficient LLM-Agent Serving</a> — Ao Li et al.</td>
+<td align="left">ICML 2026 Regular；CCF-A；arXiv:2605.22566</td>
+<td align="left">工作流状态最终用于管理 KV cache；逻辑 workflow 只是 KV 复用路径。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://mlsys.org/virtual/2026/poster/10200">ForeCache: Understanding Workloads and Optimizing KVCache Management for Efficiently Serving LLM Coding Agents</a></td>
+<td align="left">MLSys 2026；MLSys 未在 CCF 2022 正式列表中</td>
+<td align="left">直接优化 coding agent 的 KVCache 管理。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://mlsys.org/virtual/2026/poster/3587">ContextPilot: Fast Long-Context Inference via Context Reuse</a> — Yinsicheng Jiang et al.</td>
+<td align="left">MLSys 2026；未在 CCF 2022 正式列表中</td>
+<td align="left">逻辑对象是上下文块，但主要收益来自重排后提高 prefix KV 命中；建议作为边界项而非核心。</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="section-7">6. 五维研究地图</h2>
+<figure class="diagram">
+  <pre class="mermaid">
+flowchart LR
+  A["resp<br/>回答缓存"] --> V["统一 CacheItem"]
+  B["rag<br/>证据缓存"] --> V
+  C["act<br/>工具结果"] --> V
+  D["ctx<br/>上下文与记忆"] --> V
+  V --> E["依赖闭包 + 版本向量"]
+  E --> F["复用概率 × 节省工作 × 负载价格"]
+  F --> G["扣除验证 / 刷新 / 安全 / 隐私"]
+  G --> H{"生命周期动作"}
+  H --> I["复用或验证"]
+  H --> J["刷新或降级"]
+  H --> K["淘汰或重建"]
+  I --> L["Flink state / timer / checkpoint"]
+  J --> L
+  K --> L
+  </pre>
+  <figcaption class="diagram-caption">五类对象经过统一估值和生命周期决策，最终映射到 Flink 流式状态。</figcaption>
+</figure>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">维度</th>
+<th align="left">2026 年代表工作</th>
+<th align="left">已有能力</th>
+<th align="left">仍未解决的核心问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>resp</code></td>
+<td align="left">vCache、MVR-cache、INFOCOM 2026、LaCache</td>
+<td align="left">语义匹配、逐条目错误率、集合优化、抗碰撞</td>
+<td align="left">价值随负载变化；多租户质量预算；错误相关性</td>
+</tr>
+<tr>
+<td align="left"><code>rag</code></td>
+<td align="left">Cortex、RAG-Cache、Decoupling Search</td>
+<td align="left">语义验证、成本感知淘汰、三层知识结构、MCP 网关</td>
+<td align="left">来源版本、权限、新鲜度、依赖失效与刷新</td>
+</tr>
+<tr>
+<td align="left"><code>act</code></td>
+<td align="left">TVCACHE、Cortex、Decoupling Search</td>
+<td align="left">执行历史一致性、工具查询缓存、远端结果复用</td>
+<td align="left">部分状态复用、工具副作用、可回滚性与失败恢复</td>
+</tr>
+<tr>
+<td align="left"><code>ctx</code></td>
+<td align="left">C-DIC、Sculptor、MemForest、MemCoRe、MGMem、xMemory</td>
+<td align="left">摘要压缩、保真度分级、记忆合并、provenance、增量修订</td>
+<td align="left">何时冻结、何时重写、如何衡量压缩价值、如何做跨会话失效</td>
+</tr>
+<tr>
+<td align="left"><code>control</code></td>
+<td align="left">ContextPilot、Budget-Tier Routing、TokenPilot、LDPCache</td>
+<td align="left">学习式上下文管理、分层路由、生命周期驱逐、隐私约束</td>
+<td align="left">在 Flink 流状态中统一价值、容量、质量、负载和迁移成本</td>
+</tr>
+</tbody></table>
+</div>
+<h3 id="subsection-6">6.1 文献到价值因子的映射</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">价值因子</th>
+<th align="left">直接可参考的 2026 工作</th>
+<th align="left">可形成的建模方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>p_use</code>：未来复用概率</td>
+<td align="left">INFOCOM 2026、Continuous Semantic Caching、Cortex、LDPCache</td>
+<td align="left">会话剩余轮数、访问频次、风险模型或生存分析；MobiHoc 工作提供连续空间在线学习</td>
+</tr>
+<tr>
+<td align="left"><code>W_saved</code>：命中节省工作</td>
+<td align="left">Cortex、RAG-Cache、TVCACHE、C-DIC</td>
+<td align="left">核算 token、GPU-ms、检索调用、远端字节、工具等待时间</td>
+</tr>
+<tr>
+<td align="left"><code>q_wrong</code>：复用错误概率</td>
+<td align="left">vCache、MVR-cache、LaCache</td>
+<td align="left">校准分类器、逐条目置信带、响应侧验证</td>
+</tr>
+<tr>
+<td align="left"><code>L_answer</code>：答案损失</td>
+<td align="left">vCache、MVR-cache、Closing Operational Gap</td>
+<td align="left">基准质量差、返工轮数、LLM judge 抽样</td>
+</tr>
+<tr>
+<td align="left"><code>q_stale</code>：过期概率</td>
+<td align="left">FreshCache、ChurnBench、FinCacheServe、C-DIC</td>
+<td align="left">版本向量、来源更新时间、刷新调度和依赖闭包</td>
+</tr>
+<tr>
+<td align="left"><code>q_security</code>：投毒/泄漏概率</td>
+<td align="left">NDSS 2026、Key Collision、LaCache、LDPCache</td>
+<td align="left">租户隔离、ACL、key 完整性、隐私预算</td>
+</tr>
+<tr>
+<td align="left"><code>C_verify</code></td>
+<td align="left">Cortex、LaCache、vCache</td>
+<td align="left">小模型 judger、响应 token 验证、embedding/ANN 成本</td>
+</tr>
+<tr>
+<td align="left"><code>C_hold</code> / <code>C_refresh</code></td>
+<td align="left">RAG-Cache、Cortex、MemForest、MemCoRe</td>
+<td align="left">存储、压缩、合并、刷新和恢复摊销</td>
+</tr>
+<tr>
+<td align="left"><code>C_churn</code></td>
+<td align="left">当前正式主会证据较少；可参考 Budget-Tier Routing、ContextPilot</td>
+<td align="left">checkpoint/rescale、迁移、冷启动和缓存重建</td>
+</tr>
+</tbody></table>
+</div>
+<h2 id="section-8">7. 现有第一章设计的主要缺口</h2>
+<figure class="diagram">
+  <pre class="mermaid">
+flowchart TD
+  A["语义命中"] --> B["回答错误<br/>或缓存投毒"]
+  C["知识命中"] --> D["来源版本<br/>权限与新鲜度"]
+  E["工具命中"] --> F["环境状态<br/>副作用与回滚"]
+  G["上下文命中"] --> H["摘要失真<br/>事实冲突与旧状态"]
+  B --> I["统一净价值估计"]
+  D --> I
+  F --> I
+  H --> I
+  I --> J["依赖感知生命周期"]
+  J --> K["流式 Flink 状态与迁移"]
+  </pre>
+  <figcaption class="diagram-caption">四类复用风险必须进入同一价值模型，才能形成统一的生命周期控制。</figcaption>
+</figure>
+<h3 id="subsection-7">7.1 从“命中价值”转向“净复用价值”</h3>
+<p>vCache 和 MVR-cache 解决的是“是否应当命中”，INFOCOM/MobiHoc 解决的是“缓存集合如何优化”，但它们大多把回源成本视为相对稳定的参数。第一章可以把计算资源稀缺性显式引入：</p>
+<ul>
+<li>低负载时，一次命中主要节省时延，GPU 影子价格较低。</li>
+<li>高负载时，同样的命中节省的是稀缺 GPU 时间，价值上升。</li>
+<li>但高负载也会提高刷新和重算成本，不能简单使用“越忙越激进复用”的一条规则。</li>
+</ul>
+<p>这使缓存价值成为系统状态 <code>c</code> 的函数，而不是对象的静态属性。</p>
+<h3 id="subsection-8">7.2 从“语义相似”转向“依赖有效”</h3>
+<p>2026 年文献已经给出三个不同层次的有效性信号：</p>
+<ul>
+<li><code>resp</code>：LaCache 和缓存投毒研究表明，相似查询可能对应恶意或不可复用响应。</li>
+<li><code>rag</code>：Cortex 和 RAG-Cache 证明需要知识检索索引和成本感知淘汰，但来源版本仍是弱项。</li>
+<li><code>act</code>：TVCACHE 证明相同工具调用只有在完整执行历史一致时才能复用结果。</li>
+</ul>
+<p>第一章应把缓存 key 从 <code>semantic_key</code> 扩展为 <code>semantic_key + scope + version_vector + dependency_closure</code>。</p>
+<h3 id="subsection-9">7.3 从“固定淘汰”转向“风险预算下的生命周期”</h3>
+<p>现有工作分别覆盖：</p>
+<ul>
+<li>淘汰：LCFU、HARF、prefix/LRU 类替换。</li>
+<li>刷新：C-DIC 的 revise/write-back。</li>
+<li>验证：vCache、Cortex、LaCache。</li>
+<li>压缩：MemForest、MemCoRe、ACON、COMI。</li>
+<li>恢复：MemCoRe、Sculptor。</li>
+</ul>
+<p>但几乎没有工作统一回答“准入、复用、验证、刷新、降级、淘汰”六个动作之间的资源竞争关系。</p>
+<h3 id="subsection-10">7.4 从“单对象”转向“依赖闭包和失效传播”</h3>
+<p>建议把刷新成本写成：</p>
+<pre><code class="language-text">C_refresh_total(i) =
+  重算(i) 的成本
+  + 因 i 变化而失效的下游对象期望重建成本
+  + 刷新期间的短期质量损失
+</code></pre>
+<p>否则模型会系统性低估热对象刷新成本，也会忽略“刷新一个摘要会杀死多个回答缓存命中”的耦合。</p>
+<h3 id="subsection-11">7.5 从“离线命中率”转向“流式有效 goodput”</h3>
+<p>Closing the Operational Gap 和 ChurnBench 说明，离线排序好并不等于在线可用。第一章至少需要同时观察：</p>
+<ul>
+<li>有效命中率：通过验证且没有过期/越权的命中比例。</li>
+<li>质量违约率：错误复用和陈旧复用占总请求比例。</li>
+<li>净节省：节省的 GPU/检索资源减去验证、刷新、迁移和存储成本。</li>
+<li>决策后悔：相对知道未来复用结果的 Oracle 的损失。</li>
+<li>负载扰动下的恢复时间：扩缩容或路由变化后，命中率和 goodput 的恢复速度。</li>
+</ul>
+<h2 id="section-9">8. 建议的研究框架</h2>
+<aside class="callout callout-decision">
+  <svg class="callout-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-decision"/></svg>
+  <div class="callout-body">
+    <p class="callout-title">建议定位</p>
+    <p><strong>面向流式 Agent 的依赖感知缓存价值建模与生命周期控制。</strong></p>
+  </div>
+</aside>
+<h3 id="subsection-12">8.1 建议标题</h3>
+<p><strong>面向流式 Agent 的依赖感知缓存价值建模与生命周期控制</strong></p>
+<p>该标题比“Agent 多级缓存管理”更聚焦：核心不是堆叠缓存层，而是研究日志状态、版本依赖、质量风险与资源约束如何共同决定缓存价值。</p>
+<h3 id="subsection-13">8.2 三个研究问题</h3>
+<ol>
+<li><strong>净价值估计</strong>：如何为一个带依赖闭包和版本状态的 Agent 缓存对象估计未来复用概率、工作节省、验证成本、陈旧风险和安全风险？</li>
+<li><strong>生命周期控制</strong>：在容量、质量、隐私和新鲜度约束下，如何联合决定准入、复用、验证、刷新、降级和淘汰？</li>
+<li><strong>流式状态落地</strong>：如何用 Flink keyed state、timer、broadcast dependency index、checkpoint 和 rescale 实现上述策略，并量化缓存迁移与冷启动代价？</li>
+</ol>
+<h3 id="subsection-14">8.3 统一的缓存对象接口</h3>
+<p>建议在第一章内部约定如下逻辑结构，具体实现可映射到 Flink state：</p>
+<pre><code class="language-text">CacheItem {
+  id,
+  layer,                    // resp | rag | act | ctx
+  artifact_type,
+  tenant_id,
+  session_id,
+  semantic_scope,           // 会话、租户、知识域或全局
+  content_hash,
+  version_vector,
+  source_refs[],            // 文档、工具、上游缓存项
+  dependency_refs[],        // 失效传播依赖
+  created_at,
+  last_access_at,
+  ttl,
+  fidelity,                 // full | compact | summary | trace
+  size_bytes,
+  recompute_cost,
+  verify_cost,
+  access_stats,
+  risk_state,
+  provenance
+}
+</code></pre>
+<pre><code class="language-text">CacheAction = ADMIT | REUSE | VERIFY_THEN_REUSE
+            | REFRESH | DEMOTE | EVICT | RECOMPUTE
+</code></pre>
+<pre><code class="language-text">ValueEstimate {
+  p_use_now,
+  p_use_horizon,
+  saved_work,
+  shadow_price,
+  risk: {q_wrong, q_stale, q_security, q_privacy},
+  cost: {verify, hold, refresh, churn},
+  net_value: {p10, p50, p90},
+  action_hint,
+  reason_codes[]
+}
+</code></pre>
+<h3 id="subsection-15">8.4 扩展价值函数</h3>
+<pre><code class="language-text">V_i(t, c) =
+    p_use · [ λ(ρ) · W_saved + β · latency_saved ]
+  − C_verify
+  − C_hold
+  − C_refresh_total
+  − C_churn
+  − q_wrong · L_answer
+  − q_stale · L_stale
+  − q_security · L_security
+  − q_privacy · L_privacy
+</code></pre>
+<p>其中：</p>
+<ul>
+<li><code>λ(ρ)</code> 是随系统利用率和容量约束变化的资源影子价格。</li>
+<li><code>C_refresh_total</code> 包含下游失效和重建成本。</li>
+<li><code>q_security/q_privacy</code> 不是一般准确率风险，而是租户隔离、投毒和隐私预算风险。</li>
+<li>所有成本最终统一到 GPU-ms、检索调用、token 或可比较的归一化成本。</li>
+</ul>
+<h3 id="subsection-16">8.5 建议的 MVP</h3>
+<aside class="callout callout-tip">
+  <svg class="callout-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tip"/></svg>
+  <div class="callout-body">
+    <p class="callout-title">MVP 原则</p>
+    <p>先让 <code>resp + rag</code> 的价值与失效链路闭环，再增加工具和计划缓存。不要同时铺开多种记忆架构。</p>
+  </div>
+</aside>
+<p>第一阶段不要同时铺开所有缓存对象：</p>
+<ol>
+<li><strong>主对象 <code>resp</code></strong>：复用 vCache/MVR/INFOCOM 的强基线，研究风险预算、容量和负载价格联合决策。</li>
+<li><strong>第二对象 <code>rag</code></strong>：复用 Cortex/RAG-Cache 的结构，引入文档版本、来源和刷新。</li>
+<li><strong><code>ctx</code> 作为依赖源</strong>：记录会话摘要、事实和版本的变更，不先做完整通用记忆系统。</li>
+<li><strong><code>act</code> 作为扩展实验</strong>：用 TVCACHE 式执行历史前缀验证工具结果复用。</li>
+<li><strong>计划缓存作为后续扩展</strong>：参考 AgenticCache 和 SemanticALLI，不进入第一版 MVP。</li>
+</ol>
+<h2 id="section-10">9. 实验与验证建议</h2>
+<h3 id="subsection-17">9.1 预实验</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th align="left">预实验</th>
+<th align="left">问题</th>
+<th align="left">不通过时的处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">P1 复用机会</td>
+<td align="left">三类对象的语义/结构重复率是否足以产生收益</td>
+<td align="left">若回答复用低于 5%，重心转向 RAG/上下文状态</td>
+</tr>
+<tr>
+<td align="left">P2 验证税</td>
+<td align="left">judger、verifier 或 ACL 检查是否低于命中收益</td>
+<td align="left">对低价值对象只启用精确匹配或跳过验证</td>
+</tr>
+<tr>
+<td align="left">P3 价值淘汰</td>
+<td align="left">净价值策略是否显著优于 LRU/LFU/LCFU/HARF</td>
+<td align="left">降低淘汰策略权重，把贡献收缩到价值建模和刷新</td>
+</tr>
+<tr>
+<td align="left">P4 负载价格</td>
+<td align="left">负载变化是否改变最优缓存动作</td>
+<td align="left">若不变，删除显式 λ，退化为固定容量策略</td>
+</tr>
+<tr>
+<td align="left">P5 失效传播</td>
+<td align="left">刷新连带损失是否足以改变刷新时机</td>
+<td align="left">若很小，可将依赖闭包限制在 <code>rag → resp</code></td>
+</tr>
+</tbody></table>
+</div>
+<h3 id="subsection-18">9.2 对比基线</h3>
+<ul>
+<li>无缓存与精确匹配缓存。</li>
+<li>LRU、LFU、GDSF、LCFU、HARF。</li>
+<li>vCache 式逐条目阈值。</li>
+<li>INFOCOM 式带失配成本的缓存集合优化。</li>
+<li>Cortex 式语义验证 + 成本感知淘汰。</li>
+<li>TVCACHE 式执行前缀匹配。</li>
+</ul>
+<h3 id="subsection-19">9.3 核心指标</h3>
+<ul>
+<li>有效命中率与命中精度。</li>
+<li>净 GPU-ms、检索调用和 token 节省。</li>
+<li>质量违约率、陈旧复用率和安全违规率。</li>
+<li>相对 Oracle 的决策后悔。</li>
+<li>p50/p95 时延和单位资源 goodput。</li>
+<li>checkpoint/rescale 后的命中率与 goodput 恢复时间。</li>
+</ul>
+<h3 id="subsection-20">9.4 消融</h3>
+<p>至少做以下消融：</p>
+<ul>
+<li>去掉负载影子价格 <code>λ(ρ)</code>。</li>
+<li>去掉依赖闭包和版本向量。</li>
+<li>固定 TTL 替代刷新策略。</li>
+<li>去掉质量风险预算。</li>
+<li>去掉安全/隐私风险项。</li>
+<li>去掉跨层容量分配。</li>
+</ul>
+<h2 id="section-11">10. 与现有项目材料的关系</h2>
+<h3 id="subsection-21">10.1 保留的部分</h3>
+<p>现有材料中以下判断仍然成立：</p>
+<ul>
+<li>命中率不是最终目标，应使用净收益和有效复用率。</li>
+<li><code>ctx/rag/resp</code> 三层可以作为分析框架。</li>
+<li>价值建模与生命周期控制应组成一个闭环。</li>
+<li>影子价格、质量预算、指纹稳定性和刷新—命中耦合具有辨识度。</li>
+<li>MVP 应先度量复用机会，再决定是否实现复杂模型。</li>
+</ul>
+<h3 id="subsection-22">10.2 需要调整的部分</h3>
+<ul>
+<li>把 KV/prefix cache 文献集中放入边界小节，不与逻辑缓存主表混排。</li>
+<li>把 <code>resp</code> 研究从“相似度阈值”扩展到“验证、风险、集合优化和负载价格”。</li>
+<li>把 <code>rag</code> 的风险从“知识过期”细化为来源版本、依赖传播、权限和刷新成本。</li>
+<li>把 <code>act</code> 独立视为依赖完整执行历史的状态对象，不把它简单归入普通 RAG 文档。</li>
+<li>把 <code>ctx</code> 的压缩、降级和恢复纳入生命周期动作，而不是只作为 prompt 工程。</li>
+<li>在评测中增加 Operational Retention、stale error、security violation 和 rescale recovery。</li>
+</ul>
+<h2 id="section-12">11. 证据边界与后续核验</h2>
+<ol>
+<li>本文主表按 2026 年会议/期刊版本统计，不把 arXiv 首发时间当作正式发表时间。</li>
+<li>NeurIPS 2026 和 MobiHoc 2026 的若干论文在本文截止日期前已录用，但会议尚未召开；正式引用时应再次核对 camera-ready 版本。</li>
+<li>EMNLP 2026 非主会论文单独标注 Industry/Findings，不用它们替代 CCF-B 主会证据。</li>
+<li>TVCACHE 的完整工具历史匹配解决的是“相同环境状态”问题，不证明所有工具结果都可跨用户、跨租户复用。</li>
+<li>vCache 和 MVR-cache 的错误率/正确性保证依赖各自的任务定义和评估集；不能直接外推到 RAG 事实正确性、工具副作用或安全攻击。</li>
+<li>Cortex 的 LCFU 是启发式价值密度，不是经过在线价格校准的最优决策；这正好给第一章留下“负载影子价格”的研究空间。</li>
+<li>预印本中的 FreshCache、FinCacheServe、ChurnBench 和 Workload-Aware Caching 应继续跟踪正式版本；在正式录用前不应作为已有顶会结论引用。</li>
+</ol>
+<hr>
+<p><strong>一句话总结：</strong></p>
+<p>2026 年文献已经分别证明“语义缓存需要质量控制”“RAG/工具缓存需要依赖验证”“Agent 记忆需要生命周期管理”，但还没有把它们统一成一个面向流式 Agent 的净价值与依赖感知控制框架。这正是第一章可以继续深化、且与后续算力配置和路由章节自然衔接的位置。</p>
+
+      <!-- CONTENT_END -->
+
+      <footer class="doc-footer">
+        <span>Generated by <a href="#">md2html</a></span>
+        <span>来源：20261109_Agent缓存2026顶会顶刊文献综述与研究启示.md</span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    // ---------- Theme ----------
+    const STORAGE_KEY = "md2html-theme";
+    function currentTheme() { return document.documentElement.dataset.theme || "light"; }
+    function applyThemeIcon() {
+      const use = document.getElementById("theme-icon-use");
+      if (use) use.setAttribute("href", currentTheme() === "dark" ? "#i-sun" : "#i-moon");
+    }
+    (function restoreTheme() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) document.documentElement.dataset.theme = saved;
+    })();
+
+    // ---------- Mermaid ----------
+    const diagramSources = new Map();
+    function initMermaid() {
+      const isDark = currentTheme() === "dark";
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? "dark" : "default",
+        themeVariables: {
+          primaryColor: isDark ? "#3A2A22" : "#FBEEE6",
+          primaryTextColor: isDark ? "#F5F0E8" : "#1A1A1A",
+          primaryBorderColor: isDark ? "#E89572" : "#D97757",
+          lineColor: isDark ? "#9A938A" : "#6B6B66",
+          secondaryColor: isDark ? "#2A2520" : "#F5F5F0",
+          tertiaryColor: isDark ? "#221E1A" : "#FFFFFF",
+          fontFamily: "Inter, system-ui, sans-serif",
+        },
+      });
+    }
+    async function renderMermaid() {
+      initMermaid();
+      const els = document.querySelectorAll(".mermaid");
+      els.forEach(el => {
+        if (!diagramSources.has(el)) diagramSources.set(el, el.textContent.trim());
+        el.textContent = diagramSources.get(el);
+        el.removeAttribute("data-processed");
+      });
+      try { await mermaid.run({ nodes: els }); } catch (e) { console.error(e); }
+    }
+    function toggleTheme() {
+      const next = currentTheme() === "light" ? "dark" : "light";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem(STORAGE_KEY, next);
+      applyThemeIcon();
+      renderMermaid();
+    }
+
+    // ---------- TOC drawer (mobile) ----------
+    function openToc()  { document.body.classList.add("toc-open"); }
+    function closeToc() { document.body.classList.remove("toc-open"); }
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && document.body.classList.contains("toc-open")) closeToc();
+    });
+
+    // ---------- TOC scrollspy ----------
+    function setupTocSpy() {
+      const links = document.querySelectorAll("#toc-nav a[href^='#']");
+      if (!links.length) {
+        const toc = document.getElementById("toc");
+        if (toc) toc.style.display = "none";
+        return;
+      }
+      const map = new Map();
+      links.forEach(a => {
+        const id = a.getAttribute("href").slice(1);
+        const el = document.getElementById(id);
+        if (el) map.set(el, a);
+        a.addEventListener("click", () => {
+          if (window.matchMedia("(max-width: 900px)").matches) closeToc();
+        });
+      });
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          const link = map.get(en.target);
+          if (!link) return;
+          if (en.isIntersecting) {
+            links.forEach(l => l.classList.remove("active"));
+            link.classList.add("active");
+          }
+        });
+      }, { rootMargin: "-80px 0px -70% 0px", threshold: 0 });
+      map.forEach((_, el) => obs.observe(el));
+    }
+
+    // ---------- Anchor links on h2/h3 ----------
+    function injectAnchors() {
+      document.querySelectorAll(".content h2[id], .content h3[id]").forEach(h => {
+        if (h.querySelector(".anchor")) return;
+        const a = document.createElement("a");
+        a.className = "anchor";
+        a.href = "#" + h.id;
+        a.setAttribute("aria-label", "Permalink");
+        a.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-link"/></svg>';
+        h.appendChild(a);
+      });
+    }
+
+    // ---------- Copy-to-clipboard on <pre> ----------
+    function injectCopyButtons() {
+      document.querySelectorAll(".content pre").forEach(pre => {
+        if (pre.classList.contains("mermaid")) return;
+        if (pre.querySelector(".copy-btn")) return;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "copy-btn";
+        btn.setAttribute("aria-label", "Copy code");
+        btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-copy"/></svg>';
+        btn.addEventListener("click", async () => {
+          const code = pre.querySelector("code")?.textContent ?? pre.textContent;
+          try {
+            await navigator.clipboard.writeText(code);
+            btn.classList.add("copied");
+            btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check"/></svg>';
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-copy"/></svg>';
+            }, 1500);
+          } catch (e) { console.error(e); }
+        });
+        pre.appendChild(btn);
+      });
+    }
+
+    // ---------- Scroll progress ----------
+    function setupScrollProgress() {
+      const bar = document.getElementById("scroll-progress");
+      if (!bar) return;
+      const onScroll = () => {
+        const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const p = h > 0 ? (document.documentElement.scrollTop / h * 100) : 0;
+        bar.style.width = p + "%";
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+
+    // ---------- Boot ----------
+    document.addEventListener("DOMContentLoaded", () => {
+      applyThemeIcon();
+      injectAnchors();
+      injectCopyButtons();
+      renderMermaid();
+      setupTocSpy();
+      setupScrollProgress();
+    });
+  </script>
+</body>
+</html>
