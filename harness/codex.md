@@ -124,7 +124,7 @@ if (Test-Path -LiteralPath $agentsFile) {
 }
 
 # 迁移手册本身
-$handbook = 'C:\workspace\2026Spring2Winter\MasterGraduationProject\harness\codex.md'
+$handbook = 'C:\workspace\2026Spring2Winter\harness\codex.md'
 if (Test-Path -LiteralPath $handbook) {
   Copy-Item -LiteralPath $handbook -Destination $bundleRoot -Force
 }

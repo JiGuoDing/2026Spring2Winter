@@ -8,7 +8,7 @@
 
 本文档是一个可复现的快照，不是“把 `%USERPROFILE%\.config\opencode` 整个目录压缩过去”的教程。OpenCode 的配置、凭据、会话和项目状态分散在多个目录；其中 `opencode.db` 同时保存凭据和聊天记录，`service.json` 保存本机后台服务的连接密码，桌面应用的 Local Storage 保存窗口和草稿状态。这些都必须由新电脑重新生成。真正需要迁移的是 `opencode.json(c)`、`cli.json`、`AGENTS.md`、`skills/`，以及你自己新增的 agents、commands、plugins 和 themes。
 
-配套的 Codex 版本见 `MasterGraduationProject/harness/codex.md`；两份文档不要混用字段和目录。
+配套的 Codex 版本见 `harness/codex.md`；两份文档不要混用字段和目录。
 
 ---
 
@@ -390,7 +390,7 @@ if (Test-Path -LiteralPath $workspaceAgents) {
 }
 
 # 6. 本手册
-$handbook = 'C:\workspace\2026Spring2Winter\MasterGraduationProject\harness\opencode.md'
+$handbook = 'C:\workspace\2026Spring2Winter\harness\opencode.md'
 if (Test-Path -LiteralPath $handbook) {
   Copy-Item -LiteralPath $handbook -Destination $bundleRoot -Force
 }
