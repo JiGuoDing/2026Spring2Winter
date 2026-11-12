@@ -2,12 +2,13 @@
 <html lang="zh-CN" data-theme="paper" data-mode="auto" data-style="80">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-cwXs65975+hxPNioix2j1qkQRYkbhKdmpIHq5wdMDKs=' 'sha256-lPqFPx9oza8AmRj6iqQLqEVdDcwxhxzQ3yQnVhy8ZDM='; style-src 'unsafe-inline'; img-src data:; font-src data:; media-src data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-COhqkbaPOF+O1MeXzrrqyxS5JHiLZTzpFZpBTV1Hy4A=' 'sha256-lPqFPx9oza8AmRj6iqQLqEVdDcwxhxzQ3yQnVhy8ZDM='; style-src 'unsafe-inline'; img-src data:; font-src data:; media-src data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="Answer me with HTML 0.5.10">
+<meta name="generator" content="Answer me with HTML 0.5.11">
 <title>第一章研究内容与研究设计</title>
 <style>
 html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  color-scheme: light;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --radius: 0px;
@@ -34,6 +35,7 @@ html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
   --head-fg: #ffffff;
 }
 html[data-theme="blueprint"][data-mode="dark"] {
+  color-scheme: dark;
   --bg: #081322;
   --paper: #0d1c31;
   --ink: #e6edf7;
@@ -52,6 +54,9 @@ html[data-theme="blueprint"][data-mode="dark"] {
   --warn-bg: #3a2a10;
   --head-bg: #e6edf7;
   --head-fg: #081322;
+}
+html[data-theme="blueprint"][data-mode="auto"] {
+  color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
 html[data-theme="blueprint"][data-mode="auto"] {
@@ -77,6 +82,7 @@ html[data-theme="blueprint"][data-mode="auto"] {
 }
 
 html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  color-scheme: light;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --radius: 8px;
@@ -103,6 +109,7 @@ html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
   --head-fg: #fafafa;
 }
 html[data-theme="shadcn"][data-mode="dark"] {
+  color-scheme: dark;
   --bg: #09090b;
   --paper: #121215;
   --ink: #fafafa;
@@ -121,6 +128,9 @@ html[data-theme="shadcn"][data-mode="dark"] {
   --warn-bg: #451a03;
   --head-bg: #fafafa;
   --head-fg: #18181b;
+}
+html[data-theme="shadcn"][data-mode="auto"] {
+  color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
 html[data-theme="shadcn"][data-mode="auto"] {
@@ -146,6 +156,7 @@ html[data-theme="shadcn"][data-mode="auto"] {
 }
 
 html[data-theme="paper"], html[data-theme="paper"][data-mode="light"] {
+  color-scheme: light;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif;
@@ -173,6 +184,7 @@ html[data-theme="paper"], html[data-theme="paper"][data-mode="light"] {
   --head-fg: #fdfbf6;
 }
 html[data-theme="paper"][data-mode="dark"] {
+  color-scheme: dark;
   --bg: #15130f;
   --paper: #1c1a15;
   --ink: #ebe5d8;
@@ -191,6 +203,9 @@ html[data-theme="paper"][data-mode="dark"] {
   --warn-bg: #352a13;
   --head-bg: #ebe5d8;
   --head-fg: #15130f;
+}
+html[data-theme="paper"][data-mode="auto"] {
+  color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
 html[data-theme="paper"][data-mode="auto"] {
@@ -632,12 +647,19 @@ body.am-has-reply-bar { padding-block-end: 72px; }
 .am-node-shape ~ .am-node-shape { filter: none; }
 /* The corner radius is an SVG attribute (the fallback for Safari before 17.4, which ignores a CSS rx); the default here equals the attribute. A pill and a diamond keep their shape. */
 .am-node--rect .am-node-shape, .am-node--er .am-node-shape { rx: var(--node-radius, 3px); }
+/* A state is a rounded rectangle; the default matches the rx attribute state.js writes, for Safari before 17.4. */
+.am-node--state .am-node-shape { rx: var(--node-radius, 8px); }
+/* The initial pseudo-state is a filled dot, the final one a ringed dot; both take the node tokens, so every theme draws them. */
+.am-diagram .am-state-dot { fill: var(--node-stroke, var(--line, #1d2026)); }
+.am-diagram .am-state-ring { fill: var(--node-fill, var(--paper, #ffffff)); stroke: var(--node-stroke, var(--line, #1d2026)); stroke-width: var(--node-width, var(--bw, 1.5px)); }
+.am-diagram .am-state-core { fill: var(--node-stroke, var(--line, #1d2026)); }
 .am-node--hi .am-node-shape { fill: var(--hi-fill, var(--accent-bg, #e4ecf8)); stroke: var(--hi-stroke, var(--accent, #1d5fbf)); }
 .am-diagram .am-node-text { fill: var(--node-text, var(--ink, #16181d)); }
 .am-node--hi text { fill: var(--hi-text, var(--accent, #1d5fbf)); font-weight: 600; }
 .am-diagram .am-node--hi .am-node-text { fill: var(--hi-text, var(--accent, #1d5fbf)); }
 .am-edge { fill: none; stroke: var(--edge-color, var(--ink-2, #4b5260)); stroke-width: var(--edge-width, 1.3); }
 .am-edge--dashed { stroke-dasharray: 5 4; }
+.am-class-hollow { fill: var(--paper, #ffffff); stroke: var(--edge-color, var(--ink-2, #4b5260)); stroke-width: var(--edge-width, 1.3); }
 .am-arrow { fill: var(--edge-color, var(--ink-2, #4b5260)); }
 .am-edge-label rect { fill: var(--paper, #ffffff); }
 .am-diagram .am-edge-label text { fill: var(--edge-label, var(--accent, #1d5fbf)); font-size: var(--am-fs-d-edge); }
@@ -646,6 +668,17 @@ body.am-has-reply-bar { padding-block-end: 72px; }
 /* The PK / FK / UK marks of an entity follow the node text, and the highlighted text in a highlighted entity, so they stay readable on the theme's fills. */
 .am-diagram .am-er-key { fill: var(--node-text, var(--ink-2, #4b5260)); }
 .am-diagram .am-node--hi .am-er-key { fill: var(--hi-text, var(--ink-2, #4b5260)); }
+/* API contracts use the existing prose and table styles; the endpoint keeps its protocol punctuation left to right. */
+.am-api-endpoint { display: flex; gap: 10px; align-items: baseline; overflow-wrap: anywhere; }
+.am-api-endpoint strong { color: var(--accent); }
+.am-api .am-api-section h4 { margin: 16px 0 6px; font-size: var(--am-fs-text); }
+.am-api .am-api-section h4 code { font-weight: 400; }
+.am-api .am-api-section table { margin: 0; table-layout: fixed; }
+.am-api th:first-child { width: 28%; }
+.am-api th, .am-api td { overflow-wrap: anywhere; }
+.am-api tbody th { font: inherit; vertical-align: top; padding-block: 7px; }
+/* Keep field code chips visible on every contract row; Markdown's stripe uses the same fill as inline code. */
+.am-api tbody tr:nth-child(even) td { background: transparent; }
 .am-lifeline { stroke: var(--lifeline-color, var(--ink-3, #8b929e)); stroke-width: 1; stroke-dasharray: 4 4; }
 /* An actor (and the box of a divider) looks like a node unless the theme sets the actor tokens. */
 .am-actor { fill: var(--actor-fill, var(--node-fill, var(--paper, #ffffff))); stroke: var(--actor-stroke, var(--node-stroke, var(--line, #1d2026))); stroke-width: var(--node-width, var(--bw, 1.5px)); filter: var(--node-shadow, none); rx: var(--node-radius, 2px); }
@@ -1269,36 +1302,6 @@ math:not(.tml-display) { max-width: 100%; overflow-x: auto; overflow-y: hidden; 
 }
 
 
-/* New-version button and popover (src/render.js adds this file only to a page that has the button). The popover sits under the
-   toolbar and stays hidden unless open, so a browser without native popovers never shows it. */
-.am-btn--update { color: var(--ok); border-color: var(--ok); white-space: nowrap; }
-.am-update { display: none; }
-.am-update:popover-open {
-  display: block; position: fixed; inset-block: 52px auto; inset-inline: auto 12px; margin: 0; width: min(380px, calc(100vw - 24px));
-  padding: 14px 16px; font-size: var(--am-fs-text); color: var(--ink); background: var(--paper);
-  border: 1px solid var(--line-2); border-radius: var(--radius); box-shadow: 0 12px 40px rgba(0,0,0,.25);
-}
-.am-update p { margin: 0 0 8px; }
-.am-update-title { font-weight: 600; color: var(--ok); }
-.am-update-label { color: var(--ink-2); font-size: var(--am-fs-small); }
-.am-update-notes { margin: 0 0 12px; padding-inline-start: 18px; }
-.am-update-notes li { margin: 2px 0; }
-.am-update-notes code { font-size: var(--am-fs-small); }
-.am-update-row { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
-.am-update-row > :first-child {
-  flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font-size: var(--am-fs-small); padding: 6px 8px;
-  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
-}
-.am-update a { color: var(--accent); font-size: var(--am-fs-small); }
-/* A phone has no room for the words: the button keeps only its dot, and its aria-label still names the version. */
-@media (max-width: 760px) {
-  .am-btn--update .am-update-text { display: none; }
-}
-@media print {
-  .am-update { display: none !important; }
-}
-
-
 html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
 html[data-theme="blueprint"] .am-frame::before {
   content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
@@ -1327,7 +1330,6 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </head>
 <body>
 <div class="am-toolbar" data-am-root-lang="zh-CN" data-am-root-theme="paper" data-am-root-mode="auto" data-am-root-style="80">
-<button class="am-btn am-btn--update" type="button" data-am="update" popovertarget="am-update" aria-label="新版本 0.5.11" hidden>● <span class="am-update-text">新版本 <bdi>0.5.11</bdi></span></button>
 <label class="am-pick">主题<select data-am="theme"><option value="blueprint">图纸</option><option value="shadcn">卡片</option><option value="paper" selected>纸张</option></select></label>
 <label class="am-pick">明暗<select data-am="mode"><option value="auto" selected>跟随系统</option><option value="light">亮</option><option value="dark">暗</option></select></label>
 <button class="am-btn" type="button" data-am="scale-down" data-min="0.8" data-max="1.5" data-step="0.05" aria-label="缩小文字" title="缩小文字" hidden>A−</button><button class="am-btn" type="button" data-am="scale-up" data-min="0.8" data-max="1.5" data-step="0.05" aria-label="放大文字" title="放大文字" hidden>A+</button>
@@ -1335,19 +1337,8 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <button class="am-btn am-btn--remark" type="button" data-am="remark" data-ui="{&quot;button&quot;:&quot;标注&quot;,&quot;need&quot;:&quot;选择标签后才能保存&quot;,&quot;hint&quot;:&quot;批注（可选）&quot;,&quot;save&quot;:&quot;保存&quot;,&quot;remove&quot;:&quot;删除&quot;,&quot;clear&quot;:&quot;清除所有标注&quot;,&quot;clearConfirm&quot;:&quot;再次点击以清除 {n} 条标注&quot;,&quot;section&quot;:&quot;标注&quot;,&quot;kinds&quot;:{&quot;suggestion&quot;:&quot;建议&quot;,&quot;keep&quot;:&quot;保留&quot;,&quot;question&quot;:&quot;疑问&quot;,&quot;concern&quot;:&quot;关注&quot;}}">标注</button>
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
-<div class="am-update" id="am-update" popover>
-<p class="am-update-title">新版本 <bdi>0.5.11</bdi></p>
-<p>当前 <bdi>0.5.10</bdi>。生成此页时检测到新版本。</p>
-<p class="am-update-label">这次更新：</p>
-<ul class="am-update-notes"><li>am export 把页面导出成 A4 PDF 或 PNG 切片，方便发到聊天工具</li><li>表格后面写 {table sort filter}，就能排序和筛选</li><li>am video --audio-map 用你自己的音频文件做视频旁白</li></ul>
-<p class="am-update-label">在终端运行：</p>
-<div class="am-update-row"><code dir="ltr">npx skills update answer-me-with-html -y</code><button class="am-btn" type="button" data-am="copy-text" data-text="npx skills update answer-me-with-html -y" data-done="已复制 ✓">复制</button></div>
-<p class="am-update-label">或者告诉 Agent：</p>
-<div class="am-update-row"><span>更新 answer-me-with-html</span><button class="am-btn" type="button" data-am="copy-text" data-text="更新 answer-me-with-html" data-done="已复制 ✓">复制</button></div>
-<a href="https://github.com/QingYunA/answer-me-with-html/releases" target="_blank" rel="noopener">查看更新内容</a>
-</div>
 <main class="am-doc">
-<header class="am-head"><p class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.5.10 · 2026-11-11 20:46 · <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">★ Star on GitHub</a></p><h1>第一章研究内容与研究设计</h1><p class="am-sub">动作条件价值建模与依赖感知生命周期控制</p><div class="am-head-meta"><span><b>source</b>Design/20261111_第一章研究点重构_价值建模与生命周期控制.md</span></div><div class="am-intro am-md"><div class="am-md"><p>Lead: 本章研究流式 Agent 缓存的两个核心问题：一次复用值不值得；生命周期动作如何联合决策。目标是让缓存决策可解释、可证伪、可落地。</p>
+<header class="am-head"><p class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.5.11 · 2026-11-12 15:43 · <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">★ Star on GitHub</a></p><h1>第一章研究内容与研究设计</h1><p class="am-sub">动作条件价值建模与依赖感知生命周期控制</p><div class="am-head-meta"><span><b>source</b>Design/20261111_第一章研究点重构_价值建模与生命周期控制.md</span></div><div class="am-intro am-md"><div class="am-md"><p>Lead: 本章研究流式 Agent 缓存的两个核心问题：一次复用值不值得；生命周期动作如何联合决策。目标是让缓存决策可解释、可证伪、可落地。</p>
 </div></div></header>
 <div class="am-doc-layout am-doc-layout--rail-end">
 <nav class="am-toc" aria-label="目录" data-side="end" data-flow="in"><details class="am-outline"><summary aria-label="目录"><span class="am-ticks" aria-hidden="true"><i class="am-tick" data-id="A" data-title="A · 核心命题"></i><i class="am-tick" data-id="B" data-title="B · 为什么要重构"></i><i class="am-tick" data-id="C" data-title="C · 总体研究路线"></i><i class="am-tick" data-id="D" data-title="D · 研究点一：动作条件价值"></i><i class="am-tick" data-id="E" data-title="E · 研究点二：生命周期控制"></i><i class="am-tick" data-id="F" data-title="F · 论文逻辑怎么讲"></i><i class="am-tick" data-id="G" data-title="G · 实验怎么设计"></i><i class="am-tick" data-id="H" data-title="H · 贡献、边界与裁剪"></i></span></summary><ol class="am-outline-list"><li><a href="#panel-A">A · 核心命题</a></li><li><a href="#panel-B">B · 为什么要重构</a></li><li><a href="#panel-C">C · 总体研究路线</a></li><li><a href="#panel-D">D · 研究点一：动作条件价值</a></li><li><a href="#panel-E">E · 研究点二：生命周期控制</a></li><li><a href="#panel-F">F · 论文逻辑怎么讲</a></li><li><a href="#panel-G">G · 实验怎么设计</a></li><li><a href="#panel-H">H · 贡献、边界与裁剪</a></li></ol></details></nav>
@@ -1357,7 +1348,38 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <div class="am-panel-body"><div class="am-callout am-callout--ok" role="note"><div class="am-callout-title">一句话</div><div class="am-callout-body am-md"><p>缓存价值不是对象的静态属性。
 它是“对象 × 请求 × 动作 × 依赖 × 负载”的函数。</p>
 </div></div>
-<dl class="am-kv" style="--kv-cols: 2"><div class="am-kv-cell am-kv-cell--wide"><dt>研究对象</dt><dd>逻辑缓存对象 <code>resp + rag</code>；<code>ctx</code> 作为依赖源</dd></div><div class="am-kv-cell"><dt>核心动作</dt><dd><code>REUSE</code>、<code>VERIFY_THEN_REUSE</code>、<code>RECOMPUTE</code></dd></div><div class="am-kv-cell"><dt>生命周期</dt><dd>准入、复用、验证、刷新、降级、失效、淘汰、冻结</dd></div><div class="am-kv-cell"><dt>硬约束</dt><dd>权限、模型 revision、依赖登记完整性</dd></div><div class="am-kv-cell"><dt>评价主轴</dt><dd>决策后悔、风险预算兑现、净收益、约束满足率</dd></div></dl></div>
+<dl class="am-kv" style="--kv-cols: 2"><div class="am-kv-cell am-kv-cell--wide"><dt>研究对象</dt><dd><code>resp + rag + act + plan</code> 四类核心缓存；<code>ctx</code> 作为依赖源</dd></div><div class="am-kv-cell"><dt>核心动作</dt><dd><code>REUSE</code>、<code>VERIFY_THEN_REUSE</code>、<code>RECOMPUTE</code></dd></div><div class="am-kv-cell"><dt>生命周期</dt><dd>准入、复用、验证、刷新、降级、失效、淘汰、冻结</dd></div><div class="am-kv-cell"><dt>硬约束</dt><dd>权限、版本、依赖登记完整性、工具环境兼容与计划状态兼容</dd></div><div class="am-kv-cell"><dt>评价主轴</dt><dd>决策后悔、风险预算兑现、净收益、约束满足率</dd></div></dl>
+<div class="am-md"><p>四类对象具有同等研究地位，但收益与风险不能混为一个命中率。</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>对象层</th>
+<th>复用所避免的主要工作</th>
+<th>核心有效性条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>resp</code></td>
+<td>回答生成与相关模型推理</td>
+<td>回答语义可接受，模型、权限和依赖版本兼容</td>
+</tr>
+<tr>
+<td><code>rag</code></td>
+<td>检索调用、文档读取和知识加工</td>
+<td>证据有效，知识更新和传播风险可控</td>
+</tr>
+<tr>
+<td><code>act</code></td>
+<td>工具调用、付费 API 和环境交互</td>
+<td>工具版本、执行历史、环境快照和权限一致</td>
+</tr>
+<tr>
+<td><code>plan</code></td>
+<td>规划推理、搜索和重复计划生成</td>
+<td>任务阶段匹配，状态覆盖充分，数据与工具版本兼容</td>
+</tr>
+</tbody></table></div>
+</div></div>
 </section>
 <section class="am-panel" id="panel-B">
 <header class="am-panel-head"><span class="am-panel-id">B</span><h2>为什么要重构</h2></header>
@@ -1440,22 +1462,25 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><mi>N<
 </tr>
 <tr>
 <td><code>RECOMPUTE</code></td>
-<td>重新计算</td>
+<td>重新生成、检索、执行或规划</td>
 <td>其他动作不划算，或硬约束不满足</td>
 </tr>
 </tbody></table></div>
 <p>关键设计：</p>
 <ul>
-<li><code>q_total</code> 用最终答案是否可接受做端到端校准。</li>
+<li><code>q_total</code> 用各对象的最终任务结果做端到端校准。</li>
 <li><code>q_auth</code> 是零容忍硬门，不作为可概率化的核心风险。</li>
+<li><code>act</code> 的历史与环境一致进入 <code>q_stale</code>，并记录工具正确率和环境失配率。</li>
+<li><code>plan</code> 的状态覆盖进入 <code>q_sem</code>，并记录计划可执行率、任务完成率和修复成本。</li>
 <li>决策使用风险上界与净价值下界：先约束，再优化。</li>
-<li>贡献重点不是新的相似度模型，而是“动作价值如何改善决策”。</li>
+<li>贡献重点是动作价值如何改善四类对象的决策，不是新的相似度模型、工具匹配器或规划器。</li>
 </ul>
+<p><code>RECOMPUTE</code> 和 <code>REFRESH</code> 都得多态实现：<code>resp</code> 重新生成，<code>rag</code> 重新检索，<code>act</code> 安全地重新执行，<code>plan</code> 重新规划或增量修复。对 <code>act</code> 的验证不得默认重复执行有副作用操作。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-E">
 <header class="am-panel-head"><span class="am-panel-id">E</span><h2>研究点二：生命周期控制</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>RP2 在容量、风险、验证吞吐和依赖一致性约束下，联合决定生命周期动作。</p>
+<div class="am-panel-body"><div class="am-md"><p>RP2 在容量、风险、验证吞吐和依赖一致性约束下，联合决定四类对象的生命周期动作。</p>
 <div class="am-table-wrap"><table>
 <thead>
 <tr>
@@ -1489,8 +1514,10 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><msub>
 <p>关键机制：</p>
 <ul>
 <li>依赖图维护 <code>D_i</code>、<code>vv_i</code>、反向索引和失效域。</li>
-<li>刷新按拓扑序调度，必须计算下游重建与命中损失。</li>
-<li>刷新一次的重建成本与每次命中的损失分开记账。</li>
+<li>文档、上下文、工具环境和计划状态都可成为上游失效源。</li>
+<li><code>rag→resp/plan</code>、<code>plan→act</code> 和 <code>act→resp/plan</code> 的下游损失要进入刷新计价。</li>
+<li>刷新按拓扑序调度，分别记录生成、检索、工具执行和规划重建的成本。</li>
+<li><code>act</code> 的重放必须受工具幂等性与副作用策略约束。</li>
 <li>Flink 侧使用 keyed state、timer、checkpoint 和 rescale。</li>
 </ul>
 </div></div>
@@ -1549,7 +1576,7 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><msub>
 </section>
 <section class="am-panel" id="panel-G">
 <header class="am-panel-head"><span class="am-panel-id">G</span><h2>实验怎么设计</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>先做 P0，确认机制前提；再做三组判定性实验。</p>
+<div class="am-panel-body"><div class="am-md"><p>先在 W1–W5 五类核心负载上做 P0，确认各类对象的复用机会与验证经济学，再做三组判定性实验。每个主要实验都按 <code>resp/rag/act/plan</code> 分层报告，不能用某一层的收益替代其他层。</p>
 <div class="am-table-wrap"><table>
 <thead>
 <tr>
@@ -1561,9 +1588,15 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><msub>
 </thead>
 <tbody><tr>
 <td>P0 / G1</td>
-<td>复用机会与验证经济学是否成立</td>
-<td>复用率、<code>C_v/W</code>、<code>M(i)</code></td>
+<td>四类对象的复用机会与验证经济学是否成立</td>
+<td>分层复用率、<code>C_v/W</code>、<code>M(i)</code></td>
 <td>复用 &lt;5%；或 <code>C_v/W</code> &gt;0.5</td>
+</tr>
+<tr>
+<td>E1.1c</td>
+<td><code>act</code> 环境一致与 <code>plan</code> 状态覆盖是否有独立解释力</td>
+<td>工具正确率、环境失配率、计划可执行率、任务完成率</td>
+<td>专用特征无独立增益</td>
 </tr>
 <tr>
 <td>E1.2</td>
@@ -1580,23 +1613,24 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><msub>
 <tr>
 <td>E3.1 + E4.2</td>
 <td>两个研究点联动与 Flink 恢复是否成立</td>
-<td>净收益、INV-1、恢复时间</td>
+<td>分层净收益、INV-1、恢复时间</td>
 <td>增益 &lt;5%；或出现 INV-1 违反</td>
 </tr>
 </tbody></table></div>
 <p>实验纪律：</p>
 <ul>
-<li>匹配器固定，只比较决策层或生命周期层。</li>
+<li>匹配器、工具执行器和规划器固定，只比较决策层或生命周期层。</li>
+<li><code>resp</code>、<code>rag</code>、<code>act</code>、<code>plan</code> 分别保留适用基线。</li>
+<li>TVCACHE 与 AgenticCache 分别作为工具和计划层的核心对照。</li>
 <li>所有基线使用同一预算、同一数据和同一调参预算。</li>
-<li>统计单位是会话或租户，不用单请求假装独立。</li>
-<li>用配对 bootstrap、置信区间和预注册门槛。</li>
-<li>低复用、高验证成本、高更新率、低负载必须报告负结果。</li>
+<li>统计单位是会话、任务或租户，不用单请求假装独立。</li>
+<li>低复用、高验证成本、高更新率、稳定环境与低负载必须报告负结果。</li>
 </ul>
 <p>支持实验：</p>
 <ul>
-<li><code>E1.1</code>：风险校准与版本变化子集的条件覆盖。</li>
+<li><code>E1.1</code>：四类对象的风险校准与状态变化子集的条件覆盖。</li>
 <li><code>E1.6</code>：IPS/DR/随机留出的反事实验证。</li>
-<li><code>E2.4</code>：失效闭包与权限硬门。</li>
+<li><code>E2.4</code>：版本、工具环境、计划状态的失效闭包与权限硬门。</li>
 <li><code>E2.5</code>：联合控制相对单动作的增益。</li>
 <li><code>E2.8</code>：Flink 开销与恢复。</li>
 </ul>
@@ -1612,6 +1646,10 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><msub>
 </tr>
 </thead>
 <tbody><tr>
+<td>统一接口可以覆盖四类对象，且每类具有独立的收益与风险证据</td>
+<td>用 <code>resp</code> 或 <code>rag</code> 的结果代替 <code>act</code> 或 <code>plan</code> 的验证</td>
+</tr>
+<tr>
 <td>在测试负载和 δ 区间内，动作价值降低决策后悔</td>
 <td>所有 Agent 负载都适用</td>
 </tr>
@@ -1621,7 +1659,7 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><msub>
 </tr>
 <tr>
 <td>Flink 原型能保持依赖失效一致性</td>
-<td>生产级多区域一致性</td>
+<td>生产级多区域一致性或任意工具行动都可安全重放</td>
 </tr>
 <tr>
 <td>风险预算能被校准并报告负结果</td>
@@ -1629,17 +1667,18 @@ $$" display="block" class="tml-display" style="display:block math;"><mrow><msub>
 </tr>
 <tr>
 <td>本章贡献是决策层、控制层与评估协议</td>
-<td>新的 embedding、KV 机制或“首个”工作</td>
+<td>新的 embedding、工具匹配器、规划器、KV 机制或“首个”工作</td>
 </tr>
 </tbody></table></div>
 <p>裁剪顺序：</p>
 <ul>
 <li>级联不显著：删除级联计价，收缩 RP2。</li>
-<li>校准失败：退回精确匹配、版本检查和权限硬门。</li>
-<li>预算不足：先删域预算、子树淘汰和扩展实验。</li>
-<li>时间不足：保留 P0、E1.2、E2.3、E3.1、E4.2。</li>
+<li>校准失败：按对象层退回精确匹配、版本检查和权限硬门。</li>
+<li><code>act</code> 或 <code>plan</code> 证据不足：公开负结果并采用专用硬门，不把对象从核心范围静默删除。</li>
+<li>预算不足：先删域预算、子树淘汰、跨对象组合和大规模场景扫描。</li>
+<li>时间不足：保留 W1–W5 最小验证，以及 P0、E1.1c、E1.2、E2.3、E3.1、E4.2。</li>
 </ul>
-<p>保底交付：精确匹配 + 依赖版本 + 权限硬门 + 最小 Flink 元数据原型。</p>
+<p>保底交付：四类对象各自的精确匹配 + 依赖版本 + 权限硬门 + 最小 Flink 元数据原型。</p>
 </div></div>
 </section>
 </div>
@@ -1681,13 +1720,21 @@ Lead: 本章研究流式 Agent 缓存的两个核心问题：一次复用值不�
 ```
 
 ```kv cols=2
-* 研究对象: 逻辑缓存对象 `resp + rag`；`ctx` 作为依赖源
+* 研究对象: `resp + rag + act + plan` 四类核心缓存；`ctx` 作为依赖源
 核心动作: `REUSE`、`VERIFY_THEN_REUSE`、`RECOMPUTE`
 生命周期: 准入、复用、验证、刷新、降级、失效、淘汰、冻结
-硬约束: 权限、模型 revision、依赖登记完整性
+硬约束: 权限、版本、依赖登记完整性、工具环境兼容与计划状态兼容
 评价主轴: 决策后悔、风险预算兑现、净收益、约束满足率
 ```
 
+四类对象具有同等研究地位，但收益与风险不能混为一个命中率。
+
+| 对象层 | 复用所避免的主要工作 | 核心有效性条件 |
+|---|---|---|
+| `resp` | 回答生成与相关模型推理 | 回答语义可接受，模型、权限和依赖版本兼容 |
+| `rag` | 检索调用、文档读取和知识加工 | 证据有效，知识更新和传播风险可控 |
+| `act` | 工具调用、付费 API 和环境交互 | 工具版本、执行历史、环境快照和权限一致 |
+| `plan` | 规划推理、搜索和重复计划生成 | 任务阶段匹配，状态覆盖充分，数据与工具版本兼容 |
 ## B 为什么要重构
 
 | 旧设计的隐含假设 | 问题 | 新设计的回答 |
@@ -1745,17 +1792,22 @@ $$
 |---|---|---|
 | `REUSE` | 直接返回缓存负载 | 风险低、价值高 |
 | `VERIFY_THEN_REUSE` | 先验证，通过则复用 | 验证能显著降低风险 |
-| `RECOMPUTE` | 重新计算 | 其他动作不划算，或硬约束不满足 |
+| `RECOMPUTE` | 重新生成、检索、执行或规划 | 其他动作不划算，或硬约束不满足 |
 
 关键设计：
 
-- `q_total` 用最终答案是否可接受做端到端校准。
+- `q_total` 用各对象的最终任务结果做端到端校准。
 - `q_auth` 是零容忍硬门，不作为可概率化的核心风险。
+- `act` 的历史与环境一致进入 `q_stale`，并记录工具正确率和环境失配率。
+- `plan` 的状态覆盖进入 `q_sem`，并记录计划可执行率、任务完成率和修复成本。
 - 决策使用风险上界与净价值下界：先约束，再优化。
-- 贡献重点不是新的相似度模型，而是“动作价值如何改善决策”。
+- 贡献重点是动作价值如何改善四类对象的决策，不是新的相似度模型、工具匹配器或规划器。
+
+`RECOMPUTE` 和 `REFRESH` 都得多态实现：`resp` 重新生成，`rag` 重新检索，`act` 安全地重新执行，`plan` 重新规划或增量修复。对 `act` 的验证不得默认重复执行有副作用操作。
+
 ## E 研究点二：生命周期控制
 
-RP2 在容量、风险、验证吞吐和依赖一致性约束下，联合决定生命周期动作。
+RP2 在容量、风险、验证吞吐和依赖一致性约束下，联合决定四类对象的生命周期动作。
 
 | 动作组 | 动作 | 主要作用 |
 |---|---|---|
@@ -1774,8 +1826,10 @@ $$
 关键机制：
 
 - 依赖图维护 `D_i`、`vv_i`、反向索引和失效域。
-- 刷新按拓扑序调度，必须计算下游重建与命中损失。
-- 刷新一次的重建成本与每次命中的损失分开记账。
+- 文档、上下文、工具环境和计划状态都可成为上游失效源。
+- `rag→resp/plan`、`plan→act` 和 `act→resp/plan` 的下游损失要进入刷新计价。
+- 刷新按拓扑序调度，分别记录生成、检索、工具执行和规划重建的成本。
+- `act` 的重放必须受工具幂等性与副作用策略约束。
 - Flink 侧使用 keyed state、timer、checkpoint 和 rescale。
 ## F 论文逻辑怎么讲
 
@@ -1799,50 +1853,52 @@ $$
 5. 1.5 贡献、边界与章节组织。
 ## G 实验怎么设计
 
-先做 P0，确认机制前提；再做三组判定性实验。
+先在 W1–W5 五类核心负载上做 P0，确认各类对象的复用机会与验证经济学，再做三组判定性实验。每个主要实验都按 `resp/rag/act/plan` 分层报告，不能用某一层的收益替代其他层。
 
 | 实验 | 回答什么 | 主指标 | 失败线 |
 |---|---|---|---|
-| P0 / G1 | 复用机会与验证经济学是否成立 | 复用率、`C_v/W`、`M(i)` | 复用 &lt;5%；或 `C_v/W` &gt;0.5 |
-| E1.2 | 动作价值是否降低决策后悔 | 归一化后悔、违约率 | 后悔降低 &lt;10% |
-| E2.3 | 刷新级联是否改变刷新决策 | `M(i)`、净收益、churn | 中位数 &lt;1.2；或净收益提升 &lt;5% |
-| E3.1 + E4.2 | 两个研究点联动与 Flink 恢复是否成立 | 净收益、INV-1、恢复时间 | 增益 &lt;5%；或出现 INV-1 违反 |
+| P0 / G1 | 四类对象的复用机会与验证经济学是否成立 | 分层复用率、`C_v/W`、`M(i)` | 复用 &amp;lt;5%；或 `C_v/W` &amp;gt;0.5 |
+| E1.1c | `act` 环境一致与 `plan` 状态覆盖是否有独立解释力 | 工具正确率、环境失配率、计划可执行率、任务完成率 | 专用特征无独立增益 |
+| E1.2 | 动作价值是否降低决策后悔 | 归一化后悔、违约率 | 后悔降低 &amp;lt;10% |
+| E2.3 | 刷新级联是否改变刷新决策 | `M(i)`、净收益、churn | 中位数 &amp;lt;1.2；或净收益提升 &amp;lt;5% |
+| E3.1 + E4.2 | 两个研究点联动与 Flink 恢复是否成立 | 分层净收益、INV-1、恢复时间 | 增益 &amp;lt;5%；或出现 INV-1 违反 |
 
 实验纪律：
 
-- 匹配器固定，只比较决策层或生命周期层。
+- 匹配器、工具执行器和规划器固定，只比较决策层或生命周期层。
+- `resp`、`rag`、`act`、`plan` 分别保留适用基线。
+- TVCACHE 与 AgenticCache 分别作为工具和计划层的核心对照。
 - 所有基线使用同一预算、同一数据和同一调参预算。
-- 统计单位是会话或租户，不用单请求假装独立。
-- 用配对 bootstrap、置信区间和预注册门槛。
-- 低复用、高验证成本、高更新率、低负载必须报告负结果。
+- 统计单位是会话、任务或租户，不用单请求假装独立。
+- 低复用、高验证成本、高更新率、稳定环境与低负载必须报告负结果。
 
 支持实验：
 
-- `E1.1`：风险校准与版本变化子集的条件覆盖。
+- `E1.1`：四类对象的风险校准与状态变化子集的条件覆盖。
 - `E1.6`：IPS/DR/随机留出的反事实验证。
-- `E2.4`：失效闭包与权限硬门。
+- `E2.4`：版本、工具环境、计划状态的失效闭包与权限硬门。
 - `E2.5`：联合控制相对单动作的增益。
 - `E2.8`：Flink 开销与恢复。
-
 ## H 贡献、边界与裁剪
 
 | 可以主张 | 不能主张 |
 |---|---|
+| 统一接口可以覆盖四类对象，且每类具有独立的收益与风险证据 | 用 `resp` 或 `rag` 的结果代替 `act` 或 `plan` 的验证 |
 | 在测试负载和 δ 区间内，动作价值降低决策后悔 | 所有 Agent 负载都适用 |
 | 刷新级联在特定扇出和更新率下改变决策 | 级联在所有场景都显著 |
-| Flink 原型能保持依赖失效一致性 | 生产级多区域一致性 |
+| Flink 原型能保持依赖失效一致性 | 生产级多区域一致性或任意工具行动都可安全重放 |
 | 风险预算能被校准并报告负结果 | 质量损失可以通用货币化 |
-| 本章贡献是决策层、控制层与评估协议 | 新的 embedding、KV 机制或“首个”工作 |
+| 本章贡献是决策层、控制层与评估协议 | 新的 embedding、工具匹配器、规划器、KV 机制或“首个”工作 |
 
 裁剪顺序：
 
 - 级联不显著：删除级联计价，收缩 RP2。
-- 校准失败：退回精确匹配、版本检查和权限硬门。
-- 预算不足：先删域预算、子树淘汰和扩展实验。
-- 时间不足：保留 P0、E1.2、E2.3、E3.1、E4.2。
+- 校准失败：按对象层退回精确匹配、版本检查和权限硬门。
+- `act` 或 `plan` 证据不足：公开负结果并采用专用硬门，不把对象从核心范围静默删除。
+- 预算不足：先删域预算、子树淘汰、跨对象组合和大规模场景扫描。
+- 时间不足：保留 W1–W5 最小验证，以及 P0、E1.1c、E1.2、E2.3、E3.1、E4.2。
 
-保底交付：精确匹配 + 依赖版本 + 权限硬门 + 最小 Flink 元数据原型。
-</textarea>
+保底交付：四类对象各自的精确匹配 + 依赖版本 + 权限硬门 + 最小 Flink 元数据原型。</textarea>
 <script>
 (() => {
 // How a formula reads in a quote. MathML has no plain text, so src/math.js writes the formula as the draft wrote it, delimiters included, in
@@ -3464,32 +3520,6 @@ if (panels.length > 1) {
   document.addEventListener('pointerdown', (e) => { if (box.open && !nav.contains(e.target)) setOpen(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && box.open && !nav.contains(e.target)) setOpen(false); });
 })();
-})();
-// Pages with a new-version button only: src/render.js adds this script after the page script.
-// The button shows where the browser has native popovers (they open and close the popover with no script). A page that am serve
-// sends to another device has no button (src/serve.js), so this script does not look at the address.
-(() => {
-  const button = document.querySelector('[data-am="update"]');
-  if (!button || !Object.hasOwn(HTMLElement.prototype, 'popover')) return;
-  button.hidden = false;
-  // Each copy button copies its data-text and reads data-done for a moment, then comes back to the label it started from. That
-  // label is read once, here: a second click inside the moment would otherwise read the copied label off the button and restore
-  // that instead, and the label would never come back. The moment starts again on each click: the timer of the previous one is
-  // left to fire and does nothing.
-  for (const copy of document.querySelectorAll('[data-am="copy-text"]')) {
-    const idle = copy.textContent;
-    let clicks = 0;
-    copy.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(copy.dataset.text);
-      } catch {
-        return;
-      }
-      copy.textContent = copy.dataset.done;
-      const mine = ++clicks;
-      setTimeout(() => { if (mine === clicks) copy.textContent = idle; }, 1400);
-    });
-  }
 })();
 </script>
 </body>
