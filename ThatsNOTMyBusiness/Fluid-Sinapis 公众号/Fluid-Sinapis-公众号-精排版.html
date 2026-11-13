@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fluid-Sinapis 公众号排版稿</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 40px 24px 80px;
+    background: #EDF0F4;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    justify-content: center;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .paper {
+    width: 677px;
+    flex: 0 0 677px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(22,42,80,0.10);
+    padding: 34px 28px 52px;
+  }
+  .titlenote {
+    border: 1px dashed #D5DEEA;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 30px;
+    background: #FAFBFD;
+  }
+  .titlenote .lab {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: #9AA3AF;
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+  .titlenote .ttl {
+    font-size: 17px;
+    line-height: 1.6;
+    color: #1F2A37;
+    font-weight: 700;
+    margin: 0;
+  }
+  .titlenote .hint {
+    font-size: 12px;
+    color: #A2ABB8;
+    margin: 8px 0 0;
+    line-height: 1.6;
+  }
+  .side {
+    width: 300px;
+    flex: 0 0 300px;
+    position: sticky;
+    top: 40px;
+    color: #4A525C;
+  }
+  .card {
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 18px rgba(22,42,80,0.05);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #98A2B0;
+    font-weight: 700;
+  }
+  .btn {
+    width: 100%;
+    border: 0;
+    border-radius: 10px;
+    background: #165DFF;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .18s;
+  }
+  .btn:hover { background: #0E4DE0; }
+  .btn:active { transform: translateY(1px); }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #98A2B0;
+    padding: 5px 0;
+    border-bottom: 1px dashed #EDF0F4;
+  }
+  .meta:last-child { border-bottom: 0; }
+  .meta b { color: #3D444D; font-weight: 600; }
+  .tip {
+    font-size: 12px;
+    line-height: 1.85;
+    color: #6B7480;
+    margin: 0;
+  }
+  .tip ol { margin: 8px 0 0; padding-left: 18px; }
+  .tip li { margin-bottom: 6px; }
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%) translateY(20px);
+    background: #165DFF;
+    color: #fff;
+    font-size: 14px;
+    padding: 12px 22px;
+    border-radius: 30px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s;
+    z-index: 99;
+  }
+  .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (max-width: 1024px) {
+    body { padding: 24px 12px 60px; }
+    .wrap { flex-direction: column; }
+    .paper { width: 100%; flex: 1 1 auto; padding: 26px 18px 40px; }
+    .side { width: 100%; flex: 1 1 auto; position: static; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="paper">
+    <div class="titlenote">
+      <p class="lab">公众号标题 · 请填入后台标题栏</p>
+      <p class="ttl">Fluid-Sinapis：基于 LLM Agent 的智能云原生缓存管理系统组件 V0.1版本发布</p>
+      <p class="hint">标题不进入正文，粘贴正文后单独填写即可。</p>
+    </div>
+
+    <article id="article">
+
+      <!-- ================= 一、前言 ================= -->
+      <p style="margin:0 0 22px;padding-left:13px;padding-bottom:12px;border-left:5px solid #165DFF;border-bottom:1px solid #E9EEF7;font-size:20px;font-weight:700;color:#0F2B5B;line-height:1.4;letter-spacing:1px;">一、前言</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">Fluid 是一款云原生分布式弹性缓存加速框架，通过将远端存储中的数据缓存至 Kubernetes 集群本地，并对缓存资源进行统一编排与管理，提升应用的数据访问性能。随着 Fluid 在云原生场景广泛应用，越来越多用户提出了以下需求：</p>
+
+      <section style="background-color:#F7F9FD;border-left:4px solid #165DFF;border-radius:0 8px 8px 0;padding:15px 18px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">（1）多源指标接入与感知。</strong>外部业务系统的数据流量指标、Fluid状态指标（缓存容量使用率、缓存文件副本数）和一些其他指标缺乏统一的聚合与抽象，难以使用大模型和智能体准确地判断当前缓存系统是否处于健康状态，更无法将业务侧的真实流量压力与Fluid的缓存效能指标关联起来，从而综合考虑进行后续操作。</p>
+      </section>
+
+      <section style="background-color:#F7F9FD;border-left:4px solid #165DFF;border-radius:0 8px 8px 0;padding:15px 18px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">（2）智能化缓存管理决策。</strong>当前的扩缩容等决策高度依赖运维人员的个人经验操作或者规则式扩缩容，而非通过大模型智能体来判断"在什么条件下执行什么动作"。例如，综合各项目内外部指标，是应该增加缓存容量，还是优先触发文件预热？当流量高峰来临，是按固定步长扩容？这些决策逻辑功能，难以适配不同业务场景的差异化需求。</p>
+      </section>
+
+      <section style="background-color:#F7F9FD;border-left:4px solid #165DFF;border-radius:0 8px 8px 0;padding:15px 18px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">（3）灵活便捷Fluid操作。</strong>实际中指标参数多、环境复杂、Fluid 手工操作速度远跟不上业务需求，缺乏大模型智能体框架来实时监测与动态操作，往往扩容完成前已经发生缓存击穿；而在流量低谷期，又缺乏自动缩容机制，导致计算与存储资源长期闲置，无法实现与业务节奏的动态匹配。另外，副本增加操作由用户进行也很复杂。</p>
+      </section>
+
+      <p style="margin:22px 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">Fluid开源社区需要一套拥有Agentic 特征、面向 Fluid 的弹性缓存管理系统，具备自主感知、智能决策、技能执行等能力的综合管理系统。</p>
+
+      <!-- ================= 二、什么是Fluid-Sinapis ================= -->
+      <p style="margin:54px 0 22px;padding-left:13px;padding-bottom:12px;border-left:5px solid #165DFF;border-bottom:1px solid #E9EEF7;font-size:20px;font-weight:700;color:#0F2B5B;line-height:1.4;letter-spacing:1px;">二、什么是Fluid-Sinapis</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">Fluid-Sinapis是一套基于大模型智能体框架构建的Fluid弹性缓存管理系统，可以解决前文提出的Fluid不足之处，其核心目标是将Fluid缓存管理从传统的“手工/规则式管理”升级为具备Agentic（智能体自治）特征​ 的“自主感知‑智能决策‑自动执行”系统，实现缓存资源与业务节奏的动态精准匹配。</p>
+
+      <img src="draft_images/image1.png" style="width:100%;display:block;border-radius:8px;margin:26px 0 10px;" />
+      <p style="margin:0 0 26px;text-align:center;font-size:13px;color:#8B9199;line-height:1.6;letter-spacing:0.2px;">图2-1&nbsp; Fluid-Sinapis系统架构图</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">解决的核心问题：</strong>本项目解决的是Fluid缓存“能弹性，但难以判断什么时候弹、该不该弹、该怎么弹”的问题，形成的闭环是六步：多源指标定时采集→Sinapis大模型智能分析→生成缓存执行方案→ Sinapis大模型复核方案→调用Fluid技能执行→记录执行结果。</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">项目职责边界：</strong>它不替代 Fluid 自身的缓存引擎（Alluxio、JuiceFS 等）和数据编排能力，也不替代Prometheus采集与Kubernetes调度这些基础设施，也不处理底层存储故障、网络分区这类系统性故障，只专注于缓存管理调度。</p>
+
+      <img src="draft_images/image2.png" style="width:100%;display:block;border-radius:8px;margin:26px 0 10px;" />
+      <p style="margin:0 0 26px;text-align:center;font-size:13px;color:#8B9199;line-height:1.6;letter-spacing:0.2px;">图2-2&nbsp; Fluid-Sinapis系统web页面</p>
+
+      <!-- ================= 三、核心功能 ================= -->
+      <p style="margin:54px 0 22px;padding-left:13px;padding-bottom:12px;border-left:5px solid #165DFF;border-bottom:1px solid #E9EEF7;font-size:20px;font-weight:700;color:#0F2B5B;line-height:1.4;letter-spacing:1px;">三、核心功能</p>
+
+      <p style="margin:0 0 16px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">本项目核心部分包括三部分：</p>
+
+      <p style="margin:0 0 14px;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;<strong style="font-weight:700;color:#12294D;">多源异构指标采集存储：</strong>以可插拔的方式从Fluid缓存状态、Kubernetes集群和业务系统自身三个方向收集数据，统一落到时序库中。</p>
+
+      <p style="margin:0 0 14px;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;<strong style="font-weight:700;color:#12294D;">Agent智能缓存决策层：</strong>内置多种Fluid缓存策略，每轮按"读取指标、模型推理生成执行方案、独立复核、调用执行"的固定流程推进，任何一步不成功就停止后续动作。</p>
+
+      <p style="margin:0 0 14px;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;<strong style="font-weight:700;color:#12294D;">Fluid Skills技能库</strong>：目前包含缓存容量扩容、缓存文件预热、缓存文件移除、缓存容量缩容四种内置策略和对应的Fluid Skill。</p>
+
+      <!-- ---------- 3.1 ---------- -->
+      <section style="margin:40px 0 18px;">
+        <p style="display:inline-block;margin:0;background-color:#EDF3FF;border-radius:6px;padding:8px 14px;font-size:16px;font-weight:700;color:#165DFF;line-height:1.4;letter-spacing:0.5px;">3.1、多源异构指标采集存储</p>
+      </section>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">负责汇聚 Fluid系统指标、K8s 集群指标及用户外接指标，将这些指标统一结构化处理后使用Prometheus存储，为后续Agent智能决策提供数据支撑。</p>
+
+      <img src="draft_images/image3.png" style="width:100%;display:block;border-radius:8px;margin:26px 0 10px;" />
+      <p style="margin:0 0 26px;text-align:center;font-size:13px;color:#8B9199;line-height:1.6;letter-spacing:0.2px;">图3-1&nbsp; 多源异构指标采集示意图</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">采集器是可插拔的类，新增一类数据源就是注册一个采集类，不需要改动核心逻辑。当前内置两类主动采集：</p>
+
+      <p style="margin:0 0 12px;text-align:center;font-size:13px;color:#8B9199;line-height:1.6;letter-spacing:0.2px;">表3-1&nbsp; 多源异构指标内容</p>
+
+      <section style="border:1px solid #E6ECF5;border-radius:10px;overflow:hidden;margin:0 0 12px;">
+        <p style="margin:0;background-color:#F2F6FF;padding:11px 16px;line-height:1.5;"><span style="font-size:11px;color:#9AA3AF;letter-spacing:1.5px;font-weight:700;">来源</span><span style="font-size:14px;font-weight:700;color:#13306E;letter-spacing:0.3px;margin-left:9px;">Fluid系统指标</span></p>
+        <section style="padding:14px 16px;">
+          <p style="margin:0 0 9px;font-size:14px;line-height:1.8;color:#4A525C;"><span style="color:#9AA3AF;">采集内容：</span>缓存总容量、单 worker 容量、worker 就绪数、已用字节、使用率</p>
+          <p style="margin:0;font-family:Menlo,Consolas,'Courier New',monospace;font-size:13px;line-height:1.8;color:#165DFF;word-break:break-all;"><span style="color:#9AA3AF;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;">指标示例：</span>fluid_cache_capacity_bytes、fluid_workers、fluid_cache_used_ratio</p>
+        </section>
+      </section>
+
+      <section style="border:1px solid #E6ECF5;border-radius:10px;overflow:hidden;margin:0 0 12px;">
+        <p style="margin:0;background-color:#F2F6FF;padding:11px 16px;line-height:1.5;"><span style="font-size:11px;color:#9AA3AF;letter-spacing:1.5px;font-weight:700;">来源</span><span style="font-size:14px;font-weight:700;color:#13306E;letter-spacing:0.3px;margin-left:9px;">Kubernetes集群指标</span></p>
+        <section style="padding:14px 16px;">
+          <p style="margin:0 0 9px;font-size:14px;line-height:1.8;color:#4A525C;"><span style="color:#9AA3AF;">采集内容：</span>节点数、节点可分配内存、就绪 Pod 数、空闲内存</p>
+          <p style="margin:0;font-family:Menlo,Consolas,'Courier New',monospace;font-size:13px;line-height:1.8;color:#165DFF;word-break:break-all;"><span style="color:#9AA3AF;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;">指标示例：</span>k8s_nodes、k8s_ready_pods、k8s_free_memory_bytes</p>
+        </section>
+      </section>
+
+      <section style="border:1px solid #E6ECF5;border-radius:10px;overflow:hidden;margin:0 0 24px;">
+        <p style="margin:0;background-color:#F2F6FF;padding:11px 16px;line-height:1.5;"><span style="font-size:11px;color:#9AA3AF;letter-spacing:1.5px;font-weight:700;">来源</span><span style="font-size:14px;font-weight:700;color:#13306E;letter-spacing:0.3px;margin-left:9px;">用户外接系统指标</span></p>
+        <section style="padding:14px 16px;">
+          <p style="margin:0 0 9px;font-size:14px;line-height:1.8;color:#4A525C;"><span style="color:#9AA3AF;">采集内容：</span>文件访问时间、文件大小、文件访问频率</p>
+          <p style="margin:0;font-family:Menlo,Consolas,'Courier New',monospace;font-size:13px;line-height:1.8;color:#165DFF;word-break:break-all;"><span style="color:#9AA3AF;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;">指标示例：</span>model_file_last_access_time、model_file_size_bytes、model_file_access_count</p>
+        </section>
+      </section>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">所有指标统一封装后写入Prometheus，再由Agent读取，形成"写通道 + 读通道"分离的结构：采集器只写，Agent只读，中间靠Prometheus解耦。</p>
+
+      <!-- ---------- 3.2 ---------- -->
+      <section style="margin:40px 0 18px;">
+        <p style="display:inline-block;margin:0;background-color:#EDF3FF;border-radius:6px;padding:8px 14px;font-size:16px;font-weight:700;color:#165DFF;line-height:1.4;letter-spacing:0.5px;">3.2、Agent自主规划决策</p>
+      </section>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">负责缓存策略管理与自主规划决策，通过接入外部大模型（如DeepSeek、GLM等，支持用户自主配置），结合系统实时监控指标、内置默认缓存策略类 Skill以及逐步沉淀的自定义策略类Skill，实现Agent的智能决策。在Agent Loop运行过程中，大模型首先获取系统监控指标，分析并判断当前缓存系统的运行状态，再根据推理结果，按需选择并加载相应的策略类Skill，利用其中定义的策略规则与操作指导进一步完成缓存优化决策和操作序列规划，最终生成 Fluid执行计划。</p>
+
+      <img src="draft_images/image4.png" style="width:100%;display:block;border-radius:8px;margin:26px 0 10px;" />
+      <p style="margin:0 0 26px;text-align:center;font-size:13px;color:#8B9199;line-height:1.6;letter-spacing:0.2px;">图3-2&nbsp; Agent自主规划决策流程图</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">用户可以自由配置各阶段使用的大模型，我们建议使用SinapisAI，因为其可以根据用户需求，模型能力等自动匹配，选择合适的大模型。</p>
+
+      <img src="draft_images/image5.png" style="width:100%;display:block;border-radius:8px;margin:26px 0 10px;" />
+      <p style="margin:0 0 26px;text-align:center;font-size:13px;color:#8B9199;line-height:1.6;letter-spacing:0.2px;">图3-3&nbsp; 系统大模型和智能体配置</p>
+
+      <!-- ---------- 3.3 ---------- -->
+      <section style="margin:40px 0 18px;">
+        <p style="display:inline-block;margin:0;background-color:#EDF3FF;border-radius:6px;padding:8px 14px;font-size:16px;font-weight:700;color:#165DFF;line-height:1.4;letter-spacing:0.5px;">3.3、Fluid系统操作Skills</p>
+      </section>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">本项目的Fluid Skill是基于标准Skill规范实现的，当前版本提供了四种Fluid操作技能，分别是缓存文件预加载、缓存文件移除、缓存容量扩容、缓存容量缩容。当自主规划决策层生成执行计划并复核通过后，会调用本层相应的执行类Skill，并调用底层封装的Fluid操作方法，完成具体的缓存操作，实现对Fluid分布式弹性缓存系统的动态调整。以下是缓存容量扩容的skill示例。</p>
+
+      <p style="margin:26px 0 12px;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;SKILL.md（名称、描述、适用场景，LLM用来判断“什么时候该用”）</p>
+
+      <section style="background-color:#161B22;border-radius:10px;padding:18px 18px;margin:0 0 24px;">
+        <p style="margin:0;font-family:Menlo,Consolas,'Courier New',monospace;font-size:13px;line-height:1.95;color:#E6EDF3;letter-spacing:0;word-break:break-all;">name: expand_cache<br />description: |<br />扩容 Fluid 缓存系统的存储容量。当缓存容量使用率过高（如 &gt;85%）或<br />预测即将出现容量瓶颈时调用。支持按比例或绝对值扩容。<br />注意：单次应为固定容量，例如：40GB。</p>
+      </section>
+
+      <p style="margin:26px 0 12px;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;scripts（调 Fluid接口，真正执行操作）</p>
+
+      <section style="background-color:#161B22;border-radius:10px;padding:18px 18px;margin:0 0 24px;">
+        <p style="margin:0;font-family:Menlo,Consolas,'Courier New',monospace;font-size:13px;line-height:1.95;color:#E6EDF3;letter-spacing:0;word-break:break-all;">def expand_skill( **kwargs):<br /># 校验 1：单次扩容容量<br /># 校验 2：总容量上限<br /># 执行FluidAPI 调用<br /># 校验是否扩容成功</p>
+      </section>
+
+      <!-- ---------- 3.4 ---------- -->
+      <section style="margin:40px 0 18px;">
+        <p style="display:inline-block;margin:0;background-color:#EDF3FF;border-radius:6px;padding:8px 14px;font-size:16px;font-weight:700;color:#165DFF;line-height:1.4;letter-spacing:0.5px;">3.4、用户外接指标与自定义策略</p>
+      </section>
+
+      <p style="margin:30px 0 12px;font-size:16px;font-weight:700;color:#12294D;line-height:1.5;letter-spacing:0.5px;">（1）用户外接指标</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">支持用户把业务系统的自定义指标数据接入到本系统中，在config.yml中配置user_system字段，配置为热加载，修改后无需重启服务，服务端会自动检测并加载这些字段。</p>
+
+      <img src="draft_images/image6.png" style="width:100%;display:block;border-radius:8px;margin:26px 0;" />
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">config.yml中配置完成后，通过HTTP接口把对应的指标数据发送到本系统中。</p>
+
+      <img src="draft_images/image7.png" style="width:100%;display:block;border-radius:8px;margin:26px 0;" />
+
+      <p style="margin:30px 0 12px;font-size:16px;font-weight:700;color:#12294D;line-height:1.5;letter-spacing:0.5px;">（2）自定义缓存策略</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">支持用户编写自定义缓存策略技能，注入用户自己的缓存决策逻辑，自定义策略模板在 server/agent/skills/user_skills/下，由框架每轮自动扫描加载、免重启。格式要遵循skill规范： name + description + Markdown 正文：</p>
+
+      <img src="draft_images/image8.png" style="width:100%;display:block;border-radius:8px;margin:26px 0;" />
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">两者可以单独使用，也可以组合使用，用户自定义指标接入后→自定义策略脚本读取这些指标做出判定→ Agent规划与复核环节遵循该判定。</p>
+
+      <section style="background-color:#FFF8E9;border-left:4px solid #F0A020;border-radius:0 8px 8px 0;padding:14px 18px;margin:0 0 18px;">
+        <p style="margin:0;font-size:15px;line-height:1.85;color:#6B4A0F;letter-spacing:0.2px;">自定义策略与内置策略对同一操作（如 expand）给出不同结论时，以自定义策略为准。</p>
+      </section>
+
+      <!-- ================= 四、效果对比 ================= -->
+      <p style="margin:54px 0 22px;padding-left:13px;padding-bottom:12px;border-left:5px solid #165DFF;border-bottom:1px solid #E9EEF7;font-size:20px;font-weight:700;color:#0F2B5B;line-height:1.4;letter-spacing:1px;">四、效果对比</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">本项目基于LLM Agent的方式实现Fluid缓存的智能化管理，与传统基于编码策略和硬配置策略相比，拥有以下优势：</p>
+
+      <p style="margin:34px 0 12px;padding-left:11px;border-left:4px solid #9BBBFF;font-size:16px;font-weight:700;color:#12294D;line-height:1.6;letter-spacing:0.3px;">（1）多指标协同下的决策泛化能力更好</p>
+
+      <section style="background-color:#F8FAFC;border:1px dashed #D7E0EF;border-radius:8px;padding:13px 16px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.8;color:#4A525C;letter-spacing:0.2px;">例如有一个基于编码的缓存策略：如果访问次数大于100，就将文件缓存。</p>
+      </section>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">这种策略在一些简单场景下，可以做到和Agent相同的执行结果，但在一些复杂场景下，例如缓存容量还剩10GB，此时有3个热点文件都需要缓存，分别为file1（7GB）、file2（5GB）、file3（4GB），3个文件无法同时放入 缓存中，此时编码策略就无法准确判断优先将哪几个文件放入缓存，而Agent可以综合文件大小指标来选择收益最大的文件file2（5GB）、file3（4GB）放入缓存。</p>
+
+      <p style="margin:34px 0 12px;padding-left:11px;border-left:4px solid #9BBBFF;font-size:16px;font-weight:700;color:#12294D;line-height:1.6;letter-spacing:0.3px;">（2）超参数设定与边界适应能力更强</p>
+
+      <section style="background-color:#F8FAFC;border:1px dashed #D7E0EF;border-radius:8px;padding:13px 16px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.8;color:#4A525C;letter-spacing:0.2px;">例如有一个基于编码的扩容：如果已用缓存超过80%，就扩容1个worker。</p>
+      </section>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">这种策略当缓存容量已经用了79%时，又来了一个热文件，大小超过剩余缓存容量，但是由于没有超过设定的80%阈值，因此编码策略不会执行扩容，导致该热文件一直没有足够容量缓存。而Agent策略则会判断已经接近阈值且该热文件需要缓存，因此会先执行扩容再将该文件缓存。</p>
+
+      <p style="margin:34px 0 12px;padding-left:11px;border-left:4px solid #9BBBFF;font-size:16px;font-weight:700;color:#12294D;line-height:1.6;letter-spacing:0.3px;">（3）新策略的开发与维护能力要求更低</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">在新增一个策略需求时，基于编码的形式开发一个新策略动辄增加几十行源代码，而基于Agent的策略只需要增加数行描述即可实现，对开发人员的技术要求更低，且维护成本也更低。</p>
+
+      <img src="draft_images/image9.png" style="width:100%;display:block;border-radius:8px;margin:26px 0 10px;" />
+
+      <!-- ================= 五、社区支持 ================= -->
+      <p style="margin:54px 0 22px;padding-left:13px;padding-bottom:12px;border-left:5px solid #165DFF;border-bottom:1px solid #E9EEF7;font-size:20px;font-weight:700;color:#0F2B5B;line-height:1.4;letter-spacing:1px;">五、社区支持</p>
+
+      <p style="margin:0 0 14px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">作为Fluid-Sinapis开源项目组件的发起者，南芥智能很荣幸能与Fluid开源社区合作伙伴一起推出fluid-sinapis，同时也衷心感谢 Fluid 开源社区对本项目给予的支持与帮助。</p>
+
+      <p style="margin:0 0 30px;text-align:right;font-size:13px;color:#8B9199;line-height:1.7;letter-spacing:0.2px;">--刘建东，南芥智能，Fluid-Sinapis核心贡献者</p>
+
+      <section style="background-color:#F7F9FD;border-radius:10px;padding:18px 20px;margin:0 0 16px;">
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">“Fluid-Sinapis汇集缓存、集群和业务指标，通过大模型智能体分析状态、生成计划，再调用技能执行缓存操作。我们希望用户基于多样化大模型智能体能力，更方便地实现系统优化目标和约束，减少策略开发和系统管理负担。”</p>
+        <p style="margin:0;text-align:right;font-size:13px;color:#8B9199;line-height:1.7;letter-spacing:0.2px;">--车漾，阿里云，Fluid开源社区co-founder</p>
+      </section>
+
+      <section style="background-color:#F7F9FD;border-radius:10px;padding:18px 20px;margin:0 0 16px;">
+        <p style="margin:0;font-size:15px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">“Fluid-Sinapis 的价值，在于把缓存管理从人工操作变成了Agent智能管理，过去用户从过去手工写YAML定预热、定副本，现在只需要收集相关指标，剩下的交给智能体去感知、规划、执行。特别想感谢南芥开源技术团队把这个想法做成了系统组件，并共享给了Fluid开源社区，这是开源协作的优秀案例。”</p>
+      </section>
+
+      <!-- ================= 六、下一步规划 ================= -->
+      <p style="margin:54px 0 22px;padding-left:13px;padding-bottom:12px;border-left:5px solid #165DFF;border-bottom:1px solid #E9EEF7;font-size:20px;font-weight:700;color:#0F2B5B;line-height:1.4;letter-spacing:1px;">六、下一步规划</p>
+
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">当前0.1版本是一个能跑通、能观测、能扩展的起点，接下来的方向大致分三层。</p>
+
+      <section style="background-color:#F7F9FD;border-left:4px solid #A9C2F0;border-radius:0 8px 8px 0;padding:15px 18px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">（1）更早的判断：</strong>下一步希望引入时序预测，在已知调度和历史的访问曲线之间做匹配，把"扩容"从救火提前到准备。这一层不需要改变现有架构，只需要新增一类观测源和一类策略。</p>
+      </section>
+
+      <section style="background-color:#F7F9FD;border-left:4px solid #A9C2F0;border-radius:0 8px 8px 0;padding:15px 18px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">（2）更广的适配：</strong>缓存操作技能目前只适配了Alluxio Runtime，将来会继续适配JuiceFS、ThinRuntime 等运行时，根据参数语义不同，需要在技能层做抽象，让"扩容""预热""清理"在不同引擎下有统一的语义。</p>
+      </section>
+
+      <section style="background-color:#F7F9FD;border-left:4px solid #A9C2F0;border-radius:0 8px 8px 0;padding:15px 18px;margin:0 0 14px;">
+        <p style="margin:0;font-size:15px;line-height:1.85;color:#3D444D;letter-spacing:0.2px;"><strong style="font-weight:700;color:#12294D;">（3）更细的观测：</strong>现在能拿到的是Fluid缓存容量与文件访问热度，拿不到回源延迟、单文件收益。补上这些之后，缓存收益才有可能被量化，决策也才能从"看起来合理"走向"算得出来"。</p>
+      </section>
+
+      <!-- ================= 七、参与贡献 ================= -->
+      <p style="margin:54px 0 22px;padding-left:13px;padding-bottom:12px;border-left:5px solid #165DFF;border-bottom:1px solid #E9EEF7;font-size:20px;font-weight:700;color:#0F2B5B;line-height:1.4;letter-spacing:1px;">七、参与贡献</p>
+
+      <p style="margin:0 0 16px;font-size:16px;line-height:1.9;color:#3D444D;letter-spacing:0.2px;">项目采用 Apache 2.0 协议开源，遵循 CNCF 行为准则。如果你也在用 Fluid 管缓存，欢迎试用、提 issue、提 PR。</p>
+
+      <section style="background-color:#F9FAFC;border-radius:10px;padding:18px 20px;margin:0 0 8px;">
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;项目仓库：<span style="color:#165DFF;word-break:break-all;">https://github.com/fluid-cloudnative/fluid-sinapis</span></p>
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;快速开始：<span style="font-family:Menlo,Consolas,'Courier New',monospace;font-size:14px;color:#165DFF;">docs/zh/quick-start.md</span></p>
+        <p style="margin:0;font-size:15px;line-height:1.8;color:#3D444D;letter-spacing:0.2px;padding-left:18px;text-indent:-18px;"><span style="color:#165DFF;font-weight:700;">•</span>&nbsp;&nbsp;Slack：<span style="color:#165DFF;word-break:break-all;">https://cncf-slack.netlify.app/</span></p>
+      </section>
+
+    </article>
+  </div>
+
+  <aside class="side">
+    <div class="card">
+      <button class="btn" onclick="copyArticle()">一键复制到公众号</button>
+    </div>
+    <div class="card">
+      <h3>排版规格</h3>
+      <div class="meta"><span>正文字号</span><b>16px / 行高 1.9</b></div>
+      <div class="meta"><span>主色</span><b>#165DFF</b></div>
+      <div class="meta"><span>一级标题</span><b>20px 左侧色条</b></div>
+      <div class="meta"><span>二级标题</span><b>16px 浅蓝色块</b></div>
+      <div class="meta"><span>段落</span><b>不首行缩进</b></div>
+      <div class="meta"><span>图片</span><b>9 张 · 满宽圆角</b></div>
+    </div>
+    <div class="card">
+      <h3>使用步骤</h3>
+      <div class="tip">
+        <ol>
+          <li>点上方按钮复制正文</li>
+          <li>公众号后台新建图文，粘贴</li>
+          <li>把标题填入标题栏</li>
+          <li>在图片位置手动上传 <b style="color:#3D444D;">draft_images/</b> 里的 image1~image9</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <h3>说明</h3>
+      <p class="tip">正文文字与原文逐字一致，未增删改写；仅调整了层级、色块、间距与配图节奏。表3-1 为照顾手机端阅读，改为三张竖向信息卡，字段名与内容完全保留。</p>
+    </div>
+  </aside>
+
+</div>
+
+<div class="toast" id="toast">已复制，去公众号后台粘贴</div>
+
+<script>
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(function () { t.classList.remove('on'); }, 2000);
+}
+
+async function copyArticle() {
+  var el = document.getElementById('article');
+  var html = el.innerHTML.replaceAll('&#39;', "'");
+  var plain = el.innerText;
+  try {
+    await navigator.clipboard.write([new ClipboardItem({
+      'text/html': new Blob([html], { type: 'text/html' }),
+      'text/plain': new Blob([plain], { type: 'text/plain' })
+    })]);
+    toast('已复制，去公众号后台粘贴');
+  } catch (e) {
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      toast('已复制（兼容模式）');
+    } catch (err) {
+      toast('复制失败，请手动全选正文复制');
+    }
+  }
+}
+</script>
+</body>
+</html>

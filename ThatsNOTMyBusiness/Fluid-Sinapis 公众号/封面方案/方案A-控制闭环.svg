@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="654" viewBox="0 0 1536 654" role="img" aria-label="Fluid-Sinapis 封面方案A：Agent 控制闭环">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#04101f"/>
+      <stop offset=".52" stop-color="#071b2c"/>
+      <stop offset="1" stop-color="#0a2235"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#16d9e7" stop-opacity=".19"/>
+      <stop offset=".58" stop-color="#087f9d" stop-opacity=".09"/>
+      <stop offset="1" stop-color="#087f9d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="titleRule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2ee6d6"/>
+      <stop offset="1" stop-color="#2ee6d6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="slabTop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#30e4e8" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#1679b6" stop-opacity=".12"/>
+    </linearGradient>
+    <linearGradient id="slabSide" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0aa4c2" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#0b5574" stop-opacity=".12"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#8dc9e8" stroke-opacity=".055" stroke-width="1"/>
+    </pattern>
+    <pattern id="microDots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#8adfe8" fill-opacity=".12"/>
+    </pattern>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="16"/>
+    </filter>
+    <style>
+      text { font-family: 'Noto Sans SC','Segoe UI',sans-serif; }
+      .mono { font-family: 'Cascadia Mono','Consolas','Noto Sans SC',monospace; letter-spacing: 2px; }
+      .muted { fill: #8ba9bd; }
+      .cyan { fill: #4de6e4; }
+      .mint { fill: #75f1c7; }
+    </style>
+  </defs>
+
+  <rect width="1536" height="654" fill="url(#bg)"/>
+  <rect width="1536" height="654" fill="url(#grid)"/>
+  <rect width="1536" height="654" fill="url(#microDots)" opacity=".5"/>
+  <ellipse cx="1115" cy="330" rx="440" ry="300" fill="url(#halo)"/>
+  <path d="M0 574 C360 546 740 598 1536 546" fill="none" stroke="#69c7df" stroke-opacity=".055" stroke-width="1"/>
+  <path d="M0 597 C430 566 880 626 1536 572" fill="none" stroke="#69c7df" stroke-opacity=".035" stroke-width="1"/>
+
+  <g opacity=".62" class="mono" fill="#7fb7cc" font-size="11">
+    <text x="96" y="66">SYS / CACHE / AGENT</text>
+    <text x="96" y="84">CLOSED-LOOP CONTROL</text>
+    <path d="M96 94H280" stroke="#476d83" stroke-opacity=".55"/>
+  </g>
+  <g transform="translate(1340 49)">
+    <rect width="98" height="36" rx="18" fill="#0f2c40" stroke="#3acfd4" stroke-opacity=".5"/>
+    <circle cx="17" cy="18" r="3" fill="#72f0c8"/>
+    <text x="32" y="23" class="mono" font-size="13" fill="#d9fbff">V0.1</text>
+  </g>
+
+  <g transform="translate(96 128)">
+    <rect x="0" y="-12" width="10" height="10" fill="#56e5dd"/>
+    <text x="22" y="0" class="mono" font-size="15" fill="#b8d5e3">AGENTIC CACHE MANAGEMENT</text>
+    <text x="0" y="105" font-family="'Segoe UI','Noto Sans SC',sans-serif" font-size="82" font-weight="600" letter-spacing="-2.8" fill="#f4fbff">Fluid-Sinapis</text>
+    <rect x="1" y="128" width="216" height="3" rx="1.5" fill="url(#titleRule)"/>
+    <text x="2" y="196" font-size="30" font-weight="400" letter-spacing=".2" fill="#d2e5ee">基于 LLM Agent 的</text>
+    <text x="2" y="234" font-size="30" font-weight="500" letter-spacing=".5" fill="#f0f8fb">智能云原生缓存管理系统</text>
+    <path d="M2 289H534" stroke="#6591a5" stroke-opacity=".32"/>
+    <g font-size="17" fill="#c8edf2" font-weight="500">
+      <text x="2" y="330">自主感知</text>
+      <circle cx="94" cy="324" r="2.4" fill="#59e6da"/>
+      <text x="116" y="330">智能决策</text>
+      <circle cx="208" cy="324" r="2.4" fill="#59e6da"/>
+      <text x="230" y="330">自动执行</text>
+    </g>
+    <text x="2" y="360" class="mono" font-size="10" fill="#638da1">OBSERVE&#160;&#160;&#160;/&#160;&#160;&#160;DECIDE&#160;&#160;&#160;/&#160;&#160;&#160;ACT</text>
+  </g>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="1110" cy="335" rx="382" ry="213" stroke="#52b8d1" stroke-opacity=".13" stroke-dasharray="2 9"/>
+    <path d="M840 422 C765 356 786 240 900 191 C1002 147 1077 168 1168 162 C1265 155 1262 220 1330 228 C1422 239 1412 365 1366 426 C1322 484 1211 493 1108 461 C1014 432 928 409 840 422Z" stroke="#1d718d" stroke-opacity=".55" stroke-width="2"/>
+    <path d="M840 422 C765 356 786 240 900 191 C1002 147 1077 168 1168 162 C1265 155 1262 220 1330 228" stroke="#4fe9df" stroke-opacity=".9" stroke-width="2.4" filter="url(#glow)"/>
+    <path d="M1330 228 C1422 239 1412 365 1366 426" stroke="#56d8d4" stroke-opacity=".55" stroke-width="2"/>
+    <path d="M1366 426 C1322 484 1211 493 1108 461 C1014 432 928 409 840 422" stroke="#4fa7c4" stroke-opacity=".42" stroke-width="2" stroke-dasharray="7 8"/>
+  </g>
+
+  <g>
+    <circle cx="840" cy="422" r="28" fill="#071e30" stroke="#4ce6dc" stroke-width="1.7" filter="url(#glow)"/>
+    <circle cx="840" cy="422" r="35" fill="none" stroke="#4ce6dc" stroke-opacity=".18"/>
+    <circle cx="840" cy="422" r="5" fill="#79f3cb"/>
+    <text x="840" y="483" text-anchor="middle" class="mono" font-size="10" fill="#6d9caf">01 / OBSERVE</text>
+    <text x="840" y="503" text-anchor="middle" font-size="13" fill="#cfe7ef">多源指标</text>
+  </g>
+  <g>
+    <circle cx="900" cy="191" r="28" fill="#071e30" stroke="#57e7dd" stroke-width="1.7" filter="url(#glow)"/>
+    <circle cx="900" cy="191" r="35" fill="none" stroke="#57e7dd" stroke-opacity=".18"/>
+    <path d="M892 192 L898 198 L910 184" fill="none" stroke="#7ef1ca" stroke-width="2.2"/>
+    <text x="900" y="139" text-anchor="middle" class="mono" font-size="10" fill="#6d9caf">02 / DECIDE</text>
+    <text x="900" y="159" text-anchor="middle" font-size="13" fill="#cfe7ef">Agent 决策</text>
+  </g>
+  <g>
+    <circle cx="1330" cy="228" r="28" fill="#071e30" stroke="#57e7dd" stroke-width="1.7" filter="url(#glow)"/>
+    <circle cx="1330" cy="228" r="35" fill="none" stroke="#57e7dd" stroke-opacity=".18"/>
+    <path d="M1318 228H1340M1333 219L1342 228L1333 237" fill="none" stroke="#7ef1ca" stroke-width="2.2"/>
+    <text x="1330" y="178" text-anchor="middle" class="mono" font-size="10" fill="#6d9caf">03 / EXECUTE</text>
+    <text x="1330" y="198" text-anchor="middle" font-size="13" fill="#cfe7ef">Fluid Skills</text>
+  </g>
+  <g>
+    <circle cx="1366" cy="426" r="28" fill="#071e30" stroke="#7af0c9" stroke-width="1.7" filter="url(#glow)"/>
+    <circle cx="1366" cy="426" r="35" fill="none" stroke="#7af0c9" stroke-opacity=".18"/>
+    <path d="M1355 427L1363 434L1378 417" fill="none" stroke="#7ef1ca" stroke-width="2.2"/>
+    <text x="1390" y="421" class="mono" font-size="10" fill="#6d9caf">04 / REVIEW</text>
+    <text x="1390" y="441" font-size="13" fill="#cfe7ef">独立复核</text>
+  </g>
+
+  <g filter="url(#glow)">
+    <path d="M1000 380 L1110 330 L1220 380 L1110 430 Z" fill="url(#slabTop)" stroke="#1ea8c8" stroke-opacity=".5"/>
+    <path d="M1000 380 L1110 430 V452 L1000 402 Z" fill="url(#slabSide)" stroke="#1ea8c8" stroke-opacity=".32"/>
+    <path d="M1220 380 L1110 430 V452 L1220 402 Z" fill="#0a344c" fill-opacity=".7" stroke="#1ea8c8" stroke-opacity=".32"/>
+    <path d="M1000 330 L1110 280 L1220 330 L1110 380 Z" fill="url(#slabTop)" stroke="#2ac7d7" stroke-opacity=".62"/>
+    <path d="M1000 330 L1110 380 V402 L1000 352 Z" fill="url(#slabSide)" stroke="#2ac7d7" stroke-opacity=".4"/>
+    <path d="M1220 330 L1110 380 V402 L1220 352 Z" fill="#0a3c55" fill-opacity=".75" stroke="#2ac7d7" stroke-opacity=".4"/>
+    <path d="M1000 280 L1110 230 L1220 280 L1110 330 Z" fill="url(#slabTop)" stroke="#5ee6e2" stroke-width="1.4"/>
+    <path d="M1000 280 L1110 330 V352 L1000 302 Z" fill="url(#slabSide)" stroke="#5ee6e2" stroke-opacity=".52"/>
+    <path d="M1220 280 L1110 330 V352 L1220 302 Z" fill="#0d4a63" fill-opacity=".72" stroke="#5ee6e2" stroke-opacity=".52"/>
+  </g>
+  <g fill="none" stroke="#b8ffe2" stroke-width="1.45" stroke-linecap="round">
+    <path d="M1110 310 C1084 299 1073 271 1080 246 C1107 249 1127 266 1125 289 C1122 300 1117 306 1110 310Z"/>
+    <path d="M1082 251 C1096 265 1108 285 1110 308"/>
+    <path d="M1092 264 L1084 270M1101 279 L1094 285"/>
+  </g>
+  <circle cx="1110" cy="281" r="3" fill="#85f7ce"/>
+  <text x="1110" y="377" text-anchor="middle" class="mono" font-size="10" fill="#6fa9ba">FLUID CACHE</text>
+
+  <g fill="#6ff0d3">
+    <circle cx="1020" cy="345" r="2.2"/><circle cx="1188" cy="315" r="2.2"/><circle cx="1252" cy="408" r="2.2"/>
+  </g>
+  <g class="mono" font-size="10" fill="#4f8297">
+    <text x="1268" y="360">METRICS IN</text>
+    <path d="M1236 351H1258" stroke="#4f8297"/>
+    <text x="952" y="255">POLICY</text>
+    <path d="M984 262L1003 272" stroke="#4f8297"/>
+  </g>
+
+  <g class="mono" fill="#527e92" font-size="10">
+    <text x="96" y="620">FLUID-CLOUDNATIVE / SINAPIS</text>
+    <text x="1440" y="620" text-anchor="end">OBSERVE · DECIDE · ACT · REVIEW</text>
+  </g>
+  <path d="M96 606H540" stroke="#477184" stroke-opacity=".35"/>
+  <path d="M1070 606H1440" stroke="#477184" stroke-opacity=".35"/>
+</svg>
+
