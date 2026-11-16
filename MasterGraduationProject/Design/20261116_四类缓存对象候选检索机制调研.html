@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light" style="--rec-label: '推荐'">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>四类缓存对象的候选检索机制</title>
+  <style>
+    /* ============================================================
+       TOKENS
+       ============================================================ */
+    :root {
+      --bg: #FAFAF7;
+      --surface: #FFFFFF;
+      --surface-2: #F5F5F0;
+      --surface-3: #EFEEE8;
+      --text: #1A1A1A;
+      --text-muted: #4A4A45;
+      --text-subtle: #6B6B66;
+      --accent: #D97757;
+      --accent-hover: #C56843;
+      --accent-soft: #FBEEE6;
+      --accent-border: #F0D5C4;
+      --accent-strong: #A85533;
+      --border: #E5E4DC;
+      --border-strong: #CDCDC4;
+      --code-bg: #F5F2EC;
+      --code-text: #2A2A2A;
+      --info: #2563EB;
+      --info-soft: #EFF6FF;
+      --info-border: #BFDBFE;
+      --warn: #B45309;
+      --warn-soft: #FFFBEB;
+      --warn-border: #FDE68A;
+      --danger: #B91C1C;
+      --danger-soft: #FEF2F2;
+      --danger-border: #FECACA;
+      --success: #047857;
+      --success-soft: #ECFDF5;
+      --success-border: #A7F3D0;
+      --decision: #6D28D9;
+      --decision-soft: #F5F3FF;
+      --decision-border: #DDD6FE;
+      --shadow-sm: 0 1px 2px rgba(20, 14, 8, 0.04);
+      --shadow: 0 1px 2px rgba(20, 14, 8, 0.04), 0 4px 12px rgba(20, 14, 8, 0.06);
+      --shadow-lg: 0 8px 24px rgba(20, 14, 8, 0.10);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'Noto Sans CJK KR', sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+      --z-progress: 200;
+      --z-topbar: 100;
+      --z-drawer: 300;
+      --z-backdrop: 250;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1A1714;
+      --surface: #221E1A;
+      --surface-2: #2A2520;
+      --surface-3: #322C26;
+      --text: #F5F0E8;
+      --text-muted: #C8C0B6;
+      --text-subtle: #9A938A;
+      --accent: #E89572;
+      --accent-hover: #F2A87F;
+      --accent-soft: #3A2A22;
+      --accent-border: #5A3D2E;
+      --accent-strong: #F5B493;
+      --border: #2E2924;
+      --border-strong: #463F38;
+      --code-bg: #1E1B17;
+      --code-text: #E8E2D8;
+      --info: #93C5FD;
+      --info-soft: #1E2A3D;
+      --info-border: #2A4365;
+      --warn: #FBBF24;
+      --warn-soft: #332817;
+      --warn-border: #5C4520;
+      --danger: #FCA5A5;
+      --danger-soft: #3A1F1F;
+      --danger-border: #5C2A2A;
+      --success: #6EE7B7;
+      --success-soft: #1A3329;
+      --success-border: #1F5C45;
+      --decision: #C4B5FD;
+      --decision-soft: #2A1F40;
+      --decision-border: #4A3870;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ============================================================
+       BASE
+       ============================================================ */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    ::selection { background: var(--accent-soft); color: var(--accent-strong); }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -100px; left: 8px;
+      padding: 10px 16px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      z-index: 1000;
+      transition: top 0.15s;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* SVG sprite container (hidden) */
+    .icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .icon { display: inline-block; flex-shrink: 0; vertical-align: middle; stroke: currentColor; fill: none; }
+
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0;
+      background: var(--accent);
+      z-index: var(--z-progress);
+      transition: width 0.05s linear;
+    }
+
+    /* ============================================================
+       TOPBAR
+       ============================================================ */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-topbar);
+      background: rgba(250, 250, 247, 0.85);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="dark"] .topbar { background: rgba(26, 23, 20, 0.85); }
+    .topbar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .brand-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+      animation: brand-pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes brand-pulse {
+      0%, 100% { box-shadow: 0 0 0 4px var(--accent-soft); }
+      50%      { box-shadow: 0 0 0 7px transparent; }
+    }
+    .topbar-actions { display: flex; gap: 6px; align-items: center; }
+    .icon-btn {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+      padding: 0;
+    }
+    .icon-btn .icon { width: 18px; height: 18px; stroke-width: 2; }
+    .icon-btn[hidden] { display: none; }
+
+    /* ============================================================
+       LAYOUT
+       ============================================================ */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      padding: 32px 24px 96px;
+    }
+    .content { min-width: 0; }
+
+    /* ============================================================
+       TOC (desktop + mobile drawer)
+       ============================================================ */
+    .toc {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .toc::-webkit-scrollbar { width: 6px; }
+    .toc::-webkit-scrollbar-track { background: transparent; }
+    .toc::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    .toc-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px 12px;
+    }
+    .toc-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-subtle);
+      margin: 0;
+    }
+    .toc-close { display: none; }
+    .toc-nav { display: flex; flex-direction: column; gap: 2px; }
+    .toc-nav a {
+      display: flex; align-items: center;
+      min-height: 36px;
+      padding: 8px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 2px solid transparent;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+      line-height: 1.4;
+    }
+    .toc-nav a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 500;
+    }
+    .toc-nav a.lvl-3 { padding-left: 26px; font-size: 12.5px; }
+    .toc-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: var(--z-backdrop);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    /* ============================================================
+       DOC HEADER
+       ============================================================ */
+    .doc-header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-eyebrow {
+      display: inline-flex; align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      border: 1px solid var(--accent-border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+    .doc-title {
+      font-size: clamp(28px, 3vw + 16px, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+      color: var(--text);
+      text-wrap: balance;
+    }
+    .doc-subtitle {
+      font-size: clamp(15px, 0.6vw + 13px, 18px);
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0 0 20px;
+      max-width: 75ch;
+      text-wrap: pretty;
+    }
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-subtle);
+    }
+    .doc-meta-item { display: inline-flex; align-items: center; gap: 6px; }
+    .doc-meta .icon { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* ============================================================
+       CONTENT (typography)
+       ============================================================ */
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      scroll-margin-top: 80px;
+      text-wrap: balance;
+    }
+    .content h2 {
+      font-size: 26px;
+      font-weight: 600;
+      margin: 56px 0 16px;
+      padding-top: 8px;
+      position: relative;
+    }
+    .content h3 {
+      font-size: 19px;
+      font-weight: 600;
+      margin: 36px 0 12px;
+      position: relative;
+    }
+    .content h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 24px 0 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .content > p,
+    .content > ul,
+    .content > ol,
+    .content > blockquote { max-width: 75ch; }
+    .content p { margin: 0 0 16px; text-wrap: pretty; overflow-wrap: anywhere; }
+    .content a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-border); }
+    .content ul, .content ol { padding-left: 24px; margin: 0 0 16px; }
+    .content li { margin: 4px 0; }
+    .content strong { color: var(--text); font-weight: 600; }
+    .content em { color: var(--text-muted); }
+    .content hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* Anchor links injected by JS on h2/h3 with id */
+    .anchor {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px;
+      margin-left: 6px;
+      color: var(--text-subtle);
+      opacity: 0;
+      transform: translateY(-1px);
+      transition: opacity 0.15s, color 0.15s;
+      border-bottom: none !important;
+      border-radius: var(--radius-sm);
+    }
+    .anchor .icon { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* Images */
+    .content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      display: block;
+    }
+    .content figure { margin: 20px 0; }
+    .content figure img { margin: 0; }
+    .content figcaption {
+      font-size: 13px;
+      color: var(--text-subtle);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* Task lists (- [ ] / - [x]) */
+    .content .task-list-item { list-style: none; margin-left: -22px; }
+    .content .task-list-item-checkbox {
+      margin-right: 8px;
+      vertical-align: -2px;
+      accent-color: var(--accent);
+    }
+
+    /* Footnotes */
+    .content .footnote-ref a,
+    .content sup a {
+      font-size: 0.75em;
+      vertical-align: super;
+      border-bottom: none;
+      padding: 0 2px;
+    }
+    .content .footnotes {
+      margin-top: 56px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       CODE
+       ============================================================ */
+    .content code {
+      font-family: var(--font-mono);
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: var(--code-text);
+      border: 1px solid var(--border);
+      overflow-wrap: anywhere;
+    }
+    .content pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin: 16px 0;
+      position: relative;
+    }
+    .content pre code {
+      background: none; padding: 0; border: none;
+      color: var(--code-text);
+      font-size: inherit;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-subtle);
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+      padding: 0;
+    }
+    .copy-btn .icon { width: 14px; height: 14px; stroke-width: 2; }
+    .copy-btn.copied { color: var(--success); border-color: var(--success-border); opacity: 1; }
+
+    /* ============================================================
+       TIMELINE / STEPS
+       ============================================================ */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 24px 0;
+      position: relative;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 19px;
+      top: 20px;
+      bottom: 20px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-border), var(--border));
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 16px 4px;
+      position: relative;
+      border-radius: var(--radius);
+      transition: background-color 0.15s;
+    }
+    .step-num {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      border-radius: 50%;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      z-index: 1;
+      transition: background-color 0.15s, color 0.15s, transform 0.15s;
+    }
+    .step.done .step-num { background: var(--accent); color: #fff; }
+    .step-body { padding-top: 6px; min-width: 0; }
+    .step-body h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .step-body p { margin: 0 0 8px; color: var(--text-muted); font-size: 14.5px; max-width: 75ch; }
+    .step-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* ============================================================
+       CALLOUTS
+       ============================================================ */
+    .callout {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      border: 1px solid;
+      margin: 20px 0;
+      font-size: 14.5px;
+      line-height: 1.6;
+      max-width: 75ch;
+    }
+    .callout-icon { width: 20px; height: 20px; margin-top: 2px; stroke-width: 2; }
+    .callout-body { min-width: 0; }
+    .callout-title { font-weight: 600; margin: 0 0 4px; font-size: 14px; }
+    .callout-body p:last-child { margin-bottom: 0; }
+    .callout-body code { background: rgba(0,0,0,0.04); }
+    [data-theme="dark"] .callout-body code { background: rgba(255,255,255,0.06); }
+
+    .callout-info     { background: var(--info-soft);     border-color: var(--info-border);     color: var(--text); }
+    .callout-info     .callout-title, .callout-info     .callout-icon { color: var(--info); }
+    .callout-warn     { background: var(--warn-soft);     border-color: var(--warn-border);     color: var(--text); }
+    .callout-warn     .callout-title, .callout-warn     .callout-icon { color: var(--warn); }
+    .callout-danger   { background: var(--danger-soft);   border-color: var(--danger-border);   color: var(--text); }
+    .callout-danger   .callout-title, .callout-danger   .callout-icon { color: var(--danger); }
+    .callout-success  { background: var(--success-soft);  border-color: var(--success-border);  color: var(--text); }
+    .callout-success  .callout-title, .callout-success  .callout-icon { color: var(--success); }
+    .callout-decision { background: var(--decision-soft); border-color: var(--decision-border); color: var(--text); }
+    .callout-decision .callout-title, .callout-decision .callout-icon { color: var(--decision); }
+    .callout-tip      { background: var(--accent-soft);   border-color: var(--accent-border);   color: var(--text); }
+    .callout-tip      .callout-title, .callout-tip      .callout-icon { color: var(--accent-strong); }
+
+    /* ============================================================
+       KEY-POINT HIGHLIGHT
+       ============================================================ */
+    .highlight {
+      background: linear-gradient(135deg, var(--accent-soft), var(--surface-2));
+      border-left: 4px solid var(--accent);
+      padding: 18px 22px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 24px 0;
+      font-size: 16px;
+      line-height: 1.65;
+      max-width: 75ch;
+    }
+    .highlight-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-strong);
+      margin-bottom: 6px;
+    }
+
+    /* ============================================================
+       MERMAID
+       ============================================================ */
+    .diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+    .diagram-caption {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-align: center;
+    }
+    .mermaid { text-align: center; min-height: 80px; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    .mermaid:not([data-processed]) {
+      opacity: 0.4;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-subtle);
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    /* ============================================================
+       PROS / CONS
+       ============================================================ */
+    .proscons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .proscons-col {
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      border: 1px solid;
+    }
+    .proscons-col h4 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .proscons-col ul { margin: 0; padding-left: 18px; }
+    .proscons-col li { margin: 6px 0; }
+    .pros { background: var(--success-soft); border-color: var(--success-border); }
+    .pros h4 { color: var(--success); }
+    .cons { background: var(--danger-soft); border-color: var(--danger-border); }
+    .cons h4 { color: var(--danger); }
+
+    /* ============================================================
+       COMPARISON CARDS
+       ============================================================ */
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .compare-card {
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.18s, box-shadow 0.18s;
+      position: relative;
+    }
+    .compare-card.recommended { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .compare-card.recommended::before {
+      content: var(--rec-label, "★ Recommended");
+      position: absolute; top: -10px; right: 14px;
+      background: var(--accent); color: #fff;
+      padding: 2px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+    }
+    .compare-card h4 { margin: 0 0 8px; font-size: 15px; color: var(--text); text-transform: none; letter-spacing: normal; }
+    .compare-card p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+    /* ============================================================
+       COLLAPSIBLE
+       ============================================================ */
+    details.collapsible {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin: 16px 0;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    details.collapsible[open] { box-shadow: var(--shadow-sm); }
+    details.collapsible > summary {
+      cursor: pointer;
+      padding: 14px 18px;
+      font-weight: 500;
+      color: var(--text);
+      list-style: none;
+      display: flex; align-items: center; gap: 10px;
+      user-select: none;
+      transition: background 0.15s;
+      min-height: 44px;
+    }
+    details.collapsible > summary::-webkit-details-marker { display: none; }
+    details.collapsible > summary::before {
+      content: "›";
+      display: inline-block;
+      transition: transform 0.18s;
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    details.collapsible[open] > summary::before { transform: rotate(90deg); }
+    .collapsible-body { padding: 4px 18px 18px; border-top: 1px solid var(--border); }
+    .collapsible-body > *:first-child { margin-top: 12px; }
+
+    /* ============================================================
+       TABLES (wrapped via .table-wrap or naturally responsive)
+       ============================================================ */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: var(--surface);
+      margin: 0;
+    }
+    /* Standalone tables (not inside .table-wrap) keep visual border */
+    .content > table {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 20px 0;
+      display: block;
+      overflow-x: auto;
+    }
+    .content th {
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .content td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .content tr:last-child td { border-bottom: none; }
+
+    /* ============================================================
+       BLOCKQUOTE
+       ============================================================ */
+    .content blockquote {
+      margin: 20px 0;
+      padding: 4px 20px;
+      border-left: 3px solid var(--accent-border);
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .doc-footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-subtle);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .doc-footer a { color: var(--accent); text-decoration: none; }
+
+    /* ============================================================
+       FOCUS-VISIBLE (a11y)
+       ============================================================ */
+    *:focus { outline: none; }
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+    .toc-nav a:focus-visible { outline-offset: -2px; }
+    .icon-btn:focus-visible { outline-offset: 2px; }
+    .anchor:focus-visible { opacity: 1; outline-offset: 2px; }
+    details.collapsible > summary:focus-visible { outline-offset: -2px; }
+
+    /* ============================================================
+       HOVER (only on hover-capable devices to avoid sticky-tap on mobile)
+       ============================================================ */
+    @media (hover: hover) {
+      .icon-btn:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-soft); }
+      .toc-nav a:hover { color: var(--accent); background: var(--accent-soft); }
+      .content a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+      .compare-card:hover { border-color: var(--accent-border); box-shadow: var(--shadow); }
+      .compare-card.recommended:hover { border-color: var(--accent); }
+      .content tr:hover td { background: var(--surface-2); }
+      details.collapsible > summary:hover { background: var(--surface-2); }
+      .step:hover { background: var(--surface-2); }
+      .step:hover .step-num { transform: scale(1.05); }
+      .anchor:hover { color: var(--accent); }
+      .content h2:hover .anchor,
+      .content h3:hover .anchor { opacity: 1; }
+      .copy-btn:hover { color: var(--accent); border-color: var(--accent-border); }
+      .content pre:hover .copy-btn { opacity: 1; }
+    }
+    /* On touch devices, copy-btn is always visible at low opacity */
+    @media (hover: none) {
+      .copy-btn { opacity: 0.6; }
+      .anchor { opacity: 0.4; }
+    }
+
+    /* ============================================================
+       MOBILE (≤900px) — TOC becomes off-canvas drawer
+       ============================================================ */
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px 16px 80px;
+      }
+      .topbar-inner { padding: 8px 12px; }
+      .doc-header { margin-bottom: 28px; padding-bottom: 20px; }
+
+      .toc-mobile-trigger { display: inline-flex !important; }
+
+      .toc {
+        position: fixed;
+        top: 0; left: 0;
+        width: min(300px, 82vw);
+        height: 100dvh;
+        max-height: 100dvh;
+        background: var(--surface);
+        z-index: var(--z-drawer);
+        padding: 16px 8px 24px 16px;
+        box-shadow: var(--shadow-lg);
+        transform: translateX(-105%);
+        transition: transform 0.25s ease;
+      }
+      .toc-head { padding: 4px 4px 12px 8px; }
+      .toc-close {
+        display: inline-flex !important;
+        width: 36px; height: 36px;
+        align-items: center; justify-content: center;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0;
+      }
+      .toc-close .icon { width: 18px; height: 18px; stroke-width: 2; }
+      body.toc-open .toc { transform: translateX(0); }
+      body.toc-open .toc-backdrop {
+        display: block;
+        opacity: 1;
+      }
+      .toc-backdrop {
+        display: block;
+        opacity: 0;
+        pointer-events: none;
+      }
+      body.toc-open .toc-backdrop { pointer-events: auto; }
+      body.toc-open { overflow: hidden; }
+    }
+    @media (min-width: 901px) {
+      .toc-mobile-trigger { display: none !important; }
+    }
+
+    /* ============================================================
+       REDUCED MOTION (a11y)
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      html { scroll-behavior: auto; }
+      .brand-dot { animation: none; box-shadow: 0 0 0 4px var(--accent-soft); }
+    }
+
+    /* ============================================================
+       PRINT
+       ============================================================ */
+    @media print {
+      .topbar, .toc, .toc-backdrop, .icon-btn, .copy-btn, .anchor, .scroll-progress { display: none !important; }
+      .layout { grid-template-columns: 1fr; padding: 0; max-width: 100%; }
+      body { background: #fff; color: #000; }
+      a { color: #000; }
+      .content pre, .callout, .compare-card, .step, .diagram { break-inside: avoid; }
+      .doc-footer { break-before: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip link for keyboard users -->
+  <a href="#main" class="skip-link">跳到正文</a>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- SVG icon sprite (Lucide-style) -->
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="i-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></symbol>
+    <symbol id="i-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="i-decision" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-tip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14a5 5 0 1 0-6.18 0 4 4 0 0 1 1.59 2h2.99a4 4 0 0 1 1.6-2Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  </svg>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <button class="icon-btn toc-mobile-trigger" id="toc-toggle" onclick="openToc()" aria-label="目录" title="目录">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>系统设计</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" onclick="window.print()" title="打印 / 保存 PDF" aria-label="打印 / 保存 PDF">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-printer"/></svg>
+        </button>
+        <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="切换主题" aria-label="切换主题">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use id="theme-icon-use" href="#i-moon"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOC drawer backdrop (mobile) -->
+  <div class="toc-backdrop" onclick="closeToc()" aria-hidden="true"></div>
+
+  <div class="layout">
+    <aside class="toc" id="toc" aria-label="目录">
+      <div class="toc-head">
+        <p class="toc-title">目录</p>
+        <button class="toc-close" onclick="closeToc()" aria-label="关闭">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+      <nav class="toc-nav" id="toc-nav">
+        <a href="#overview" class="lvl-2">1. 研究问题与结论</a>
+<a href="#framework" class="lvl-2">2. 共用检索框架</a>
+<a href="#resp" class="lvl-2">3. resp：面向回答等价性的分层召回</a>
+<a href="#resp-1" class="lvl-3">3.1 文献依据</a>
+<a href="#resp-2" class="lvl-3">3.2 建议的条目与索引</a>
+<a href="#resp-3" class="lvl-3">3.3 本方案相对原文的变化</a>
+<a href="#rag" class="lvl-2">4. rag：集合存储、块级召回和缺口补检</a>
+<a href="#rag-1" class="lvl-3">4.1 文献依据与对象边界</a>
+<a href="#rag-2" class="lvl-3">4.2 查询路径</a>
+<a href="#rag-3" class="lvl-3">4.3 适配与优化</a>
+<a href="#act" class="lvl-2">5. act：调用签名精确索引与状态校验</a>
+<a href="#act-1" class="lvl-3">5.1 文献依据</a>
+<a href="#act-2" class="lvl-3">5.2 检索流程</a>
+<a href="#act-3" class="lvl-3">5.3 适配与优化</a>
+<a href="#plan" class="lvl-2">6. plan：阶段筛选、目标检索和模板适配</a>
+<a href="#plan-1" class="lvl-3">6.1 文献依据</a>
+<a href="#plan-2" class="lvl-3">6.2 索引与路径</a>
+<a href="#plan-3" class="lvl-3">6.3 适配与优化</a>
+<a href="#cost" class="lvl-2">7. 检索成本与动作价值的衔接</a>
+<a href="#evaluation" class="lvl-2">8. 评估设计</a>
+<a href="#references" class="lvl-2">9. 参考文献与证据范围</a>
+      </nav>
+    </aside>
+
+    <main class="content" id="main">
+      <header class="doc-header">
+        <span class="doc-eyebrow">SYSTEM DESIGN</span>
+        <h1 class="doc-title">四类缓存对象的候选检索机制</h1>
+        <p class="doc-subtitle">面向流式智能体：从对象专属索引、候选召回到有效性判断与动作价值比较。</p>
+        <div class="doc-meta">
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-file"/></svg>
+            20261116_四类缓存对象候选检索机制调研.md
+          </span>
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>
+            2026-11-16
+          </span>
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg>
+            约 15 分钟阅读
+          </span>
+        </div>
+      </header>
+
+      <!-- CONTENT_START -->
+<p>调研日期：2026-11-16。对应初稿的 <code>resp</code>、<code>rag</code>、<code>act</code>、<code>plan</code> 对象，以及“候选检索 → 有效性判断 → 动作价值比较”的结构。</p>
+<h2 id="overview">1. 研究问题与结论</h2>
+<p>本调研回答三个问题：一次请求或 Agent 中间步骤出现时，用什么键找到可能复用的条目？怎样在候选数量、召回率和查询开销之间取得平衡？已有方法需要怎样适配到四种对象？范围聚焦在线候选检索；有效性和价值模型沿用第一章的设计。</p>
+<p>建议采用<strong>统一的检索接口、按对象定制索引</strong>：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>对象</th>
+<th>查找时机与输入</th>
+<th>缓存及索引键</th>
+<th>候选检索</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resp</code></td>
+<td>回答生成前：当前问题与必要会话上下文</td>
+<td>完整答案条目；原请求、结构字段、请求向量</td>
+<td>静态层优先；精确键＋语义及关键词召回，轻量精排</td>
+</tr>
+<tr>
+<td><code>rag</code></td>
+<td>需要证据时：当前问题或拆出的信息需求</td>
+<td>证据集合；块级内容、来源、版本及集合归属索引</td>
+<td>从有效块的倒排和向量索引召回，按当前需求组织证据并补检</td>
+</tr>
+<tr>
+<td><code>act</code></td>
+<td>Agent 发起只读工具调用时：工具名和已绑定参数</td>
+<td>工具调用结果；规范化调用签名</td>
+<td>工具、规范化参数和配置的哈希精确查找；版本及外部状态复核</td>
+</tr>
+<tr>
+<td><code>plan</code></td>
+<td>规划或到达子目标时：当前目标、阶段和状态</td>
+<td>参数化模板或计划片段；任务、阶段、槽位及步骤结构</td>
+<td>阶段/类型筛选＋关键词与语义召回，再按前置条件和结构精排</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>resp</code> 面对的是“旧答案能否服务新问题”，<code>rag</code> 面对的是“旧证据能否支持新问题”，<code>act</code> 面对的是“是否为同一次语义的工具调用”，<code>plan</code> 面对的是“旧计划能否绑定当前任务并执行”。因此每种对象应当有自己的候选相关性定义。</p>
+<p>检索器返回条目 ID、候选分数和必要元数据；后续再做权限、版本、时效、答案风险、证据充分性或可执行性检查，最后选择 <code>reuse</code>、<code>verify_then_reuse</code> 或 <code>recompute</code>。候选排序可使用历史收益作为次级特征，但是否复用由原有价值模型决定。</p>
+<h2 id="framework">2. 共用检索框架</h2>
+<figure class="diagram"><pre class="mermaid">
+flowchart TD
+  A[请求或 Agent 步骤] --&gt; B[可信身份与结构字段]
+  B --&gt; C[限定候选范围]
+  C --&gt; D[对象专属索引]
+  D --&gt; E[合并候选与轻量重排]
+  E --&gt; F[权限、版本与有效性检查]
+  F --&gt; G[比较动作价值]
+  G --&gt; H[复用、验证或重算]
+    </pre><figcaption class="diagram-caption">统一入口与对象专属索引配合；有效性和动作价值在候选召回后判断。</figcaption></figure>
+<p><strong>过滤与召回。</strong> 租户和可访问范围由认证与授权系统提供；对可确定、稳定且适合索引的字段做预过滤。必须兼容的模型、工具版本可过滤；一个尚未知晓的来源最新版本，应在读取时向版本目录检查，不能假定索引元数据自动代表实时状态。权限标签无法完整表达复杂 ACL 时，用标签缩小范围，并在访问缓存内容前进行权威权限检查。语义向量和由模型提取的字段均不能代替权限判断。</p>
+<p>候选空间很小时，在过滤结果上精确算相似度；规模较大时使用支持条件过滤的 ANN，或先按可信租户/权限域划分索引再搜索。ACORN [4] 研究向量搜索与结构化谓词的联合执行，可作为过滤式 ANN 的实现依据。单纯对全局 ANN 取很小的 top-k 再过滤，可能因为候选被无权限条目占满而漏掉可用结果；扩大候选数或选择过滤式检索可缓解漏召回，仍需测量。</p>
+<p><strong>结构化字段的置信度。</strong> 时间、实体和用户意图可由规则或轻量模型提取；缺失或低置信度字段记为未知，不以猜测值执行硬过滤。对明确且确实影响答案语义的数值、时间和实体可作确定性筛选。自动抽取适合作为召回线索，最终仍由对象级判断核对。对于多轮指代，优先复用上游已解析的会话状态；提取失败时用更完整上下文召回，必要时回源。</p>
+<p><strong>工程落地。</strong> 一个逻辑检索接口可对接哈希表、倒排索引和向量库，无需第一版就实现自研 ANN 图。新条目的写入、索引建立、过期标记和淘汰应共享稳定 ID；依赖变更由来源→条目反向索引标记失效，读取时复核版本，异步清理旧索引。索引失效或部分不可用时走对应原始操作。内容和引用共享时，内容块可去重，权限与归属按引用分别记录。</p>
+<h2 id="resp">3. <code>resp</code>：面向回答等价性的分层召回</h2>
+<h3 id="resp-1">3.1 文献依据</h3>
+<p>vCache [1] 用语义相似性识别可能复用的历史回答，并结合在线验证控制错误风险；MVR-cache [2] 通过学习式 prompt 分段和多向量 MaxSim 提升细粒度匹配。SmartCache [3] 将对话上下文纳入语义缓存组织。三者共同提示：问题文本相近只是线索，局部条件和会话背景对回答是否适用很关键。</p>
+<h3 id="resp-2">3.2 建议的条目与索引</h3>
+<p>一个条目包含：原始请求、必要上下文摘要或指代解析结果、完整回答、轻量签名、请求向量、来源依赖、生成配置、权限域、时间戳及条目 ID。签名可包括意图、主题实体、时间范围、关键数值、输出格式和语言；权限及版本由可信元数据另行提供。对于可能一问多答或同键多版本的情况，同一键指向候选列表。</p>
+<p>建议采用三路召回：</p>
+<div class="timeline"><article class="step"><div class="step-num">1</div><div class="step-body"><p><strong>精确键</strong>：对规范化请求和相关上下文做哈希查找，用于高频重复请求。</p></div></article><article class="step"><div class="step-num">2</div><div class="step-body"><p><strong>关键词倒排</strong>：对实体、专业术语、编号及时间表达建立索引，减少重要字词被稠密向量忽略的问题。</p></div></article><article class="step"><div class="step-num">3</div><div class="step-body"><p><strong>语义 ANN</strong>：对请求及必要上下文编码，在可访问候选范围内取 top-k，召回不同表述。</p></div></article></div>
+<p>候选去重后，以语义得分、意图/实体/时间等字段一致性做轻量重排。初版可用固定字段权重，参数在验证集确定；存在明确冲突的候选进入拒绝或验证流程。复杂请求可选用 MVR-cache 风格的分段多向量重排，只对小候选集计算，比较收益与额外成本。</p>
+<p>沿用初稿的<strong>静态层优先</strong>：先检索静态层，满足其在线门槛时直接使用；否则检索动态层，必要时生成。灰区静态候选按 1.3 的预算进入后台验证。候选依然要经过来源依赖、版本、权限、时效和回答可接受性检查；多轮问题需检查指代所指的对象。</p>
+<p>例：缓存“2025 年 A 产品退款期限是多少？”的回答；新请求“去年的 A 产品多久能退款？”在时间解析确认为 2025 年、权限和文档版本匹配后，可进入复用判断。“2026 年 A 产品多久能退款？”即使文本很相似，也应按时间条件区分。</p>
+<h3 id="resp-3">3.3 本方案相对原文的变化</h3>
+<p>vCache 的风险控制服务于候选回答是否可复用；这里额外增加静态/动态层的候选检索、可信权限和依赖过滤及对象级价值决策。MVR-cache 的学习式分段需要训练；本方案先采用轻量字段和单向量作为基线，再在有限候选上测试多向量精排。两者的理论保证依赖各自算法及假设，改变候选产生、校准与决策后，需要重新分析，不能直接沿用保证。</p>
+<h2 id="rag">4. <code>rag</code>：集合存储、块级召回和缺口补检</h2>
+<h3 id="rag-1">4.1 文献依据与对象边界</h3>
+<p>Cortex [5] 面向远程数据访问缓存知识，利用语义索引检索相近请求并判断缓存知识的适用性。RAGCache [6] 的知识树主要组织已检索文档的中间状态和 KV 前缀，其性能目标涉及生成阶段的计算复用；它可以启发依赖组织，但不能作为“已经解决证据内容召回”的证据。</p>
+<p>本章以<strong>一次检索产生的证据集合</strong>为缓存管理单位；为提高复用粒度，同时对集合中的块建立辅助索引。一个块记录内容、来源、版本、获取时间、权限、块 ID 和所属集合 ID。共享块可由多个集合引用，版本和权限按来源及引用关系维护。由此既保持初稿的集合生命周期统计，又支持仅复用其中仍然有效的部分。</p>
+<h3 id="rag-2">4.2 查询路径</h3>
+<div class="timeline"><article class="step"><div class="step-num">1</div><div class="step-body"><p>获取当前问题；在多信息需求问题中，用固定规则或轻量模型拆成少量子需求。拆分结果是召回线索，原问题始终保留。</p></div></article><article class="step"><div class="step-num">2</div><div class="step-body"><p>在用户可访问的块及集合范围内，按问题/子需求分别运行关键词倒排与向量召回；并行可选查找历史相似查询所关联的证据集合。合并并按块 ID 去重。</p></div></article><article class="step"><div class="step-num">3</div><div class="step-body"><p>检查块对应的来源版本、时效和权限；按相关性、子需求覆盖及来源去重/多样性组成候选证据。不得把来源数量当成充分性的证明。</p></div></article><article class="step"><div class="step-num">4</div><div class="step-body"><p>对缺失的信息需求执行后端补检；若覆盖无法确认或补检没有成本优势，则按初稿执行完整检索。使用最终证据生成新回答，并将采用的证据及集合归属回写统计。</p></div></article></div>
+<p>例：问题需要“退款期限”和“申请入口”，缓存集合中的期限政策块仍有效，但入口块来自已更新来源。召回期限块，丢弃失效入口块并补检入口；仅当最终证据覆盖问题时生成回答。</p>
+<h3 id="rag-3">4.3 适配与优化</h3>
+<p>相对 Cortex 的相似请求→缓存知识思路，本方案为一个集合建立块级辅助入口，以来源版本检查和缺口补检实现部分复用，并用集合归属支持初稿的长期价值统计。可同时保留“相似查询→证据集合”的快捷路径，在检索实验中比较集合级与块级入口。结果块被访问不等于已经用于回答，应区分“召回”“通过验证”和“实际采用”三种事件。</p>
+<h2 id="act">5. <code>act</code>：调用签名精确索引与状态校验</h2>
+<h3 id="act-1">5.1 文献依据</h3>
+<p>TVCACHE [7] 研究 Agent 后训练中的工具值缓存，Cortex [5] 研究远程数据访问与知识缓存。它们支持复用工具或远程访问结果的方向。本方案的在线工具可能读取动态外部状态，复用时需接入数据版本或业务时效判断；这一点是针对当前场景的扩展。</p>
+<h3 id="act-2">5.2 检索流程</h3>
+<p>只为允许缓存的<strong>只读</strong>调用建立候选。键可以表示为：</p>
+<pre><code class="language-text">key = hash(租户/权限域, 工具 ID, 工具/算法版本,
+           规范化参数, 影响输出的配置与语义上下文)
+</code></pre>
+<p>规范化只做工具契约明确允许的等价变换，例如参数顺序、显式默认值、单位换算和时区统一；数组顺序、精度、区域、分页和排序等影响输出的参数必须保留。键命中后核对原始规范化字段，读取权威权限信息及数据版本/状态；稳定纯计算可按工具版本和完整输入复用，动态数据依业务要求检查版本或有效期。</p>
+<p>例：<code>get_order(order_id=123)</code> 与相同工具、同一权限域、同一规范化参数的历史调用可定位到同一候选；订单来源版本已更新时重新调用。<code>order_id=124</code> 与 <code>123</code> 虽然语义接近，仍是不同键。</p>
+<p>如工具定义了可证明的范围包含关系，辅助的范围或参数字段索引可找到候选，再由工具专属规则提取结果并验证；首版优先采用精确键。带副作用操作不进入普通结果复用；业务重试按操作 ID 和外部执行记录处理。</p>
+<h3 id="act-3">5.3 适配与优化</h3>
+<p>精确签名＋版本校验是针对在线只读工具提出的工程设计，并非声称 TVCACHE 实现了在线动态数据一致性。把昂贵的外部状态检查与重新调用的预计成本比较：若验证后预期总成本不低于重调，可直接调用。检查失败的代价和后续回源开销按实际路径计入。</p>
+<h2 id="plan">6. <code>plan</code>：阶段筛选、目标检索和模板适配</h2>
+<h3 id="plan-1">6.1 文献依据</h3>
+<p>APC [8] 从已有执行中形成可复用计划，使用关键词检索并由轻量模型适配。MetaFlowLLM [9] 从经验形成层次化的 MetaFlow，支持检索相关经验。这里借鉴关键词和层级组织，面向在线 Agent 增加计划片段、槽位及前置条件信息。</p>
+<h3 id="plan-2">6.2 索引与路径</h3>
+<p>每个条目保存：任务目标描述、任务类型、适用阶段、参数槽位及类型、前置条件、步骤/依赖、所需工具、权限约束、版本和历史适配结果。将任务类型→子目标/阶段组织为层级索引；同一模板允许出现在多个合适的检索入口，使用模板 ID 去重。</p>
+<p>当前目标到达后，先用已知阶段、工具类型和明确不兼容条件缩小搜索范围；阶段未知时保留更广候选，避免提取错误导致漏召回。关键词索引按 APC 的思路提供快速候选，并行用目标描述向量召回表述不同的相似任务。对合并的候选按目标一致性、阶段、槽位类型及必要步骤/依赖进行重排。随后绑定当前参数，检查前置条件和工具授权，必要时验证或局部修复；不通过则重新规划。</p>
+<p>例：针对“查询订单并处理退款”，可召回“查询订单→检查退款资格→告知处理渠道”的模板。需要当前订单号、可用工具和退款政策版本；若订单已退款或工具不存在，模板必须经适配或重新规划。模板检索不执行有副作用的步骤。</p>
+<h3 id="plan-3">6.3 适配与优化</h3>
+<p>APC 的关键词入口保留为基线；本方案叠加阶段/前置条件索引、语义补充召回、参数槽位绑定及价值模型。相对 MetaFlowLLM 的层次经验组织，本方案将可检索单位设计为可参数化的计划模板或片段，并对在线工具和状态进行校验。这些组合是待实验验证的设计，不预设效果优于原方法。</p>
+<h2 id="cost">7. 检索成本与动作价值的衔接</h2>
+<p>端到端时间按实际时间线记录：</p>
+<pre><code class="language-text">T_prepare：解析、规范化、编码
+T_search：元数据过滤、哈希/倒排/ANN 查询与候选合并
+T_rank：候选精排
+T_check：权限、版本、风险/覆盖/可执行性检查
+T_adapt：模板绑定、修复或证据补检
+T_fallback：验证失败后的生成、检索、工具调用或规划
+</code></pre>
+<p>一次请求的实际耗时为实际执行各阶段之和；并行阶段按墙钟时间测量，不能简单把各线程耗时相加。另记录 CPU/GPU 时间、模型 token 和索引内存/维护资源。对是否启动缓存检索的上游决策，比较含 <code>T_prepare + T_search + T_rank</code> 的完整路径与直接重算；当候选已经检索出来，比较后续 <code>reuse / verify_then_reuse / recompute</code> 时，上述共同沉没成本不重复加入各动作。失败后的已发生检查、适配和回退成本需完整记录。</p>
+<p>可选优化是先用极低成本的精确键或可用性统计预测能否命中，再决定是否发起向量搜索。初版勿强制每次调用生成式 LLM 抽取签名：复用可信 Agent 上下文与规则、轻量编码器，并实测提取准确率和延迟。对象多次被调用时，每次检索都应归因到相应的 Agent 步骤。</p>
+<h2 id="evaluation">8. 评估设计</h2>
+<p>建议在固定数据流、缓存容量、权限和版本序列下，先固定检索器比较 1.2/1.3 的价值与生命周期策略；另设独立检索实验，控制同样的缓存内容、有效性判断和预算，比较不同候选索引。这样可区分检索器与缓存策略的收益。</p>
+<p><strong>候选质量。</strong> 抽样请求构建与在线索引独立的参考候选池：在小规模快照上遍历所有缓存项，人工或可信标注器结合真实权限、版本、答案适用性、证据支持/覆盖、工具语义、计划可执行性给出对象专属标签；大规模可将多路高召回检索、随机抽样和人工复核组成池，并报告池不完整。分别计算：</p>
+<ul>
+<li><code>Hit@k</code>：参考池中存在至少一个合格候选时，top-k 找到至少一个的请求比例。对于最终只需一个答案/计划的场景尤其直观。</li>
+<li><code>Recall@k</code>：top-k 召回的合格条目数除以参考池中合格条目总数；<code>rag</code> 还需报告证据需求覆盖和补检后覆盖。没有合格候选的请求单列，避免分母歧义。</li>
+<li>ANN 索引召回率：相同过滤条件下，相对精确向量 top-k 的重合比例。这个指标衡量 ANN 近似损失，不等于语义可复用召回率。</li>
+<li>权限越界读取、过期复用和错误复用次数；检索 p50/p95、端到端 p50/p95、吞吐、索引内存、建索引及增删改开销、embedding/判官开销。</li>
+</ul>
+<p><strong>对照和消融。</strong> <code>resp</code> 比较精确键、单向量 ANN、混合检索及可选多向量精排；<code>rag</code> 比较查询→集合、块级混合召回及块级召回＋补检；<code>act</code> 比较规范化精确键与无缓存调用，必要时评估经工具契约授权的范围复用；<code>plan</code> 比较 APC 式关键词入口、关键词＋语义和再加结构重排。按时间划分训练/参数选择/测试集，测试不同缓存规模、热点、更新率、过滤选择率和 k 值。对照使用相同有效性门与资源预算；只评估召回路径时固定快照，以免索引内容变化干扰结果。</p>
+<h2 id="references">9. 参考文献与证据范围</h2>
+<p>以下为近年正式发表的论文，链接优先指向会议或期刊原始页面。这里使用的是与本设计直接相关的方法；组合方式及其预期收益属于本章的待验证设计。</p>
+<ol>
+<li>Schroeder et al. <strong>vCache: Verified Semantic Prompt Caching.</strong> ICLR 2026. <a href="https://iclr.cc/virtual/2026/poster/10006471">会议页面</a>；<a href="https://openreview.net/pdf?id=zF0A0xw3HZ">论文</a>。用于回答相似候选的验证与风险控制。</li>
+<li>Noshad, Zheng, Wu. <strong>MVR-cache: Optimizing Semantic Caching via Multi-Vector Retrieval and Learned Prompt Segmentation.</strong> ICML 2026, PMLR 306: 93883–93907. <a href="https://proceedings.mlr.press/v306/noshad26a.html">论文页面</a>。用于细粒度 prompt 匹配与候选精排。</li>
+<li><strong>SmartCache.</strong> NeurIPS 2025. <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/fb74b63d225f846e6032bf3e3ab0f4ec-Abstract-Conference.html">会议论文</a>。用于参考多轮对话上下文与语义缓存组织。</li>
+<li>Patel et al. <strong>ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.</strong> SIGMOD 2024. <a href="https://doi.org/10.1145/3654923">DOI</a>。用于带结构化过滤条件的 ANN。</li>
+<li>Ruan et al. <strong>Cortex: Achieving Low-Latency, Cost-Efficient Remote Data Access for LLM via Semantic-Aware Knowledge Caching.</strong> NSDI 2026. <a href="https://www.usenix.org/system/files/nsdi26-ruan-cortex.pdf">论文</a>。用于远程知识缓存和语义候选检索。</li>
+<li>Jin et al. <strong>RAGCache: Efficient Knowledge Caching for Retrieval-Augmented Generation.</strong> ACM Transactions on Computer Systems, 44(1), 2026. <a href="https://doi.org/10.1145/3768628">DOI</a>。用于参考知识树及 KV 前缀依赖。</li>
+<li>Kumar et al. <strong>TVCACHE: A Tool-Value Cache for Post-Training LLM Agents.</strong> ICML 2026, PMLR 306: 61539–61558. <a href="https://proceedings.mlr.press/v306/kumar26d.html">论文页面</a>。用于参考工具调用结果复用。</li>
+<li>Zhang, Wornow, Olukotun. <strong>Agentic Plan Caching: Test-Time Memory for Fast and Cost-Efficient LLM Agents.</strong> NeurIPS 2025. <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/9549f7d06700f0966d5f938f1d11022a-Abstract-Conference.html">会议页面</a>。用于计划模板检索与适配。</li>
+<li>Fan et al. <strong>Generalizing Experience for Language Agents with Hierarchical MetaFlows.</strong> NeurIPS 2025. <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/5c882988ce5fac487974ee4f415b96a9-Abstract-Conference.html">会议页面</a>。用于参考层次化经验检索。</li>
+</ol>
+<p>检索范围为本章已有参考文献以及近期语义缓存、过滤 ANN、Agent 计划/工具复用相关工作；以会议、期刊页面和论文摘要/正文中的可核对信息为依据，属于针对方案设计的定向调研。</p>
+
+<!-- CONTENT_END -->
+
+      <footer class="doc-footer">
+        <span>Generated by <a href="#">md2html</a></span>
+        <span>来源：20261116_四类缓存对象候选检索机制调研.md</span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    // ---------- Theme ----------
+    const STORAGE_KEY = "md2html-theme";
+    function currentTheme() { return document.documentElement.dataset.theme || "light"; }
+    function applyThemeIcon() {
+      const use = document.getElementById("theme-icon-use");
+      if (use) use.setAttribute("href", currentTheme() === "dark" ? "#i-sun" : "#i-moon");
+    }
+    (function restoreTheme() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) document.documentElement.dataset.theme = saved;
+    })();
+
+    // ---------- Mermaid ----------
+    const diagramSources = new Map();
+    function initMermaid() {
+      const isDark = currentTheme() === "dark";
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? "dark" : "default",
+        themeVariables: {
+          primaryColor: isDark ? "#3A2A22" : "#FBEEE6",
+          primaryTextColor: isDark ? "#F5F0E8" : "#1A1A1A",
+          primaryBorderColor: isDark ? "#E89572" : "#D97757",
+          lineColor: isDark ? "#9A938A" : "#6B6B66",
+          secondaryColor: isDark ? "#2A2520" : "#F5F5F0",
+          tertiaryColor: isDark ? "#221E1A" : "#FFFFFF",
+          fontFamily: "Inter, system-ui, sans-serif",
+        },
+      });
+    }
+    async function renderMermaid() {
+      initMermaid();
+      const els = document.querySelectorAll(".mermaid");
+      els.forEach(el => {
+        if (!diagramSources.has(el)) diagramSources.set(el, el.textContent.trim());
+        el.textContent = diagramSources.get(el);
+        el.removeAttribute("data-processed");
+      });
+      try { await mermaid.run({ nodes: els }); } catch (e) { console.error(e); }
+    }
+    function toggleTheme() {
+      const next = currentTheme() === "light" ? "dark" : "light";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem(STORAGE_KEY, next);
+      applyThemeIcon();
+      renderMermaid();
+    }
+
+    // ---------- TOC drawer (mobile) ----------
+    function openToc()  { document.body.classList.add("toc-open"); }
+    function closeToc() { document.body.classList.remove("toc-open"); }
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && document.body.classList.contains("toc-open")) closeToc();
+    });
+
+    // ---------- TOC scrollspy ----------
+    function setupTocSpy() {
+      const links = document.querySelectorAll("#toc-nav a[href^='#']");
+      if (!links.length) {
+        const toc = document.getElementById("toc");
+        if (toc) toc.style.display = "none";
+        return;
+      }
+      const map = new Map();
+      links.forEach(a => {
+        const id = a.getAttribute("href").slice(1);
+        const el = document.getElementById(id);
+        if (el) map.set(el, a);
+        a.addEventListener("click", () => {
+          if (window.matchMedia("(max-width: 900px)").matches) closeToc();
+        });
+      });
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          const link = map.get(en.target);
+          if (!link) return;
+          if (en.isIntersecting) {
+            links.forEach(l => l.classList.remove("active"));
+            link.classList.add("active");
+          }
+        });
+      }, { rootMargin: "-80px 0px -70% 0px", threshold: 0 });
+      map.forEach((_, el) => obs.observe(el));
+    }
+
+    // ---------- Anchor links on h2/h3 ----------
+    function injectAnchors() {
+      document.querySelectorAll(".content h2[id], .content h3[id]").forEach(h => {
+        if (h.querySelector(".anchor")) return;
+        const a = document.createElement("a");
+        a.className = "anchor";
+        a.href = "#" + h.id;
+        a.setAttribute("aria-label", "Permalink");
+        a.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-link"/></svg>';
+        h.appendChild(a);
+      });
+    }
+
+    // ---------- Copy-to-clipboard on <pre> ----------
+    function injectCopyButtons() {
+      document.querySelectorAll(".content pre").forEach(pre => {
+        if (pre.classList.contains("mermaid")) return;
+        if (pre.querySelector(".copy-btn")) return;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "copy-btn";
+        btn.setAttribute("aria-label", "Copy code");
+        btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-copy"/></svg>';
+        btn.addEventListener("click", async () => {
+          const code = pre.querySelector("code")?.textContent ?? pre.textContent;
+          try {
+            await navigator.clipboard.writeText(code);
+            btn.classList.add("copied");
+            btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check"/></svg>';
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-copy"/></svg>';
+            }, 1500);
+          } catch (e) { console.error(e); }
+        });
+        pre.appendChild(btn);
+      });
+    }
+
+    // ---------- Scroll progress ----------
+    function setupScrollProgress() {
+      const bar = document.getElementById("scroll-progress");
+      if (!bar) return;
+      const onScroll = () => {
+        const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const p = h > 0 ? (document.documentElement.scrollTop / h * 100) : 0;
+        bar.style.width = p + "%";
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+
+    // ---------- Boot ----------
+    document.addEventListener("DOMContentLoaded", () => {
+      applyThemeIcon();
+      injectAnchors();
+      injectCopyButtons();
+      renderMermaid();
+      setupTocSpy();
+      setupScrollProgress();
+    });
+  </script>
+</body>
+</html>

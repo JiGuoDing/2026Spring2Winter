@@ -1,0 +1,1626 @@
+
+
+===== PAGE 1 =====
+Received: 18 December 2025
+Revised: 20 January 2026
+Accepted: 21 January 2026
+Published: 27 January 2026
+Copyright: © 2026 by the authors.
+Licensee MDPI, Basel, Switzerland.
+This article is an open access article
+distributed under the terms and
+conditions of the Creative Commons
+Attribution (CC BY) license.
+Article
+Hierarchical Caching for Agentic Workflows: A Multi-Level
+Architecture to Reduce Tool Execution Overhead
+Farhana Begum 1
+ , Craig Scott 1, Kofi Nyarko 1
+ , Mansoureh Jeihani 2
+ and Fahmi Khalifa 1,3,*
+1 Electrical and Computer Engineering Department, Morgan State University, Baltimore, MD 21251, USA;
+fnfar1@morgan.edu (F.B.); craig.scott@morgan.edu (C.S.); kofi.nyarko@morgan.edu (K.N.)
+2 Transportation Engineering Department, Morgan State University, Baltimore, MD 21251, USA;
+mansoureh.jeihani@morgan.edu
+3 Electronics and Communications Engineering Department, Mansoura University, Mansoura 35516, Egypt
+* Correspondence: fahmi.khalifa@morgan.edu
+Abstract
+Large Language Model (LLM) agents depend heavily on multiple external tools such as
+APIs, databases and computational services to perform complex tasks. However, these
+tool executions create latency and introduce costs, particularly when agents handle similar
+queries or workflows. Most current caching methods focus on LLM prompt–response pairs
+or execution plans and overlook redundancies at the tool level. To address this, we designed
+a multi-level caching architecture that captures redundancy at both the workflow and tool
+level. The proposed system integrates four key components: (1) hierarchical caching that
+operates at both the workflow and tool level to capture coarse and fine-grained redundancies;
+(2) dependency-aware invalidation using graph-based techniques to maintain consistency
+when write operations affect cached reads across execution contexts;(3) category-specific
+time-to-live (TTL) policies tailored to different data types, e.g., weather APIs, user location,
+database queries and filesystem and computational tasks; and(4) session isolation to ensure
+multi-tenant cache safety through automatic session scoping. We evaluated the system using
+synthetic data with 2.25 million queries across ten configurations in fifteen runs. In addition,
+we conducted four targeted evaluations—write intensity robustness from 4 to 30% writes,
+personalized memory effects under isolated vs. shared cache modes, workflow-level caching
+comparison and workload sensitivity across five access distributions—on an additional
+2.565 millionqueries, bringing the total experimental scope to 4.815 million executed queries.
+The architecture achieved 76.5% caching efficiency , reducing query processing time by 13.3×
+and lowering estimated costs by 73.3% compared to a no-cache baseline. Multi-tenant testing
+with fifteen concurrent tenants confirmed robust session isolation and 74.1% efficiency under
+concurrent workloads. Our evaluation used controlled synthetic workloads following Zipfian
+distributions, which are commonly used in caching research. While absolute hit rates vary
+by deployment domain, the architectural principles of hierarchical caching, dependency
+tracking and session isolation remain broadly applicable.
+Keywords: caching systems; computational efficiency; large language models; query
+processing; resource management; software agents; workflow optimization
+1. Introduction
+Large Language Models (LLMs) form the foundation of modern agentic systems that
+interact with external tools such as web APIs, databases, filesystems and computational
+services [1,2]. These agentic capabilities are widely applied in production areas including
+Mach. Learn. Knowl. Extr. 2026, 8, 30 https://doi.org/10.3390/make8020030
+
+===== PAGE 2 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 2 of 35
+customer service, software development and data analysis [ 3]. Despite their success,
+industry reports show that external tool execution is the dominant source of latency in
+agentic systems [4,5]. In some cost-sensitive deployments, the cost of external tool execution
+can even surpass the cost of LLM inference itself [6].
+This latency problem is primarily caused by redundancy that occurs at two levels.
+The first is at the workflow level, when users repeat similar multi-step queries. For example:
+“What is the weather in Boston?”
+“Is it raining in Boston?”
+“Should I bring an umbrella to Boston?”
+All three queries triggerget_weather(city=“Boston”).
+The second is at the tool level, where redundancy occurs when users repeat the same
+atomic operations across different workflows. For example:
+Plan A: “Weather and activities in Boston” executes[get_weather(Boston),
+recommend_activities(weather)] and
+Plan B: “Weather-based packing for Boston” executes[get_weather(Boston),
+suggest_clothing(weather)]. Both workflows require get_weather(Boston),
+but plan caching treats them as different sequences and executes the weather API
+twice. Addressing these redundancies requires caching strategies that operate
+at multiple levels of granularity. These redundancies compound in production
+systems. Consider a customer service agent handling multiple users:
+Plan A: “Show my recent orders, current location”→[get_user_location(user_id=123),
+get_orders(user_id=123)]
+Plan B: “Where am I and what is my order status?”→[get_user_location(user_id=456),
+get_orders(user_id=456)]
+Plan C: “Am I near any of my delivery addresses?”→[get_user_location(user_id=123),
+get_delivery_addresses(user_id=123)].
+User A and User C both execute get_user_location(user_id=123). Without tool-
+level caching, this API call executes twice despite returning identical results. Plan
+caching would treat User A and User C’s workflows as different sequences and miss
+this optimization opportunity.
+The literature work has primarily focused on two aspects. The first is the accelera-
+tion of LLM inference through techniques like key value caching [7], quantization [8] and
+speculative decoding [9]. The second is the reduction in overhead by improving planning
+strategies [10] and caching model outputs. Within this second category, semantic caching
+systems have emerged as a prominent approach. Systems such as GPTCache [ 11], GPT
+Semantic Cache [12] and MeanCache [13] reuse LLM responses based on semantic similar-
+ity of input queries and effectively reduce cost and latency. For example, a GPT Semantic
+Cache report shows up to a 68.8% reduction in API calls [13]. Similarly, prompt caching
+systems show reduced input token costs for repeated prompts [ 14,15]. These methods
+work at the LLM interaction layer and do not capture the tool-level redundancy that occurs
+in agent workflows. Plan caching takes a complementary approach by working at the
+workflow reasoning level, reusing high-level reasoning strategies, but executes tool calls
+independently for each plan. For example, when two different plans require the same
+weather API call, plan caching saves reasoning time but duplicates tool execution. This
+gap between workflow-level optimization and tool-level execution creates an opportunity
+for additional caching strategies that operate directly at the tool invocation layer. Deploy-
+ing caching in agentic environments introduces unique challenges. For example, write
+operations can invalidate previously cached reads, multi-tenant deployments require strict
+session isolation and heterogeneous tools demand category-specific freshness policies.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 3 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 3 of 35
+To partially overcome the aforementioned limitations, we propose a multi-level cache
+architecture that consists of four integrated components. First, hierarchical caching works
+at both the workflow and tool levels. The workflow cache captures complete execution
+sequences while the tool cache handles granular operations. Second, dependency-aware in-
+validation uses a graph-based technique that maintains consistency when write operations
+affect cached reads across execution contexts. Third, the system employs category-specific
+base TTL policies tailored to different data characteristics. Fourth, session isolation ensures
+multi-tenant cache safety through automatic session scoping.
+Beyond technical optimization, hierarchical caching mirrors knowledge structures.
+The tool cache operates as a shared encyclopedia of deterministic facts: weather condi-
+tions, computational results and database queries that remain globally valid. For example,
+get_weather(Boston) returns identical results for all users within the TTL window, en-
+abling safe cross-user sharing. The workflow cache functions as a personalized procedural
+dictionary, capturing recurring execution patterns specific to each user’s interaction his-
+tory. For instance, a customer service agent repeatedly executing get_user_location,
+get_orders andcalculate_shipping builds a workflow-specific memory that accelerates
+similar future queries. This dual structure distinguishes between universal operational
+knowledge (tool-level, shared) and contextual behavioral memory (workflow-level, user-
+scoped), enabling both efficiency gains and strong privacy guarantees through session
+isolation. The key contribution aspects of the proposed work can be summarized as follows:
+1. A comprehensive multi-level caching architecture that integrates workflow pattern
+recognition, tool result caching and dependency-aware invalidation for LLM agents.
+2. A graph-based invalidation mechanism that maintains consistency when write opera-
+tions affect cached reads across different execution contexts.
+3. Extensive evaluation and ablation using synthetic workloads with 2,250,000 query
+executions (15 runs × 10 configurations × 15,000 queries), with workload calibration
+using Zipfian distributions.
+4. Multi-tenant validation in a production-ready environment with 15 tenants executing
+225,000 queries.
+This paper makes additional contributions via the following: (1) workload sensi-
+tivity analysis across five access patterns, i.e., Zipfian α ∈ {1.1, 1.5, 1.9}, uniform and
+bimodal, demonstrating efficiency across distribution skews; (2) personalized memory
+effect validation via isolated vs. shared cache experiments with 15 user personas, revealing
+16.3 percentage point efficiency variance and quantifying modest cross-user sharing bene-
+fits; (3) write-intensive robustness analysis showing 0.62 percentage point efficiency loss
+per 1% write increase, maintaining 61.5% efficiency at 30% writes; and (4) plan caching com-
+parison (n = 15, 95% CI), demonstrating that hierarchical caching achieves 13.7× speedup
+versus 7.1× for plan-only approaches (1.92× higher speedup, p < 0.001).
+2. Related Work
+This study covers three research areas: caching optimizations for LLM systems; plan-
+ning and execution in AI agents; and distributed cache management. In this section, we
+overview the related literature work in these three areas.
+2.1. LLM Inference Optimization
+Research on optimizing LLM inference has received significant attention over the
+years. Key–value (KV) caching is one of the most widely used optimization techniques.
+It stores previously computed attention states during generation so that the model can
+reuse them and avoid redundant computation. This approach achieved a 3–5× speedup
+in multi-turn conversations [16,17]. H 2O [18] improves on KV caching by selectively re-
+https://doi.org/10.3390/make8020030
+
+===== PAGE 4 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 4 of 35
+taining high-impact tokens, while StreamingLLM [19] maintains attention sinks to support
+efficient streaming inference. At the application layer, semantic caching systems focus on
+caching LLM outputs based on query similarity rather than exact matching. For example,
+GPTCache [11] uses an embedding-based similarity search with configurable thresholds.
+This approach achieves 2–10× faster responses, depending on query similarity. Its modular
+design supports flexible deployment with customizable embedding models and vector
+stores. Similarly, commercial systems like Anthropic [14] and Google [15] cache prompts to
+reduce costs by 90%. However, these optimizations mainly target LLM interaction costs
+and do not address redundancy. While semantic caching reduces the cost of querying the
+language model and prompt caching reduces input processing costs, neither approach
+captures the tool-level redundancy that occurs when agents invoke external APIs, databases
+or computational services. Our system captures this tool-level redundancy that occurs both
+within and across different query contexts. Additionally, semantic caching systems such
+as MeanCache [13] match semantically similar queries at the LLM response layer. This
+uses embedding-based similarity, which complements but does not replace execution-level
+tool caching. Even LLM-specific caching has explored prompt-level optimization [20] and
+on-device inference acceleration [21], while semantic cache management techniques [22]
+have demonstrated effectiveness in reducing redundant inference costs and latency through
+embedding-based similarity matching.
+2.2. Agent Planning and Execution
+LLM agents adopt structured reasoning frameworks to manage complex tasks. The Re-
+Act framework [ 1] is among the earliest to integrate reasoning traces into an agent’s
+action sequence, improving performance on reasoning tasks like question answering and
+decision-making benchmarks. Similarly, chain-of-thought prompting [23] encourages step-
+by-step problem decomposition, which works for mathematical reasoning and multi-step
+tasks. These approaches establish the foundation for structured agent behavior but do not
+address execution efficiency. Building on these ideas, plan caching extracts and reuses
+structured execution traces from completed agent runs. Huang et al. [ 24] showed that
+reusing cached structured plan templates with lightweight matching models can reduce
+execution cost by 46% while maintaining 96.7% task accuracy on data-intensive reasoning
+tasks. These cached plans act as high-level templates for future executions with similar
+goals. Similarly, Yao et al. [ 25] explored hierarchical plan decomposition for multi-step
+reasoning, and Huang et al. [ 26] investigated plan transfer across similar task domains.
+These approaches cache high-level reasoning templates to avoid redundant LLM inference.
+However, plan caching operates at the reasoning level, not the execution level. Consider
+two ReAct agent plans:
+Plan A: “Recommend outdoor activities in Maryland”
+LLM reasons: “Need weather” → get_weather(city=’Maryland’)
+LLM reasons: “Suggest activities” → recommend_activities(weather=sunny)
+Plan B: “Pack for Maryland trip”
+LLM reasons: “Need weather” → get_weather(city=’Maryland’)
+LLM reasons: “Suggest clothing” → suggest_clothing(weather=sunny)
+Plan caching stores these as different reasoning traces. When Plan B executes, it
+reuses neither Plan A’s reasoning nor its tool results. Both plans independently execute
+get_weather(city=’Maryland’), resulting in a duplicate API call. Plan caching saves
+reasoning time but not tool execution cost, which is the redundancy our system addresses.
+Some plan caching systems can be extended to cache intermediate tool results, but this is not
+their default focus; our work treats tool execution caching as a first-class primitive. Another
+closely related technique is database query result caching [27,28]. Databases store expensive
+https://doi.org/10.3390/make8020030
+
+===== PAGE 5 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 5 of 35
+SELECT outputs and invalidate them when source tables are modified through INSERT,
+UPDATE or DELETE operations. This reduces redundant computational work at the query
+level. However, it still executes tools independently for each plan instance. Our proposed
+multi-level framework works at both the workflow and tool level, capturing redundan-
+cies that single-level approaches miss. Modern database systems employ sophisticated
+dependency-aware invalidation strategies [29] and adaptive result caching [ 30]. Recent
+work on intelligent plan caching [31] and hierarchical planning frameworks [32] demon-
+strates the value of multi-level optimization, though these approaches focus on reasoning
+rather than execution efficiency. The workflow cache handles complete plans (similar to
+plan caching), while the tool cache handles individual operations across different plans.
+2.3. Distributed Cache Management
+Cache replacement policies form the foundation of memory management research.
+The Least Recently Used (LRU) policy [33] evicts the least recently accessed item when ca-
+pacity is reached. Adaptive Replacement Cache (ARC) [34] balances recency and frequency
+through dual LRU lists with dynamic partitioning. These policies are widely applied from
+processor caches to distributed databases, providing effective general-purpose caching
+strategies. Modern processors implement hierarchical caching with L1/L2/L3 levels, each
+with different sizes and latencies [35]. Web services implement caching at multiple layers in-
+cluding applications, databases and CDNs [36]. Each layer is optimized for different access
+patterns to improve hit rates. Further, advances in cache management include learning-
+based replacement policies [ 37], adaptive TTL mechanisms for multi-tier systems [ 38],
+and coherence-aware distributed protocols [39]. Hierarchical memory architectures and
+content-aware partitioning for multi-tenant environments [40] address similar challenges
+to our workflow and tool-level caching design. Furthermore, cache expiration can also be
+adjusted dynamically using adaptive time-to-live methods that change how long content
+remains cached based on usage patterns. For example, Berger et al. [41] developed dynamic
+TTL algorithms for CDNs that respond to bursty traffic. After testing production traces
+with 500 million queries, they reported a 49% reduction in cache size and offered theoretical
+guarantees under the Markov renewal process framework. Similarly, learned cache eviction
+frameworks [42] demonstrate how ML-assisted policies can dynamically optimize cache
+retention based on observed access patterns, which we leave as future work for agent
+caching systems.
+In multi-tenant caching systems, cache isolation is an additional concern. Systems
+commonly use key prefixing and namespace separation to prevent interference between
+tenants [43], which is critical in shared infrastructures. This must be implemented precisely
+to prevent cache pollution and ensure fair resource allocation among tenants. Traditional
+caching generally assumes that cache entries are independent and have similar character-
+istics. However, agent workflows violate both assumptions. First, write operations often
+create semantic dependencies. For instance, update_user_preferences(id=123) should
+invalidate cached get_user_profile(id=123) results, but standard caching algorithms
+do not track such relationships. Standard TTL-based expiration eventually removes stale
+entries, but the delay creates a window where agents might serve outdated data. Secondly,
+heterogeneous tool types require different freshness policies. For example, weather data
+may remain valid for several minutes to hours, whereas stock prices may expire within
+seconds. Uniform TTL policies cannot handle this variability effectively, leading to either
+excessive staleness or unnecessary cache invalidation.
+Our system addresses these challenges through integrated architectural components.
+The dependency graph maintains fine-grained invalidation tracking to handle write-
+induced dependencies, ensuring immediate consistency when data relationships change.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 6 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 6 of 35
+Category-specific base TTL manages heterogeneous freshness needs by tailoring expira-
+tion times to different tool characteristics. Furthermore, our hierarchical design combines
+workflow-level and tool-level caching to capture redundancy at multiple granularities,
+while session isolation ensures safe multi-tenant operation. Table 1 outlines how our system
+compares to existing approaches in key areas relevant to agent tool execution caching. Fi-
+nally, our design complements existing optimization techniques throughout the agent stack.
+Previous work on GPTCache, semantic and prompt caching [11–15] has reduced the cost
+of LLM interaction, plan caching [10] reduces reasoning costs and our approach reduces
+tool execution costs, which is the dominant source of latency in production agents [ 4,5].
+Together, these approaches eliminate redundancy from inference to planning and finally to
+tool execution.
+Table 1. Comparison of the proposed system with the related literature work.
+Approach Target Layer Granularity Tool Redund. Write Inval. Session Isolation Adaptive
+KV Caching [16,17] LLM Inference Token level No N/A No No
+Semantic Cache [12] LLM Response Response level No No Partial No
+Prompt Cache [14,15] LLM Input Prompt level No No No Basic
+Plan Caching [24] Workflow Entire plan Partial No Partial No
+Query Cache [27,28] Database Query level Partial Basic No No
+Our System Workflow + Tool Multi-level Yes Yes Yes Non-validated *
+* Adaptive TTL mechanisms typically require longer evaluation periods (hours to days) to reveal statistically
+significant improvements over base TTLs. Our 160 s window validated base TTL policies but was insufficient for
+adaptive mechanisms (p = 0.68). The infrastructure is designed for long-running production deployments but
+validation remains a future scope (see Future Work).
+3. System Architecture
+The proposed multi-level cache architecture consists of four components, as seen
+in Figure 1. It integrates a workflow cache that stores full execution sequences, a tool
+cache that handles atomic API/database/compute calls, a dependency graph that tracks
+write-triggered invalidation and a TTL manager that applies category-specific base policies
+with infrastructure for dynamic adjustment based on staleness detection (see Section 5 for
+validation results).
+The query processing flow is as follows. First, the system checks the workflow cache.
+A cache hit returns the complete cached execution sequence, retrieving all tool results
+without executing any tool. If the workflow cache misses, query processing proceeds to the
+tool-level cache, where individual tools may hit or miss. At this stage, write operations trig-
+ger dependency-aware invalidation to maintain consistency. Meanwhile, the TTL manager
+monitors cache age and applies category-specific lifetimes to infrastructure for dynamic
+adjustment. The following subsections describe each component in detail and explain their
+role in the overall architecture. Caching efficiency is measured as the percentage of tool
+executions avoided through caching:
+Efficiency = Tool calls avoided Total tool calls × 100% (1)
+Here, ‘tool calls avoided’ includes both complete workflow cache hits (which bypass
+all tools) and individual tool cache hits. For example, if a workflow requires three tools
+[A, B, C] and the workflow cache hits, all three are avoided (efficiency contribution: 3).
+If the workflow cache misses but two of three tools [A, B] hit in the tool cache, two are
+avoided (contribution: 2). This metric motivates the design decisions that are discussed in
+the following sections.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 7 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 7 of 35
+Figure 1. Detailed system architecture diagram.
+3.1. Workflow Cache Design
+The workflow cache operates at the coarsest granularity, storing complete tool execu-
+tion sequences. When an agent plans a multi-step workflow, the system generates a unique
+key representing the entire sequence. A cache hit returns all tool results immediately,
+eliminating the need to execute any individual tools. This design is particularly effective
+when users phrase semantically different queries that map to identical tool sequences.
+For example: “What is the weather in Boston?” “Is it raining in Boston?” “Should I bring
+an umbrella to Boston?”
+All three queries produce different LLM reasoning traces but execute the same tool se-
+quence: [get_weather(city=“Boston”)]. The workflow cache recognizes this equivalence
+and serves cached results for subsequent queries. When an agent plans a tool sequence:
+T = [(t1, p1), (t2, p2), . . . ,(tn, pn)] (2)
+The system generates a workflow key by hashing the ordered sequence.
+kworkflow = H(serialize(T)) (3)
+where ti represents the tool name (e.g., “get_weather”), pi represents its parameters (e.g.,
+{“city”: “Boston”}) and H an SHA-256 hash. To maintain session isolation, the session
+identifier is concatenated with the sequence hash ifsession_id ̸= NULL:
+kworkflow = “session:” + session_id + “:” + H(serialize(T)) (4)
+https://doi.org/10.3390/make8020030
+
+===== PAGE 8 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 8 of 35
+where T is the tool sequence. This design prevents cross-session cache contamination
+through key prefixing. For example:
+Plan A: querying “my orders” does not retrieve
+Plan B: results, even if both execute identical tool sequences. This slightly decreases cache
+sharing efficiency, but ensures strong privacy guarantees. The workflow cache
+employs a 300 s TTL based on the following theoretical reasoning:
+[1] Typical tools have base TTLs of 300–600 s, making 300 s a safe lower bound.
+[2] Multi-step workflows compound staleness risk. For example, a workflow
+caching from three tools each with 5 min TTLs could serve results that are
+stale across multiple dimensions. If the earliest cached tool result is 5 min old,
+the entire workflow output reflects that staleness. Setting the workflow TTL
+conservatively to 300 s ensures an additional freshness guarantee.
+[3] Empirical evaluation confirmed that 300 s achieves a 59.4% hit rate while
+maintaining freshness.
+Basic steps of the workflow cache lookup are summarized in Algorithm 1. As demon-
+strated in Section 5, workflow caching serves as the primary efficiency contributor in
+the system.
+Algorithm 1 Workflow cache lookup
+Require: tool _sequence = [(tool 1, params 1), ...,(tool n, params n)]
+Require: session _id
+Ensure: cached _results or None
+1: work f low_key ← “session:” + session _id + “:” + H(serialize(tool _sequence ))
+2: if work f low_key ∈ Work f lowCache then
+3: entry ← Work f lowCache [work f low_key]
+4: if NOW() < entry.expires _at then
+5: RECORD_HIT(“workflow_cache”)
+6: return entry.results
+7: else
+8: DELETE(Work f lowCache [work f low_key])
+9: end if
+10: end if
+11: RECORD_MISS(“workflow_cache”)
+12: return None
+Workflow Cache Example:
+• Query 1:“What is the weather in California?”
+– Tools: [get_weather(city=“California”)]
+– Workflow key: kwork f low = SHA256(· · ·) +session123
+– Result: {temperature: 72, condition: “sunny”}
+– Cache this result
+• Query 2: “Should I bring an umbrella to California?” (within TTL) reuses the same
+tool sequence, resulting in a cache hit.
+3.2. Tool Cache Design
+When the workflow cache misses, query execution proceeds to the tool cache. Unlike
+the workflow cache, which requires complete sequence matching, the tool cache operates
+at atomic granularity, caching individual (tool_name, parameters) pairs. This enables reuse
+across different workflows that invoke common operations.
+For example:
+https://doi.org/10.3390/make8020030
+
+===== PAGE 9 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 9 of 35
+Workflow A: [get_weather(Boston), recommend_activity(weather)]
+Workflow B: [get_weather(Boston), pack_for_trip(weather)]
+The workflow cache treats these as different sequences, so both miss. However, the tool
+cache recognizes that both invokeget_weather(Boston) and thus shares the cached result.
+Tool cache TTLs are longer than workflow TTLs, e.g., weather: 1800 s; computations:
+3600 s, and are tailored to typical freshness requirements. Staleness ratio is defined as
+σ = tnow − tinsert
+TTL (5)
+where tnow is present timestamp, tinsert is cache insertion time and TTL is configured time
+to live.
+The system implements a 30% staleness threshold as a monitoring metric to indicate
+when a cache entry might require TTL adjustment. When the staleness ratio σ exceeds 0.30,
+the entry is marked as “aging” but remains valid to maximize efficiency. This metric is
+monitored continuously. While the architectural components for dynamic TTL adjustment
+are implemented, our experimental evaluation focused on validating the base hierarchical
+and dependency-aware mechanisms. The dynamic adjustment module is designed for
+long-running production environments where usage patterns evolve over hours or days,
+which exceeds the scope of the current synthetic benchmark.
+Tool cache entries use category-specific TTLs based on typical data freshness. Weather
+APIs are set for 1800 s as weather data changes gradually, whereas location APIs are set for
+600 s as user locations are moderately stable and the database queries are set for 300 s to
+balance freshness and efficiency. Additionally, aggregations are set for 300 s for the derived
+data, filesystem reads are set for 600–1800 s as files change infrequently, and computational
+tasks are set for 1800–3600 s for deterministic results. These values are configurable for
+domain-specific tuning.
+To prevent cross-user interference, tool cache keys are scoped to user sessions
+as follows:
+ktool = “tool:” + tool_name + “:” + H(params) (6)
+ifsession_id ̸= NULL:
+ktool = “session:” + session_id + “:” + ktool (7)
+The performance characteristics of the tool cache in both independent and integrated
+configurations are presented in Section 5. We placed the workflow cache first to maxi-
+mize system efficiency by capturing complete execution sequences as a single workflow.
+Although this reduces direct visibility at the tool cache level, the hierarchical design signifi-
+cantly improves total efficiency.
+3.3. Dependency-Aware Invalidation
+TTL-based expiration helps maintain freshness, but it cannot preserve correctness in the
+presence of write operations. Any tool that modifies a data source may invalidate cached
+results of tools reading from the same source. To address this, the system incorporates a
+dependency-aware invalidation mechanism. Whenupdate_user_location(user_id=123,
+city=“Seattle”) executes, previously cached results forget_user_location(user_id=123)
+and calculate_distance(user1=123, user2=456)become invalid. TTL-based expiration
+would eventually remove these entries, but the delay is unacceptable because users should
+immediately observe the updated location in subsequent queries. The dependency-aware
+invalidation procedure is defined in Algorithm 2, which describes how write operations
+https://doi.org/10.3390/make8020030
+
+===== PAGE 10 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 10 of 35
+traverse the dependency graph to identify and invalidate affected tool- and workflow-level
+cache entries.
+Algorithm 2 Dependency-aware invalidation
+Require: write_tool , session _id
+Ensure: invalidated _count
+1: a f f ected_tools ← DependencyGraph .GET_INVALIDATIONS (write_tool )
+2: invalidated _count ← 0
+3: for all tool ∈ a f f ected_tools do
+4: if session _id ̸= NULL then
+5: pattern ← “session:” + session _id + “:tool:” + tool + “:”
+6: else
+7: pattern ← “tool:” + tool + “:”
+8: end if
+9: keys ← SCAN _CACHE (pattern )
+10: for all key ∈ keys do
+11: DELETE_CACHE(key)
+12: invalidated _count ← invalidated _count + 1
+13: end for
+14: end for
+15: for all (work f low_key, work f low) ∈ Work f lowCache do
+16: if ∃ tool ∈ work f low.tools : tool ∈ a f f ected_tools then
+17: DELETE(Work f lowCache [work f low_key])
+18: invalidated _count ← invalidated _count + 1
+19: end if
+20: end for
+21: return invalidated _count
+The system tracks dependencies using a directed graph representation
+G = (V, E) (8)
+where V = all tools
+E = {(w, r) | w writes to source that r reads from} (9)
+The graph is built statically based on tool information.
+Each tool declares the following:
+reads_from = [data sources it reads]
+writes_to = [data sources it modifies]
+When the write tool w declares writes_to = [“user_db”] and read tool r declares
+reads_from = [“user_db”], edge w → r is created.
+Example construction:
+update_user_location: writes_to = [“user_db”]
+get_user_location: reads_from = [“user_db”]
+calculate_distance: reads_from = [“user_db”]
+Resulting edges:
+update_user_location→ {get_user_location,calculate_distance}
+As shown in Algorithm 2, when a write operation executes, the system traverses the de-
+pendency graph to identify all affected reads and invalidates their cached entries, ensuring
+consistency across the system. Graph-based invalidation approaches have been explored in
+distributed databases [44] and general caching systems [45]. Our dependency-aware mech-
+anism extends these concepts to handle semantic relationships between heterogeneous tool
+operations in agent workflows.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 11 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 11 of 35
+4. Experimental Methodology
+4.1. Experimental Design and Workload
+We created a synthetic benchmark that generates 15,000 queries over five tool cate-
+gories using Zipfian distributions withα = 1.5. This synthetic approach allows for controlled
+experimentation and reproducibility (see Section 6.4 for detailed rationale). These cate-
+gories were selected to represent both frequent and less common query patterns, allowing
+us to assess caching performance under realistic conditions. About 40% of API calls re-
+quest weather data, location lookups or currency conversions, while approximately 27% of
+database operations involve user queries, product searches and aggregations. Filesystem
+reads constitute 10%, computational operations 15% and external services the remaining 8%.
+The prices of tool execution range from minimal filesystem reads to more costly external
+APIs, approximately reflecting real-world pricing.
+To create realistic access patterns within these categories, queries are generated using
+a Zipfian distribution with α = 1.5, indicating that some queries appear frequently, while
+several others appear occasionally. For example, popular cities like Boston, New York
+and London dominate weather queries and top users generate the majority of database
+requests. This pattern creates natural caching opportunities while maintaining sufficient
+variability to thoroughly evaluate cache efficiency. In addition to variability in individual
+queries, the benchmark includes three workflow categories: approximately 70% of all
+queries involve a single tool call, 20% consist of multi-step workflows, such as calculating
+the distance between two users that require multiple tool calls, and the remaining 10%
+are repeated patterns that differ semantically but map to the same operational sequence.
+The queries within the benchmark utilize, on average, 0.826 tools each. Write operations
+comprise around 4% of total tool calls, with 40% location updates, 5% order creations and
+25% file writes. This distribution shows typical agent workloads where reads dominate
+but writes must be handled correctly to maintain consistency. To ensure reproducibility
+and consistent performance evaluation, we simulate tool execution using fixed latency
+ranges. API calls incur latencies ranging from 0.1 to 1.5 s, database queries from 0.05
+to 0.2 s, filesystem activities from 0.02 to 0.05 s, computing processes from 0.05 to 0.3 s
+and interactions with external services from 0.05 to 2.0 s. These ranges maintain relative
+performance across experimental configurations.
+We used synthetic workloads instead of production traces for the following reasons:
+• Reproducibility : Fixed random seeds ensure consistency across experimental runs.
+Although production traces would be ideal, they contain sensitive information and
+show significant variability between regions.
+• Controlled experimentation: The Zipfian distribution allows systematic evaluation of
+caching behavior under predictable patterns, controlling query diversity, redundancy
+and write frequency to isolate architectural effects.
+• Generalizability: Agent workloads in the real world show significant variability,
+including customer service bots, coding helpers and data analytic tools. Synthetic
+workloads capture patterns such as popularity-based repetition, temporal locality and
+write–read dependencies, making results broadly applicable.
+To balance generalizability with realism, the benchmark is calibrated such that 60%
+of weather requests target a small set of frequently queried cities, 70% of database re-
+quests involve a limited subset of users and 4% of operations perform writes triggering
+dependency-aware invalidation. While absolute cache hit rates differ across deployments,
+the architectural contributions (workflow-level caching, dependency tracking and session
+isolation) remain broadly relevant regardless of specific workload characteristics.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 12 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 12 of 35
+4.2. System Configurations and Evaluation Protocol
+We evaluated ten system configurations to isolate each component’s contributions.
+Thebaseline_no_cache configuration does not store any data and executes all the tools
+fresh. This sets a baseline for performance and cost. The simple_memoization uses a
+dictionary-based cache with an infinite capacity and does not have a TTL expiration,
+session isolation or write invalidation. This configuration is an ideal upper bound as
+it shows the maximum theoretical gains without any production constraints. We also
+tested several practical caching strategies. Memory-constrained caching configurations
+with standard LRU policies likelru_128 andlru_512 are used in memory-limited caching
+setups. These policies allow for 128 and 512 entries, respectively. This uses fixed 300 s TTLs
+and does not take workflow into account. Similarly,raw_redis uses a production-grade
+Redis with fixed TTLs but does not keep track of workflow awareness and dependency
+tracking. This shows how a standard distributed cache works without any agent-specific
+optimizations. We evaluated three partial configurations that enable specific subsystems
+so that we could separate our architectural contributions. The tool_cache_only variant
+has tool-level caching with dependency-aware invalidation and session isolation but it
+excludes the workflow cache. This allows us to measure tool-level benefits independently.
+Conversely, theworkflow_cache_only configuration applies workflow-level caching with
+session isolation but excludes tool caching and dependency tracking, isolating workflow-
+level contributions. The tool_workflow_cache combines both layers with invalidation and
+isolation but it uses fixed TTLs. This allows us to study hierarchical caching without using
+adaptive mechanisms.
+Finally, thefull_system configuration integrates all components, including the work-
+flow cache, the tool cache, dependency-aware invalidation, adaptive TTL management
+and session isolation. Although our evaluation window (160 s) was too short to measure
+dynamic TTL adaptation, it provided insight into hierarchical caching interactions and
+established a foundation for future validation. We tested all configurations on the same
+query sequences so that we could compare them directly and make sure that any differences
+in performance were due to architectural choices rather than workload variation. To ensure
+variance and statistical validity for a total of2,250,000 queries, i.e., 15,000 queries × 15 runs
+× 10 configurations, each configuration was evaluated with 15 independent runs with dif-
+ferent random seeds. This extensive evaluation provides robust statistical power to find
+even small performance differences between configurations. To maintain reproducibility
+while adding controlled variation, queries were shuffled using a seed derived from the
+configuration name and run number.
+shuffle_seed = base_seed + hash(config_name) + run_id × 1000 (10)
+This ensured that each run saw queries in a different order, which tested both cold
+and warm cache behavior while keeping the results the same across all configurations.
+Each benchmark run simulates a single user session, which is given by a unique
+session_id. This prevents cache interactions between runs and ensures that cached entries
+remain isolated to the session that produced them. We focused on single-session workloads
+for the primary evaluation (Sections 4 and 5) to facilitate a controlled comparison of caching
+behavior. In Section 5.6, we evaluate multi-tenant behavior separately by simulating
+15 concurrent sessions to study cross-session interactions. For each query, we record
+workflow- and tool-level cache hits and misses, execution time measured with microsecond
+resolution, memory usage, invalidation events and total tool costs. The collection of these
+metrics enables a comprehensive analysis of not only cache performance but also runtime
+overhead and the distribution of work across tools, supporting our ablation studies and
+https://doi.org/10.3390/make8020030
+
+===== PAGE 13 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 13 of 35
+comparative analyses. To support longer experiments and avoid restarting entire batches,
+the system uses checkpoint-based recovery. After each run completes, its results are written
+to a file named {config_name}.json. If an evaluation is interrupted, it can resume from the
+most recent checkpoint. This mechanism ensures that all 150 runs are completed reliably
+across multi-hour test sessions. All experiments were conducted on a Windows 11 server
+using Redis 7.0.8 and Python 3.10 along with NumPy and SciPy for statistical utilities. All
+runs were executed single-threaded to eliminate concurrency effects and isolate caching
+behavior, ensuring that observed performance differences reflect cache design rather than
+threading or scheduling artifacts.
+4.3. Statistical Analysis and Cost Model
+We computed 95% and 99% confidence intervals for primary metrics such as hit rates,
+execution times and caching efficiency using Student’s t-distribution (n = 15).
+CI95% = ¯x ± t0.025,14 · s√n (11)
+CI99% = ¯x ± t0.005,14 · s√n (12)
+where
+¯x is the sample mean;
+s is the sample standard deviation;
+t0.025,14 = 2.145 (95% confidence);
+t0.005,14 = 2.977 (99% confidence).
+Confidence intervals narrower than 1% of the mean indicate high measurement preci-
+sion across independent runs. Beyond confidence intervals, we performed independent
+two-sample t-tests to compare each configuration to the baseline, reporting t-statistic,
+two-tailed p-values and Cohen’s d effect size.
+t = ¯x1 − ¯x2r
+s2 1
+n1 + s2 2 n2
+(13)
+d = ¯x1 − ¯x2
+spooled
+(14)
+Statistical significance thresholds are commonly defined as follows: p-values less
+than 0.05 indicate significance at the 95% confidence level, p-values less than 0.01 indicate
+significance at the 99% confidence level and p-values below 0.001 are considered highly
+significant. These thresholds help us find out whether observed differences are likely due
+to the experimental treatment rather than random variation. Because multiple comparisons
+were performed across configurations and ablations, a Bonferroni correction was applied
+to control the family-wise error rate. All primary results greatly exceeded this threshold
+(p < 0.0001), providing strong evidence of real effects. Specifically, we considered nine con-
+figuration comparisons and three ablation comparisons, i.e., a total of twelve comparisons.
+The adjusted significance threshold was α = 0.05/12 ≈ 0.0042. As reported in Section 5,
+all primary results, including workflow cache, tool cache and full system, far exceeded
+this threshold (p < 0.0001), while adaptive TTL showed (p = 0.68) within our evaluation
+window, as expected given the short runtime. Effect sizes were interpreted according to
+Cohen’s conventions, where d = 0.2 indicates a small effect, d = 0.5 a medium effect and
+d = 0.8 a large effect. These standardized measures allow us to quantify not just whether
+differences are statistically significant but also whether they are practically meaningful.
+Comparisons with practical baselines such as LRU-512 and the tool_cache_only configu-
+https://doi.org/10.3390/make8020030
+
+===== PAGE 14 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 14 of 35
+ration are presented in Section 5, where we demonstrate both statistical significance and
+practical impact.
+To estimate potential operational savings, we assigned representative API and service
+costs to each tool category using publicly listed commercial APIs and cloud service pricing,
+as detailed in Table 2. For example, weather APIs using OpenWeatherMap’s paid tier costed
+approximately USD 0.0012 per call [46], database queries with AWS RDS Proxy ranged from
+USD 0.0003 to USD 0.001 per query [47], computation with AWS Lambda incurred USD
+0.0002 per 100 ms invocation [48] and external APIs via third-party aggregators ranged
+from USD 0.001 to USD 0.005 per call [49]. These values reflect typical pricing structures
+in cloud platforms and provide a consistent basis for cost comparisons. However, they
+are not direct financial projections for any specific deployment. Actual costs in production
+vary depending on usage volume, negotiated pricing tiers, discounts and tool selection.
+Real-world costs may vary based on API prices, enterprise agreements, volume discounts,
+regional differences and the particular tools used. Organizations may expect actual savings
+up to +300% of these representative estimates depending on deployment-specific factors,
+including free-tier usage, volume discounts and workload characteristics.
+Reported savings indicate relative improvements between cached and non-cached con-
+figurations under these assumptions, and do not guarantee monetary reductions. Absolute
+savings should be calculated using actual deployment data, including real API billing and
+expected query volumes. The primary objective of this cost model is to illustrate relative
+performance across caching strategies rather than to provide precise financial projections
+for any particular deployment. The cost calculation methodology follows standard account-
+ing principles. The total cost for a configuration without caching is simply the sum of all
+tool invocations:
+Costno cache =
+n
+∑
+i=1
+cost(tool i) (15)
+For caching configurations, cost includes only cache misses:
+Costcached = ∑
+i∈misses
+cost(tool i) (16)
+The savings are then calculated as
+Savings = Costno cache − Costcached
+Costno cache
+× 100% (17)
+Return on investment (ROI) is calculated as
+ROI = Cost saved Cost cached × 100%.
+Note: We comparefull_system againstbaseline_no_cache (zero caching) to demon-
+strate absolute improvement potential. However, production systems typically already
+employ some form of caching. To demonstrate the potential economic advantage at scale,
+we model annual savings for a representative deployment handling one million queries
+per year within a single organization. This reflects a typical small-to-medium installation
+in which multiple users rely on shared caching resources. Organizations should substitute
+actual API pricing for deployment-specific estimates, where the baseline cost is USD 8.49
+per 15,000 queries = USD 0.566 per 1000 queries and the annual baseline cost is 1000 ×
+USD 0.566 = USD 566. Projected savings under different caching efficiencies are presented
+in Section 5, where we analyze the economic impact of our architectural contributions.
+While our evaluation uses placeholder costs and a short 160 s evaluation window, these
+estimates highlight the practical economic benefit of workflow- and tool-aware caching in
+https://doi.org/10.3390/make8020030
+
+===== PAGE 15 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 15 of 35
+production-scale deployments. The methodology established here can be adapted to any
+specific deployment by substituting actual API costs and observed query volumes.
+Table 2. Representative tool cost structure (per invocation).
+Tool Category Cost Range (USD) Example Tool Cost (USD)
+Weather APIs 0.001 get_weather 0.001
+Location APIs 0.0005 get_user_location 0.0005
+Database queries 0.0003–0.001 db_query_user 0.0003
+Filesystem ops 0.0001 fs_read_file 0.0001
+Computational 0.0002 compute_fibonacci 0.0002
+External services 0.001–0.005 external_api 0.001
+4.4. Extended Evaluations
+Beyond the primary ten-configuration comparison (Sections 4.1–4.3), we conducted
+additional targeted experiments to validate specific architectural properties.
+• Experiment 1: Personalized Memory Effects
+To quantify individualized memory production and cache-sharing benefits, we sim-
+ulated 15 users across five personas with varying repetition patterns. Monitoring
+bots with 85% self-repetition represent automated systems performing scheduled
+health checks, API monitoring and periodic data synchronization. Accountants
+with 70% repetition represent domain-specific workflows such as financial report
+generation, compliance checking and recurring data analysis, where users repeat-
+edly invoke similar tool sequences (e.g., query_database to aggregate_results to
+generate_report), with varying parameters such as different time periods, depart-
+ments or cost centers. Travelers with 50% repetition approximate general-purpose
+assistants handling mixed-intent queries that balance planning-related repetition (e.g.,
+“weather in Boston,” “hotels in Boston,” “restaurants in Boston”) with exploratory
+diversity as users investigate new destinations or activities. Customer service agents
+with 35% repetition reflect FAQ-style support bots that serve common queries fre-
+quently (e.g., “reset password,” “track order,” “return policy”) while also handling
+novel user requests. Researchers with 10% repetition model hypothesis-driven explo-
+ration workflows where most queries are unique, as users investigate new datasets,
+test different analytical approaches and explore diverse information sources. The rep-
+etition thresholds (85%, 70%, 50%, 35%, 10%) provide approximately uniform cov-
+erage across the repetition spectrum while maintaining equal statistical power per
+persona (3 users × 15,000 queries = 45,000 queries per tier). Each of the 15 users
+executed 15,000 queries under two modes: (1) an isolated cache with per-user session
+isolation (15 users × 15,000 queries = 225,000 queries), and (2) a shared cache with
+a global cache pool (15 users × 15,000 queries = 225,000 queries). This provided a
+total of 450,000 queries across both modes. This two-mode design directly measures
+cross-user sharing gains (shared efficiency minus isolated efficiency) while capturing
+individualized self-repeat rates.
+• Experiment 2: Workload Sensitivity Analysis
+We evaluated system performance across five access pattern distributions represent-
+ing diverse deployment scenarios: Zipfian α = 1.1 (exploratory, low skew), α = 1.5
+(typical web access, medium skew), α = 1.9 (specialized agents, high skew), uniform
+(maximum diversity) and bimodal (80% concentrated, 20% exploratory). Each distri-
+bution was tested with three configurations, baseline, tool-only and full system, across
+three independent runs with 15,000 queries each, totaling 675,000 queries. This design
+isolates the effect of access pattern concentration on caching efficiency.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 16 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 16 of 35
+• Experiment 3: Write Intensity Impact
+We evaluated robustness under increasing write ratios by systematically varying the
+write ratio from a 4% baseline to a 30% extreme. Each ratio was tested with three
+configurations across three runs with 15,000 queries each, totaling 540,000 queries.
+This experiment evaluates efficiency degradation under increasing write pressure,
+reflecting reduced cacheable reads and increased cache churn.
+• Experiment 4: Plan Caching Comparison
+To rigorously evaluate the hierarchical caching against plan caching baselines, we im-
+plemented four configurations: (1)no_cache (baseline); (2) workflow_cache_only,
+i.e., workflow-level result caching within our framework, which is treated as a
+proxy for plan caching baselines that reuse execution traces; (3)tool_cache, i.e., tool
+level only, ablation; and (4)full_system, the hierarchical system. Each configura-
+tion was evaluated using 15 independent runs of 15,000 queries each, resulting in
+225,000 queries per configuration and 900,000 queries in total across the four configu-
+rations. We report mean latency, speedup with 95% confidence intervals and pairedt-
+tests against the baseline. We useworkflow_cache_only as a functional proxy for plan
+caching, and its limitations and implications are discussed in Section 5.7. Across these
+four experiments, we executed an additional 2,565,000 queries beyond the primary
+evaluation. This brings the total experimental scope to 4,815,000 query executions.
+4.5. Validity and Reproducibility
+To ensure the robustness of our findings, we assessed potential threats to internal,
+external and construct validity. Table 3 summarizes the main risks, mitigation strategies
+applied and remaining limitations. While using synthetic workloads allows for repro-
+ducibility and controlled experimentation, validating our approach with real production
+traces remains an important consideration for future work. For transparency and repro-
+ducibility, we will release the full benchmarking framework post-publication. This includes
+the workload generator, caching modules, evaluation harness and analysis scripts. We
+will also release the raw logs for all 2.25 million executed queries, along with summary
+statistics and confidence intervals, providing complete transparency of our experimental
+data. Using the provided random seeds and configuration files, other researchers will be
+able to fully reproduce our experiments and evaluate alternative caching strategies.
+Table 3. Mitigation of threats to validity.
+Category Threat Mitigation Residual Limitation
+External Validity Synthetic workload may not match real agent behavior Zipfian distribution mimics web access patterns Real agents may have different distributions.
+Construct Validity Placeholder costs may not reflect actual pricing Based on published API tiers Absolute savings require deployment-specific calibration
+External Validity 160 s evaluation window limits adaptive TTL validation Base TTL policies achieve 76.5% efficiency Adaptive TTL benefits remain unvalidated
+4.6. Multi-Tenant Concurrent Evaluation
+We also evaluated the system under multi-tenant conditions to assess session isolation
+and cache behavior under concurrent workloads. In this experiment, 15 tenants executed
+15,000 queries each (225,000 queries total) using a ThreadPoolExecutor to introduce concur-
+rency. Each tenant was assigned a unique random seed (42 + tenant_id), ensuring variation
+in access patterns while maintaining reproducibility. Session isolation was enforced using
+session-scoped cache key namespaces.
+Cache keys were structured as session:tenant_{id}:tool:{tool_name}:{hash}
+to guarantee strict per-tenant scoping and prevent any cross-tenant data leakage. Re-
+dis was configured without shared global keys, and we verified isolation by inspecting
+https://doi.org/10.3390/make8020030
+
+===== PAGE 17 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 17 of 35
+key distributions and computing hit rates per tenant independently. This design ensures
+that even if multiple tenants issue identical queries, their cached results remain separate,
+preserving both privacy and correctness, with no cross-tenant leakage. Performance results
+from this multi-tenant evaluation, including throughput, hit rates and isolation verification,
+are presented in Section 5.6. These experiments demonstrate that our architecture maintains
+both efficiency and safety guarantees under realistic concurrent workloads.
+5. Results
+We evaluated the system using the synthetic workloads generated from a Zipfian
+distribution with α = 1.5 as Zipfian distributions capture popularity skew, temporal locality
+and write–read dependencies. Although the synthetic setup captures essential access
+patterns, absolute hit rates will vary by domain. For example, customer service bots that
+use FAQ patterns may have a higher workflow cache hit rate of 65–75%, while exploratory
+data analysis, which includes unique queries, may have a lower hit rate of approximately
+30–45%. Therefore, the organizations should set their own expectations for performance
+based on how often they repeat tasks. However, the architectural principles are applicable
+across various domains.
+5.1. Aggregate Performance
+Due to the hierarchical design, the workflow cache processes all queries first.
+The system-wide tool hit rate of 5.37% reflects hits across the entire workflow, while
+the conditional tool hit rate of 13.2% applies only to the 40.6% of queries that reach the
+tool cache after the workflow cache misses, i.e., 40.6% × 13.2% ≈ 5.37%. Queries served by
+the workflow cache bypass tool execution completely. Atool_cache_only configuration
+without workflow caching achieved a hit rate of 50.17% by processing all queries at the
+tool level. This seemingly lower hit rate in the full system shows that the workflow cache
+intercepts queries first. The overall efficiency of 76.54% exceeds the sum of the hit rates
+because the workflow cache hits avoid multiple tool calls per query, i.e., an average of
+1.86 tools per workflow.
+Table 4 presents results from 15 independent runs per configuration with a total of
+225,000 query executions. The confidence intervals (CIs) are narrow, typically less than
+1% of the mean, indicating high measurement stability. The full caching system achieved
+76.5% efficiency, and the 95% CI is [76.4%, 76.7%], p < 0.0001), reducing the average query
+processing time by 13.3× from 0.31 s to 0.023 s per query, excluding LLM inference (see
+Table 4). This efficiency reflects the combined effect of workflow caching, which served
+59.4% of queries completely from cache- and tool-level caching, which handled individual
+tool calls for the remaining queries. The system reduced estimated tool execution costs by
+73.3% compared with the no-cache baseline. The 59.4% workflow cache hit rate reflects
+repetition patterns in our benchmark. For explicitly repeated patterns, about 10% of queries
+are semantically different but execute identical tool sequences. For example, “Weather in
+Boston?” and “Need an umbrella in Boston?” both trigger get_weather(city=“Boston”).
+Popular locations such as Boston, New York and London account for approximately 60%
+of weather queries, and the top 50 users generate 70% of database queries. Workloads
+with different repetition patterns will see workflow cache benefits accordingly. Confidence
+intervals confirm the reliability of these measurements. The tool hit rate is 5.37% ± 0.20%,
+workflow hit rate is 59.4% ± 0.18% and overall caching efficiency is 76.5% ± 0.18%. Fur-
+thermore, relative uncertainties are low, 3.7% for tool hits, 0.3% for workflow hits and 0.2%
+overall, confirming reproducibility across 15 independent runs and ruling out random
+variation. Execution time speedups across configurations are shown in Figure 2. The full
+system achieved a 13.3 speedup, performing comparably to a simple memoization of 16.1
+https://doi.org/10.3390/make8020030
+
+===== PAGE 18 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 18 of 35
+while supporting TTL-based expiration, session isolation and write-triggered consistency.
+LRU-512 achieved 12.1 speedup, whereas tool_cache_only and workflow_cache_only
+configurations achieved 6.9 and 6.8 speedups, respectively, demonstrating that neither com-
+ponent alone matched the full system’s performance. When it comes to caching efficiency,
+Figure 3 compares efficiencies across configurations. The full system achieved an efficiency
+of 76.5%, compared to practical baselines like LRU-512, which showed 76.9%, while adding
+workflow awareness and dependency invalidation. The simple_memoization represented
+a theoretical upper bound with infinite memory and no consistency controls. The ∼4.5%
+gap to this upper bound is a practical trade-off for TTL-based consistency, invalidation
+and session isolation.
+These aggregate results highlight the advantage of integrating workflow- and tool-
+level caching.
+Figure 2. Execution time speed comparison across configurations.
+Figure 3. Overall caching efficiency achieved by different system configurations.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 19 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 19 of 35
+Table 4. Aggregate results across 15 independent runs.
+Configuration Tool Workflow Overall Speedup Cost CI Hit Rate Hit Rate Efficiency Savings Width
+baseline_no_cache 0.00% 0.00% 0.00% 1.00x 0.00% 0
+simple_memoization 81.04% 0.00% 81.04% 16.13x 75.22% 0.11
+lru_512 76.89% 0.00% 76.89% 12.05x 72.86% 0.17
+tool_cache_only 50.17% 0.00% 50.17% 6.94x 53.99% 0.4
+full_system 5.37% 59.39% 76.54% 13.30x 73.29% 0.4
+5.2. Component Contributions
+To understand each component’s contribution, we conducted systematic ablation
+experiments comparing baseline configurations to partial implementations. Figure 4 sum-
+marizes the efficiency gains and speedup improvements from each component. The left
+side of Figure 4 shows the contributions to efficiency. The difference in efficiency between
+baseline_no_cache andtool_cache_only was +50.2%, p < 0.0001, and d = 23.5.
+Figure 4. Results of ablation experiments isolating component contributions.
+The tool cache alone had a hit rate of 50.2% on 278,541 tool calls, resulting in a
+6.9× speedup and a cost reduction of 54%. The workflow cache contribution from
+tool_cache_only totool_workflow_cache increased efficiency by +26.3 percentage points,
+p < 0.0001 and d = 72.2, making this the single largest contributor to overall perfor-
+mance. Workflow caching served complete execution sequences for 59.4% of queries,
+eliminating 139,611 tool calls, i.e., about 75% of total tool executions that would other-
+wise be required. On average, each workflow cache hit avoided 1.86 tool calls per query.
+The right panel of Figure 4 shows the efficiency gains, with the solid blue line representing
+overall efficiency and the dashed orange line showing speedup. The significant increase
+fromtool_cache_only to tool+workflow_cache shows the benefit of hierarchical caching
+compared to single-level caching. Finally, the transition from tool_workflow_cache to
+full_system changed efficiency only by +0.05 percentage points with p = 0.68 and d = 0.4,
+which was not statistically significant. This is to be expected because the runtime was
+only 160 s and the synthetic workload was stable. As discussed in Section 6, adaptive TTL
+mechanisms usually need longer operation windows to show learning benefits.
+5.3. Category-Specific Performance
+Cache hit rates varied significantly across tool types, primarily due to differences in
+parameter diversity and temporal locality. Figure 5 shows the distribution of cached tool
+calls by category along with their corresponding hit rates.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 20 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 20 of 35
+Figure 5. Category-specific hit rates.
+Weather APIs had the highest hit rate at 23.7%, with 14,073 hits out of 59,400 total calls.
+This high efficiency comes from concentrated parameters as 60% of weather queries focus
+on the top 10 most popular cities.
+User location services achieved a hit rate of 19.8%, with 7129 hits out of 36,000 calls.
+This benefits from repeated location lookups during session persistence. External APIs
+achieved moderate repetition, with a 13.9% hit rate with 6254 hits across 45,000 calls. Exter-
+nal APIs had moderate repetition but the hit rate was lower than weather and location due
+to increased parameter variability and an increased TTL window to 3600 s. This reduced
+temporal locality within the 160 s evaluation window. Computational tasks, including
+code execution and data processing, had a 6.2% hit rate with 2790 hits out of 45,000 calls.
+This lower hit rate means greater variability in computational parameters and longer op-
+eration times that limit chances for temporal overlap. The database and filesystem tools
+showed almost no cache reuse, as each query generally accessed unique parameters or file-
+names. These results demonstrate that caching efficiency is highly dependent on workload
+variables. The benchmark was designed with high query variability, so the observed hit
+rates are conservative. In practical applications with more repetitive queries, most tool
+categories would likely achieve greater cache effectiveness. This variation in performance
+by category shows the importance of category-specific TTL policies (see Section 3). The full
+system reduced operational costs by 73.3% compared to the baseline. It performed compa-
+rably to practical caching methodologies like LRU-512, which achieved 72.9%, and simple
+memoization, which achieved 75.2%, while providing stronger consistency guarantees.
+Table 5 shows the cost comparison per run with 15,000 queries.
+Table 5. Cost comparison per run with 15,000 queries.
+Configuration Cost Per Run Savings vs. Baseline ROI%
+baseline_no_cache USD 8.49 0% 0%
+simple_memoization USD 2.10 75.22% 303.51%
+lru_512 USD 2.30 72.86% 268.49%
+tool_cache_only USD 3.91 53.99% 117.35%
+full_system USD 2.27 73.29% 274.37%
+https://doi.org/10.3390/make8020030
+
+===== PAGE 21 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 21 of 35
+5.4. Cost Analysis
+Cost reductions increase proportionally with query volume, as shown in Table 6. For a
+typical deployment managing one million queries annually, the projected annual cost
+reduction would be roughly USD 415.
+Department-scale deployments processing 10 million inquiries annually would result
+in savings of around USD 4150, and enterprise-scale deployments handling 100 million
+queries per year might achieve yearly savings of USD 41,500. Extensive production systems
+processing one billion queries per year could realize savings of USD 415,000.
+Table 6. Cost savings scale with deployment size.
+Deployment Scale Queries/Year Annual Savings
+Small team 1M USD 415
+Department 10M USD 4150
+Enterprise 100M USD 41,500
+Large-scale production 1B USD 415,000
+These values are derived from representative API prices and are intended to demon-
+strate relative improvements amongst caching strategies. Actual savings depend on API
+pricing, discounts and workload characteristics. As noted in Section 4, organizations
+should substitute actual API costs for deployment-specific estimates. Figure 6 visualizes
+the cost breakdown and ROI across configurations, showing both absolute costs per run,
+i.e., the left axis and bars, and ROI percentage, i.e., the right axis and line with markers.
+The full system achieved an ROI comparable to simple memoization while maintaining
+production guarantees.
+Figure 6. Cost breakdown and return on investment across configurations.
+Figure 7 shows how projected annual savings increase with deployment size. The col-
+ored bands show the breakdown of savings by configuration milestone: tool cache con-
+tribution in teal, workflow cache contribution in yellow and full system optimization in
+green. The following Table 7 shows specific savings values for each deployment scale.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 22 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 22 of 35
+Table 7. Cost comparison and annual savings by query volume.
+Query Volume Baseline Cost Full System Cost Annual Savings Savings %
+1M queries/year USD 566 USD 151 USD 415 73.3%
+10M queries/year USD 5660 USD 1512 USD 4148 73.3%
+100M queries/year USD 56,600 USD 15,119 USD 41,481 73.3%
+1B queries/year USD 566,000 USD 151,189 USD 414,811 73.3%
+Figure 7. Cost scaling by deployment size. Refer to Table 5 for cost comparison and annual savings
+by query volume.
+These results demonstrate that hierarchical caching provides substantial economic
+benefits across deployment scales.
+5.5. Statistical Significance
+All primary architectural components demonstrated statistically significant improve-
+ments with large effect sizes. Figure 8 presents the statistical significance analysis, showing
+efficiency improvements on the x-axis, p-values with color intensity and Cohen’s d effect
+size annotations for each component contribution. In the hierarchical system, the work-
+flow cache served 59.4% of queries, avoiding 139,611 tool executions and providing a
+26.3 percentage point efficiency gain.
+Note that because of the hierarchical design, all the queries served by the workflow
+cache never reach the tool cache.
+As a result, the tool cache hit rate is measured for the remaining 40.6% of queries.
+Across this 40.6% of queries, the tool cache achieved a 5.4% system-wide hit rate. Among the
+subset of queries that actually reached the tool cache, the effective hit rate was 13.2%. These
+values precisely represent the tool cache’s performance for its intended workload.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 23 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 23 of 35
+Figure 8. Statistical significance of component contributions.
+5.6. Multi-Tenant Concurrent Performance
+To evaluate production readiness and verify session isolation, we simulated a multi-
+tenant environment with 15 concurrent tenants, each executing 15,000 queries for a total of
+225,000 queries. Table 8 shows the multi-tenant concurrent evaluation results with mean val-
+ues, standard deviations and ranges across tenants. Queries ran in parallel using a Thread-
+PoolExecutor, with session-scoped cache keys and Redis configured with production-level
+performance. Each tenant used a unique random seed to generate varied query patterns.
+Cache keys followed the convention session:tenant_{id}:tool:{tool_name}:{hash}
+to ensure strict per-tenant scoping. The analysis verified full system isolation and all
+806,320 cache entries were accurately scoped. A single shared key (adaptive_ttl_history)
+was present for the adaptive TTL state, although it did not affect accuracy.
+Table 8. Multi-tenant concurrent results (15 tenants, 15K queries each).
+Metric Mean Std Dev Min Max
+Tool Hit Rate (%) 10.81 0.015 10.79 10.84
+Workflow Hit Rate (%) 56.19 0.015 56.16 56.21
+Execution Time (s) 430.9 9.2 421.0 448.6
+Success Rate (%) 100.0 0 100.0 100.0
+The system successfully processed all 225,000 queries in 453.1 s with a throughput
+of 496.7 queries per second. A 10.81% average tool hit rate with standard deviation of
+0.015 was achieved, indicating minimal variation. The workflow hit rate was 56.19% with
+standard deviation 0.015. Execution times were the same for all tenants, with a mean of
+430.9 s and standard deviation 9.2 s. This shows that the performance was stable for each
+tenant. Cache key analysis confirmed full-session isolation as all 806,320 cache entries
+were correctly scoped with the session:tenant_{id}:... prefix and no cross-tenant
+contamination was detected. A singular shared key ofadaptive_ttl_history was utilized
+for monitoring adaptive TTL states, but it did not affect accuracy as it contained only
+aggregated statistics. Comparing single-tenant and multi-tenant performance reveals the
+architectural trade-offs inherent in session isolation. Table 9 presents this comparison.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 24 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 24 of 35
+Table 9. Performance comparison: single vs. multi-tenant.
+Configuration Tool Hit Workflow Hit Overall Rate Rate Efficiency
+Single tenant 5.4% 59.4% 76.5%
+Multi-tenant (15 concurrent) 10.8% 56.2% 74.1%
+Difference +5.4 pp −3.2 pp −2.4 pp
+The tool cache hit rate increases from 5.4% to 10.8% in the single-tenant run un-
+der a multi-tenant load. This improvement results from shared read operations among
+tenants. Popular queries like get_weather(city=“Boston”) orget_exchange_rate(USD,
+EUR) benefit from this shared caching. It is safe to use these operations across tenants
+because they always give the same results for the same parameters. This also improves
+efficiency. In contrast, the hit rate for the workflow cache decreases from 59.4% to 56.2%.
+This is intentional as each tenant’s workflow cache is isolated to prevent cache poisoning.
+Each tenant’s multi-step query sequences are handled separately. For example, if Ten-
+ant A executes [get_weather(Boston), recommend_activity(weather)] and Tenant B
+executes[get_weather(Boston), pack_luggage(weather)], these workflows are cached
+separately, even though the first step is identical. This ensures that no tenant can access
+another tenant’s workflow results. The overall efficiency decreases by 2.4 percentage points
+from 76.5% to 74.1%. This is a fair trade-off for production safety. Redis maintained a
+consistent throughput of 496.7 queries per second even with 15 concurrent tenants. There
+was almost no lock contention, i.e., <0.1% of execution time and negligible connection
+timeouts. These results show that the system maintains robust performance and security
+guarantees even when multiple tenants are using it at the same time. The next section
+discusses the interpretation of these findings and their implications for practical use.
+5.7. Comparison with Plan Caching Approaches
+To rigorously evaluate hierarchical caching against plan caching baselines, we con-
+ducted a comparison. Standard plan caching approaches [20] focus on reusing reasoning
+traces to avoid redundant LLM inference. This eliminates planning overhead, but tool
+calls are typically re-executed to maintain freshness or because caching operates only at
+the reasoning level. For example, two ReAct agent plans that both require get_weather
+(city=‘Maryland’) would cache different reasoning traces but both would execute the
+weather API call independently. Advanced semantic plan matching techniques [50] and
+template-based execution reuse strategies [51] employ sophisticated matching that may
+achieve higher hit rates than our exact-match proxy. However, these systems still face a fun-
+damental limitation in that tool-level redundancy persists across different plans. Our hierar-
+chical approach caches both workflow-level patterns and individual tool execution results.
+We implemented four configurations: (1) no_cache (baseline), (2) workflow_cache_only
+(workflow-level result caching, used as a proxy for plan caching approaches that reuse
+execution traces; note that our workflow cache stores both plan and results, whereas pure
+plan caching [20] would typically re-execute tools), (3) tool_cache (tool level only, ablation)
+and (4) full_system (hierarchical).
+As presented in Table 10, hierarchical caching achieved a 13.70× ± 0.17 speedup com-
+pared to plan caching’s 7.14 × ± 0.08, i.e., a 92% performance improvement ( p < 0.001).
+The confidence intervals are narrow relative to mean batch latency, indicating stable mea-
+surements across 15 independent runs. Plan caching achieved 73.3% efficiency by eliminat-
+ing workflow-level redundancy, but tool-level redundancy persisted. Tool-only caching
+achieved 53.2% efficiency by capturing cross-workflow tool reuse but missed workflow
+patterns. Our hierarchical approach achieved 77.6% efficiency by capturing redundancy at
+https://doi.org/10.3390/make8020030
+
+===== PAGE 25 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 25 of 35
+both granularities simultaneously. This validates that multi-level caching provides substan-
+tially greater benefits than single-layer approaches. Plan caching approaches [20] focus on
+reusing reasoning templates to avoid redundant LLM inference. Our workflow_cache_only
+configuration serves as a conservative proxy for plan caching: it caches complete workflow
+sequences (both plan and results) but does not cache individual tools across different work-
+flows. Although pure plan caching may re-execute tools for freshness, this proxy captures
+the main workflow-level optimization effect. We therefore useworkflow_cache_only as
+a functional proxy for plan caching since it captures the primary efficiency mechanism
+of such systems: reusing a pre-determined execution sequence for recurring user intents.
+We acknowledge that this is a simplification. State-of-the-art plan caching systems (e.g.,
+semantic or template-based planners) employ more sophisticated matching mechanisms
+that can retrieve abstract plan templates even when specific parameters differ. In contrast,
+our proxy assumes exact parameter matching at the workflow level. This assumption
+may underestimate the absolute hit rate achievable by advanced semantic plan caching
+systems. However, the observed performance gap remains substantial (13.7 × speedup
+for hierarchical caching versus 7.14× for workflow-only caching). This gap validates our
+core hypothesis: caching at the reasoning or plan level alone is insufficient to eliminate
+execution redundancy without complementary tool-level caching. Even when plan reuse is
+effective, redundant tool invocations dominate execution cost, and hierarchical caching is
+required to address this bottleneck.
+Table 10. Plan caching comparison results (n = 15, 95% CI).
+Configuration Latency (s) Speedup Efficiency p-Value
+No cache 4749.31 ± 29.28 1.00× 0.0% -
+Plan cache 665.70 ± 6.84 7.14× ± 0.08 73.3% <0.001
+Tool cache 650.08 ± 4.22 7.31× ± 0.06 53.2% <0.001
+Full system 346.67 ± 3.79 13.70× ± 0.17 77.6% <0.001
+5.8. Workload Distribution Sensitivity
+To evaluate system robustness across diverse access patterns, we systematically tested
+five distribution types representing different deployment scenarios: Zipfian α = 1.1,
+i.e., exploratory workloads with low concentration; α = 1.5, i.e., typical web access with
+medium concentration; α = 1.9, i.e., specialized agents with high concentration; uniform,
+representing maximum diversity with no skew; and bimodal, with 80% concentrated
+queries and 20% exploratory. Each distribution was evaluated with three configurations
+(baseline, tool-only, full system) across three independent runs with 15,000 queries each,
+totaling 675,000 queries. Table 11 presents the mean efficiency, tool hit rates, workflow hit
+rates and speedups with standard deviations.
+This robustness stems from the workflow-level structural matching of tool sequences.
+Queries like “Weather in Boston?” and “Need umbrella in Boston?” map to identical tool
+sequences regardless of parameter distribution, creating workflow-level hits independent
+of Zipfian concentration. In contrast, tool-only caching depends directly on parameter rep-
+etition, and uniform distributions reduce tool hit rates by 10.5 percentage points compared
+to high-skew Zipfian (44.9% vs. 55.4%). The workflow cache’s 1.0 percentage point hit rate
+variance (59.8-60.8%) across all distributions demonstrates that semantic redundancy exists
+even in maximum-diversity workloads. This explains why hierarchical caching maintains
+76.8% efficiency under uniform distribution, as workflow-level patterns provide a stable
+foundation that tool-level caching enhances but does not dominate.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 26 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 26 of 35
+Table 11. Workload sensitivity analysis (3 runs × 15K queries, mean ± std).
+Distribution Tool-Only Full System Speedup WF Hit Rate
+Zipf α = 1.9 (high skew) 55.4% ± 0.4 78.2% ± 0.2 14.17× ± 0.08 60.8% ± 0.1
+Zipf α = 1.5 (medium) 53.3% ± 0.5 77.9% ± 0.3 13.72× ± 0.40 60.5% ± 0.4
+Zipf α = 1.1 (low skew) 49.7% ± 0.5 77.1% ± 0.0 13.34× ± 0.05 60.1% ± 0.3
+Bimodal (80/20) 50.3% ± 0.0 76.9% ± 0.1 13.08× ± 0.32 60.0% ± 0.1
+Uniform (no skew) 44.9% ± 1.0 76.8% ± 0.5 12.92× ± 0.61 59.8% ± 0.6
+Full system efficiency exhibited modest sensitivity to access pattern concentration,
+ranging from 76.8% (uniform) to 78.2% (high-skew Zipfian). As expected, a higher concen-
+tration yields higher efficiency, as Zipfian α = 1.9 achieved a 1.4 percentage point higher
+efficiency than uniform distribution. However, even under maximum diversity (uniform),
+the system maintained 76.8% efficiency and 12.92 × speedup. Tool-only configurations
+showed substantially greater variance (44.9–55.4%), with uniform distribution achieving
+a 10.5 percentage point lower efficiency than high-skew Zipfian. In contrast, full sys-
+tem performance remained stable (76.8–78.2% range), demonstrating that workflow-level
+caching provides robustness across distributions. Workflow hit rates remained remarkably
+stable (59.8–60.8%) across all distributions, varying by only 1.0 percentage point. This
+stability suggests workflow-level semantic patterns are robust to changes in parameter
+distribution. Tool-only hit rates varied by 10.5 percentage points, indicating tool-level
+caching is more sensitive to parameter concentration. These results validate that hier-
+archical caching provides consistent benefits across diverse access patterns, from highly
+concentrated specialized agents to exploratory workloads with uniform query distribution.
+5.9. Personalized Memory Effects and Cache Sharing
+To examine individualized memory production and heterogeneity in multi-user scenar-
+ios, we simulated 15 users across five personas with different access patterns: monitoring
+bots (85% self-repetition), accountants (70%), travelers (50%), customer service (35%) and re-
+searchers (10% exploratory). Each user executed 15,000 queries in two modes: (1) isolated
+cache with per-user session isolation (225,000 queries), and (2) shared cache with global
+cache pool (225,000 queries). This totaled 450,000 queries. This design quantifies true
+inter-session gain (shared efficiency and isolated efficiency).
+As presented in Table 12, efficiency in the isolated mode ranged from 79.5% (re-
+searchers) to 95.8% (monitoring bots), demonstrating 16.3 percentage point variance at-
+tributable to personalized access patterns. High-repetition personas (monitoring bots:
+84.8% self-repetition rate) achieved the highest absolute efficiency but smallest cross-user
+gain (+0.6%), as they benefit primarily from their own repeated queries. Conversely, ex-
+ploratory researchers with minimal self-repetition (10.1%) showed the highest cross-user
+gain (+0.9%), suggesting they benefit more from population-level cache sharing. The mod-
+est cross-user gains (0.5–0.9 percentage points) indicate that most caching value arises from
+each user’s own repetition patterns and from shared deterministic operations (weather
+APIs, computational tasks) rather than user-specific data. This design enables strong
+privacy guarantees through per-user workflow isolation while allowing safe sharing of
+deterministic tool results. Please note that our current evaluation measures efficiency
+degradation under write load but does not report detailed invalidation cascade metrics
+(e.g., average entries invalidated per write, dependency graph traversal depth, cache churn
+rate). The linear degradation pattern (0.62% efficiency loss per 1% write increase) suggests
+predictable behavior, but production deployments would benefit from detailed invalidation
+telemetry to optimize dependency graph configurations.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 27 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 27 of 35
+Table 12. Personalized memory effects across user personas.
+Persona Isolated Shared Cross-User Self-Repeat Efficiency Efficiency Gain Rate
+Monitoring bot 95.8% ± 0.1 96.3% ± 0.1 +0.6% 84.8% ± 0.2
+Accountant 92.7% ± 0.1 93.2% ± 0.4 +0.5% 70.4% ± 0.2
+Traveler 89.8% ± 0.2 90.5% ± 0.2 +0.7% 50.3% ± 0.4
+Customer service 85.1% ± 0.1 85.9% ± 0.2 +0.7% 35.2% ± 0.4
+Researcher 79.5% ± 0.4 80.5% ± 0.2 +0.9% 10.1% ± 0.1
+Self-Repeat Rate: Percentage of queries repeating user’s own previous queries. Cross-User Gain: Additional
+efficiency from shared cache (Shared – Isolated).
+5.10. Performance Under Write-Intensive Workloads
+To evaluate system robustness under cache invalidation pressure, we systematically
+varied write operation ratios from 4% (baseline, reflecting typical agent workloads) to 30%
+(extreme write-intensive scenario). Each ratio was tested with three configurations (baseline,
+tool-only, full system) across three runs with 15,000 queries each, totaling 540,000 queries.
+As presented in Table 13, efficiency degraded approximately linearly with write ratio,
+with an average loss of 0.62 percentage points per 1% increase in write ratio (from 4% to
+30%). This linear relationship enables predictable performance modeling: organizations
+can estimate expected caching efficiency by measuring their write ratio. For example,
+workloads with approximately 10% writes achieved 71.1% efficiency, while 20% write
+workloads achieved 65.7% efficiency. Even under extreme write load (30%, far exceeding
+typical agent workloads), the system maintained 61.5% efficiency and a 46.3% workflow hit
+rate, demonstrating graceful degradation. This monotonic trend indicates system stability
+rather than fragility under write pressure.
+Table 13. Write intensity impact (3 runs × 15K queries, mean ± std).
+Write Ratio Efficiency Degradation WF Hit Rate
+4% (baseline) 77.7% ± 0.0 0.0 pp 60.5% ± 0.0
+10% 71.1% ± 0.0 −6.6 pp 54.2% ± 0.0
+20% 65.7% ± 0.0 −12.0 pp 49.8% ± 0.0
+30% 61.5% ± 0.0 −16.2 pp 46.3% ± 0.0
+6. Discussion
+Our hierarchical caching architecture achieved 76.5% efficiency, 13.3× speedup and a
+73.3% cost reduction across 2.25M queries. In multi-tenant deployments with 15 concurrent
+tenants, the system achieved 74.1% efficiency with complete session isolation and zero
+session contamination. The two-tier design captures redundancy at the workflow and tool
+levels. Workflow-level caching handles 59% of queries by caching the complete execution
+sequences and eliminating an average of 1.86 tool calls per hit. Tool caching provides 50.2%
+independent efficiency by reusing individual operations across workflows that single-layer
+approaches cannot achieve simultaneously.
+Our approach complements existing optimization techniques for LLM agents. While
+GPTCache [11] accelerates LLM inference with 2–10× speedup, plan caching [24] reduces
+reasoning costs by 46% and our approach eliminates redundant tool executions, achieving
+a 13.3× speedup and 73.3% cost reduction. Combining these three methods can optimize
+the entire agent pipeline. Compared to plan caching, our method provides finer-grained
+efficiency. Plan caching reuses reasoning traces but executes tools independently for each
+plan. For example, ReAct agent plans for “Recommend outdoor activities in Maryland” and
+“Pack for Maryland trip” are cached as different reasoning traces, but both of them execute
+https://doi.org/10.3390/make8020030
+
+===== PAGE 28 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 28 of 35
+get_weather(city=’Maryland’). This duplicates the tool execution and incurs additional
+costs. In contrast, our tool cache captures this cross-workflow redundancy, providing an
+additional 50% independent efficiency at the workflow level and addressing redundancy
+at the full sequence level. Together, these layers address redundancy across multiple levels.
+Our extended experiments provide additional architectural validation.
+Plan Caching Comparison: The 92% performance advantage over plan caching (13.7 ×
+vs. 7.1× speedup) demonstrates that caching execution results at multiple granularities
+provides substantially greater value than caching reasoning templates alone. Plan caching
+eliminates LLM reasoning overhead. It does not reduce tool execution costs, which domi-
+nate latency in production agents. Our hierarchical approach addresses both workflow-level
+reasoning redundancy and tool-level execution redundancy. It provides comprehensive
+optimization across the agent execution stack. The hierarchical system achieves a 13.7 ×
+speedup. This is substantially greater than either workflow-only (7.14 ×) or tool-only
+(7.31×) configurations in isolation. This demonstrates complementary benefits from multi-
+level caching. Workflow hits eliminate entire tool chains. Tool caching reduces tail latency
+for workflows that miss. For example, consider a workflow requiring three tools: [A, B, C].
+Plan caching saves reasoning time but executes all three tools (three calls). Tool caching may
+hit A and B individually (one call saved). Workflow caching hits the complete sequence
+(three calls saved). This architectural synergy explains why hierarchical caching achieves
+77.6% efficiency versus plan caching’s 73.3%. The workflow layer captures redundancy
+at the semantic pattern level. The tool layer captures parameter-level redundancy for
+workflows that miss.
+Workload Robustness: The narrow efficiency range across five access pattern distribu-
+tions (76.8–78.2%) validates that hierarchical caching provides consistent benefits regardless
+of query concentration. Even under maximum diversity (uniform distribution with no
+skew), the system maintained 76.8% efficiency and a 12.92 × speedup. Workflow-level
+caching proved particularly robust (59.8–60.8% hit rates across distributions). Tool-only
+configurations showed greater sensitivity (44.9–55.4%). This stability suggests broad appli-
+cability across deployment contexts. It applies from specialized agents with concentrated
+access patterns to general-purpose assistants with exploratory workloads.
+Personalized Memory Trade-offs: The isolated versus shared cache comparison re-
+vealed that individualized memory effects created 16.3 percentage point efficiency variance
+across user types (79.5% for exploratory researchers to 95.8% for monitoring bots). How-
+ever, cache sharing provided only modest additional gains (0.5–0.9 percentage points).
+This indicates that most caching value derives from shared deterministic operations (e.g.,
+weather APIs, computational tasks, currency conversions) rather than user-specific data.
+The architecture balances strong privacy guarantees through per-user workflow isolation
+while enabling modest cross-user efficiency gains.
+Write Intensity Boundaries: Linear efficiency degradation (approximately 0.62 percent-
+age point loss per 1% increase in write ratio) enables predictable performance modeling
+for deployment planning. Organizations can estimate expected efficiency by measuring
+their write ratio. For examplem, 10% writes yield approximately 71% efficiency, while
+20% writes yield approximately 66% efficiency. Even under an extreme 30% write load—
+far exceeding typical 4–8% agent workloads—the system maintains approximately 61%
+efficiency without correctness violations. This demonstrates robust dependency-aware
+invalidation suitable for collaborative and write-intensive environments.
+In production deployments, organizations processing one million queries annually
+could save approximately USD 415depending on API prices. Enterprise-level deployments
+handling 100M queries yearly could save USD 41,500. These estimates are based on
+https://doi.org/10.3390/make8020030
+
+===== PAGE 29 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 29 of 35
+representative pricing from commercial API costs [46–49], with actual savings scaling with
+deployment-specific costs.
+6.1. Architectural Insights and Design Trade-Offs
+Our ablation study shows that adding workflow caching improved efficiency by
+26.3 percentage points. This indicates that users tend to repeat complete workflows more
+frequently than individual tool calls. For example, queries like “What is the weather in
+Boston?” followed by “Should I bring an umbrella to Boston?” trigger the same workflow
+twice. Checking the workflow cache first ensures that most repeated queries are handled
+with minimal computation. The tool-only configuration achieved a 50.17% hit rate, but in
+the full system, the tool cache processed roughly 40% of queries that reached it after the
+workflow cache execution. Among these queries, the tool cache achieved a 13.2% hit
+rate. This is exactly how hierarchical caching should work in systems like CPU caches,
+where L1 filters requests before L2. The multi-tenant deployment reduced efficiency by
+2.4 percentage points, decreasing from 76.5% to 74.1%. This shows most caching value
+comes from shared deterministic operations like weather lookups and currency conversions
+and not from user-specific data. If sharing user data were the main benefit, isolation would
+cost 10–15 percentage points instead of 2.4. This indicates that strong privacy guarantees
+can be provided with minimal overhead.
+Our session isolation approach aligns with recent work on privacy-preserving cache
+architectures [52] and shared infrastructure isolation [53], demonstrating that strong secu-
+rity guarantees are achievable with minimal efficiency overhead.
+Scope of Applicability: Our evaluation demonstrates that hierarchical caching works
+best for deterministic, data-centric tasks with objective tool outputs (e.g., retrieving weather,
+database records or file contents). In these scenarios, the tool output is identical regardless
+of the broader conversation context. However, for interpretive or context-dependent tasks
+such as ‘analyzing sentiment’ or ‘summarizing documents’ where the tool’s output might
+need to vary based on subtle user intent, hierarchical caching has limitations. If an agent
+requires a different slice of data based on a reasoning path, a strict cache hit on a previous
+tool call might return data that is factually correct but contextually insufficient. Future
+iterations of this architecture could integrate semantic similarity checks at the workflow
+level to better handle these ambiguous, reasoning-heavy scenarios.
+6.2. Performance Boundaries and Failure Modes
+The efficacy of the cache depends on the type of tool and the distribution of pa-
+rameters. Category-specific hit rates varied from nearly zero for database queries to
+23.7% for weather APIs. Weather APIs benefit from geographic clustering as 60% of
+requests are concentrated in the top 10 cities, thereby creating natural caching opportu-
+nities. Database queries are impacted by unique user IDs and varied search parameters,
+leading to low hit rates. This pattern suggests that tools with highly skewed parameter
+distributions such as Zipfian or power-law get benefits from caching whereas tools with
+uniform distributions like UUIDs, timestamps or unique identifiers see minimal advan-
+tages irrespective of TTL adjustments. Our evaluation subjected the system to 4% write
+operations to test dependency-aware invalidation. Higher write rates of 15–25% were
+observed in collaborative environments or real-time data ingestion would increase inval-
+idation overhead. Each write operation triggers dependency graph traversal (as shown
+in Algorithm 2), which may invalidate several cached reads. Although the algorithmic
+complexity is manageable at O(k), where k is the average out-degree in the dependency
+graph, write-intensive workloads may experience a decrease in efficiency to 60–70%
+instead of 76%. The 160 s evaluation window was sufficient for baseline TTL validation
+https://doi.org/10.3390/make8020030
+
+===== PAGE 30 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 30 of 35
+but too short to evaluate adaptive TTL mechanisms, which require observation periods
+comparable to or exceeding the TTL values themselves (3 00–3600 s). Short experiments
+miss temporal patterns or usage shifts that adaptive algorithms need. Production deploy-
+ments running continuously over weeks are expected to realize the benefits of adaptive
+TTL strategies, although this is not yet validated in our study. Long-term adaptive
+cache management [ 54] and workload-adaptive strategies typically require extended
+observation periods (days to weeks) to build reliable access models. Therefore, our 160 s
+evaluation window was too short to validate adaptiveness.
+6.3. Production Deployment Considerations
+The multi-tenant architecture demonstrates that security guarantees do not require
+major efficiency trade-offs. Session-isolated workflow caches prevent data leakage
+while globally shared tool caches capture optimization opportunities, resulting in only a
+2.4 percentage point drop in efficiency from 76.5% to 74.1%. Per-tenant performance was
+consistent, i.e., CV < 0.2%, and throughput reached 496.7 queries per second. Performance
+scales in a predictable way with the type of workload. Common workloads like FAQ
+bots achieved 65–75% efficiency. Medium-repetition workloads like general assistants
+reached 50–65% and low-repetition workloads like exploratory tasks achieved 30–45%
+efficiency. Organizations can profile their workloads over 1–2 weeks and compare with
+actual API costs and adjust category-specific TTLs to fit their domain needs. Hit rates for
+each category ranged from almost 0 for unique database queries to 23.7% for external APIs.
+This variation reflects parameter diversity in our benchmark. Production systems typically
+exhibit concentrated access patterns, i.e., 80/20 distributions, which would yield substan-
+tially higher hit rates across all categories. The core architectural contributions, including
+hierarchical design, dependency-aware invalidation and session isolation, can be applied
+broadly across deployment contexts. Our evaluation validates these mechanisms under
+controlled conditions but production deployments would benefit from domain-specific
+tuning while retaining the core architecture.
+6.4. Limitations and Future Work
+Our evaluation used synthetic workloads across five experiments, totaling4.815 million
+queries. These experiments include a (1) ten-configuration comparison, (2) plan caching
+comparison with statistical rigor, (3) workload sensitivity analysis across five distributions,
+(4) write intensity robustness analysis and (5) personalized memory effect analysis with
+isolated and shared cache modes. Workloads were generated using controlled distributions
+to enable reproducibility and systematic ablation studies. While this synthetic approach
+enables precise architectural evaluation and statistical validation, absolute hit rates will vary
+in production. In practice, performance depends on access patterns, API costs and domain-
+specific characteristics. The architectural principles of hierarchical caching, dependency-
+aware invalidation and session isolation remain broadly applicable across deployment
+contexts. However, organizations should calibrate expectations based on their specific
+workload characteristics. For example, FAQ-style customer service bots with concentrated
+access patterns may achieve 75–90% efficiency. In contrast, exploratory data analysis tools
+with diverse queries may achieve 30–45% efficiency.
+Our personalized memory experiment (Section 5.9) simulated 15 users spanning
+five personas with self-repetition rates ranging from 85% (monitoring bots) to 10% (re-
+searchers). Although these personas span a wide range of real-world usage patterns,
+several limitations remain. First, the persona parameters were approximations derived
+from domain intuition and the actual repetition rates may vary substantially across orga-
+nizations and tasks. Second, our behavioral configurations were stationary and did not
+https://doi.org/10.3390/make8020030
+
+===== PAGE 31 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 31 of 35
+capture temporal dynamics such as context switching, learning effects or collaborative
+workflows. Third, the fixed per-user volume supported controlled evaluation but did not
+reflect the variability in real deployments. In practice, per-user activity may span several
+orders of magnitude. Fourth, while five personas provided broad coverage, they cannot
+represent all multi-modal behaviors found in production usage.
+Our write intensity evaluation (Section 5.10) quantified efficiency degradation across
+write ratios. However, it did not report fine-grained invalidation metrics. The observed
+linear degradation (0.62% efficiency loss per 1% write increase) reflects reduced caching op-
+portunities as write operations constituted a larger fraction of the workload. Although the
+dependency-aware invalidation mechanism (Algorithm 2) was implemented, detailed
+cascade metrics were not instrumented in this evaluation. Future work should instrument
+dependency graph traversal to enable deployment-specific optimization of graph structure
+and TTL policies based on observed invalidation patterns.
+Cost estimates use representative commercial API pricing to illustrate relative perfor-
+mance across caching strategies. Actual savings depend on deployment-specific factors
+including negotiated pricing, volume discounts and tool selection. Organizations should
+substitute actual API costs and observed query volumes for deployment-specific projections.
+While our evaluation demonstrates significant efficiency gains through hierarchical caching
+and dependency management, the current study relies on a 160 s evaluation window. This
+is insufficient to validate the long-term benefits of adaptive TTL mechanisms. Dynamic
+expiration policies typically require extended learning periods (hours to days) to build
+statistically significant access history models. Consequently, we validated the system using
+category-specific base TTLs.
+Future work will focus on deploying the architecture in a long-running production
+environment to evaluate the adaptive TTL component against fluctuating real-world traf-
+fic patterns. Despite these improvements, some limitations should be noted. (1) The
+workflow_cache_only configuration serves as a conservative proxy for plan caching. While
+advanced semantic matching systems may achieve higher baseline performance, our ob-
+served 92% advantage suggests potential for tool-level optimization. (2) Invalidation
+cascade metrics require production instrumentation for deployment-specific optimization,
+as synthetic write patterns may not fully capture the complexity of real-world dependency
+chains. (3) Adaptive TTL mechanisms require extended observation periods (hours to days)
+for statistical validation, which was beyond the scope of our 160 s experimental window.
+Future work will focus on long-term production deployments to validate these adaptive
+components. (4) Expanded persona configurations should include temporal variations,
+collaborative workflows, learning effects and domain-specific archetypes like legal research,
+medical triage and coding assistants.
+7. Conclusions
+In this paper, we presented a hierarchical caching architecture for LLM agents that
+addresses the tool execution overhead problem in agentic workflows. Particularly, we
+designed a multi-level caching architecture that captures redundancy at both the workflow
+and tool levels and integrates (1) hierarchical caching that operates at both the workflow
+and tool levels to capture coarse and fine-grained redundancies; (2) dependency-aware
+invalidation using graph-based techniques to maintain consistency when write operations
+affect cached reads across execution contexts; (3) category-specific TTL policies tailored to
+different data types, e.g., weather APIs, user location, database queries, filesystems and
+computational tasks; and (4) session isolation to ensure multi-tenant cache safety through
+automatic session scoping. Evaluation across four comprehensive experiments totaling
+4.815 million queries demonstrated the following: (1) A 76.5% caching efficiency in the
+https://doi.org/10.3390/make8020030
+
+===== PAGE 32 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 32 of 35
+primary ten-configuration comparison with 2.25M queries and 15 runs. This reduced
+query processing time by 13.3 × and estimated costs by 73.3% compared to a no-cache
+baseline. (2) A 13.7× speedup versus 7.1× for plan caching baselines—a 92% performance
+improvement with statistical validation (900K queries, n = 15, 95% confidence interval,
+p < 0.001). (3) Consistent 76.8–78.2% efficiency across five access pattern distributions,
+ranging from uniform to high-skew Zipfian workloads (675K queries). This demonstrates
+architectural robustness. (4) Individualized memory effects with 16.3 percentage point
+efficiency variance across user personas (450K queries, isolated versus shared cache modes),
+revealing modest 0.5–1.0 percentage point cross-user gains from cache sharing. (5) Graceful
+linear degradation under write-intensive workloads, i.e., 0.62% efficiency loss per 1% write
+increase. This maintains approximately 61% efficiency even at a 30% write ratio. Multi-
+tenant testing with fifteen concurrent tenants confirmed robust session isolation and 74.1%
+efficiency under concurrent workloads.
+Our evaluation also showed that 59% of queries were satisfied directly at the work-
+flow level, eliminating an average of 1.86 tool calls per hit. For the remaining queries
+that reached the tool level, a 13.2% conditional hit rate was achieved. Additionally, our
+expanded evaluation confirms the architecture’s robustness across various dimensions:
+heterogeneous user personas had 16.3% efficiency variance, write-intensive workloads
+maintained 61% efficiency at 30% writes, and diverse access patterns reached 76.8–78.2%
+efficiency across five distributions. The hierarchical design consistently outperforms
+single-layer approaches, including plan caching baselines. As LLM agents are deployed
+more extensively with complex tool interactions, this validated hierarchical caching
+architecture provides a practical, scalable approach. It also preserves privacy while
+supporting sustainable cost management and reliable performance across diverse de-
+ployment contexts.
+Author Contributions: Conceptualization, F.B., C.S., N.K., M.J. and F.K.; methodology, F.B., C.S.
+and N.K.; validation, F.B., C.S., N.K., M.J. and F.K.; formal analysis, F.B., C.S. and N.K.; resources, C.S.
+and N.K.; writing—original draft preparation, F.B., C.S. and F.K.; writing—review and editing, all
+authors. All authors have read and agreed to the published version of the manuscript.
+Funding: This work is supported by the Center for Equitable Artificial Intelligence and Machine
+Learning Systems (CEAMLS) and the Safety and Mobility Advancements Regional Transportation
+and Economics Research (SMARTER) Center at Morgan State University. Both centers provided
+resources and valuable support that increased the quality of this work.
+Institutional Review Board Statement: Not applicable.
+Informed Consent Statement: Not applicable.
+Data Availability Statement: The dataset will be made available after publication at https://github.c
+om/Farhana211/Hierarchical-Caching-for-Agentic-Workflows.git, (accessed on 10 January 2026).
+Conflicts of Interest: The authors declare no conflicts of interest.
+References
+1. Yao, S.; Zhao, J.; Yu, D.; Du, N.; Shafran, I.; Narasimhan, K.; Cao, Y. ReAct: Synergizing reasoning and acting in language models.
+In Proceedings of the International Conference on Learning Representations (ICLR), Kigali, Rwanda, 1–5 May 2023.
+2. Wu, Q.; Bansal, G.; Zhang, J.; Wu, Y.; Zhang, S.; Zhu, E.; Li, B.; Jiang, L.; Zhang, X.; Zhang, S.; et al. AutoGen: Enabling next-gen
+LLM applications via multi-agent conversation. arXiv 2023, arXiv:2308.08155.
+3. LangChain. LangChain: Building Applications with LLMs Through Composability. 2024. Available online: https://www.blog.l
+angchain.com/author/langchain/ (accessed on 10 January 2026).
+4. Langfuse. AI Agent Observability with Langfuse. Langfuse Blog. 2024. Available online: https://langfuse.com/blog/2024-07-ai
+-agent-observability-with-langfuse (accessed on 18 December 2025).
+https://doi.org/10.3390/make8020030
+
+===== PAGE 33 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 33 of 35
+5. De Backer, K. Common Solutions to Latency Issues in LLM Applications. Medium. 2024. Available online: https://medium.com
+/@mancity.kevindb/common-solutions-to-latency-issues-in-llm-applications-d58b8cf4be17 (accessed on 18 December 2025).
+6. Datadog. Monitor Your OpenAI LLM Spend with Cost Insights from Datadog. Datadog Blog. 2024. Available online:
+https://www.datadoghq.com/blog/monitor-openai-cost-datadog-cloud-cost-management-llm-observability/ (accessed on
+18 December 2025).
+7. Li, H.; Li, Y.; Tian, A.; Tang, T.; Xu, Z.; Chen, X.; Hu, N.; Dong, W.; Li, Q.; Chen, L. A survey on large language model acceleration
+based on KV cache management. arXiv 2025, arXiv:2412.19442.
+8. Frantar, E.; Alistarh, D. SparseGPT: Massive language models can be accurately pruned in one-shot. In Proceedings of the
+International Conference on Machine Learning (ICML), Honolulu, HI, USA, 23–29 July 2023.
+9. Leviathan, Y.; Kalman, M.; Matias, Y. Fast inference from transformers via speculative decoding. In Proceedings of the
+International Conference on Machine Learning (ICML), Honolulu, HI, USA, 23–29 July 2023.
+10. Wang, L.; Xu, W.; Lan, Y.; Hu, Z.; Lan, Y.; Lee, R.K.W.; Lim, E.P . Plan-and-solve prompting: Improving zero-shot chain-of-thought
+reasoning by large language models. In Proceedings of the Annual Meeting of the Association for Computational Linguistics
+(ACL), Toronto, ON, Canada, 9–14 July 2023.
+11. Bang, F.; Feng, D. GPTCache: An open-source semantic cache for LLM applications enabling faster answers and cost savings. In
+Proceedings of the Workshop for Natural Language Processing Open Source Software (NLP-OSS), Singapore, 6 December 2023.
+12. Regmi, S.; Pun, G. GPT semantic cache: Reducing LLM costs and latency via semantic embedding caching. arXiv 2024,
+arXiv:2411.05276. [CrossRef]
+13. Gill, W.; Elidrisi, M.; Kalapatapu, P .; Ahmed, A.; Anwar, A.; Gulzar, M.A. MeanCache: User-centric semantic cache for large
+language model-based web services. arXiv 2025, arXiv:2403.02694.
+14. Anthropic. Prompt Caching with Claude. Anthropic Documentation. 2024. Available online: https://docs.anthropic.com/en/
+docs/build-with-claude/prompt-caching (accessed on 18 December 2025).
+15. Google. Gemini Context Caching. Google AI for Developers. 2024. Available online: https://ai.google.dev/gemini-api/docs/ca
+ching?lang=python (accessed on 18 December 2025).
+16. Brown, T.; Mann, B.; Ryder, N.; Subbiah, M.; Kaplan, J.D.; Dhariwal, P .; Neelakantan, A.; Shyam, P .; Sastry, G.; Askell, A.; et al.
+Language models are few-shot learners. In Proceedings of the Advances in Neural Information Processing Systems (NeurIPS),
+Virtual, 6–12 December 2020; Volume 33, pp. 1877–1901.
+17. Kwon, W.; Li, Z.; Zhuang, S.; Sheng, Y.; Zheng, L.; Yu, C.H.; Gonzalez, J.E.; Zhang, H.; Stoica, I. Efficient memory management
+for large language model serving with Paged Attention. In Proceedings of the 29th ACM Symposium on Operating Systems
+Principles (SOSP), Koblenz, Germany, 23–26 October 2023; pp. 611–626.
+18. Zhang, Z.; Sheng, Y.; Zhou, T.; Chen, T.; Zheng, L.; Cai, R.; Song, Z.; Tian, Y.; Ré, C.; Barrett, C.; et al. H2O: Heavy-hitter oracle
+for efficient generative inference of large language models. In Proceedings of the Advances in Neural Information Processing
+Systems (NeurIPS), New Orleans, LA, USA, 10–16 December 2023.
+19. Xiao, G.; Tian, Y.; Chen, B.; Han, S.; Lewis, M. Efficient streaming language models with attention sinks. In Proceedings of the
+International Conference on Learning Representations (ICLR), Vienna, Austria, 7–11 May 2024.
+20. Gim, I.; Chen, G.; Lee, S.-S.; Sarda, N.; Khandelwal, A.; Zhong, L. Prompt Cache: Modular Attention Reuse for Low-Latency
+Inference. In Proceedings of the Conference on Machine Learning and Systems (MLSys), Santa Clara, CA, USA, 13–16 May 2024.
+21. Xu, D.; Yin, W.; Jin, X.; Zhang, Y.; Wei, S.; Xu, M.; Liu, X. LLMCad: Fast and Scalable On-device Large Language Model Inference.
+arXiv 2023, arXiv:2309.04255. [CrossRef]
+22. Xie, Y.; Li, Z.; Zhang, H.; Chen, X.; Li, Q.; Chen, L. LLMCache: Efficient Semantic Caching for Large Language Model Inference.
+arXiv 2024, arXiv:2404.01234.
+23. Wei, J.; Wang, X.; Schuurmans, D.; Bosma, M.; Ichter, B.; Xia, F.; Chi, E.; Le, Q.V .; Zhou, D. Chain-of-thought prompting elicits
+reasoning in large language models. In Proceedings of the Advances in Neural Information Processing Systems (NeurIPS),
+New Orleans, LA, USA, 28 November–9 December 2022; Volume 35, pp. 24824–24837.
+24. Huang, Z.; Li, Y.; Zhang, H. Executable code actions elicit better LLM agents. In Proceedings of the International Conference on
+Machine Learning (ICML), Vienna, Austria, 21–27 July 2024.
+25. Yao, S.; Zhao, J.; Yu, D.; Du, N.; Shafran, I.; Narasimhan, K.; Cao, Y. Tree of Thoughts: Deliberate Problem Solving with Large
+Language Models. In Proceedings of the Advances in Neural Information Processing Systems (NeurIPS), New Orleans, LA, USA,
+10–16 December 2023.
+26. Yang, C.; Wang, X.; Lu, Y.; Liu, H.; Le, Q.V .; Zhou, D.; Chen, X. Large Language Models as Optimizers. In Proceedings of the
+International Conference on Learning Representations (ICLR), Kigali, Rwanda, 1–5 May 2023.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 34 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 34 of 35
+27. Altinel, R.; Boncz, P .; Zukowski, M. Cooperative scans: Dynamic bandwidth sharing in a DBMS. In Proceedings of the
+International Conference on Very Large Data Bases (VLDB), Vienna, Austria, 23–27 September 2007; pp. 723–734.
+28. Cao, P .; Irani, S. Cost-aware WWW proxy caching algorithms. In Proceedings of the USENIX Symposium on Internet Technologies
+and Systems (USITS), Monterey, CA, USA, 9 December 1997; pp. 193–206.
+29. Zhang, Y.; Zhu, Y.; Yu, C.; Zhou, K.; Zheng, S.; Chen, C.; Tian, Y.; Yang, F.; Shao, J.; Liao, X.; et al. MuCache: Framework-
+Agnostic Caching for Microservices. In Proceedings of the USENIX Annual Technical Conference (ATC), Santa Clara, CA, USA,
+10–12 July 2024.
+30. Otaki, R.; Chang, J.H.; Benello, C.; Elmore, A.J.; Graefe, G. Resource-Adaptive Query Execution with Paged Memory Management.
+In Proceedings of the Conference on Innovative Data Systems Research (CIDR), Amsterdam, The Netherlands,19–22 January 2025.
+31. Hsu, C.N.; Knoblock, C.A. Semantic Query Optimization for Query Plans of Heterogeneous Multidatabase Systems. IEEE Trans.
+Knowl. Data Eng. 1999, 11, 645–667.
+32. Li, Z.; Chang, Y.; Yu, G.; Le, X. HiPlan: Hierarchical Planning for LLM-Based Agents with Adaptive Global-Local Guidance.
+arXiv 2025, arXiv:2508.19076.
+33. O’Neil, E.J.; O’Neil, P .E.; Weikum, G. The LRU-K page replacement algorithm for database disk buffering. In Proceedings of the
+ACM SIGMOD International Conference on Management of Data, Washington, DC, USA, 25–28 May 1993; pp. 297–306.
+34. Megiddo, N.; Modha, D.S. ARC: A self-tuning, low overhead replacement cache. In Proceedings of the USENIX Conference on
+File and Storage Technologies (FAST), San Francisco, CA, USA, 31 March 2003; Volume 3, pp. 115–130.
+35. Hennessy, J.L.; Patterson, D.A. Computer Architecture: A Quantitative Approach, 6th ed.; Morgan Kaufmann: San Francisco, CA,
+USA, 2017.
+36. Rabinovich, M.; Spatscheck, O. Web Caching and Replication; Addison-Wesley: Boston, MA, USA, 2002.
+37. Sethumurugan, S.; Vuppala, J.S.V .R.; Krishnakumar, S.; Murugan, T.B. RLR: A Reinforcement Learning Based Cache Replacement
+Policy. In Proceedings of the International Symposium on Computer Architecture (ISCA), Virtual, 14–19 June 2021.
+38. Dehghan, M.; Jiang, B.; Vuppala, J.S.V .R.; Murugan, T.B. On the Complexity of Traffic Traces and Implications. In Proceedings
+of the ACM SIGMETRICS International Conference on Measurement and Modeling of Computer Systems, Boston, MA, USA,
+8–12 June 2020; pp. 55–56.
+39. Stojkovic, J.; Alverti, C.; Andrade, A.; Iliakopoulou, N.M.; Franke, H.; Xu, T.; Torrellas, J. Concord: Rethinking Distributed
+Coherence for Software Caches in Serverless Environments. In Proceedings of the IEEE International Symposium on High-
+Performance Computer Architecture (HPCA), Las Vegas, NV , USA, 1–5 March 2025.
+40. Zhang, H.; Zuo, D.; Yan, Y.; Liang, Z.; Wang, H. SAM: A Stability-Aware Cache Manager for Multi-Tenant Embedded Databases.
+arXiv 2025, arXiv:2507.22701.
+41. Berger, D.S.; Sitaraman, R.K.; Harchol-Balter, M. AdaptSize: Orchestrating the hot object memory cache in a content delivery
+network. In Proceedings of the 14th USENIX Symposium on Networked Systems Design and Implementation (NSDI), Boston,
+MA, USA, 27–29 March 2017; pp. 483–498.
+42. Yang, J.; Yue, Y.; Rashmi, K.V . A large scale analysis of hundreds of in-memory cache clusters at Twitter. In Proceedings of the
+14th USENIX Symposium on Operating Systems Design and Implementation (OSDI), Online, 4–6 November 2020; pp. 191–208.
+43. Kasture, H.; Sanchez, D. Ubik: Efficient cache sharing with strict QoS for latency-critical workloads. In Proceedings of the
+International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS), Salt Lake
+City, UT, USA, 1–5 March 2014; pp. 729–742.
+44. Huang, Q.; Laddad, P .; Veeraraghavan, K.; Faleiro, J.M.; Abadi, D.J.; Ren, X. Cache Made Consistent: Meta’s Cache Invalidation
+Solution. In Proceedings of the USENIX Annual Technical Conference (ATC), Carlsbad, CA, USA, 11–13 July 2022.
+45. Dallot, J.; Fesharaki, A.J.; Pacut, M.; Schmid, S. Dependency-Aware Online Caching. arXiv 2024, arXiv:2401.17146. [CrossRef]
+46. OpenWeatherMap. Pricing. 2024. Available online: https://openweathermap.org/price (accessed on 18 December 2025).
+47. Amazon Web Services. Amazon RDS Proxy Pricing. 2024. Available online: https://aws.amazon.com/rds/proxy/pricing/
+(accessed on 18 December 2025).
+48. Amazon Web Services. AWS Lambda Pricing. 2024. Available online: https://aws.amazon.com/lambda/pricing/ (accessed on
+18 December 2025).
+49. RapidAPI. API Marketplace Pricing. 2024. Available online: https://rapidapi.com/backend_box/api/usage-and-billing/pricing
+(accessed on 18 December 2025).
+50. Zhang, Q.; Wornow, M.; Olukotun, K. Cost-Efficient Serving of LLM Agents via Test-Time Plan Caching. arXiv 2025,
+arXiv:2506.14852.
+51. Li, G.; Wu, R.; Tan, H. A Plan Reuse Mechanism for LLM-Driven Agent. arXiv 2025, arXiv:2512.21309. [CrossRef]
+52. Chu, K.; Lin, Z.; Xiang, D.; Shen, Z.; Su, J.; Chu, C.; Yang, Y.; Zhang, W.; Wu, W.; Zhang, W. SafeKV: Selective KV-Cache Sharing
+to Mitigate Timing Side-Channels in LLM Serving. arXiv 2025, arXiv:2508.08438.
+https://doi.org/10.3390/make8020030
+
+===== PAGE 35 =====
+Mach. Learn. Knowl. Extr. 2026, 8, 30 35 of 35
+53. Volos, S.; Fournet, C.; Hofmann, J.; Köpf, B. Principled Microarchitectural Isolation on Cloud CPUs. In Proceedings of the ACM
+SIGSAC Conference on Computer and Communications Security (CCS), Salt Lake City, UT, USA, 14–18 October 2024.
+54. Song, Z.; Chen, K.; Sarda, N.; Altınbüken, D.; Brevdo, E.; Coleman, J.; Ju, X.; Jurczyk, P .; Schooler, R.; Gummadi, R. HALP:
+Heuristic Aided Learned Preference Eviction Policy for YouTube CDN. In Proceedings of the USENIX Symposium on Networked
+Systems Design and Implementation (NSDI), Boston, MA, USA, 17–19 April 2023.
+Disclaimer/Publisher’s Note: The statements, opinions and data contained in all publications are solely those of the individual
+author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to
+people or property resulting from any ideas, methods, instructions or products referred to in the content.
+https://doi.org/10.3390/make8020030
