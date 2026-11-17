@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light" style="--rec-label: '★ 推荐'">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>第一章 面向流式智能体的缓存价值建模与生命周期控制</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       TOKENS
+       ============================================================ */
+    :root {
+      --bg: #FAFAF7;
+      --surface: #FFFFFF;
+      --surface-2: #F5F5F0;
+      --surface-3: #EFEEE8;
+      --text: #1A1A1A;
+      --text-muted: #4A4A45;
+      --text-subtle: #6B6B66;
+      --accent: #D97757;
+      --accent-hover: #C56843;
+      --accent-soft: #FBEEE6;
+      --accent-border: #F0D5C4;
+      --accent-strong: #A85533;
+      --border: #E5E4DC;
+      --border-strong: #CDCDC4;
+      --code-bg: #F5F2EC;
+      --code-text: #2A2A2A;
+      --info: #2563EB;
+      --info-soft: #EFF6FF;
+      --info-border: #BFDBFE;
+      --warn: #B45309;
+      --warn-soft: #FFFBEB;
+      --warn-border: #FDE68A;
+      --danger: #B91C1C;
+      --danger-soft: #FEF2F2;
+      --danger-border: #FECACA;
+      --success: #047857;
+      --success-soft: #ECFDF5;
+      --success-border: #A7F3D0;
+      --decision: #6D28D9;
+      --decision-soft: #F5F3FF;
+      --decision-border: #DDD6FE;
+      --shadow-sm: 0 1px 2px rgba(20, 14, 8, 0.04);
+      --shadow: 0 1px 2px rgba(20, 14, 8, 0.04), 0 4px 12px rgba(20, 14, 8, 0.06);
+      --shadow-lg: 0 8px 24px rgba(20, 14, 8, 0.10);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'Noto Sans CJK KR', sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+      --z-progress: 200;
+      --z-topbar: 100;
+      --z-drawer: 300;
+      --z-backdrop: 250;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1A1714;
+      --surface: #221E1A;
+      --surface-2: #2A2520;
+      --surface-3: #322C26;
+      --text: #F5F0E8;
+      --text-muted: #C8C0B6;
+      --text-subtle: #9A938A;
+      --accent: #E89572;
+      --accent-hover: #F2A87F;
+      --accent-soft: #3A2A22;
+      --accent-border: #5A3D2E;
+      --accent-strong: #F5B493;
+      --border: #2E2924;
+      --border-strong: #463F38;
+      --code-bg: #1E1B17;
+      --code-text: #E8E2D8;
+      --info: #93C5FD;
+      --info-soft: #1E2A3D;
+      --info-border: #2A4365;
+      --warn: #FBBF24;
+      --warn-soft: #332817;
+      --warn-border: #5C4520;
+      --danger: #FCA5A5;
+      --danger-soft: #3A1F1F;
+      --danger-border: #5C2A2A;
+      --success: #6EE7B7;
+      --success-soft: #1A3329;
+      --success-border: #1F5C45;
+      --decision: #C4B5FD;
+      --decision-soft: #2A1F40;
+      --decision-border: #4A3870;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ============================================================
+       BASE
+       ============================================================ */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    ::selection { background: var(--accent-soft); color: var(--accent-strong); }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -100px; left: 8px;
+      padding: 10px 16px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      z-index: 1000;
+      transition: top 0.15s;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* SVG sprite container (hidden) */
+    .icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .icon { display: inline-block; flex-shrink: 0; vertical-align: middle; stroke: currentColor; fill: none; }
+
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0;
+      background: var(--accent);
+      z-index: var(--z-progress);
+      transition: width 0.05s linear;
+    }
+
+    /* ============================================================
+       TOPBAR
+       ============================================================ */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-topbar);
+      background: rgba(250, 250, 247, 0.85);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="dark"] .topbar { background: rgba(26, 23, 20, 0.85); }
+    .topbar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .brand-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+      animation: brand-pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes brand-pulse {
+      0%, 100% { box-shadow: 0 0 0 4px var(--accent-soft); }
+      50%      { box-shadow: 0 0 0 7px transparent; }
+    }
+    .topbar-actions { display: flex; gap: 6px; align-items: center; }
+    .icon-btn {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+      padding: 0;
+    }
+    .icon-btn .icon { width: 18px; height: 18px; stroke-width: 2; }
+    .icon-btn[hidden] { display: none; }
+
+    /* ============================================================
+       LAYOUT
+       ============================================================ */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      padding: 32px 24px 96px;
+    }
+    .content { min-width: 0; }
+
+    /* ============================================================
+       TOC (desktop + mobile drawer)
+       ============================================================ */
+    .toc {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .toc::-webkit-scrollbar { width: 6px; }
+    .toc::-webkit-scrollbar-track { background: transparent; }
+    .toc::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    .toc-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px 12px;
+    }
+    .toc-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-subtle);
+      margin: 0;
+    }
+    .toc-close { display: none; }
+    .toc-nav { display: flex; flex-direction: column; gap: 2px; }
+    .toc-nav a {
+      display: flex; align-items: center;
+      min-height: 36px;
+      padding: 8px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 2px solid transparent;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+      line-height: 1.4;
+    }
+    .toc-nav a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 500;
+    }
+    .toc-nav a.lvl-3 { padding-left: 26px; font-size: 12.5px; }
+    .toc-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: var(--z-backdrop);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    /* ============================================================
+       DOC HEADER
+       ============================================================ */
+    .doc-header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-eyebrow {
+      display: inline-flex; align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      border: 1px solid var(--accent-border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+    .doc-title {
+      font-size: clamp(28px, 3vw + 16px, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+      color: var(--text);
+      text-wrap: balance;
+    }
+    .doc-subtitle {
+      font-size: clamp(15px, 0.6vw + 13px, 18px);
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0 0 20px;
+      max-width: 75ch;
+      text-wrap: pretty;
+    }
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-subtle);
+    }
+    .doc-meta-item { display: inline-flex; align-items: center; gap: 6px; }
+    .doc-meta .icon { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* ============================================================
+       CONTENT (typography)
+       ============================================================ */
+    .content h1, .content h2, .content h3, .content h4 {
+      color: var(--text);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      scroll-margin-top: 80px;
+      text-wrap: balance;
+    }
+    .content h2 {
+      font-size: 26px;
+      font-weight: 600;
+      margin: 56px 0 16px;
+      padding-top: 8px;
+      position: relative;
+    }
+    .content h3 {
+      font-size: 19px;
+      font-weight: 600;
+      margin: 36px 0 12px;
+      position: relative;
+    }
+    .content h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 24px 0 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .content > p,
+    .content > ul,
+    .content > ol,
+    .content > blockquote { max-width: 75ch; }
+    .content p { margin: 0 0 16px; text-wrap: pretty; overflow-wrap: anywhere; }
+    .content a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-border); }
+    .content ul, .content ol { padding-left: 24px; margin: 0 0 16px; }
+    .content li { margin: 4px 0; }
+    .content strong { color: var(--text); font-weight: 600; }
+    .content em { color: var(--text-muted); }
+    .content hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* Anchor links injected by JS on h2/h3 with id */
+    .anchor {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px;
+      margin-left: 6px;
+      color: var(--text-subtle);
+      opacity: 0;
+      transform: translateY(-1px);
+      transition: opacity 0.15s, color 0.15s;
+      border-bottom: none !important;
+      border-radius: var(--radius-sm);
+    }
+    .anchor .icon { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* Images */
+    .content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      display: block;
+    }
+    .content figure { margin: 20px 0; }
+    .content figure img { margin: 0; }
+    .content figcaption {
+      font-size: 13px;
+      color: var(--text-subtle);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* Task lists (- [ ] / - [x]) */
+    .content .task-list-item { list-style: none; margin-left: -22px; }
+    .content .task-list-item-checkbox {
+      margin-right: 8px;
+      vertical-align: -2px;
+      accent-color: var(--accent);
+    }
+
+    /* Footnotes */
+    .content .footnote-ref a,
+    .content sup a {
+      font-size: 0.75em;
+      vertical-align: super;
+      border-bottom: none;
+      padding: 0 2px;
+    }
+    .content .footnotes {
+      margin-top: 56px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       CODE
+       ============================================================ */
+    .content code {
+      font-family: var(--font-mono);
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: var(--code-text);
+      border: 1px solid var(--border);
+      overflow-wrap: anywhere;
+    }
+    .content pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin: 16px 0;
+      position: relative;
+    }
+    .content pre code {
+      background: none; padding: 0; border: none;
+      color: var(--code-text);
+      font-size: inherit;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-subtle);
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+      padding: 0;
+    }
+    .copy-btn .icon { width: 14px; height: 14px; stroke-width: 2; }
+    .copy-btn.copied { color: var(--success); border-color: var(--success-border); opacity: 1; }
+
+    /* ============================================================
+       TIMELINE / STEPS
+       ============================================================ */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 24px 0;
+      position: relative;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 19px;
+      top: 20px;
+      bottom: 20px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-border), var(--border));
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 16px 4px;
+      position: relative;
+      border-radius: var(--radius);
+      transition: background-color 0.15s;
+    }
+    .step-num {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      border-radius: 50%;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      z-index: 1;
+      transition: background-color 0.15s, color 0.15s, transform 0.15s;
+    }
+    .step.done .step-num { background: var(--accent); color: #fff; }
+    .step-body { padding-top: 6px; min-width: 0; }
+    .step-body h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .step-body p { margin: 0 0 8px; color: var(--text-muted); font-size: 14.5px; max-width: 75ch; }
+    .step-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* ============================================================
+       CALLOUTS
+       ============================================================ */
+    .callout {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      border: 1px solid;
+      margin: 20px 0;
+      font-size: 14.5px;
+      line-height: 1.6;
+      max-width: 75ch;
+    }
+    .callout-icon { width: 20px; height: 20px; margin-top: 2px; stroke-width: 2; }
+    .callout-body { min-width: 0; }
+    .callout-title { font-weight: 600; margin: 0 0 4px; font-size: 14px; }
+    .callout-body p:last-child { margin-bottom: 0; }
+    .callout-body code { background: rgba(0,0,0,0.04); }
+    [data-theme="dark"] .callout-body code { background: rgba(255,255,255,0.06); }
+
+    .callout-info     { background: var(--info-soft);     border-color: var(--info-border);     color: var(--text); }
+    .callout-info     .callout-title, .callout-info     .callout-icon { color: var(--info); }
+    .callout-warn     { background: var(--warn-soft);     border-color: var(--warn-border);     color: var(--text); }
+    .callout-warn     .callout-title, .callout-warn     .callout-icon { color: var(--warn); }
+    .callout-danger   { background: var(--danger-soft);   border-color: var(--danger-border);   color: var(--text); }
+    .callout-danger   .callout-title, .callout-danger   .callout-icon { color: var(--danger); }
+    .callout-success  { background: var(--success-soft);  border-color: var(--success-border);  color: var(--text); }
+    .callout-success  .callout-title, .callout-success  .callout-icon { color: var(--success); }
+    .callout-decision { background: var(--decision-soft); border-color: var(--decision-border); color: var(--text); }
+    .callout-decision .callout-title, .callout-decision .callout-icon { color: var(--decision); }
+    .callout-tip      { background: var(--accent-soft);   border-color: var(--accent-border);   color: var(--text); }
+    .callout-tip      .callout-title, .callout-tip      .callout-icon { color: var(--accent-strong); }
+
+    /* ============================================================
+       KEY-POINT HIGHLIGHT
+       ============================================================ */
+    .highlight {
+      background: linear-gradient(135deg, var(--accent-soft), var(--surface-2));
+      border-left: 4px solid var(--accent);
+      padding: 18px 22px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 24px 0;
+      font-size: 16px;
+      line-height: 1.65;
+      max-width: 75ch;
+    }
+    .highlight-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-strong);
+      margin-bottom: 6px;
+    }
+
+    /* ============================================================
+       MERMAID
+       ============================================================ */
+    .diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+    .diagram-caption {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-align: center;
+    }
+    .mermaid { text-align: center; min-height: 80px; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    .mermaid:not([data-processed]) {
+      opacity: 0.4;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-subtle);
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    /* ============================================================
+       PROS / CONS
+       ============================================================ */
+    .proscons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .proscons-col {
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      border: 1px solid;
+    }
+    .proscons-col h4 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .proscons-col ul { margin: 0; padding-left: 18px; }
+    .proscons-col li { margin: 6px 0; }
+    .pros { background: var(--success-soft); border-color: var(--success-border); }
+    .pros h4 { color: var(--success); }
+    .cons { background: var(--danger-soft); border-color: var(--danger-border); }
+    .cons h4 { color: var(--danger); }
+
+    /* ============================================================
+       COMPARISON CARDS
+       ============================================================ */
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .compare-card {
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.18s, box-shadow 0.18s;
+      position: relative;
+    }
+    .compare-card.recommended { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .compare-card.recommended::before {
+      content: var(--rec-label, "★ Recommended");
+      position: absolute; top: -10px; right: 14px;
+      background: var(--accent); color: #fff;
+      padding: 2px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+    }
+    .compare-card h4 { margin: 0 0 8px; font-size: 15px; color: var(--text); text-transform: none; letter-spacing: normal; }
+    .compare-card p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+    /* ============================================================
+       COLLAPSIBLE
+       ============================================================ */
+    details.collapsible {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin: 16px 0;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    details.collapsible[open] { box-shadow: var(--shadow-sm); }
+    details.collapsible > summary {
+      cursor: pointer;
+      padding: 14px 18px;
+      font-weight: 500;
+      color: var(--text);
+      list-style: none;
+      display: flex; align-items: center; gap: 10px;
+      user-select: none;
+      transition: background 0.15s;
+      min-height: 44px;
+    }
+    details.collapsible > summary::-webkit-details-marker { display: none; }
+    details.collapsible > summary::before {
+      content: "›";
+      display: inline-block;
+      transition: transform 0.18s;
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    details.collapsible[open] > summary::before { transform: rotate(90deg); }
+    .collapsible-body { padding: 4px 18px 18px; border-top: 1px solid var(--border); }
+    .collapsible-body > *:first-child { margin-top: 12px; }
+
+    /* ============================================================
+       TABLES (wrapped via .table-wrap or naturally responsive)
+       ============================================================ */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      max-width: 100%;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: var(--surface);
+      margin: 0;
+    }
+    /* Standalone tables (not inside .table-wrap) keep visual border */
+    .content > table {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 20px 0;
+      display: block;
+      overflow-x: auto;
+    }
+    .content th {
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .content td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .content tr:last-child td { border-bottom: none; }
+
+    /* ============================================================
+       BLOCKQUOTE
+       ============================================================ */
+    .content blockquote {
+      margin: 20px 0;
+      padding: 4px 20px;
+      border-left: 3px solid var(--accent-border);
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .doc-footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-subtle);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .doc-footer a { color: var(--accent); text-decoration: none; }
+
+    /* ============================================================
+       FOCUS-VISIBLE (a11y)
+       ============================================================ */
+    *:focus { outline: none; }
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+    .toc-nav a:focus-visible { outline-offset: -2px; }
+    .icon-btn:focus-visible { outline-offset: 2px; }
+    .anchor:focus-visible { opacity: 1; outline-offset: 2px; }
+    details.collapsible > summary:focus-visible { outline-offset: -2px; }
+
+    /* ============================================================
+       HOVER (only on hover-capable devices to avoid sticky-tap on mobile)
+       ============================================================ */
+    @media (hover: hover) {
+      .icon-btn:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-soft); }
+      .toc-nav a:hover { color: var(--accent); background: var(--accent-soft); }
+      .content a:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+      .compare-card:hover { border-color: var(--accent-border); box-shadow: var(--shadow); }
+      .compare-card.recommended:hover { border-color: var(--accent); }
+      .content tr:hover td { background: var(--surface-2); }
+      details.collapsible > summary:hover { background: var(--surface-2); }
+      .step:hover { background: var(--surface-2); }
+      .step:hover .step-num { transform: scale(1.05); }
+      .anchor:hover { color: var(--accent); }
+      .content h2:hover .anchor,
+      .content h3:hover .anchor { opacity: 1; }
+      .copy-btn:hover { color: var(--accent); border-color: var(--accent-border); }
+      .content pre:hover .copy-btn { opacity: 1; }
+    }
+    /* On touch devices, copy-btn is always visible at low opacity */
+    @media (hover: none) {
+      .copy-btn { opacity: 0.6; }
+      .anchor { opacity: 0.4; }
+    }
+
+    /* ============================================================
+       MOBILE (≤900px) — TOC becomes off-canvas drawer
+       ============================================================ */
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px 16px 80px;
+      }
+      .topbar-inner { padding: 8px 12px; }
+      .doc-header { margin-bottom: 28px; padding-bottom: 20px; }
+
+      .toc-mobile-trigger { display: inline-flex !important; }
+
+      .toc {
+        position: fixed;
+        top: 0; left: 0;
+        width: min(300px, 82vw);
+        height: 100dvh;
+        max-height: 100dvh;
+        background: var(--surface);
+        z-index: var(--z-drawer);
+        padding: 16px 8px 24px 16px;
+        box-shadow: var(--shadow-lg);
+        transform: translateX(-105%);
+        transition: transform 0.25s ease;
+      }
+      .toc-head { padding: 4px 4px 12px 8px; }
+      .toc-close {
+        display: inline-flex !important;
+        width: 36px; height: 36px;
+        align-items: center; justify-content: center;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0;
+      }
+      .toc-close .icon { width: 18px; height: 18px; stroke-width: 2; }
+      body.toc-open .toc { transform: translateX(0); }
+      body.toc-open .toc-backdrop {
+        display: block;
+        opacity: 1;
+      }
+      .toc-backdrop {
+        display: block;
+        opacity: 0;
+        pointer-events: none;
+      }
+      body.toc-open .toc-backdrop { pointer-events: auto; }
+      body.toc-open { overflow: hidden; }
+    }
+    @media (min-width: 901px) {
+      .toc-mobile-trigger { display: none !important; }
+    }
+
+    /* ============================================================
+       REDUCED MOTION (a11y)
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      html { scroll-behavior: auto; }
+      .brand-dot { animation: none; box-shadow: 0 0 0 4px var(--accent-soft); }
+    }
+
+    /* ============================================================
+       PRINT
+       ============================================================ */
+    @media print {
+      .topbar, .toc, .toc-backdrop, .icon-btn, .copy-btn, .anchor, .scroll-progress { display: none !important; }
+      .layout { grid-template-columns: 1fr; padding: 0; max-width: 100%; }
+      body { background: #fff; color: #000; }
+      a { color: #000; }
+      .content pre, .callout, .compare-card, .step, .diagram { break-inside: avoid; }
+      .doc-footer { break-before: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip link for keyboard users -->
+  <a href="#main" class="skip-link">跳转到正文</a>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- SVG icon sprite (Lucide-style) -->
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="i-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></symbol>
+    <symbol id="i-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="i-decision" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-tip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14a5 5 0 1 0-6.18 0 4 4 0 0 1 1.59 2h2.99a4 4 0 0 1 1.6-2Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  </svg>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <button class="icon-btn toc-mobile-trigger" id="toc-toggle" onclick="openToc()" aria-label="目录" title="目录">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>系统设计</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" onclick="window.print()" title="打印 / 保存 PDF" aria-label="打印 / 保存 PDF">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-printer"/></svg>
+        </button>
+        <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="切换主题" aria-label="切换主题">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use id="theme-icon-use" href="#i-moon"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOC drawer backdrop (mobile) -->
+  <div class="toc-backdrop" onclick="closeToc()" aria-hidden="true"></div>
+
+  <div class="layout">
+    <aside class="toc" id="toc" aria-label="目录">
+      <div class="toc-head">
+        <p class="toc-title">目录</p>
+        <button class="toc-close" onclick="closeToc()" aria-label="关闭">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+      <nav class="toc-nav" id="toc-nav">
+        <a href="#section-01" class="lvl-2">1.1 研究背景与总体思路</a>
+<a href="#section-01-01" class="lvl-3">1.1.1 研究场景与目标</a>
+<a href="#section-01-02" class="lvl-3">1.1.2 两大研究点与四个问题</a>
+<a href="#section-01-03" class="lvl-3">1.1.3 流式处理边界与系统流程</a>
+<a href="#section-02" class="lvl-2">1.2 面向异质缓存对象的价值建模与检索复用</a>
+<a href="#section-02-01" class="lvl-3">1.2.1 异质缓存对象的未来管理价值建模</a>
+<a href="#section-02-02" class="lvl-3">1.2.2 候选检索与有效性检查</a>
+<a href="#section-03" class="lvl-2">1.3 价值驱动与依赖感知的缓存生命周期管理</a>
+<a href="#section-03-01" class="lvl-3">1.3.1 价值驱动的准入、保留、淘汰与回答异步验证提升</a>
+<a href="#section-03-02" class="lvl-3">1.3.2 面向流式证据更新的缓存依赖传播与自适应修复</a>
+<a href="#section-03-03" class="lvl-3">四点之间的接口与因果关系</a>
+<a href="#section-04" class="lvl-2">1.4 实验设计与评估</a>
+<a href="#section-04-01" class="lvl-3">1.4.1 研究问题与实验边界</a>
+<a href="#section-04-02" class="lvl-3">1.4.2 数据集、运行环境与事件构造</a>
+<a href="#section-04-03" class="lvl-3">1.4.3 对照策略与公平性控制</a>
+<a href="#section-04-04" class="lvl-3">1.4.4 分层实验步骤</a>
+<a href="#section-04-05" class="lvl-3">1.4.5 指标与统计报告</a>
+<a href="#section-04-06" class="lvl-3">1.4.6 实施顺序与阶段交付</a>
+<a href="#section-04-07" class="lvl-3">1.4.7 分支重放与成本测量约定</a>
+<a href="#section-05" class="lvl-2">1.5 本章小结与实施顺序</a>
+<a href="#section-06" class="lvl-2">参考资料</a>
+      </nav>
+    </aside>
+
+    <main class="content" id="main">
+      <header class="doc-header">
+        <span class="doc-eyebrow">SYSTEM DESIGN</span>
+        <h1 class="doc-title">第一章 面向流式智能体的缓存价值建模与生命周期控制</h1>
+        <p class="doc-subtitle">研究设计改稿。本文档明确研究问题、方法与实验实施路线；所有公式和参数均为待实现、待检验的设计，实验结果留待实测。</p>
+        <div class="doc-meta">
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-file"/></svg>
+            研究设计改稿.md
+          </span>
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>
+            2026-11-17
+          </span>
+          <span class="doc-meta-item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg>
+            约 29 分钟阅读
+          </span>
+        </div>
+      </header>
+
+      <!-- CONTENT_START -->
+<blockquote>
+<p>研究设计改稿。本文档明确研究问题、方法与实验实施路线；所有公式和参数均为待实现、待检验的设计，实验结果留待实测。</p>
+</blockquote>
+<h2 id="section-01">1.1 研究背景与总体思路</h2>
+<h3 id="section-01-01">1.1.1 研究场景与目标</h3>
+<p>流式 Agent 持续接收任务，并在处理任务时规划、检索知识、调用工具、生成回答。任务间可能出现相似的信息需求、相同的只读工具调用和可迁移的计划片段；与此同时，请求热点、知识来源和工具状态持续变化。系统因此需要边处理事件，边判断哪些历史结果适用于当前任务，以及哪些缓存值得继续保存或维护。</p>
+<p>本章将 <code>resp</code>（回答）、<code>rag</code>（检索证据）、<code>act</code>（只读工具结果）和 <code>plan</code>（计划模板或片段）作为四类缓存对象。会话上下文、用户权限、外部数据与工具版本作为适用性和依赖状态的来源。系统接收请求与 Agent 执行事件、来源或工具状态更新事件、后台任务完成事件，在线更新缓存状态和统计信息。</p>
+<p><strong>研究目标：</strong> 在持续变化的请求与来源状态下，衡量四类对象的有效复用价值，选择当前请求的服务路径，并在有限缓存空间与后台预算下管理条目。评价同时报告任务质量、用户时延与资源开销。</p>
+<h3 id="section-01-02">1.1.2 两大研究点与四个问题</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>研究点</th>
+<th>小点</th>
+<th>关键问题</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一、价值建模与检索复用</td>
+<td>① 异质缓存对象的价值建模</td>
+<td>缓存未来保留能带来多少收益？</td>
+<td>长期管理价值和有效性依据</td>
+</tr>
+<tr>
+<td>一、价值建模与检索复用</td>
+<td>② 候选检索与有效性检查</td>
+<td>怎样找到候选并判断是否可以复用？</td>
+<td>本次请求的服务路径及执行反馈</td>
+</tr>
+<tr>
+<td>二、缓存生命周期管理</td>
+<td>③ 价值驱动的准入、淘汰与异步验证提升</td>
+<td>有限空间和后台资源下，保存什么、如何改进回答缓存？</td>
+<td>新的缓存集合及回答提升任务</td>
+</tr>
+<tr>
+<td>二、缓存生命周期管理</td>
+<td>④ 面向流式证据更新的依赖传播与自适应修复</td>
+<td>证据更新后，哪些回答受影响，适合局部修复还是完整重生成？</td>
+<td>经过核验并绑定最新证据版本的缓存回答</td>
+</tr>
+</tbody>
+</table></div>
+<p>四点依次形成“估值 → 在线复用 → 准入与提升 → 依赖传播与回答修复 → 反馈估值”的闭环。候选检索与有效性检查支持当前请求复用，未来管理价值支持跨请求的保留与维护决策；更新后的回答作为新版本重新进入价值评估。</p>
+<h3 id="section-01-03">1.1.3 流式处理边界与系统流程</h3>
+<p>以处理时间为本章原型的统计口径：同一测试序列中的请求、依赖更新及任务完成按控制器接收顺序处理；需求统计使用固定长度的滑动时间窗口。历史回放以实验调度的逻辑时间作为处理时间，真实系统记录实际处理时间。涉及乱序和事件时间的研究留作后续扩展。</p>
+<figure class="diagram">
+<pre class="mermaid">flowchart LR
+    A[请求与 Agent 执行] --&gt; B[候选检索] --&gt; C[有效性检查] --&gt; D[复用或执行] --&gt; E[执行反馈]
+    F[数据或工具更新] --&gt; G[依赖定位与失效] --&gt; H[缓存状态]
+    H --&gt; I[准入、淘汰、提升与回答修复] --&gt; J[验证、刷新或重生成任务]
+    J --&gt; K[任务完成事件] --&gt; H
+  </pre>
+<figcaption class="diagram-caption">请求、证据更新和后台任务完成事件交错推进；依赖定位与版本检查保证修复结果对应当前已知证据。</figcaption>
+</figure>
+<p>读取路径使用当前已知的依赖版本和权限判定有效性；后台任务携带版本快照，提交前再次检查。外部状态更新被系统接收之前的可见性取决于数据源更新通知及其延迟，实验分别记录通知延迟和系统接收后的处理延迟；一致性保证以系统已接收的最新版本为边界。</p>
+<h2 id="section-02">1.2 面向异质缓存对象的价值建模与检索复用</h2>
+<h3 id="section-02-01">1.2.1 异质缓存对象的未来管理价值建模</h3>
+<p><strong>设计目标。</strong>  基于在线观测和成本统计估计条目未来管理价值，支持准入、保留和维护。</p>
+<p><strong>对象及其有效性条件。</strong>  四类对象纳入同一个条目接口，各自保留专属语义条件：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>对象</th>
+<th>缓存粒度</th>
+<th>请求时的主要适用性检查</th>
+<th>直接节省的工作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resp</code></td>
+<td>完整回答或可参数化回答模板</td>
+<td>权限、问题语义、模型/内容版本、时效、答案可接受性</td>
+<td>回答生成与推理</td>
+</tr>
+<tr>
+<td><code>rag</code></td>
+<td>证据集合及集合内来源可追溯的证据块</td>
+<td>权限、来源版本、新鲜度、当前问题证据覆盖</td>
+<td>检索、回源和证据加工</td>
+</tr>
+<tr>
+<td><code>act</code></td>
+<td>一次只读工具调用结果</td>
+<td>工具/算法版本、规范化参数、权限、依赖数据或环境状态</td>
+<td>工具调用与远程交互</td>
+</tr>
+<tr>
+<td><code>plan</code></td>
+<td>参数化计划模板或计划片段</td>
+<td>任务阶段、前置条件、工具/权限、参数绑定和可执行性</td>
+<td>规划搜索与重规划</td>
+</tr>
+</tbody>
+</table></div>
+<p>写入或重用时保存对象标识、内容引用、大小、来源和版本、创建/确认时间、访问时间、权限域、对象专属特征及依赖边。<code>act</code> 普通结果缓存限于只读操作；副作用工具调用不以缓存命中跳过一次新的业务动作。<code>ctx</code> 等会话信息作为依赖和失效来源记录，不额外扩展为本章核心实验对象。</p>
+<p><strong>成本记录。</strong>  分别记录用户端耗时、模型 token、远程调用次数或费用及后台工作时间。有效性检查与适配的时间计入其实际所在的前台或后台，实验主指标采用用户端耗时；token、调用次数与后台计算分项报告。</p>
+<p>近期统计统一使用处理时间上的固定长度滑动窗口 <code>T</code>，到达事件更新窗口内计数与成本样本。窗口不混用“最近 N 次请求”口径；请求事件的到达时间、来源更新和任务完成时间由回放器明确排序。成本预测仅使用当前事件之前的历史观测。</p>
+<p><strong>条目未来管理价值。</strong>  在未来窗口 <code>H</code> 内，以近期窗口估计兼容请求的到达率、条目的可用机会以及每次实际可节省的用户端时间。单条目的近似价值可以写为：</p>
+<pre><code class="language-text">V_hold(i, H) = 预计有效复用次数 × 每次预期用户端时间节省 − 持有开销
+</code></pre>
+<p>有效复用次数综合近期需求、权限、对象适用性、剩余有效期及依赖版本状态；每次节省按复用相对于正常执行的净成本估计。<code>resp</code> 进一步考虑当前缓存中已有的安全覆盖；<code>rag</code> 按实际使用的来源记录需求，来源更新时只折减受影响证据的机会；<code>act</code> 依据参数匹配和可观察的数据版本估算；<code>plan</code> 将计划适配、执行回退和重新规划成本纳入收益，任务完成率独立报告。重复候选的边际价值以缓存集合比较，避免重复计数。</p>
+<p>在时间口径下，<code>rag</code> 可按来源分别估计：最近 <code>T</code> 内来源 <code>s</code> 对集合 <code>i</code> 分得的使用次数为 <code>n(i,s)</code>，未来时间 <code>u</code> 内来源当前版本仍有效的估计比例为 <code>P(s,u)</code>，<code>h(i,s)</code> 为未来窗口 <code>H</code> 与集合、来源剩余有效期的较小值，则 <code>O(i,H) = Σ_s [n(i,s)/T × ∫₀ʰ⁽ⁱ,ˢ⁾ P(s,u) du]</code>。一次请求使用多个来源时将一次机会分摊给相关来源；机会估计仍须通过在线证据充分性和实际选用情况校准。可用近期更新率构造 <code>P(s,u) = exp(−λ(s) × u)</code> 作为待验证的泊松假设，样本不足时使用同类来源的统计；版本刷新后重新估计。
+对任一估计，保存样本量与置信区间；样本少时采用保守先验。预计收益用于决策，实验同时报告估值与实测收益的偏差和风险结果，不能仅凭公式声称预测有效。</p>
+<h3 id="section-02-02">1.2.2 候选检索与有效性检查</h3>
+<p><strong>检索职责。</strong>  检索负责在对象专属索引中提出少量候选，不负责证明可复用。比较不同缓存策略时固定请求规范化方法、索引、候选数和相似度排序，避免将检索质量变化误认为价值模型收益。四类对象共享“检索—有效性检查—复用或执行—反馈”接口，采用各自匹配特征：</p>
+<ul>
+<li><code>resp</code>：按请求意图、实体、时间范围及权限/版本等字段检索完整答案；语义向量用于候选召回，权限与时间条件用于过滤或检查。</li>
+<li><code>rag</code>：按当前问题或子需求检索证据块，回溯其证据集合与来源版本；检查证据覆盖，对有效部分复用，对缺失部分补检，无法确认时完整检索。</li>
+<li><code>act</code>：以工具标识、版本和规范化参数作精确或结构匹配；动态结果还需比较当前依赖状态，状态检查开销纳入复用成本。</li>
+<li><code>plan</code>：按任务目标、阶段和工具需求找参数化模板；检查前置条件，记录参数绑定、局部修复及失败回退成本，不能仅凭文本相似直接执行。</li>
+</ul>
+<p><strong>当前请求的复用流程。</strong>  检索候选后，检查权限、版本、时效及对象适用性；通过检查的候选可供复用。<code>rag</code> 证据部分覆盖时，复用有效证据并对缺失部分补检。没有可用候选时，正常执行相应的检索、工具调用、规划或回答生成。执行结果及实际使用的证据、计划、工具结果和回答写入反馈日志。</p>
+<p>对同一请求中多个缓存阶段的收益，记录各阶段实际避免的工作，并避免把下游生成已包含的上游成本再次计入。<code>plan</code>、<code>act</code>、<code>rag</code> 与 <code>resp</code> 的组合收益在端到端实验中衡量，单对象实验用于区分各机制贡献。</p>
+<h2 id="section-03">1.3 价值驱动与依赖感知的缓存生命周期管理</h2>
+<h3 id="section-03-01">1.3.1 价值驱动的准入、保留、淘汰与回答异步验证提升</h3>
+<p><strong>管理目标。</strong>  生命周期控制使用第一小点的未来管理价值，并以第二小点的安全门和执行反馈为输入。在固定缓存容量和后台预算下，决定候选是否准入、已有条目是否保留，以及有限后台验证资源优先用于何处。</p>
+<p><strong>准入、保留与淘汰。</strong>  新结果经过对象专属有效性检查后成为候选。若有空间且预期未来价值为正，则准入；容量不足时，评估候选加入并移除条目集合后的整体价值变化：</p>
+<pre><code class="language-text">ΔV(M → M′) = V(M′, H) − V(M, H)
+</code></pre>
+<p>其中 <code>M′</code> 满足容量约束；<code>V(M,H)</code> 是未来窗口内缓存集合相对于相同请求全部重算的预计用户端累计时间节省，计入候选之间的覆盖重叠和回退开销。集合差值体现被替换条目的空间机会成本，准入和保留时的未来维护开销纳入比较；质量约束与后台资源分别记录。只有预计价值增量为正且硬约束满足时才执行替换。先移除已确认失效且无刷新计划的条目；其余淘汰选择依据“移除造成的未来服务损失/占用空间”比较。定期重估使用当前窗口统计，记录反复准入淘汰作为抖动成本。候选冷启动只使用有限探索预算，且所有方法使用相同的探索机会。</p>
+<p><strong><code>resp</code> 静态层后台验证与提升。</strong>  该机制参考 Krites 的双层回答缓存和异步验证思路，扩展为按预计增量价值选择提升任务。静态层存放经过离线精选的回答条目，动态层存放在线生成回答及已验证的静态回答映射。请求先检查静态层：候选满足较高适用性阈值与所有硬条件时可直接返回；处于预设灰区且权限、版本和时效可预先检查时，当前请求沿动态层或后端完成服务，再提交独立后台验证任务。后台任务验证静态答案对原请求的适用性，并在有可靠基线时比较回答质量；通过后按 <code>ΔT_post + λ_Q × ΔQ_post</code> 重新计算提升后的增量价值，并扣除尚未发生的维护开销；只有预计增量价值为正且容量约束满足，才写入动态层映射。已发生的验证成本用于任务选择和实验记账，准入比较不再重复扣除。验证结论绑定请求条件、权限、静态内容和依赖版本，后续请求仍须经过在线有效性检查。提升不重置源内容年龄，存储指针和元数据计入动态层容量。</p>
+<p>后台任务优先级按单位后台时间的预期收益排序：</p>
+<pre><code class="language-text">P_verify(j) = [p_pass(j) × (ΔT_post(j) + λ_Q × ΔQ_post(j)) − λ_B × C_verify(j)] / max(T_verify(j), ε)
+</code></pre>
+<p>其中 <code>ΔT_post</code> 是提升成功后相对未提升的预计未来用户端累计时间节省，单位为秒；<code>ΔQ_post</code> 是相同未来请求上预计累计回答质量分之差，<code>λ_Q</code> 的单位为秒／质量分。两者采用相同未来窗口、相同请求样本估计，质量评分及 <code>λ_Q</code> 在验证集确定并做敏感性分析；缺少可比评分时质量增益按零处理。因而即使已有安全动态命中、时间节省接近零，只要通过概率加权后的预计质量收益足以覆盖后台成本和其他增量开销，仍可安排验证并在通过后决定提升。<code>C_verify</code> 是该次验证消耗的后台计算工作量（以单工作槽秒计，含并行工作槽之和），<code>T_verify</code> 是任务对调度槽的预计占用时长；当每次任务固定占用一个槽时二者数值相同，分子反映成本、分母反映有限时间内的任务排序。<code>λ_B</code> 将后台工作秒折算为用户端时间收益，采用验证集选定的无量纲权重并做敏感性分析；队列等待另行记录。通过概率和成本使用此前同类观测。排队任务去重、限长、限并发；执行前重新检查需求、依赖版本和剩余有效期。任务过期或候选状态改变时取消/合并或丢弃结果，避免无用工作；失败、超时后有限重试，随后交由在线请求按需验证或重算。后台验证时间、判官 token、队列等待和实际后续命中均进入评估。</p>
+<p><code>rag</code>、<code>act</code>、<code>plan</code> 不使用回答静态层提升机制，但都按同一管理价值口径做在线准入/替换；其验证工作针对证据支持和来源状态、工具结果状态、计划前置条件与执行反馈分别设计。</p>
+<h3 id="section-03-02">1.3.2 面向流式证据更新的缓存依赖传播与自适应修复</h3>
+<p><strong>细粒度依赖记录。</strong>  首版聚焦单轮 <code>rag → resp</code>，记录“来源版本 → 检索证据块 → 回答事实表述”的依赖关系。生成回答时拆分可核验的事实表述，保存每条表述对应的证据 ID、内容版本或摘要；无法清晰对应的跨句推理或无引用表述标记为不可局部修复。反向索引支持从来源更新快速定位受影响证据与回答表述。</p>
+<p><strong>更新事件与影响定位。</strong>  生成回答时同时保存原查询、检索器配置、索引版本和旧 Top-k 证据。来源新增、修改或删除都可能使旧 Top-k 外的新证据进入结果，因此首版在每次更新后对全部缓存查询使用固定确定性检索器重检，并与记录的旧 Top-k 比较证据 ID、内容版本或哈希及排序；同一证据 ID 的内容变化也触发处理。完成影响判断前，相关回答保持待确认且不可服务。删除后无替代证据的事实表述不再作为事实服务。只有检索结果变化会改变回答依据或覆盖时才触发修复；重检成本计入实验。</p>
+<p><strong>修复或重生成决策。</strong>  将原问题、旧回答、变更前后的相关证据和更新后的完整相关证据上下文交给轻量 LLM，要求返回受影响表述、修复候选和结构化依据。影响局部、替代证据充分且未修改部分仍有有效支撑时，只修复相关表述；溯源不足、更新改变多条主张之间的推理、影响范围不清或证据不足时完整重生成。重生成仍缺少证据时，明确表达不确定性或证据不足，不补造事实。</p>
+<p><strong>核验与版本条件写回。</strong>  逐条检查修改及保留的事实表述是否得到当前证据支持，并检查其证据版本。通过后写入新 <code>resp</code> 版本及依赖映射；失败则完整重生成。任务携带检索索引与来源版本快照，提交前再次检查；若处理中又到达更新，丢弃旧候选并基于最新版本重新定位和处理。正确性评估使用人工、程序化真值或独立标注，不以修复模型自身判断作为真值。</p>
+<p><strong>流式执行与研究边界。</strong>  请求、证据更新和修复完成按控制器接收顺序处理；版本条件提交保证结果对应系统当前已知版本，更新事件被系统接收前的可见性受通知延迟影响。首版将实现和实验限定为单轮 <code>rag → resp</code>、短回答、可追溯证据和固定确定性检索器；<code>act</code> 与 <code>plan</code> 保留各自的状态检查与按需重算流程。</p>
+<p><strong>与流处理实现的关系。</strong>  事件回放验证依赖传播、修复决策和版本一致性；后续 Flink 原型维护来源版本、证据—主张反向索引、缓存状态和修复任务。checkpoint 与恢复用于检查状态和任务结果一致性。研究重点是更新后回答质量、过期结果控制和修复总成本；吞吐与恢复性能只在原型实际测量后报告。</p>
+<h3 id="section-03-03">四点之间的接口与因果关系</h3>
+<ol>
+<li>第一小点定义条目管理价值的估计量，并使用按时间更新的请求、成本及依赖状态。</li>
+<li>第二小点执行候选检索与有效性检查，复用有效缓存或正常执行，并输出真实结果及成本反馈。</li>
+<li>第三小点消费条目管理价值和反馈，控制准入、保留、淘汰；<code>resp</code> 灰区验证通过后再评估动态层提升。</li>
+<li>第四小点消费证据更新事件，定位受影响的 <code>rag</code> 和 <code>resp</code>，选择局部修复或完整重生成；核验、版本冲突与修复成本反馈再进入第一小点估值。</li>
+</ol>
+<p>请求路径通过有效性检查确定是否复用；生命周期路径决定缓存条目是否保留，以及证据更新后如何恢复回答有效性。两者共享观测和对象状态，收益与修复成本在对应路径记账一次。</p>
+<h2 id="section-04">1.4 实验设计与评估</h2>
+<p>本节按“先确认缓存机会，再验证价值模型与生命周期策略，最后验证流式原型”的顺序开展。实验目标是检验：在相同请求轨迹、缓存容量、有效性规则与后台预算下，所提出的在线价值估计与生命周期决策能否提高安全复用所带来的累计收益，并在请求需求或依赖状态变化时保持服务质量。</p>
+<h3 id="section-04-01">1.4.1 研究问题与实验边界</h3>
+<p>实验围绕四个问题组织：</p>
+<ol>
+<li><strong>RQ1：四类 Agent 对象分别有多少可利用的复用机会？</strong>  测量 <code>resp</code>、<code>rag</code>、<code>act</code>、<code>plan</code> 的精确重复与语义近邻分布、结果可验证比例、复用所需成本，以及缓存查找和有效性检查的管理开销。先确认每类对象的净收益空间，再进入策略比较。</li>
+<li><strong>RQ2：候选检索与有效性检查能否支持可靠复用？</strong>  测量四类对象的候选检索效果、检查开销和错误复用情况，评价复用路径的成本与质量。</li>
+<li><strong>RQ3：价值驱动的生命周期策略能否更有效地使用有限缓存与后台资源？</strong>  比较准入、保留、淘汰和回答异步提升，检验单位缓存空间和后台工作量带来的服务收益。</li>
+<li><strong>RQ4：证据更新与 Agent 请求、回答修复交错时，依赖传播和自适应修复能否保持回答有效？</strong>  比较受影响回答定位、局部修复或完整重生成、版本条件写回的质量、陈旧结果暴露和总成本；随后用 Flink 原型验证事件处理与恢复行为。</li>
+</ol>
+<p>四类对象均进入实验范围，但采用共同的实验协议和对象专属的真值定义：<code>resp</code> 评价答案适用性与回答质量；<code>rag</code> 评价证据支持、来源权限和版本；<code>act</code> 评价工具、参数、权限及外部状态；<code>plan</code> 评价前置条件、适配成本、执行完成情况和回退。四者不共用一个未经校准的质量分数；时间、费用、质量、错误复用分别报告。静态层异步验证与提升仅针对 <code>resp</code>，其他对象的后台工作以可定义的状态检查或依赖刷新为主。</p>
+<h3 id="section-04-02">1.4.2 数据集、运行环境与事件构造</h3>
+<h4 id="section-04-h15">任务来源</h4>
+<p>采用“公开基准任务／环境 + 自建运行日志 + 可控流事件”的组合。候选来源为：</p>
+<ul>
+<li><strong>AgentBench</strong> ：覆盖多种交互环境，可用于采集请求、计划、工具调用、工具结果和最终回答。官方仓库说明与运行入口见 <a href="https://github.com/THUDM/AgentBench">THUDM/AgentBench</a>。选择具体子环境后再锁定依赖与许可；仓库许可不能替代对环境镜像、底层数据或外部服务条款的核验。</li>
+<li><strong>WebArena</strong> ：自托管网页任务与可程序化评估，适合采集浏览器工具动作、页面状态、计划和执行结果，也可构造页面内容版本变化。官方实现见 <a href="https://github.com/web-arena-x/webarena">web-arena-x/webarena</a>。它提供的是任务与环境，不应描述为天然具有长期请求到达流或真实更新日志。</li>
+<li><strong>ToolBench / StableToolBench</strong> ：可作为工具 API 与可复现响应模拟的补充来源，重点用于 <code>act</code> 的输入、输出和状态变化实验。官方项目见 <a href="https://github.com/OpenBMB/ToolBench">OpenBMB/ToolBench</a>。模拟响应和静态轨迹不能直接当作真实在线工具调用成本或生产到达流。</li>
+<li><strong>HoH</strong> ：动态知识更新与过时回答的候选任务／数据来源。使用前核验当前发布版本、许可、字段及其与证据版本和回答主张映射的适配性；若字段不足，则借鉴其更新事件设计，以自建可控文档版本构造主实验数据。论文见 <a href="https://aclanthology.org/2025.acl-long.301/">ACL 2025</a>。</li>
+</ul>
+<p>具体起步顺序采用 AgentBench 的 DBBench 与 WebShop 子环境：前者优先用于可重置的只读数据操作与计划执行，后者用于购物交互、回答和多步计划；为两者增加带来源 ID 和版本的可检索文档、证据引用记录及更新事件，以形成 <code>rag</code> 样本。四类对象均使用同一个仪表化 Agent 记录，必要时用 WebArena 作为独立环境复核。执行前核对各环境硬件要求，固定仓库提交及各环境版本。</p>
+<p>上述基准均需在开工时确认当前版本、可下载性、执行依赖和许可证；只将核验过的任务子集纳入正式实验。可用 API 模型或本地模型驱动 Agent，记录模型版本、提示词、参数、调用价格口径和硬件环境。对需要判定答案或计划质量的场景，优先使用环境自带程序化评估；LLM 判官用于辅助标注时，固定模型和评分规程，并抽样人工复核，判官调用成本计入资源账本。</p>
+<h4 id="section-04-h15-02">运行日志与事件流</h4>
+<p>每次运行按统一日志记录任务 ID、事件序号、到达时间、会话／租户、请求、对象类型和 ID、候选检索结果、依赖版本、所选动作、实际路径、工具参数与结果、回答／任务评分、延迟、token 或外部费用、缓存大小、后台任务及完成状态。不可观测字段保留缺失标记，不从测试集反推。</p>
+<p>公开任务通常不提供流式服务所需的真实到达时间、热点漂移、连续来源版本和缓存决策反事实。对这些变量，先从任务内容和环境状态生成带固定种子的事件序列，并在结果中标为 <strong>实验构造</strong> ：</p>
+<ul>
+<li>请求到达时间及并发负载；</li>
+<li>热点阶段及迁移时刻；</li>
+<li>知识文档、网页、工具数据的更新事件和版本号；</li>
+<li>处理、验证、刷新和重算的成本参数（若无直接观测，则通过实际运行测量或明确的负载模型取得）；</li>
+<li>后台服务速率及预算。</li>
+</ul>
+<p>事件回放按序推进；任一决策只能使用此前已经处理的请求、更新和任务完成反馈。先按原始任务族或会话划分历史构建、验证和测试数据，再在各自内部构造重复或相近请求流；静态库使用历史部分，但不得引入测试请求的答案或测试期间后续版本。参数只在验证集确定，测试轨迹用于最终报告。至少保存原始数据版本、环境配置、模型设置、事件生成代码版本和随机种子。</p>
+<h4 id="section-04-h15-03">每类缓存的实验样本构造</h4>
+<ul>
+<li><strong><code>resp</code>：</strong>  用问题及上下文检索历史回答候选；通过基准标签、环境状态或人工复核建立“适用于当前请求”的标注。测语义近邻误复用风险、完整回答质量、动态层命中和静态层灰区候选。静态回答库从训练部分构建，测试请求不参与构建。</li>
+<li><strong><code>rag</code>：</strong>  对可访问文档或页面切分证据块，保留文档 ID、版本、权限和生成回答时实际采用的证据引用。构造可控文档修订，检查旧证据及其下游回答的失效传播；采用答案支持标注或环境真值判断证据覆盖与补检效果。</li>
+<li><strong><code>act</code>：</strong>  记录工具名、规范化参数、权限、工具版本、输入状态版本和输出。先覆盖确定性计算及可重放只读工具，再加入外部状态发生变化的情形。新业务操作不作为缓存命中；副作用工具不允许通过普通结果复用跳过执行。</li>
+<li><strong><code>plan</code>：</strong>  从可重复执行的任务轨迹提取计划模板和参数槽位，记录工具依赖、前置条件、适配／验证／修复步骤、执行结果、回退和重规划。通过环境重复运行同一任务族来比较复用计划与直接重规划；只基于任务文本相似度不能标为可安全复用。</li>
+</ul>
+<h3 id="section-04-03">1.4.3 对照策略与公平性控制</h3>
+<p>所有策略共享同一事件序列、候选检索器、候选生成规则、权限与版本安全底线、离线独立质量评估规程和执行环境；各策略自行决定缓存内容。实验 D 中双层回答缓存对照与本文方法使用相同在线验证器；实验 E 的在线核验属于本文修复方案的一部分，三组均以统一离线独立评估比较正确性。改变候选检索算法时另设检索实验，不与价值和生命周期策略同时变动。对比方法包括：</p>
+<ol>
+<li><strong>无缓存：</strong>  每次完整检索、调用工具、重新规划或生成回答，建立成本和质量基线。</li>
+<li><strong>精确匹配缓存：</strong>  只在键和依赖条件完全匹配时复用，用于测量仅使用精确匹配时的收益。</li>
+<li><strong>LRU/TTL：</strong>  固定容量下的通用近期使用和年龄管理基线。</li>
+<li><strong>LFU／近期频率策略：</strong>  使用同一窗口统计频率决定准入或淘汰，用于比较动态价值估计的作用。</li>
+<li><strong>成本感知策略：</strong>  按单次重算成本及大小排序；维护相同硬有效性门，不加入质量收益或依赖机会估计。</li>
+<li><strong>依赖失效 + 按需重生成：</strong>  更新时传播失效，后续请求到达后按最新证据完整生成回答，作为维护基线。</li>
+<li><strong>直接轻量 LLM 修复：</strong>  将证据变更和旧回答直接交给轻量模型修订，不提供主张级影响定位，检验依赖信息的作用。</li>
+<li><strong>依赖定位的自适应修复：</strong>  本文方案；按主张—证据依赖定位、局部修复或完整重生成，再进行证据核验和版本条件写回。</li>
+<li><strong>双层 <code>resp</code> 基线：</strong>  相同静态回答库、灰区阈值、验证器及后台预算下，按到达顺序处理验证任务，成功后使用 LRU/TTL 管理动态提升项。</li>
+<li><strong>本文策略及消融：</strong>  长期管理价值、依赖状态、质量收益和后台任务优先级按设计逐项启用或移除。</li>
+</ol>
+<p>若按论文描述自行实现对照方法，记录实现假设和与原论文的差异，不标注为官方复现。所有方法使用相同的缓存容量（按对象字节数计）、模型调用预算、请求与更新轨迹、验证器和后台工作预算。权重或阈值用验证集确定；报告敏感性曲线，避免只选择有利工作点。质量约束通过独立质量指标和约束线报告，除非单位和转换依据明确，不把质量分与毫秒直接相加。</p>
+<h3 id="section-04-04">1.4.4 分层实验步骤</h3>
+<h4 id="section-04-h17">实验 A：缓存机会与管理税预实验</h4>
+<p>对四类对象分别统计精确重复率、候选近邻率、通过硬有效性检查的比例，以及“潜在节省 − 检索／验证／适配开销”的净收益分布。随机抽取分层样本，人工或程序化检查真值。对复用路径和正常执行路径重复执行并测量成本，固定 API 模型或本地环境及缓存热身条件。</p>
+<p><strong>产出：</strong>  每类对象的可复用样本规模、风险标签覆盖率、平均及分位成本、缓存空间分布和管理税。若某类样本或真值不足，在章节中报告限制，并扩大可控环境样本；不据候选清单推定该类已经有足够复用机会。</p>
+<h4 id="section-04-h17-02">实验 B：候选检索与有效性检查</h4>
+<p>固定候选检索方法和排序，对四类对象分别检查候选的权限、版本、时效与适用性，并测量查找、检查和复用开销；没有可用候选时正常执行。以标注或环境真值评估候选检索及有效性判断。</p>
+<p>报告候选召回、有效性判别 precision/recall、错误复用率及其质量损失，以及检索和检查耗时。对 <code>plan</code>，另报任务成功率、额外重规划次数及完成耗时；对 <code>rag</code>，另报证据覆盖率和支持正确率。</p>
+<h4 id="section-04-h17-03">实验 C：长期价值与准入／保留／淘汰</h4>
+<p>在固定容量下按时间回放请求，比较 LRU、LFU、成本感知和本文长期价值策略。使用相同的候选生成规则、初始状态及估值预算，允许各策略产生不同缓存集合，测量不同对象的累计安全服务收益、被淘汰后重建成本、命中质量、缓存空间和条目 churn。对 <code>act</code> 与 <code>plan</code>，分别在环境执行或重规划成本可重复测量的任务族中运行；用价值因素消融区分需求估计、内容年龄、依赖稳定性、对象大小及质量反馈。</p>
+<p>容量建议先按统一对象字节数设定多个归一化档位（如工作集大小的 25%、50%、75%），并在预实验后锁定范围；此为实验设计默认扫描档，不是既有实测参数。每个条件使用相同测试序列和多组事件随机种子，报告均值及置信区间。</p>
+<h4 id="section-04-h17-04">实验 D：<code>resp</code> 静态回答后台验证与提升</h4>
+<p>用训练轨迹构造静态答案库，验证集确定候选相似度灰区和质量比较规则，测试流中遇到灰区候选后先完成当前请求服务路径，再创建后台验证任务。任务确认静态回答适用性和与当前回答的质量差；通过后才计算提升的增量价值并写入动态层。比较双层到达顺序任务处理与价值排序／执行前重估策略，并设置“不提升”对照。</p>
+<p>改变请求热点迁移、灰区到达率、验证成本及后台服务预算，统计后续新增安全覆盖、用户端累计时延变化、回答质量变化、验证调用/token、任务等待时间、队列积压和提升后未使用比例。增设动态回答已安全命中、提升前后时间差接近零而质量提高的样本，检验质量收益驱动的验证与提升；单独报告这些样本的质量变化，避免重复计作新增命中。后台任务若因来源版本变化或需求消退而作废，计入后台开销。</p>
+<h4 id="section-04-h17-05">实验 E：流式证据更新与缓存回答自适应修复</h4>
+<p>首版使用单轮 <code>rag → resp</code> 问答、固定确定性检索器和同一索引版本，保存查询、检索器配置、索引版本、旧 Top-k 证据和回答主张—证据版本映射。构造证据新增、修改、删除和连续更新事件；每次更新后对全部缓存查询重检，与旧 Top-k 比较证据 ID、内容版本或哈希及排序，同一 ID 内容更正也触发处理，定位潜在影响，重检成本计入评估。比较三组：①依赖失效后完整重生成；②直接轻量 LLM 修复，输入原问题、旧回答、证据变更和更新后的完整相关证据；③本文依赖定位方案，根据影响范围局部修复或完整重生成。三组统一在更新事件到达时触发维护，共享权限、版本等安全基线；回答正确性使用统一的离线独立标注或程序化真值评估，不假设三组共用在线核验器。</p>
+<p>测量主张定位 precision/recall、陈旧回答暴露次数与时长、修复后事实正确率和证据支持率、局部修复比例、失败后完整重生成比例、端到端时延和总成本。所有策略均计入查询重检、影响判定、修复及失败回退的模型调用、token、费用和时间。设置无关更新、证据替换、删除无替代、新证据改变 Top-k、证据不足及修复期间连续更新；检查版本冲突时过期候选是否被丢弃。</p>
+<h4 id="section-04-h17-06">实验 F：组合策略与流式原型</h4>
+<p>将 A–E 中通过验证的动作组合，运行稳定到达、突发到达、热点迁移、来源更新与混合事件工作负载。扫描缓存容量、来源更新率和后台服务预算，比较同等资源限制下的累计收益、质量、前台 P95/P99 时延、请求吞吐、队列长度和过期复用。以时间曲线展示变化发生前后策略响应，而不是只报告全程平均值。</p>
+<p>事件回放完成后，再把请求、来源更新和后台任务完成事件接入 Flink 状态处理原型。验证状态更新、反向依赖查询、任务幂等和 checkpoint 恢复；报告吞吐、处理延迟、队列积压及恢复前后重复／遗漏任务数。若只完成离线回放，则不报告 Flink 系统性能结论。</p>
+<h3 id="section-04-05">1.4.5 指标与统计报告</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>指标</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>复用与收益</td>
+<td>有效复用率、安全覆盖率、累计节省时间／费用、管理税后净收益</td>
+<td>将命中收益与检索、验证、补检、回退开销合并核算</td>
+</tr>
+<tr>
+<td>质量与风险</td>
+<td>任务成功率、回答质量、证据支持率、错误复用率、陈旧复用率</td>
+<td>按对象报告，不以命中率代替正确性</td>
+</tr>
+<tr>
+<td>价值估计</td>
+<td>管理价值估计误差、准入后收益</td>
+<td>衡量预计价值与后续实际收益的差异</td>
+</tr>
+<tr>
+<td>缓存控制</td>
+<td>占用字节、有效条目数、淘汰 churn、重建开销</td>
+<td>解释固定空间下的收益来源</td>
+</tr>
+<tr>
+<td>后台管理</td>
+<td>验证／刷新任务数与成功率、后台 CPU／时间、API/token、积压及未使用率</td>
+<td>核算为未来请求准备缓存的真实代价</td>
+</tr>
+<tr>
+<td>流式响应</td>
+<td>热点迁移适应时间、更新标记延迟、前台 P95/P99、吞吐</td>
+<td>直接检验动态流负载下的响应能力</td>
+</tr>
+<tr>
+<td>证据更新修复</td>
+<td>陈旧回答暴露次数／时长、主张定位效果、证据支持率、修复与回退比例</td>
+<td>评估更新后影响定位、回答正确性和版本一致性</td>
+</tr>
+<tr>
+<td>修复总开销</td>
+<td>检索、判定、修复、核验及回退的端到端时延、token 和费用</td>
+<td>完整计入局部修复失败后的重生成成本</td>
+</tr>
+<tr>
+<td>恢复能力</td>
+<td>checkpoint 恢复时间、重复／遗漏任务和状态差异</td>
+<td>仅在 Flink 原型实现后报告</td>
+</tr>
+</tbody>
+</table></div>
+<p>成本优先分别报告毫秒、token、API 费用与 CPU 时间；如需合并为净收益，明确单价与转换来源，并提供分项结果。质量优先报告原始任务指标；若设置质量门槛，门槛由验证集和研究目标预先确定，测试集不调参。随机种子、任务拆分和缓存初始状态保持配对；对配对测试轨迹报告置信区间，统计检验结合效应量，不只报告显著性。</p>
+<h3 id="section-04-06">1.4.6 实施顺序与阶段交付</h3>
+<ol>
+<li><strong>数据适配盘点：</strong>  下载并核验具体基准子集、许可证、运行条件和对象覆盖；完成日志 schema 与原始／构造字段清单。</li>
+<li><strong>单对象端到端打通：</strong>  先选择环境支持最完整的一类对象，跑通候选检索、硬有效性检查、复用与正常执行路径测量和回放；随后将相同协议扩展到另外三类。</li>
+<li><strong>价值与生命周期策略：</strong>  完成固定检索器条件下的有效性检查、准入淘汰、<code>resp</code> 提升，以及单轮 <code>rag → resp</code> 证据更新修复实验。</li>
+<li><strong>动态流和预算扫描：</strong>  固定验证集选出的参数，运行测试事件流，完成热点变化、来源更新、缓存容量和后台预算实验。</li>
+<li><strong>Flink 原型验证：</strong>  将已通过回放验证的状态转移接入 Flink；只评估实现过的吞吐、延迟和恢复能力。</li>
+</ol>
+<p>每阶段先检查样本量、可重复运行性和对应真值是否可得，再扩大实验规模。数据集实际字段、估值参数、事件生成规则和系统结果均在实施后填入；本设计不预设数据集提供了真实流时间戳、更新事件或缓存反事实，也不预设任一策略已取得优势。</p>
+<h3 id="section-04-07">1.4.7 分支重放与成本测量约定</h3>
+<p>日志中的历史时延不能直接当作缓存策略的端到端收益：缓存会改变后续 Agent 轨迹、工具调用数量和回答内容。可重放性按对象区分：</p>
+<ul>
+<li>对确定性只读工具和自托管环境，保存环境快照或可恢复状态，在同一初始状态分别运行候选缓存动作与完整执行分支；以实际观测到的两分支差值估计节省。</li>
+<li>对外部 API 工具，只有在响应可回放且状态条件一致时才可做分支配对；否则使用受控模拟响应评价策略，并把模拟环境结果与真实 API 的单次成本测量分开报告。</li>
+<li>对回答生成、证据检索及计划执行，缓存命中与重算分支应使用相同模型／提示词／检索版本和任务初始状态；质量由基准评分、环境成功条件或经复核的标注测量。缓存导致的后续调用变化也计入整条任务的端到端成本。</li>
+<li>对具有副作用的工具，不通过重放已执行动作来推断收益；在隔离环境中重置状态后重跑，或仅报告安全只读动作的结果。</li>
+</ul>
+<p>若无法重跑反事实分支，该样本只用于估值输入或描述性统计，不用于宣称实际节省。离线策略回放报告“由模型／代价表推算的估计值”；真实环境重跑报告“实测端到端差值”，两者分开列出。API 费用按调用账单或明确的公开单价记录，本地模型同时记录墙钟时延、设备和 token 数；相同硬件、并发度与模型配置下做配对运行，并在报告中说明缓存热身和计时边界。</p>
+<p>定义每条测试任务轨迹的实测净时间收益为：</p>
+<p><code>G_time = T_base − T_cache</code></p>
+<p>其中 <code>T_base</code> 与 <code>T_cache</code> 分别是同一初始任务状态下无缓存基线和缓存策略完整执行至任务结束的墙钟时间。费用收益同理为 <code>G_cost = C_base − C_cache</code>。回答质量、任务完成率和错误复用独立报告；不将它们与时间合成单一分数，除非预先给出可解释的折算单位和验证集确定过程。</p>
+<h2 id="section-05">1.5 本章小结与实施顺序</h2>
+<p>本章以四类 Agent 缓存对象为研究对象，先建立未来管理价值，并通过候选检索与有效性检查支持复用，再将价值估计用于准入、保留与淘汰。面对流式证据更新，系统沿证据—回答主张依赖定位影响，选择局部修复或完整重生成，经证据核验和版本检查后更新缓存；请求、更新与修复事件的交错由版本条件提交保持一致。</p>
+<p>建议先确定可运行任务和事件字段，再建立四类对象的复用机会与开销基线；随后实现价值决策、生命周期控制、<code>resp</code> 异步提升，以及固定检索器下的证据更新修复；最后组合动态事件流与 Flink 原型开展评估。</p>
+<h2 id="section-06">参考资料</h2>
+<p>以下资料用于明确相关方法与实验环境。论文中的研究设计和预期效果属于本章方案，须通过实验检验；论文与环境的版本、许可及使用条件以实施时的官方发布信息为准。</p>
+<ol>
+<li>Schroeder L G, Desai A, Cuadron Lafuente A, et al.  <strong>vCache: Verified Semantic Prompt Caching</strong> . ICLR 2026. <a href="https://proceedings.iclr.cc/paper_files/paper/2026/hash/9559cd2116de7a8f5672eac3fcd232cc-Abstract-Conference.html">论文页面</a>. 关联：语义回答缓存的风险控制。</li>
+<li>Singh A K, Wang H, Attaluri S, et al.  <strong>Asynchronous Verified Semantic Caching for Tiered LLM Architectures</strong> . arXiv:2602.13165, 2026. <a href="https://arxiv.org/abs/2602.13165">论文</a>；<a href="https://machinelearning.apple.com/research/semantic-caching">项目说明</a>. 关联：分层回答缓存及后台验证提升；预印本。</li>
+<li>Ruan C, Bi C, Zheng K, et al.  <strong>Cortex: Achieving Low-Latency, Cost-Efficient Remote Data Access for LLM via Semantic-Aware Knowledge Caching</strong> . USENIX NSDI 2026. <a href="https://www.usenix.org/conference/nsdi26/presentation/ruan-cortex">会议页面</a>. 关联：远程知识访问和成本感知缓存。</li>
+<li>Jin C, Zhang Z, Jiang X, et al.  <strong>RAGCache: Efficient Knowledge Caching for Retrieval-Augmented Generation</strong> . <a href="https://arxiv.org/abs/2404.12457">论文</a>. 关联：RAG 推理中的知识缓存与结构组织。</li>
+<li>Zeng L, Jin Y.  <strong>FinCacheServe: Dependency-Consistent Answer Reuse for Cost-Efficient RAG Serving over Mutable Enterprise Documents</strong> . arXiv:2607.26076, 2026. <a href="https://arxiv.org/abs/2607.26076">论文</a>. 关联：可变文档上的依赖一致性；预印本。</li>
+<li>Zhang Q, Wornow M, Olukotun K.  <strong>Agentic Plan Caching: Test-Time Memory for Fast and Cost-Efficient LLM Agents</strong> . NeurIPS 2025. <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/9549f7d06700f0966d5f938f1d11022a-Abstract-Conference.html">会议页面</a>. 关联：计划模板提取和适配复用。</li>
+<li>Kumar A V, Kataria B, Oh B, et al.  <strong>TVCACHE: A Tool-Value Cache for Post-Training LLM Agents</strong> . ICML 2026. <a href="https://proceedings.mlr.press/v306/kumar26d.html">PMLR 页面</a>. 关联：工具调用结果复用。</li>
+<li><strong>AgentBench</strong> . <a href="https://github.com/THUDM/AgentBench">官方代码与环境</a>. 关联：多环境 Agent 任务及交互评测。</li>
+<li><strong>WebArena</strong> . <a href="https://github.com/web-arena-x/webarena">官方代码与环境</a>. 关联：可复现网页任务与执行评测。</li>
+<li><strong>Apache Flink</strong> . <a href="https://nightlies.apache.org/flink/flink-docs-release-1.20/">有状态流处理文档</a>. 关联：流式状态管理与恢复实现。</li>
+<li>Xie et al. <strong>StreamRAG: Enhancing Real-Time Video Understanding with Retrieval Augmentation</strong> . CVPR 2026. <a href="https://openaccess.thecvf.com/content/CVPR2026/papers/Xie_StreamRAG_Enhancing_Real-Time_Video_Understanding_with_Retrieval_Augmentation_CVPR_2026_paper.pdf">论文</a>. 关联：实时流数据进入检索知识库的场景背景；不研究缓存回答修复。</li>
+<li><strong>HoH: A Dynamic Benchmark for Evaluating the Impact of Outdated Information on Retrieval-Augmented Generation</strong> . ACL 2025. <a href="https://aclanthology.org/2025.acl-long.301/">论文</a>. 关联：动态知识变化下 RAG 过时回答的评测背景；仅作为候选数据来源，使用前核验许可、字段和更新事件适配性。</li>
+<li>Gao et al. <strong>RARR: Researching and Revising What Language Models Say, Using Language Models</strong> . ACL 2023. <a href="https://aclanthology.org/2023.acl-long.910/">论文</a>. 关联：依据检索证据修订生成文本；不处理流式更新触发的缓存依赖传播。</li>
+<li><strong>RAGTruth: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models</strong> . ACL 2024. <a href="https://aclanthology.org/2024.acl-long.585/">论文</a>. 关联：细粒度 RAG 幻觉标注，可参考回答核验评估；不研究答案缓存修复。</li>
+</ol>
+<p>上述工作分别支撑流式检索场景、知识过时评测、证据驱动修订和细粒度核验；它们不直接验证本章提出的“依赖定位—局部修复／完整重生成—版本条件提交”组合，该组合的有效性由本章实验检验。</p>
+
+
+      <!-- Inject components here. See components.md for the catalog. -->
+
+      <!-- CONTENT_END -->
+
+      <footer class="doc-footer">
+        <span>Generated by <a href="#">md2html</a></span>
+        <span>来源：本章研究设计改稿</span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    // ---------- Theme ----------
+    const STORAGE_KEY = "md2html-theme";
+    function currentTheme() { return document.documentElement.dataset.theme || "light"; }
+    function applyThemeIcon() {
+      const use = document.getElementById("theme-icon-use");
+      if (use) use.setAttribute("href", currentTheme() === "dark" ? "#i-sun" : "#i-moon");
+    }
+    (function restoreTheme() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) document.documentElement.dataset.theme = saved;
+    })();
+
+    // ---------- Mermaid ----------
+    const diagramSources = new Map();
+    function initMermaid() {
+      const isDark = currentTheme() === "dark";
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? "dark" : "default",
+        themeVariables: {
+          primaryColor: isDark ? "#3A2A22" : "#FBEEE6",
+          primaryTextColor: isDark ? "#F5F0E8" : "#1A1A1A",
+          primaryBorderColor: isDark ? "#E89572" : "#D97757",
+          lineColor: isDark ? "#9A938A" : "#6B6B66",
+          secondaryColor: isDark ? "#2A2520" : "#F5F5F0",
+          tertiaryColor: isDark ? "#221E1A" : "#FFFFFF",
+          fontFamily: "Inter, system-ui, sans-serif",
+        },
+      });
+    }
+    async function renderMermaid() {
+      initMermaid();
+      const els = document.querySelectorAll(".mermaid");
+      els.forEach(el => {
+        if (!diagramSources.has(el)) diagramSources.set(el, el.textContent.trim());
+        el.textContent = diagramSources.get(el);
+        el.removeAttribute("data-processed");
+      });
+      try { await mermaid.run({ nodes: els }); } catch (e) { console.error(e); }
+    }
+    function toggleTheme() {
+      const next = currentTheme() === "light" ? "dark" : "light";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem(STORAGE_KEY, next);
+      applyThemeIcon();
+      renderMermaid();
+    }
+
+    // ---------- TOC drawer (mobile) ----------
+    function openToc()  { document.body.classList.add("toc-open"); }
+    function closeToc() { document.body.classList.remove("toc-open"); }
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && document.body.classList.contains("toc-open")) closeToc();
+    });
+
+    // ---------- TOC scrollspy ----------
+    function setupTocSpy() {
+      const links = document.querySelectorAll("#toc-nav a[href^='#']");
+      if (!links.length) {
+        const toc = document.getElementById("toc");
+        if (toc) toc.style.display = "none";
+        return;
+      }
+      const map = new Map();
+      links.forEach(a => {
+        const id = a.getAttribute("href").slice(1);
+        const el = document.getElementById(id);
+        if (el) map.set(el, a);
+        a.addEventListener("click", () => {
+          if (window.matchMedia("(max-width: 900px)").matches) closeToc();
+        });
+      });
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          const link = map.get(en.target);
+          if (!link) return;
+          if (en.isIntersecting) {
+            links.forEach(l => l.classList.remove("active"));
+            link.classList.add("active");
+          }
+        });
+      }, { rootMargin: "-80px 0px -70% 0px", threshold: 0 });
+      map.forEach((_, el) => obs.observe(el));
+    }
+
+    // ---------- Anchor links on h2/h3 ----------
+    function injectAnchors() {
+      document.querySelectorAll(".content h2[id], .content h3[id]").forEach(h => {
+        if (h.querySelector(".anchor")) return;
+        const a = document.createElement("a");
+        a.className = "anchor";
+        a.href = "#" + h.id;
+        a.setAttribute("aria-label", "Permalink");
+        a.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-link"/></svg>';
+        h.appendChild(a);
+      });
+    }
+
+    // ---------- Copy-to-clipboard on <pre> ----------
+    function injectCopyButtons() {
+      document.querySelectorAll(".content pre").forEach(pre => {
+        if (pre.classList.contains("mermaid")) return;
+        if (pre.querySelector(".copy-btn")) return;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "copy-btn";
+        btn.setAttribute("aria-label", "Copy code");
+        btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-copy"/></svg>';
+        btn.addEventListener("click", async () => {
+          const code = pre.querySelector("code")?.textContent ?? pre.textContent;
+          try {
+            await navigator.clipboard.writeText(code);
+            btn.classList.add("copied");
+            btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check"/></svg>';
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-copy"/></svg>';
+            }, 1500);
+          } catch (e) { console.error(e); }
+        });
+        pre.appendChild(btn);
+      });
+    }
+
+    // ---------- Scroll progress ----------
+    function setupScrollProgress() {
+      const bar = document.getElementById("scroll-progress");
+      if (!bar) return;
+      const onScroll = () => {
+        const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const p = h > 0 ? (document.documentElement.scrollTop / h * 100) : 0;
+        bar.style.width = p + "%";
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+
+    // ---------- Boot ----------
+    document.addEventListener("DOMContentLoaded", () => {
+      applyThemeIcon();
+      injectAnchors();
+      injectCopyButtons();
+      renderMermaid();
+      setupTocSpy();
+      setupScrollProgress();
+    });
+  </script>
+</body>
+</html>
