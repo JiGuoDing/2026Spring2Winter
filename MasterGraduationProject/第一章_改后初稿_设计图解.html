@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面向流式智能体的异质缓存机制与生命周期管理 · 第一章设计</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<style>
+:root{
+  --bg:#f7f6f3; --panel:#ffffff; --ink:#1f2933; --muted:#5b6472; --line:#e4e1da;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --amber:#b45309; --amber-soft:#fdf3e3;
+  --teal:#0f766e; --teal-soft:#e2f2f0; --code:#eef1f6; --shadow:0 1px 3px rgba(20,25,40,.07),0 8px 24px rgba(20,25,40,.05);
+}
+[data-theme="dark"]{
+  --bg:#0f172a; --panel:#16213a; --ink:#e6ebf4; --muted:#9aa6bd; --line:#2a3654;
+  --accent:#7aa2ff; --accent-soft:#1c2a4d; --amber:#f0b264; --amber-soft:#33291a;
+  --teal:#5fd0c5; --teal-soft:#123330; --code:#1e293b; --shadow:0 1px 3px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;line-height:1.7;font-size:16px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+header.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 0}
+.nav .brand{font-weight:700;color:var(--accent);margin-right:10px;font-size:15px}
+.nav a{color:var(--muted);text-decoration:none;font-size:13.5px;padding:5px 10px;border-radius:8px}
+.nav a:hover{background:var(--accent-soft);color:var(--accent)}
+.nav .spacer{flex:1}
+#themeBtn{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:5px 11px;font-size:13px}
+.hero{padding:46px 0 26px}
+.hero h1{font-size:30px;line-height:1.35;margin:0 0 12px;letter-spacing:.3px}
+.hero .lead{font-size:17px;color:var(--muted);max-width:760px;margin:0}
+.kicker{display:inline-block;font-size:12.5px;letter-spacing:1px;color:var(--accent);background:var(--accent-soft);padding:4px 12px;border-radius:999px;margin-bottom:16px;font-weight:600}
+section{padding:30px 0;border-top:1px solid var(--line)}
+h2{font-size:22px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+h2 .no{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:var(--accent);color:#fff;font-size:15px;flex:none}
+h3{font-size:17px;margin:26px 0 8px;color:var(--ink)}
+.sub{color:var(--muted);font-size:14.5px;margin:0 0 18px}
+p{margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);margin:16px 0}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);margin:18px 0}
+.fig svg{width:100%;height:auto;display:block}
+.fig .cap{font-size:13px;color:var(--muted);text-align:center;margin-top:10px}
+.fig.lightfig{background:#ffffff;border-color:#e4e1da}
+[data-theme="dark"] .fig.lightfig{background:#f4f5f8}
+.callout{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0;font-size:14.5px}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.teal{border-color:var(--teal);background:var(--teal-soft)}
+.callout b{color:var(--ink)}
+.grid{display:grid;gap:14px}
+.grid.c2{grid-template-columns:1fr 1fr}
+.grid.c4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:820px){.grid.c4{grid-template-columns:1fr 1fr}.grid.c2{grid-template-columns:1fr}}
+@media(max-width:520px){.grid.c4{grid-template-columns:1fr}}
+.mini{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.mini .tag{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--accent);background:var(--code);padding:2px 8px;border-radius:6px}
+.mini h4{margin:10px 0 6px;font-size:15px}
+.mini p{margin:0;font-size:13.5px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0}
+th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);color:var(--ink);font-weight:600}
+td code,p code,li code{font-family:ui-monospace,Consolas,monospace;background:var(--code);padding:1px 6px;border-radius:5px;font-size:13px}
+.formula{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px;text-align:center;margin:14px 0;overflow-x:auto}
+.formula .fnote{font-size:13px;color:var(--muted);margin-top:8px}
+.mermaid{display:flex;justify-content:center}
+.pill{display:inline-block;font-size:12px;color:var(--teal);background:var(--teal-soft);border-radius:999px;padding:2px 10px;margin-left:8px;font-weight:600}
+ol,ul{margin:8px 0;padding-left:22px}
+li{margin:5px 0}
+footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--muted);font-size:13px}
+.exp{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--panel)}
+.exp h4{margin:0 0 8px;font-size:15.5px;color:var(--accent)}
+.exp .ang{font-size:13.5px;margin:8px 0}
+.exp .ang b{color:var(--ink)}
+.small{font-size:13px;color:var(--muted)}
+.cite{font-size:.78em;white-space:nowrap;margin-left:2px}.cite a{color:var(--accent);text-decoration:none}.cite a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav">
+  <span class="brand">第一章 · 设计图解</span>
+  <a href="#bg">背景</a><a href="#obj">四类对象</a><a href="#loop">总体闭环</a>
+  <a href="#rp1">研究点一</a><a href="#rp2">研究点二</a><a href="#exp">实验</a><a href="#refs">参考文献</a>
+  <span class="spacer"></span><button id="themeBtn">🌙 深色</button>
+</div></header>
+
+<div class="wrap hero">
+  <span class="kicker">毕业设计 · 第一部分</span>
+  <h1>面向流式智能体的异质缓存机制与生命周期管理策略</h1>
+  <p class="lead">把 Agent 执行全链路的四类中间结果纳入统一缓存，用价值建模决定「值不值得留」，用有效性检查决定「这次能不能用」，再用生命周期管理应对持续到来的知识更新。</p>
+</div>
+
+<div class="wrap">
+
+<section id="bg">
+  <h2><span class="no">1</span>问题背景</h2>
+  <p class="sub">流式 Agent 的运行形态，决定了缓存既有机会、也有新约束。</p>
+  <div class="fig lightfig">
+    <svg viewBox="0 0 900 230" role="img" aria-label="双流交错时间轴">
+      <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#94a3b8"/></marker></defs>
+      <text x="20" y="40" font-size="15" font-weight="700" fill="#1f2933">任务请求流</text>
+      <line x1="150" y1="35" x2="870" y2="35" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar)"/>
+      <g font-size="12" fill="#1d4ed8" text-anchor="middle">
+        <circle cx="200" cy="35" r="6" fill="#1d4ed8"/><text x="200" y="20">R1</text>
+        <circle cx="320" cy="35" r="6" fill="#1d4ed8"/><text x="320" y="20">R2</text>
+        <circle cx="470" cy="35" r="6" fill="#1d4ed8"/><text x="470" y="20">R3</text>
+        <circle cx="620" cy="35" r="6" fill="#1d4ed8"/><text x="620" y="20">R4</text>
+        <circle cx="770" cy="35" r="6" fill="#1d4ed8"/><text x="770" y="20">R5</text>
+      </g>
+      <rect x="150" y="92" width="720" height="34" rx="8" fill="#e2f2f0"/>
+      <text x="510" y="114" font-size="13" fill="#0f766e" text-anchor="middle">两次更新之间知识稳定 → 中间结果可一次计算、多次复用</text>
+      <text x="20" y="180" font-size="15" font-weight="700" fill="#1f2933">证据更新流</text>
+      <line x1="150" y1="175" x2="870" y2="175" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar)"/>
+      <g font-size="12" fill="#b45309" text-anchor="middle">
+        <rect x="380" y="167" width="16" height="16" rx="3" fill="#b45309"/><text x="388" y="205">U1 修改</text>
+        <rect x="690" y="167" width="16" height="16" rx="3" fill="#b45309"/><text x="698" y="205">U2 新增</text>
+      </g>
+      <line x1="388" y1="41" x2="388" y2="167" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <line x1="698" y1="41" x2="698" y2="167" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <text x="510" y="62" font-size="12" fill="#b45309" text-anchor="middle">更新与请求处理在时间上交错</text>
+    </svg>
+    <div class="cap">图 1 · 任务处理与知识更新两条流交错，构成区别于一次性问答的流式形态<sup class="cite"><a href="#ref-1">[1]</a></sup></div>
+  </div>
+  <div class="grid c2">
+    <div class="callout teal"><b>缓存机会：</b>相似任务反复需要相同的证据、工具结果、计划与回答，而知识在两次更新之间保持稳定。</div>
+    <div class="callout amber"><b>新约束：</b>知识更新令缓存过时，复用前须确认有效；热点与来源状态随时间变化，保存与淘汰须动态判断。<sup class="cite"><a href="#ref-2">[2]</a></sup></div>
+  </div>
+  <p>传统按命中率、相似度、访问频率的策略，衡量不了复用相对重新执行的真实净收益，也处理不了对象间的依赖一致性。现有 Agent 缓存工作还有两点不足：</p>
+  <div class="grid c2">
+    <div class="mini"><h4>① 只覆盖局部</h4><p>语义缓存复用回答<sup class="cite"><a href="#ref-3">[3]</a> <a href="#ref-5">[5]</a></sup>、KV 缓存复用推理状态<sup class="cite"><a href="#ref-7">[7]</a></sup>、工具缓存复用调用结果<sup class="cite"><a href="#ref-9">[9]</a></sup>，尚未形成贯穿规划、检索、调用、回答的统一系统。</p></div>
+    <div class="mini"><h4>② 未因地制宜</h4><p>机制多面向静态语料或独立请求，没有利用「更新间稳定、变更以事件到达、运行反馈持续产生」这些流式有利条件。</p></div>
+  </div>
+</section>
+
+<section id="obj">
+  <h2><span class="no">2</span>四类缓存对象</h2>
+  <p class="sub">把执行全链路的中间结果统一纳入缓存，会话上下文与外部数据、工具版本作为适用性与依赖来源。</p>
+  <div class="fig lightfig">
+    <svg viewBox="0 0 900 180" role="img" aria-label="Agent 执行链与四类对象">
+      <defs><marker id="ar2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/></marker></defs>
+      <g text-anchor="middle">
+        <rect x="40" y="40" width="170" height="56" rx="12" fill="#e8eefc" stroke="#1d4ed8"/>
+        <text x="125" y="64" font-size="15" font-weight="700" fill="#1f2933">规划</text>
+        <text x="125" y="84" font-size="13" fill="#1d4ed8" font-family="monospace">plan</text>
+        <rect x="260" y="40" width="170" height="56" rx="12" fill="#e2f2f0" stroke="#0f766e"/>
+        <text x="345" y="64" font-size="15" font-weight="700" fill="#1f2933">知识检索</text>
+        <text x="345" y="84" font-size="13" fill="#0f766e" font-family="monospace">rag</text>
+        <rect x="480" y="40" width="170" height="56" rx="12" fill="#fdf3e3" stroke="#b45309"/>
+        <text x="565" y="64" font-size="15" font-weight="700" fill="#1f2933">工具调用</text>
+        <text x="565" y="84" font-size="13" fill="#b45309" font-family="monospace">act</text>
+        <rect x="700" y="40" width="170" height="56" rx="12" fill="#e8eefc" stroke="#1d4ed8"/>
+        <text x="785" y="64" font-size="15" font-weight="700" fill="#1f2933">回答生成</text>
+        <text x="785" y="84" font-size="13" fill="#1d4ed8" font-family="monospace">resp</text>
+        <line x1="210" y1="68" x2="258" y2="68" stroke="#1d4ed8" stroke-width="2" marker-end="url(#ar2)"/>
+        <line x1="430" y1="68" x2="478" y2="68" stroke="#1d4ed8" stroke-width="2" marker-end="url(#ar2)"/>
+        <line x1="650" y1="68" x2="698" y2="68" stroke="#1d4ed8" stroke-width="2" marker-end="url(#ar2)"/>
+        <g font-size="12" fill="#5b6472">
+          <text x="125" y="130">省去：规划推理与搜索</text>
+          <text x="345" y="130">省去：检索与知识加工</text>
+          <text x="565" y="130">省去：工具调用与交互</text>
+          <text x="785" y="130">省去：回答生成与推理</text>
+        </g>
+      </g>
+    </svg>
+    <div class="cap">图 2 · 四类对象对应执行链的四个阶段，各自省去一类重复工作</div>
+  </div>
+</section>
+
+<section id="loop">
+  <h2><span class="no">3</span>总体设计闭环</h2>
+  <p class="sub">两个研究点相互衔接：价值建模与检索复用（研究点一）支撑生命周期管理（研究点二），运行反馈再回到估值。</p>
+  <div class="fig lightfig">
+    <svg viewBox="0 0 760 330" role="img" aria-label="设计闭环">
+      <defs><marker id="ar3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0f766e"/></marker></defs>
+      <g text-anchor="middle" font-size="14.5" font-weight="700">
+        <rect x="290" y="20" width="180" height="52" rx="12" fill="#e8eefc" stroke="#1d4ed8"/><text x="380" y="42" fill="#1f2933">价值建模</text><text x="380" y="60" font-size="11.5" font-weight="400" fill="#5b6472">1.2.1 值不值得留</text>
+        <rect x="560" y="135" width="180" height="52" rx="12" fill="#e8eefc" stroke="#1d4ed8"/><text x="650" y="157" fill="#1f2933">检索复用</text><text x="650" y="175" font-size="11.5" font-weight="400" fill="#5b6472">1.2.2 这次能不能用</text>
+        <rect x="290" y="250" width="180" height="52" rx="12" fill="#e2f2f0" stroke="#0f766e"/><text x="380" y="272" fill="#1f2933">准入淘汰</text><text x="380" y="290" font-size="11.5" font-weight="400" fill="#5b6472">1.3.1 给谁让位</text>
+        <rect x="20" y="135" width="180" height="52" rx="12" fill="#e2f2f0" stroke="#0f766e"/><text x="110" y="157" fill="#1f2933">依赖修复</text><text x="110" y="175" font-size="11.5" font-weight="400" fill="#5b6472">1.3.2 更新后怎么修</text>
+      </g>
+      <g stroke="#0f766e" stroke-width="2" fill="none">
+        <path d="M470,52 C560,60 600,95 635,133" marker-end="url(#ar3)"/>
+        <path d="M635,189 C600,235 540,268 472,276" marker-end="url(#ar3)"/>
+        <path d="M288,276 C210,268 150,235 122,189" marker-end="url(#ar3)"/>
+        <path d="M122,133 C150,90 210,58 288,48" marker-end="url(#ar3)"/>
+      </g>
+      <text x="380" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#0f766e">运行反馈闭环</text>
+      <text x="380" y="182" text-anchor="middle" font-size="12" fill="#5b6472">复用与修复结果回流，更新估值</text>
+    </svg>
+    <div class="cap">图 3 · 估值 → 复用 → 准入淘汰 → 依赖修复 → 反馈回估值</div>
+  </div>
+</section>
+
+<section id="rp1">
+  <h2><span class="no">4</span>研究点一 · 价值建模与检索复用</h2>
+  <p class="sub">先估计每条缓存的价值，再判断当前请求能否安全复用。</p>
+
+  <h3>4.1 价值建模 <span class="pill">1.2.1</span></h3>
+  <p>四类对象共用一个基础价值，再按各自特点修正。<sup class="cite"><a href="#ref-5">[5]</a> <a href="#ref-6">[6]</a></sup>基础价值用「预计能省多少用户等待时间」衡量：</p>
+  <div class="fig lightfig">
+    <svg viewBox="0 0 900 130" role="img" aria-label="基础价值构成">
+      <g text-anchor="middle" font-size="13.5">
+        <rect x="20" y="35" width="200" height="60" rx="10" fill="#e8eefc" stroke="#1d4ed8"/><text x="120" y="60" font-weight="700" fill="#1f2933">预计有效复用次数</text><text x="120" y="80" fill="#5b6472">近期需求 × 有效期</text>
+        <text x="245" y="72" font-size="22" fill="#1f2933">×</text>
+        <rect x="270" y="35" width="200" height="60" rx="10" fill="#e2f2f0" stroke="#0f766e"/><text x="370" y="60" font-weight="700" fill="#1f2933">单次复用净节省</text><text x="370" y="80" fill="#5b6472">正常执行 − 成功复用</text>
+        <text x="495" y="72" font-size="22" fill="#1f2933">−</text>
+        <rect x="520" y="35" width="200" height="60" rx="10" fill="#fdf3e3" stroke="#b45309"/><text x="620" y="60" font-weight="700" fill="#1f2933">失败尝试额外开销</text><text x="620" y="80" fill="#5b6472">尝试后回退多花的时间</text>
+        <text x="745" y="72" font-size="22" fill="#1f2933">=</text>
+        <rect x="770" y="35" width="110" height="60" rx="10" fill="#1d4ed8"/><text x="825" y="60" font-weight="700" fill="#fff">基础价值</text><text x="825" y="80" fill="#dbe4ff">V_base</text>
+      </g>
+    </svg>
+    <div class="cap">图 4 · 基础价值 = 有效复用次数 × 单次净节省 − 失败额外开销（例：检查 30ms 后发现过期再调用，多花的 30ms 即额外开销）</div>
+  </div>
+  <p>四类对象各有专属价值，用来校正基础估值或补充决策依据：</p>
+  <div class="grid c4">
+    <div class="mini"><span class="tag">resp</span><h4>边际覆盖价值</h4><p>回放有/无该回答，看它新增了多少安全复用机会；已被现有缓存覆盖的不重复计。<sup class="cite"><a href="#ref-3">[3]</a></sup></p></div>
+    <div class="mini"><span class="tag">rag</span><h4>来源版本感知</h4><p>按来源统计实际使用，再按各来源版本剩余有效时长加权，修正未来复用机会。<sup class="cite"><a href="#ref-6">[6]</a> <a href="#ref-8">[8]</a> <a href="#ref-19">[19]</a></sup></p></div>
+    <div class="mini"><span class="tag">act</span><h4>下游调用支撑</h4><p>统计直接用过该结果的不同下游工具数，支撑越广越值得保留。<sup class="cite"><a href="#ref-9">[9]</a></sup></p></div>
+    <div class="mini"><span class="tag">plan</span><h4>计划执行质量</h4><p>用顺利完成率衡量复用后能否少返工、少回退地完成任务。<sup class="cite"><a href="#ref-10">[10]</a> <a href="#ref-11">[11]</a></sup></p></div>
+  </div>
+  <p>把基础价值换算成无量纲分数，再叠加专属修正，得到用于准入、保留、淘汰的最终评分：</p>
+  <div class="formula">$$V_{\mathrm{final}}(i,H)=\frac{V_{\mathrm{base}}(i,H)}{T_{\mathrm{ref}}}+\Delta S_{\mathrm{type}}(i,H)$$<div class="fnote">T_ref 为四类对象共用的参考时长；resp/rag 修正净节省，act/plan 分别按下游支撑数与顺利完成率加权。</div></div>
+  <div class="callout"><b>LLM 辅助分簇：</b>用 LLM 把表述不同但回答需求一致的请求归入同簇，簇内频次估计需求、簇内样本回放估计边际覆盖。分簇只用于估值与抽样，是否复用仍由有效性检查决定。<sup class="cite"><a href="#ref-12">[12]</a></sup></div>
+
+  <h3>4.2 检索与有效性检查 <span class="pill">1.2.2</span></h3>
+  <p>统一的在线流程：召回候选 → 检查当前有效性 → 复用或正常执行 → 记录反馈。</p>
+  <div class="fig lightfig"><pre class="mermaid">
+flowchart LR
+  A[按对象召回候选] --> B{有效性检查}
+  B -->|通过| C[复用缓存]
+  B -->|不通过| D[正常执行原流程]
+  C --> E[记录反馈]
+  D --> E
+  E --> F[更新价值估计]
+  </pre><div class="cap">图 5 · 四类对象共用的在线复用流程</div></div>
+  <table>
+    <tr><th>对象</th><th>怎么找候选</th><th>命中后检查什么</th></tr>
+    <tr><td><code>resp</code></td><td>精确键优先，再按问题语义召回<sup class="cite"><a href="#ref-3">[3]</a> <a href="#ref-4">[4]</a> <a href="#ref-13">[13]</a></sup></td><td>权限、实体、时间范围、限定条件、证据版本，再做风险判断</td></tr>
+    <tr><td><code>rag</code></td><td>按问题/子需求做证据块关键词与语义检索</td><td>逐块查权限与来源版本，再判断证据覆盖，缺则补检<sup class="cite"><a href="#ref-7">[7]</a> <a href="#ref-8">[8]</a></sup></td></tr>
+    <tr><td><code>act</code></td><td>工具+版本+规范化参数+访问范围精确匹配<sup class="cite"><a href="#ref-6">[6]</a> <a href="#ref-9">[9]</a></sup></td><td>权限<sup class="cite"><a href="#ref-24">[24]</a> <a href="#ref-25">[25]</a></sup>与依赖数据状态，有效则复用否则重调（限只读工具）</td></tr>
+    <tr><td><code>plan</code></td><td>按任务阶段与工具缩小范围，再按目标语义召回<sup class="cite"><a href="#ref-10">[10]</a> <a href="#ref-14">[14]</a> <a href="#ref-15">[15]</a></sup></td><td>绑定参数后查前置条件、工具可用性与权限</td></tr>
+  </table>
+  <p><b>回答缓存的误复用风险控制（借鉴 vCache）：</b><sup class="cite"><a href="#ref-3">[3]</a></sup>按「回答条目 + 版本 + 相似度区间」积累反馈。新版本反馈不足时，有限借用同簇、同区间、版本相容的标注；自身标注越多，借用占比越小。<sup class="cite"><a href="#ref-13">[13]</a></sup></p>
+  <div class="fig lightfig">
+    <svg viewBox="0 0 900 210" role="img" aria-label="簇内反馈借用">
+      <defs><marker id="ar4" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/></marker></defs>
+      <g text-anchor="middle" font-size="13">
+        <rect x="20" y="30" width="220" height="50" rx="10" fill="#e8eefc" stroke="#1d4ed8"/><text x="130" y="52" font-weight="700" fill="#1f2933">自身标注</text><text x="130" y="70" fill="#5b6472">n_i 条，其中 e_i 条不匹配</text>
+        <rect x="20" y="120" width="220" height="50" rx="10" fill="#e2f2f0" stroke="#0f766e"/><text x="130" y="142" font-weight="700" fill="#1f2933">同簇兼容反馈</text><text x="130" y="160" fill="#5b6472">不匹配比例 p_c，借用 m 条</text>
+        <rect x="330" y="75" width="200" height="56" rx="10" fill="#fdf3e3" stroke="#b45309"/><text x="430" y="98" font-weight="700" fill="#1f2933">加权误复用风险</text><text x="430" y="118" fill="#5b6472">p̂_i</text>
+        <rect x="620" y="75" width="240" height="56" rx="10" fill="#1d4ed8"/><text x="740" y="98" font-weight="700" fill="#fff">按风险定重生成概率</text><text x="740" y="118" fill="#dbe4ff">风险越高越常正常生成</text>
+        <line x1="240" y1="55" x2="328" y2="92" stroke="#1d4ed8" stroke-width="2" marker-end="url(#ar4)"/>
+        <line x1="240" y1="145" x2="328" y2="112" stroke="#1d4ed8" stroke-width="2" marker-end="url(#ar4)"/>
+        <line x1="530" y1="103" x2="618" y2="103" stroke="#1d4ed8" stroke-width="2" marker-end="url(#ar4)"/>
+      </g>
+      <text x="430" y="172" font-size="12" fill="#5b6472" text-anchor="middle">自身越多 → 借用占比 m/(n_i+m) 越小</text>
+      <text x="430" y="192" font-size="12" fill="#b45309" text-anchor="middle">证据更新产生新版本 → 自身反馈重新累计</text>
+    </svg>
+    <div class="cap">图 6 · 版本感知的簇内反馈借用：先检查有效性，再用加权风险决定复用或重生成</div>
+  </div>
+  <div class="formula">$$\widehat{p}_i=\frac{e_i+m\,p_c}{n_i+m}$$<div class="fnote">无兼容反馈时 m=0；样本量达标后按风险与目标 δ 计算重生成概率，正常生成后再由轻量 LLM 判定旧回答并回填反馈。</div></div>
+  <div class="callout amber"><b>使用前再核对版本：</b>更新可能与检索交错，实际使用前以系统当前已接收的版本为准；失效证据剔除、失效回答退出本次复用。</div>
+</section>
+
+<section id="rp2">
+  <h2><span class="no">5</span>研究点二 · 生命周期管理</h2>
+  <p class="sub">用价值决定准入与淘汰，用依赖定位决定更新后如何修复。</p>
+
+  <h3>5.1 分层准入与淘汰 <span class="pill">1.3.1</span></h3>
+  <p>四类缓存共用价值决策：候选先过有效性检查，加入后整体评分上升才准入；空间不足时按「移除损失 ÷ 释放空间」选出拟淘汰条目，替换后评分上升才执行。<sup class="cite"><a href="#ref-6">[6]</a> <a href="#ref-5">[5]</a> <a href="#ref-17">[17]</a></sup></p>
+  <div class="fig lightfig"><pre class="mermaid">
+flowchart TD
+  A[候选进入准入流程] --> B{有效性检查通过?}
+  B -->|否| X[不写入候选]
+  B -->|是| C{空间充足?}
+  C -->|否| D[清理失效项<br/>选出拟淘汰条目]
+  C -->|是| E{满足容量且整体评分上升?}
+  D --> E
+  E -->|是| F[写入候选并移除拟淘汰项]
+  E -->|否| X
+  </pre><div class="cap">图 7 · 准入与淘汰：先选拟淘汰集合，再比较替换前后整体评分（ΔS&gt;0 才写入）</div></div>
+  <div class="fig lightfig">
+    <svg viewBox="0 0 900 200" role="img" aria-label="resp 静态层与动态层">
+      <defs><marker id="ar5" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0f766e"/></marker></defs>
+      <g font-size="13.5">
+        <rect x="40" y="25" width="360" height="60" rx="12" fill="#e8eefc" stroke="#1d4ed8"/><text x="220" y="50" text-anchor="middle" font-weight="700" fill="#1f2933">静态层</text><text x="220" y="70" text-anchor="middle" fill="#5b6472">离线精选的完整回答</text>
+        <rect x="40" y="120" width="360" height="60" rx="12" fill="#e2f2f0" stroke="#0f766e"/><text x="220" y="145" text-anchor="middle" font-weight="700" fill="#1f2933">动态层</text><text x="220" y="165" text-anchor="middle" fill="#5b6472">在线生成回答 + 已验证的静态回答入口</text>
+        <path d="M220,85 L220,118" stroke="#0f766e" stroke-width="2" marker-end="url(#ar5)"/>
+        <text x="235" y="107" fill="#0f766e" font-size="12">验证通过后登记入口</text>
+        <rect x="480" y="70" width="380" height="60" rx="12" fill="#fdf3e3" stroke="#b45309"/><text x="670" y="95" text-anchor="middle" font-weight="700" fill="#1f2933">原回答仍留在静态层</text><text x="670" y="115" text-anchor="middle" fill="#5b6472">动态层只新增「请求签名 → 静态回答版本」映射</text>
+      </g>
+    </svg>
+    <div class="cap">图 8 · resp 两层：静态层供标准答案，动态层跟上线上需求；登记的是复用入口而非搬移回答<sup class="cite"><a href="#ref-16">[16]</a></sup></div>
+  </div>
+
+  <h3>5.2 依赖传播与缓存修复 <span class="pill">1.3.2</span></h3>
+  <p>外部资料随时间以事件形式流入，与请求处理、修复交错。首版聚焦单轮 rag→resp：记录依赖 → 定位影响 → 选择修复方式 → 核验后按版本写回。<sup class="cite"><a href="#ref-18">[18]</a> <a href="#ref-19">[19]</a> <a href="#ref-22">[22]</a></sup></p>
+  <div class="fig lightfig"><pre class="mermaid">
+flowchart TD
+  A[收到证据更新] --> B[暂停待判定回答并重新检索]
+  B --> C{检索结果或依据有变化?}
+  C -->|否| D[恢复旧回答复用]
+  C -->|是| E{可定位影响且证据充分?}
+  E -->|是| F[局部修复]
+  E -->|否| G[完整重生成]
+  F --> H{事实核验通过?}
+  H -->|否| G
+  H -->|是| I{提交时版本仍一致?}
+  G --> J{结果通过核验?}
+  J -->|否| L[不写入缓存]
+  J -->|是| I
+  I -->|否| B
+  I -->|是| K[新版本进入准入流程]
+  </pre><div class="cap">图 9 · 更新后的影响定位、选择性修复与版本条件提交</div></div>
+  <div class="fig lightfig">
+    <svg viewBox="0 0 900 210" role="img" aria-label="依赖链与版本冲突">
+      <defs><marker id="ar6" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+      <g text-anchor="middle" font-size="13">
+        <rect x="40" y="20" width="180" height="44" rx="10" fill="#e8eefc" stroke="#1d4ed8"/><text x="130" y="47" font-weight="700" fill="#1f2933">来源版本</text>
+        <rect x="300" y="20" width="180" height="44" rx="10" fill="#e2f2f0" stroke="#0f766e"/><text x="390" y="47" font-weight="700" fill="#1f2933">证据块</text>
+        <rect x="560" y="20" width="200" height="44" rx="10" fill="#fdf3e3" stroke="#b45309"/><text x="660" y="47" font-weight="700" fill="#1f2933">回答中的事实表述</text>
+        <line x1="220" y1="42" x2="298" y2="42" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar6)"/>
+        <line x1="480" y1="42" x2="558" y2="42" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar6)"/>
+      </g>
+      <text x="40" y="100" font-size="13" font-weight="700" fill="#1f2933">例：活动开始时间连续变更</text>
+      <line x1="60" y1="140" x2="840" y2="140" stroke="#94a3b8" stroke-width="2"/>
+      <g text-anchor="middle" font-size="13">
+        <circle cx="160" cy="140" r="7" fill="#0f766e"/><text x="160" y="125" fill="#1f2933" font-weight="700">10:00</text><text x="160" y="168" fill="#5b6472">原回答</text>
+        <circle cx="450" cy="140" r="7" fill="#b45309"/><text x="450" y="125" fill="#1f2933" font-weight="700">10:30</text><text x="450" y="168" fill="#5b6472">局部修复到此</text>
+        <circle cx="740" cy="140" r="7" fill="#dc2626"/><text x="740" y="125" fill="#1f2933" font-weight="700">11:00</text><text x="740" y="168" fill="#5b6472">提交前再次更新</text>
+      </g>
+      <text x="450" y="195" font-size="12.5" fill="#dc2626" text-anchor="middle">10:30 的修复结果作废 → 按最新证据重新定位处理（版本条件提交）</text>
+    </svg>
+    <div class="cap">图 10 · 依赖链定位受影响事实；修复期间再次更新时，旧候选不得覆盖新状态<sup class="cite"><a href="#ref-17">[17]</a> <a href="#ref-18">[18]</a></sup></div>
+  </div>
+  <div class="callout teal"><b>修复选择：</b>影响局部、替代证据充分、其余表述仍有支撑 → 只改相关表述；影响不清、改变整体推理或证据不足 → 完整重生成，仍不足则说明无法确认。<sup class="cite"><a href="#ref-20">[20]</a></sup></div>
+</section>
+
+<section id="exp">
+  <h2><span class="no">6</span>实验设计与预期结论</h2>
+  <p class="sub">四条结论、四个实验，共用一套实验台；每个实验只扫一个轴，策略对比阶段不调用模型。</p>
+
+  <p>事件回放器按处理时间回放请求、证据更新与任务完成三类事件<sup class="cite"><a href="#ref-23">[23]</a></sup>。“不用缓存会怎样”这一反事实对任何策略都相同，因此预先算好一次，把执行分成两部分：</p>
+  <div class="grid c2">
+    <div class="mini"><span class="tag">离线回放</span><h4>标签表</h4><p>预计算无缓存生成结果、判官标签与各项单价；各策略在表上回放，对比阶段零模型调用。</p></div>
+    <div class="mini"><span class="tag">实测标定</span><h4>单价表</h4><p>300 条请求真实执行，标定单价表，并报告建模时延相对实测时延的偏差（MAPE）。</p></div>
+  </div>
+
+  <div class="card">
+    <p style="margin-top:0"><b>数据与规模。</b>单场景受控台：2–3 千篇带版本文档、3,000 条单轮短请求、40 个更新事件；四类对象共用同一时钟（<code>act</code> 50 个只读查询、<code>plan</code> 30 个模板）。真值不依赖判官：<code>resp</code> 由检索相关性与版本重算确定，<code>act</code> 由规则引擎给出，<code>plan</code> 对照金标序列。候选与标签表约 15,000 行。</p>
+    <table>
+      <tr><th>指标</th><th>定义</th></tr>
+      <tr><td>回答正确率</td><td>判定为正确的回答数 ÷ 总回答数</td></tr>
+      <tr><td>质量约束</td><td>相对无缓存基线的正确率下降（pp）</td></tr>
+      <tr><td>P95 时延</td><td>单请求端到端时延的 95 分位</td></tr>
+      <tr><td>推理成本</td><td>token、调用次数与后台时间按同一单价表折算</td></tr>
+      <tr><td>安全复用</td><td>命中且质量达标的请求数 ÷ 总请求数</td></tr>
+      <tr><td>修复成本</td><td>检索 + 生成 + 核验</td></tr>
+      <tr><td>goodput</td><td>满足质量与 SLO 的请求数 ÷ 单位时间</td></tr>
+    </table>
+    <p class="small">只报用户可见的结果，不报预测精度一类中间指标；越权与过期复用次数作为硬断言，要求为零。工具与任务环境参考<sup class="cite"><a href="#ref-26">[26]</a> <a href="#ref-27">[27]</a> <a href="#ref-28">[28]</a> <a href="#ref-29">[29]</a> <a href="#ref-30">[30]</a></sup>，更新事件构造参考<sup class="cite"><a href="#ref-22">[22]</a></sup>，主张核验参考<sup class="cite"><a href="#ref-21">[21]</a></sup>。</p>
+  </div>
+
+  <h3>四条预期结论 <span class="small" style="font-weight:400">字母为待实测数字</span></h3>
+  <div class="grid c2">
+    <div class="mini"><span class="tag">C1</span><h4>质量约束下的前沿</h4><p>正确率下降 ≤1pp 时，相比固定阈值与 vCache 式门控，P95 时延降 <b>a%</b>、成本降 <b>b%</b>；1 / 3 / 5 pp 三点上前沿始终位于左上。</p></div>
+    <div class="mini"><span class="tag">C2</span><h4>装不下时留得对</h4><p>同一门槛与容量下，相比 LRU / LFU / GDSF 分别多 <b>x% / y% / z%</b> 安全复用，时延降 <b>c%</b>、成本降 <b>d%</b>。</p></div>
+    <div class="mini"><span class="tag">C3</span><h4>质量贴重生成，成本贴直改</h4><p>修复成本降 <b>Z%</b>（检索 ↓ r%、生成 ↓ g%），修复期时延降 <b>s%</b>，质量不降；比直改贵 <b>e%</b>，正确率高 <b>w</b> pp。</p></div>
+    <div class="mini"><span class="tag">C4</span><h4>合起来更好</h4><p>相比最强单一机制，goodput 升 <b>u%</b>、总成本降 <b>v%</b>、正确率不降。</p></div>
+  </div>
+
+  <h3>四个实验 <span class="small" style="font-weight:400">与结论一一对应</span></h3>
+  <div class="grid c2">
+    <div class="exp">
+      <h4>实验一 · 复用决策（C1）</h4>
+      <div class="ang"><b>变量：</b>质量约束 1 / 3 / 5 pp，每点为各策略选最优配置，得到前沿</div>
+      <div class="ang"><b>对比：</b>全局相似度阈值 / vCache 式逐条目门控 / 本文</div>
+      <div class="ang"><b>指标：</b>P95 时延、推理成本、正确率、安全复用</div>
+      <div class="ang"><b>主图：</b>质量-时延前沿 + 去借用消融</div>
+    </div>
+    <div class="exp">
+      <h4>实验二 · 容量受限（C2）</h4>
+      <div class="ang"><b>变量：</b>容量 10% / 25% / 50% 工作集</div>
+      <div class="ang"><b>对比：</b>LRU / LFU / GDSF / 本文，共用候选集、硬门槛与成本表</div>
+      <div class="ang"><b>指标：</b>安全复用、P95 时延、累计成本、准入淘汰抖动</div>
+      <div class="ang"><b>主图：</b>容量-收益曲线 + 静态层开关</div>
+    </div>
+    <div class="exp">
+      <h4>实验三 · 更新与修复（C3）</h4>
+      <div class="ang"><b>变量：</b>更新率 5 / 20 / 50 事件每千请求</div>
+      <div class="ang"><b>对比：</b>完整重生成 / LLM 直接改写 / 本文依赖定位修复</div>
+      <div class="ang"><b>指标：</b>修复成本分解、修复期时延、正确率、回退率</div>
+      <div class="ang"><b>主图：</b>质量-成本散点 + 成本分解堆叠柱</div>
+    </div>
+    <div class="exp">
+      <h4>实验四 · 整体收益（C4）</h4>
+      <div class="ang"><b>变量：</b>无</div>
+      <div class="ang"><b>对比：</b>无缓存 / 最强单一机制 / 完整系统 / 去掉单项的完整系统</div>
+      <div class="ang"><b>指标：</b>goodput、P95 时延、总成本、正确率</div>
+      <div class="ang"><b>主图：</b>分组柱状 + 更新前后各 30 分钟时序</div>
+    </div>
+  </div>
+
+  <div class="callout"><b>规模与边界：</b>8 张主图、5–6 页、约 7–8 周。不做扩展性与跨硬件实验；不做 Flink 真实部署，仅借其状态管理接口；不单独做参数敏感性分析，实验一的前沿已覆盖风险目标；不与已有工作报告数字直接对齐，只做趋势比较。</div>
+</section>
+
+<section id="refs">
+  <h2>参考文献</h2>
+  <p class="sub">按正文引用顺序列出。预印本已标注，详细书目信息与使用位置见<a href="第一章_参考文献汇总.xlsx">参考文献汇总表</a>。</p>
+  <div class="card">
+    <ol style="font-size:13px;line-height:1.6;padding-left:24px">
+    <li id="ref-1">Xie J, Zheng Q, Zhang R, et al. StreamRAG: Enhancing Real-Time Video Understanding with Retrieval Augmentation[C]//Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR). 2026. <a href="https://openaccess.thecvf.com/content/CVPR2026/html/Xie_StreamRAG_Enhancing_Real-Time_Video_Understanding_with_Retrieval_Augmentation_CVPR_2026_paper.html" target="_blank" rel="noopener noreferrer">https://openaccess.thecvf.com/content/CVPR2026/html/Xie_StreamRAG_Enhancing_Real-Time_Video_Understanding_with_Retrieval_Augmentation_CVPR_2026_paper.html</a>.</li>
+    <li id="ref-2">Ouyang J, Pan T, Cheng M, et al. HoH: A Dynamic Benchmark for Evaluating the Impact of Outdated Information on Retrieval-Augmented Generation[C]//Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). 2025. <a href="https://aclanthology.org/2025.acl-long.301/" target="_blank" rel="noopener noreferrer">https://aclanthology.org/2025.acl-long.301/</a>.</li>
+    <li id="ref-3">Schroeder L G, Desai A, Cuadron A, et al. vCache: Verified Semantic Prompt Caching[C]//International Conference on Learning Representations (ICLR). 2026. arXiv:2502.03771. <a href="https://iclr.cc/virtual/2026/poster/10006471" target="_blank" rel="noopener noreferrer">https://iclr.cc/virtual/2026/poster/10006471</a>.</li>
+    <li id="ref-4">Noshad A, Zheng Z, Wu Y. MVR-cache: Optimizing Semantic Caching via Multi-Vector Retrieval and Learned Prompt Segmentation[C]//International Conference on Machine Learning (ICML). 2026. arXiv:2605.24914. <a href="https://icml.cc/virtual/2026/poster/63545" target="_blank" rel="noopener noreferrer">https://icml.cc/virtual/2026/poster/63545</a>.</li>
+    <li id="ref-5">Liu X, Atalar B, Dai X, et al. Semantic Caching for Low-Cost LLM Serving: From Offline Learning to Online Adaptation[C]//IEEE INFOCOM 2026—IEEE Conference on Computer Communications. IEEE, 2026: 1-10. DOI: <a href="https://doi.org/10.1109/INFOCOM59046.2026.11571467" target="_blank" rel="noopener noreferrer">10.1109/INFOCOM59046.2026.11571467</a></li>
+    <li id="ref-6">Ruan C, Bi C, Zheng K, et al. Cortex: Achieving Low-Latency, Cost-Efficient Remote Data Access for LLM via Semantic-Aware Knowledge Caching[C]//23rd USENIX Symposium on Networked Systems Design and Implementation (NSDI). USENIX Association, 2026: 2407-2421. <a href="https://www.usenix.org/conference/nsdi26/presentation/ruan-cortex" target="_blank" rel="noopener noreferrer">https://www.usenix.org/conference/nsdi26/presentation/ruan-cortex</a>.</li>
+    <li id="ref-7">Jin C, Zhang Z, Jiang X, et al. RAGCache: Efficient Knowledge Caching for Retrieval-Augmented Generation[J]. ACM Transactions on Computer Systems, 2026, 44(1): 1-27. DOI: <a href="https://doi.org/10.1145/3768628" target="_blank" rel="noopener noreferrer">10.1145/3768628</a></li>
+    <li id="ref-8">Verma A, Pillai S, Das S, et al. Safe and Sufficient Caching: Validated Evidence Reuse for Production Retrieval-Augmented Generation[C]//Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing: Industry Track. 2026: 1272-1279. DOI: <a href="https://doi.org/10.18653/2026.emnlp-industry.75" target="_blank" rel="noopener noreferrer">10.18653/2026.emnlp-industry.75</a></li>
+    <li id="ref-9">Kumar A V, Kataria B, Oh B, et al. TVCACHE: A Tool-Value Cache for Post-Training LLM Agents[C]//Proceedings of the 43rd International Conference on Machine Learning. PMLR, 2026, 306: 61539-61558. <a href="https://proceedings.mlr.press/v306/kumar26d.html" target="_blank" rel="noopener noreferrer">https://proceedings.mlr.press/v306/kumar26d.html</a>.</li>
+    <li id="ref-10">Zhang Q, Wornow M, Olukotun K. Agentic Plan Caching: Test-Time Memory for Fast and Cost-Efficient LLM Agents[C]//Advances in Neural Information Processing Systems 38 (NeurIPS). 2025. <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/9549f7d06700f0966d5f938f1d11022a-Abstract-Conference.html" target="_blank" rel="noopener noreferrer">https://proceedings.neurips.cc/paper_files/paper/2025/hash/9549f7d06700f0966d5f938f1d11022a-Abstract-Conference.html</a>.</li>
+    <li id="ref-11">Fan S, Cong X, Zhang Z, et al. Generalizing Experience for Language Agents with Hierarchical MetaFlows[C]//Advances in Neural Information Processing Systems 38 (NeurIPS). 2025. <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/5c882988ce5fac487974ee4f415b96a9-Abstract-Conference.html" target="_blank" rel="noopener noreferrer">https://proceedings.neurips.cc/paper_files/paper/2025/hash/5c882988ce5fac487974ee4f415b96a9-Abstract-Conference.html</a>.</li>
+    <li id="ref-12">Basu A. Why Agent Caching Fails and How to Fix It: Structured Intent Canonicalization with Few-Shot Learning[EB/OL]. arXiv:2602.18922, 2026. <a href="https://arxiv.org/abs/2602.18922" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2602.18922</a>.（预印本）</li>
+    <li id="ref-13">Liang J, Wang Y, Jiang T, et al. LaCache: Robust Semantic Caching for LLM Serving[C]//Advances in Neural Information Processing Systems (NeurIPS). 2026. arXiv:2608.01718. <a href="https://neurips.cc/virtual/2026/poster/152812" target="_blank" rel="noopener noreferrer">https://neurips.cc/virtual/2026/poster/152812</a>.</li>
+    <li id="ref-14">Chillara V, Kline D, Alvares C, et al. SemanticALLI: Caching Reasoning, Not Just Responses, in Agentic Systems[EB/OL]. arXiv:2601.16286, 2026. <a href="https://arxiv.org/abs/2601.16286" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2601.16286</a>.（预印本）</li>
+    <li id="ref-15">Kim H, Wu Y, Tambe T. AgenticCache: Cache-Driven Asynchronous Planning for Embodied AI Agents[C]//Proceedings of Machine Learning and Systems (MLSys). 2026. <a href="https://mlsys.org/virtual/2026/poster/3583" target="_blank" rel="noopener noreferrer">https://mlsys.org/virtual/2026/poster/3583</a>.</li>
+    <li id="ref-16">Singh A K, Wang H, Attaluri L N S, et al. Asynchronous Verified Semantic Caching for Tiered LLM Architectures[C]//Proceedings of the Sixth European Workshop on Machine Learning and Systems (EuroMLSys). 2026: 192-199. DOI: <a href="https://doi.org/10.1145/3805621.3807627" target="_blank" rel="noopener noreferrer">10.1145/3805621.3807627</a></li>
+    <li id="ref-17">Mohamed A, Haque K, Khan A A, et al. Workload-Aware Caching for Multi-Agent Systems[EB/OL]. arXiv:2607.20495, 2026. <a href="https://arxiv.org/abs/2607.20495" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2607.20495</a>.（预印本）</li>
+    <li id="ref-18">Zeng L, Jin Y. FinCacheServe: Dependency-Consistent Answer Reuse for Cost-Efficient RAG Serving over Mutable Enterprise Documents[EB/OL]. arXiv:2607.26076, 2026. <a href="https://arxiv.org/abs/2607.26076" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2607.26076</a>.（预印本）</li>
+    <li id="ref-19">Mansoor M, Ahmad T, Yoon Y C. Risk-Constrained Freshness-Aware Semantic Caching for Open-Web Retrieval-Augmented LLMs[EB/OL]. arXiv:2607.04281, 2026. <a href="https://arxiv.org/abs/2607.04281" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2607.04281</a>.（预印本）</li>
+    <li id="ref-20">Gao L, Dai Z, Pasupat P, et al. RARR: Researching and Revising What Language Models Say, Using Language Models[C]//Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). 2023. <a href="https://aclanthology.org/2023.acl-long.910/" target="_blank" rel="noopener noreferrer">https://aclanthology.org/2023.acl-long.910/</a>.</li>
+    <li id="ref-21">Niu C, Wu Y, Zhu J, et al. RAGTruth: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models[C]//Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). 2024. <a href="https://aclanthology.org/2024.acl-long.585/" target="_blank" rel="noopener noreferrer">https://aclanthology.org/2024.acl-long.585/</a>.</li>
+    <li id="ref-22">Singh V K, Priyam P, Bhowmick G. ChurnBench: A Drift-Aware Benchmark Demonstrating That Refresh Scheduling, Not Cache Age, Governs Staleness in Agentic AI[EB/OL]. arXiv:2609.11515, 2026. <a href="https://arxiv.org/abs/2609.11515" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2609.11515</a>.（预印本）</li>
+    <li id="ref-23">Apache Software Foundation. Apache Flink Documentation: Stateful Stream Processing (Release 1.20)[EB/OL]. [2026-11-18]. <a href="https://nightlies.apache.org/flink/flink-docs-release-1.20/" target="_blank" rel="noopener noreferrer">https://nightlies.apache.org/flink/flink-docs-release-1.20/</a>.</li>
+    <li id="ref-24">Wu G, Wang T, Zhang Y, et al. When Cache Poisoning Meets LLM Systems: Semantic Cache Poisoning and Its Countermeasures[C]//Proceedings 2026 Network and Distributed System Security Symposium (NDSS). 2026. DOI: <a href="https://doi.org/10.14722/ndss.2026.240200" target="_blank" rel="noopener noreferrer">10.14722/ndss.2026.240200</a></li>
+    <li id="ref-25">Zhang Z, Liu Z, Xie Y, et al. From Similarity to Vulnerability: Key Collision Attack on LLM Semantic Caching[C]//International Conference on Machine Learning (ICML). 2026. arXiv:2601.23088. <a href="https://icml.cc/virtual/2026/poster/65663" target="_blank" rel="noopener noreferrer">https://icml.cc/virtual/2026/poster/65663</a>.</li>
+    <li id="ref-26">Liu X, Yu H, Zhang H, et al. AgentBench: Evaluating LLMs as Agents[C]//International Conference on Learning Representations (ICLR). 2024. arXiv:2308.03688. <a href="https://github.com/THUDM/AgentBench" target="_blank" rel="noopener noreferrer">https://github.com/THUDM/AgentBench</a>.</li>
+    <li id="ref-27">Zhou S, Xu F F, Zhu H, et al. WebArena: A Realistic Web Environment for Building Autonomous Agents[C]//International Conference on Learning Representations (ICLR). 2024. arXiv:2307.13854. <a href="https://github.com/web-arena-x/webarena" target="_blank" rel="noopener noreferrer">https://github.com/web-arena-x/webarena</a>.</li>
+    <li id="ref-28">Qin Y, Liang S, Ye Y, et al. ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs[C]//International Conference on Learning Representations (ICLR). 2024. arXiv:2307.16789. <a href="https://github.com/OpenBMB/ToolBench" target="_blank" rel="noopener noreferrer">https://github.com/OpenBMB/ToolBench</a>.</li>
+    <li id="ref-29">Guo Z, Cheng S, Wang H, et al. StableToolBench: Towards Stable Large-Scale Benchmarking on Tool Learning of Large Language Models[C]//Findings of the Association for Computational Linguistics: ACL 2024. 2024: 11143-11156. DOI: <a href="https://doi.org/10.18653/v1/2024.findings-acl.664" target="_blank" rel="noopener noreferrer">10.18653/v1/2024.findings-acl.664</a></li>
+    <li id="ref-30">Yao S, Chen H, Yang J, et al. WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents[C]//Advances in Neural Information Processing Systems 35 (NeurIPS). 2022. arXiv:2207.01206. <a href="https://webshop-pnlp.github.io" target="_blank" rel="noopener noreferrer">https://webshop-pnlp.github.io</a>.</li>
+    </ol>
+  </div>
+</section>
+</div>
+
+<footer><div class="wrap">来源：第一章_改后初稿.md · 本页以图解呈现第一部分的设计思路、组织与实验安排。</div></footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  if(window.mermaid){mermaid.initialize({startOnLoad:true,theme:'base',securityLevel:'loose',themeVariables:{fontFamily:'-apple-system,Segoe UI,Microsoft YaHei,sans-serif',fontSize:'14px',primaryColor:'#e8eefc',primaryBorderColor:'#1d4ed8',primaryTextColor:'#1f2933',lineColor:'#5b6472',secondaryColor:'#e2f2f0',tertiaryColor:'#fdf3e3'}});}
+  if(window.renderMathInElement){renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});}
+  var btn=document.getElementById('themeBtn');
+  btn.addEventListener('click',function(){
+    var r=document.documentElement;var d=r.getAttribute('data-theme')==='dark';
+    r.setAttribute('data-theme',d?'light':'dark');btn.textContent=d?'🌙 深色':'☀️ 浅色';
+  });
+});
+</script>
+</body>
+</html>
