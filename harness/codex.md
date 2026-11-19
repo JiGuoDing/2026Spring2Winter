@@ -1,7 +1,7 @@
 # Codex Windows 本地配置迁移手册
 
-> 快照日期：2026-11-11（Asia/Shanghai）  
-> 源环境：Windows 10 Pro 22H2、Codex Desktop `26.1106.6628.0`、内置 Codex CLI `0.167.0-alpha.4.1`  
+> 快照日期：2026-11-19（Asia/Shanghai）
+> 源环境：Windows 11 Pro `10.0.26300`、Codex Desktop `26.1111.9664.0`、内置 Codex CLI `0.167.2`
 > 目标环境：另一台 Windows 电脑  
 > 迁移范围：Codex 配置、模型提供商、UI、字体、MCP、插件、技能、AGENTS 规则和必要依赖  
 > 不迁移：登录凭据、API token、会话、记忆、历史记录、日志、索引和其他私有状态
@@ -21,16 +21,16 @@
 5. 用 Codex Plugin Manager 或 `codex plugin add` 重新安装 13 个插件。
 6. 用 ARS 的 GitHub marketplace 重新安装 `ars-codex`；Windows 更新异常时再使用本地 marketplace 备用方案。
 7. 安装 Maple Mono NF CN 字体，重启 Codex Desktop，检查主题和字体。
-8. 重新添加本地项目和 SSH 连接；不要复制旧机器的凭据或数据库。
+8. 重新添加本地项目；如使用远程连接，再单独添加，不要复制旧机器的凭据或数据库。
 9. 运行 `codex doctor`、`codex plugin list` 和 `codex mcp list --json` 做验收。
 
 最小验收标准：
 
 - `codex plugin list` 显示 13 个已安装且启用的插件：7 个 `openai-bundled`、5 个 `openai-primary-runtime`、1 个 `ars-codex`。
-- `$CODEX_HOME/skills` 下有 15 个用户技能目录，另有自动维护的 `.system` 目录。
+- `$CODEX_HOME/skills` 下有 29 个用户技能目录，另有自动维护的 `.system` 目录。
 - `$HOME/.agents/skills` 下有 `answer-me-with-html`，且 `.skill-lock.json` 存在。
-- 3 个 MCP 记录可见：`node_repl`、`cua_repl`、`codex_app`；它们的实际路径应来自新电脑。
-- 模型目录中有 `deepseek-v4.1-flash` 和 `kimi-k3.1-pro`。
+- 3 个 MCP 记录可见：`node_repl`、`cua_repl`、`codex_app`；当前 `node_repl`、`cua_repl` 启用，`codex_app` 在 CLI 视角为禁用。实际路径应来自新电脑。
+- 模型目录中有 `deepseek-v4.1-flash` 和 `qwen4-max`。
 - 新电脑打开新对话后，`codex doctor` 不再报告配置语法错误；安全提示和可选依赖缺失可以按需处理。
 
 ---
@@ -39,19 +39,20 @@
 
 | 项目 | 当前值 |
 |---|---|
-| 操作系统 | Windows 10.0.19045，64 位，中文系统 |
-| Codex Desktop | `26.1106.6628.0` |
-| Codex CLI | `0.167.0-alpha.4.1` |
+| 操作系统 | Windows 11 Pro `10.0.26300`，64 位，中文系统 |
+| Codex Desktop | `26.1111.9664.0` |
+| Codex CLI | `0.167.2` |
+| Codex Primary Runtime | `26.1118.904.0` |
 | Codex Home | `%USERPROFILE%\.codex` |
 | 默认 shell | PowerShell |
 | 默认模型提供商 | 自定义 `custom` provider，名称为 `opencode_go` |
-| 默认模型 | `deepseek-v4.1-flash`，reasoning `max` |
+| 默认模型 | `deepseek-v4.1-flash`，reasoning `high` |
 | 模型目录 | `%USERPROFILE%\.codex\cc-switch-model-catalog.json` |
 | 子 agent 默认模型 | `deepseek-v4.1-flash` |
 | 已启用插件 | 13 个 |
-| 用户技能 | 15 个目录（包含内部支持包 `nature-shared`） |
+| 用户技能 | 29 个目录（包含内部支持包 `nature-shared` 与 PaperSpine 六项） |
 | 系统技能 | 5 个，位于 `.codex\skills\.system` |
-| 已配置 MCP 记录 | `node_repl`、`cua_repl`、`codex_app` |
+| 已配置 MCP 记录 | `node_repl`、`cua_repl` 启用；`codex_app` 在 CLI 视角禁用 |
 | Desktop 语言 | `zh-CN` |
 | Desktop 主题 | 深色 Lobster，accent 为 `#ff5c5c` |
 | UI/代码字体 | Maple Mono NF CN |
@@ -94,7 +95,7 @@ New-Item -ItemType Directory -Path $bundleRoot -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $bundleRoot 'codex-skills') -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $bundleRoot 'agents-skills') -Force | Out-Null
 
-# 模型目录：deepseek-v4.1-flash / kimi-k3.1-pro
+# 模型目录：deepseek-v4.1-flash / qwen4-max
 Copy-Item -LiteralPath (Join-Path $codexHome 'cc-switch-model-catalog.json') `
   -Destination $bundleRoot -Force
 
@@ -117,14 +118,20 @@ if (Test-Path -LiteralPath $skillLock) {
   Copy-Item -LiteralPath $skillLock -Destination $bundleRoot -Force
 }
 
+# 全局 AGENTS 规则
+$globalAgentsFile = Join-Path $codexHome 'AGENTS.md'
+if (Test-Path -LiteralPath $globalAgentsFile) {
+  Copy-Item -LiteralPath $globalAgentsFile -Destination (Join-Path $bundleRoot 'AGENTS.global.md') -Force
+}
+
 # 当前项目的父级 AGENTS 规则
-$agentsFile = 'C:\workspace\2026Spring2Winter\AGENTS.md'
+$agentsFile = 'Q:\workspace\2026Spring2Winter\AGENTS.md'
 if (Test-Path -LiteralPath $agentsFile) {
   Copy-Item -LiteralPath $agentsFile -Destination $bundleRoot -Force
 }
 
 # 迁移手册本身
-$handbook = 'C:\workspace\2026Spring2Winter\harness\codex.md'
+$handbook = 'Q:\workspace\2026Spring2Winter\harness\codex.md'
 if (Test-Path -LiteralPath $handbook) {
   Copy-Item -LiteralPath $handbook -Destination $bundleRoot -Force
 }
@@ -150,8 +157,9 @@ Write-Host "迁移资源包已生成：$zipPath"
 
 检查点：
 
-- `codex-skills` 中应有 15 个目录。
+- `codex-skills` 中应有 29 个目录。
 - `agents-skills\answer-me-with-html` 和 `.skill-lock.json` 应存在。
+- `AGENTS.global.md` 和工作区 `AGENTS.md` 应存在。
 - `cc-switch-model-catalog.json` 应存在。
 - 压缩包中不应有 `config.toml`、`auth.json`、`.codex-global-state.json`、SQLite 文件或 `plugins\cache`。
 - 字体目录为空不一定是错误；也可以在新电脑单独安装 Maple Mono NF CN。
@@ -174,7 +182,7 @@ $agentsSkills = Join-Path $agentsHome 'skills'
 New-Item -ItemType Directory -Path $userskills -Force | Out-Null
 New-Item -ItemType Directory -Path $agentsSkills -Force | Out-Null
 
-# 复制 15 个用户技能，保留原有目录名和相邻的 nature-shared 支持包
+# 复制 29 个用户技能，保留原有目录名、nature-shared 支持包和 PaperSpine 系列
 Get-ChildItem -LiteralPath (Join-Path $bundleRoot 'codex-skills') -Directory |
   ForEach-Object {
     Copy-Item -LiteralPath $_.FullName -Destination $userskills -Recurse -Force
@@ -190,6 +198,12 @@ if (Test-Path -LiteralPath $sourceAgentsSkill) {
   Copy-Item -LiteralPath $sourceAgentsSkill -Destination $agentsSkills -Recurse -Force
 }
 
+# 复制全局 AGENTS 规则
+$bundleGlobalAgents = Join-Path $bundleRoot 'AGENTS.global.md'
+if (Test-Path -LiteralPath $bundleGlobalAgents) {
+  Copy-Item -LiteralPath $bundleGlobalAgents -Destination (Join-Path $codexHome 'AGENTS.md') -Force
+}
+
 # 复制模型目录
 Copy-Item -LiteralPath (Join-Path $bundleRoot 'cc-switch-model-catalog.json') `
   -Destination $codexHome -Force
@@ -200,15 +214,33 @@ Write-Host "模型目录：$codexHome\cc-switch-model-catalog.json"
 
 ### 3.1 AGENTS 规则
 
-当前项目的规则不在项目目录中，而在 Git 工作区的父目录：
+当前机器有两份作用域不同的规则文件。
+
+全局规则位于：
 
 ```text
-C:\workspace\2026Spring2Winter\AGENTS.md
+%USERPROFILE%\.codex\AGENTS.md
 ```
 
-如果新电脑也采用相同的工作区布局，把资源包中的 `AGENTS.md` 放到相同位置。若工作区路径不同，应放到新工作区的最上层项目父目录，确保它覆盖所有需要该规则的仓库。
+它约束所有项目中的写作风格：
 
-新电脑上的规则文件内容应为：
+```markdown
+# 避免防御性写作
+1、不迂回立论（No negative framing）：避免滥用“不是……而是”（It is not X, but rather Y）这种先设定反方、再陈述己方的句式；直接写明是什么，而不是它不是什么，不写“...是两回事”、“不意味着...”等描述。
+2、避免过度防御性写作（Over-defensive Writing）。核心观点先行，直接陈述判断，再用事实、逻辑和证据支撑。删除“需要强调的是”“值得注意的是”“这并不意味着”“不能简单地认为”等无效套话。不要提前回应尚未出现的质疑，不主动削弱观点，不堆砌模糊限定、自我贬低和无意义的让步。删除重复总结、空泛解释和不必要的风险提示。
+3、如果某句话的作用只是防止被质疑，而不是推进论证，请删除。
+
+# 用于科研
+4、论文是发布会，不是工作汇报。1.只围绕最强优势组织叙事；2.不按"做了什么、试过什么、哪些失败了"的过程写；3.禁止自我削弱表达("遗憾的是""仅""仍明显落后""效果有限")，不替审稿人总结弱点；4.打不赢的指标不设为比赛，换评价维度或比较口径；5.不占优的结果不说输，从目标差异或合理权衡解释；6.优势必须主动说清楚，别指望审稿人自己从表格里发现；7.每个实验必须有论证职责，没有就删；8.摘要引言像发布会开场：问题→缺口→思路→最硬的结果；9.结论只强化记忆点，不突然自我否定。
+```
+
+工作区规则位于：
+
+```text
+Q:\workspace\2026Spring2Winter\AGENTS.md
+```
+
+它只约束该 Git 工作区，当前内容为：
 
 ```markdown
 # Answer format
@@ -219,7 +251,7 @@ C:\workspace\2026Spring2Winter\AGENTS.md
 - This rule overrides any skill's always-on or automatic page behavior.
 ```
 
-这是工作区级规则，不是用户全局规则。不要把它复制到 `.codex` 根目录，除非你明确希望所有项目都遵守同一条规则。
+迁移时分别恢复这两份文件。工作区路径变化时，把第二份规则放到新工作区最上层项目父目录。
 
 ### 3.2 字体
 
@@ -251,8 +283,8 @@ Get-ChildItem -LiteralPath $fontDir -Filter 'MapleMono-NF-CN-*.ttf' |
 | provider API | `https://opencode.ai/zen/go/v1`，`responses` wire API | 保留，确认新网络可访问 |
 | provider 认证 | `requires_openai_auth = false`，明文 bearer token | 文档脱敏；新电脑手动填写 token |
 | 默认模型 | `deepseek-v4.1-flash` | 保留 |
-| reasoning effort | `max` | 保留；也可按任务调低 |
-| 备选模型 | `kimi-k3.1-pro` | 通过模型目录恢复 |
+| reasoning effort | `high` | 保留；也可按任务调低 |
+| 备选模型 | `qwen4-max` | 通过模型目录恢复 |
 | 子 agent 模型 | `deepseek-v4.1-flash` | 保留 |
 | `model_catalog_json` | `cc-switch-model-catalog.json` | 连同 JSON 一起恢复 |
 | `sandbox_mode` | `danger-full-access` | 安全风险较高，按需保留 |
@@ -267,16 +299,32 @@ Get-ChildItem -LiteralPath $fontDir -Filter 'MapleMono-NF-CN-*.ttf' |
 
 ### 4.2 当前 `config.toml` 的脱敏参考
 
-下面是当前有效配置的结构化快照。它替换了 token、用户名、runtime 哈希和命名管道；**不要把它当作可直接复制的文件**。真正迁移时请使用第 4.3 节的便携模板，并让新电脑重新生成 app-managed 路径。
+下面是当前有效配置的脱敏快照。token 已替换为占位符，用户名、Codex 安装目录和 CUA 管道已参数化。真正迁移时使用第 4.3 节的便携模板，并让新电脑重新生成 app-managed 路径。
 
 ```toml
 model_provider = "custom"
 model = "deepseek-v4.1-flash"
-model_reasoning_effort = "max"
-disable_response_storage = true
-model_catalog_json = "cc-switch-model-catalog.json"
+model_reasoning_effort = "high"
+model_catalog_json = '<CODEX_HOME>\cc-switch-model-catalog.json'
 sandbox_mode = "danger-full-access"
-notify = ['<LOCALAPPDATA>\OpenAI\Codex\runtimes\cua_node\<CUA_RUNTIME_HASH>\bin\node_modules\@oai\sky\bin\windows\codex-computer-use.exe', "turn-ended"]
+
+notify = [ "<CODEX_INSTALL_DIR>\\app\\resources\\cua_node\\bin\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe", "turn-ended" ]
+[model_providers.custom]
+name = "opencode_go"
+base_url = "https://opencode.ai/zen/go/v1"
+wire_api = "responses"
+requires_openai_auth = false
+experimental_bearer_token = "<OPENCODE_API_KEY>"
+
+[features]
+memories = true
+
+[memories]
+generate_memories = true
+use_memories = true
+
+[agents]
+default_subagent_model = "deepseek-v4.1-flash"
 
 [desktop]
 followUpQueueMode = "steer"
@@ -325,6 +373,9 @@ diffAdded = "#22c55e"
 diffRemoved = "#ff5c5c"
 skill = "#3b82f6"
 
+[windows]
+sandbox = "elevated"
+
 [marketplaces.openai-bundled]
 source_type = "local"
 source = '<CODEX_HOME>\.tmp\bundled-marketplaces\openai-bundled'
@@ -334,15 +385,9 @@ source_type = "local"
 source = '<USERPROFILE>\.cache\codex-runtimes\codex-primary-runtime\plugins\openai-primary-runtime'
 
 [marketplaces.ars-codex]
-source_type = "local"
-source = '<CODEX_HOME>\local-marketplaces\academic-research-skills-codex'
-
-[model_providers.custom]
-name = "opencode_go"
-base_url = "https://opencode.ai/zen/go/v1"
-wire_api = "responses"
-requires_openai_auth = false
-experimental_bearer_token = "<OPENCODE_API_KEY>"
+source_type = "git"
+source = "https://github.com/Imbad0202/academic-research-skills-codex.git"
+ref = "main"
 
 [plugins."codex-app-tools@openai-bundled"]
 enabled = true
@@ -353,13 +398,16 @@ enabled = true
 [plugins."unified-computer-use@openai-bundled"]
 enabled = true
 
-[plugins."chrome@openai-bundled"]
-enabled = true
-
 [plugins."visualize@openai-bundled"]
 enabled = true
 
 [plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."latex@openai-bundled"]
 enabled = true
 
 [plugins."documents@openai-primary-runtime"]
@@ -377,72 +425,46 @@ enabled = true
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
-[plugins."latex@openai-bundled"]
-enabled = true
-
 [plugins."ars-codex@ars-codex"]
 enabled = true
 
 [mcp_servers.node_repl]
 args = []
-command = '<LOCALAPPDATA>\OpenAI\Codex\runtimes\cua_node\<CUA_RUNTIME_HASH>\bin\node_repl.exe'
+command = '<CODEX_INSTALL_DIR>\app\resources\cua_node\bin\node_repl.exe'
 env_vars = ["BROWSER_USE_ACCESS_EXECUTOR_ID", "BROWSER_USE_ACCESS_PIPE_PATH", "BROWSER_USE_ACCESS_VERIFYING_IDENTITY", "CODEX_WINDOWS_REGISTERED_CORE"]
 startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = '<LOCALAPPDATA>\OpenAI\Codex\runtimes\cua_node\<CUA_RUNTIME_HASH>\bin\node_modules'
-NODE_REPL_NODE_PATH = '<LOCALAPPDATA>\OpenAI\Codex\runtimes\cua_node\<CUA_RUNTIME_HASH>\bin\node.exe'
-NODE_REPL_TRUSTED_CODE_PATHS = '<CODEX_HOME>;<LOCALAPPDATA>\OpenAI\Codex\runtimes\cua_node\<CUA_RUNTIME_HASH>\bin\node_modules'
+NODE_REPL_NODE_MODULE_DIRS = '<CODEX_INSTALL_DIR>\app\resources\cua_node\bin\node_modules'
+NODE_REPL_NODE_PATH = '<CODEX_INSTALL_DIR>\app\resources\cua_node\bin\node.exe'
+NODE_REPL_TRUSTED_CODE_PATHS = '<CODEX_HOME>;<CODEX_INSTALL_DIR>\app\resources\cua_node\bin\node_modules'
 CODEX_HOME = '<CODEX_HOME>'
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab,mcpapps"
 BROWSER_USE_TINYSKY_ENABLED = "1"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.1106.51428"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"<CODEX_HOME>/plugins/cache/openai-bundled/browser/26.1106.51428/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+BROWSER_USE_CODEX_APP_VERSION = "26.1111.71704"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"<CODEX_HOME>/plugins/cache/openai-bundled/browser/26.1111.71704/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
 SKY_CUA_NATIVE_PIPE = "1"
 SKY_CUA_NATIVE_PIPE_DIRECTORY = '\\.\pipe\codex-computer-use-<PIPE_ID>'
-CODEX_CLI_PATH = '<LOCALAPPDATA>\OpenAI\Codex\bin\<CLI_HASH>\codex.exe'
+CODEX_CLI_PATH = '<CODEX_INSTALL_DIR>\app\resources\codex.exe'
 NODE_REPL_UNTRUSTED_ENV_ALLOWLIST = "CODEX_WINDOWS_REGISTERED_CORE"
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
 
-[windows]
-sandbox = "elevated"
-
-[projects.'c:\workspace\2026spring2winter']
+[projects.'q:\workspace\2026spring2winter']
 trust_level = "trusted"
-
-[projects.'c:\workspace\community.wiki']
-trust_level = "trusted"
-
-[projects.'c:\workspace\deepseek-harness']
-trust_level = "trusted"
-
-[projects.'c:\workspace\infertuner']
-trust_level = "trusted"
-
-[features]
-memories = true
-
-[memories]
-generate_memories = true
-use_memories = true
-
-[agents]
-default_subagent_model = "deepseek-v4.1-flash"
 ```
 
 重要说明：
 
-- `disable_response_storage` 在当前版本会被忽略，并在新版中可能被删除。便携模板不包含该项。
-- `[marketplaces.*]`、`notify`、`[mcp_servers.node_repl]` 及其所有环境变量都应视为旧机器生成物；复制旧路径会造成启动失败。
-- `experimental_bearer_token` 当前是明文配置。本文档只保留占位符；不要把真实值写进仓库。
-- `danger-full-access` 是当前机器的显式选择，不是本手册推荐的安全默认值。
-- 当前没有用户自建的 hooks、prompts、agents、commands 或 automations 目录；插件自带 hooks 会随插件安装。`codex doctor` 报告 69 个内置 feature flags 处于启用状态，当前唯一的用户覆盖项是 `memories`。
-
----
+- `notify`、`[marketplaces.*]`、`[mcp_servers.node_repl]` 及其环境变量属于本机 app-managed 配置，不复制旧值。
+- `experimental_bearer_token` 当前以明文保存在本机配置中。本文档只保留占位符。
+- `danger-full-access` 是当前机器的显式选择。
+- 当前配置还包含一条当前任务生成的临时目录信任记录，未纳入上方快照，也不属于迁移项。
+- `codex doctor` 报告 69 个内置 feature flags 启用、1 个覆盖项；配置中的用户覆盖项是 `memories`。
+- `codex doctor` 的 MCP 检查显示 1 个显式配置服务器（`node_repl`）；`cua_repl` 与 `codex_app` 由插件注册，通过 `codex mcp list --json` 查看。
 
 ### 4.3 新电脑使用的便携 `config.toml` 模板
 
@@ -457,7 +479,7 @@ default_subagent_model = "deepseek-v4.1-flash"
 ```toml
 model_provider = "custom"
 model = "deepseek-v4.1-flash"
-model_reasoning_effort = "max"
+model_reasoning_effort = "high"
 model_catalog_json = "cc-switch-model-catalog.json"
 sandbox_mode = "danger-full-access"
 
@@ -586,7 +608,7 @@ default_subagent_model = "deepseek-v4.1-flash"
 %USERPROFILE%\.codex\cc-switch-model-catalog.json
 ```
 
-内容如下。它是当前模型的覆盖目录，不要把它误写成普通模型配置：
+内容如下。它是当前模型的覆盖目录：
 
 ```json
 {
@@ -599,11 +621,14 @@ default_subagent_model = "deepseek-v4.1-flash"
       "context_window": 1048576,
       "default_reasoning_level": "high",
       "default_reasoning_summary": "none",
-      "description": "DeepSeek V4.1 Flash",
-      "display_name": "DeepSeek V4.1 Flash",
+      "description": "deepseek-v4.1-flash",
+      "display_name": "deepseek-v4.1-flash",
       "effective_context_window_percent": 95,
       "experimental_supported_tools": [],
-      "input_modalities": ["text", "image"],
+      "input_modalities": [
+        "text",
+        "image"
+      ],
       "max_context_window": 1048576,
       "priority": 1000,
       "service_tiers": [],
@@ -612,48 +637,75 @@ default_subagent_model = "deepseek-v4.1-flash"
       "support_verbosity": false,
       "supported_in_api": true,
       "supported_reasoning_levels": [
-        {"description": "Fast responses with lighter reasoning", "effort": "low"},
-        {"description": "Greater reasoning depth for complex problems", "effort": "high"},
-        {"description": "Maximum reasoning depth for the hardest problems", "effort": "max"}
+        {
+          "description": "Fast responses with lighter reasoning",
+          "effort": "low"
+        },
+        {
+          "description": "Greater reasoning depth for complex problems",
+          "effort": "high"
+        },
+        {
+          "description": "Maximum reasoning depth for the hardest problems",
+          "effort": "max"
+        }
       ],
       "supports_image_detail_original": false,
       "supports_parallel_tool_calls": false,
       "supports_reasoning_summaries": true,
       "supports_search_tool": false,
-      "truncation_policy": {"limit": 10000, "mode": "bytes"},
+      "truncation_policy": {
+        "limit": 10000,
+        "mode": "bytes"
+      },
       "upgrade": null,
       "visibility": "list"
     },
     {
       "additional_speed_tiers": [],
-      "auto_compact_token_limit": 943718,
+      "auto_compact_token_limit": 900000,
       "availability_nux": null,
       "base_instructions": "You are Codex, a coding agent. You and the user share the same workspace and collaborate to achieve the user's goals.",
-      "context_window": 1048576,
+      "context_window": 1000000,
       "default_reasoning_level": "high",
       "default_reasoning_summary": "none",
-      "description": "kimi-k3.1-pro",
-      "display_name": "kimi-k3.1-pro",
+      "description": "qwen4-max",
+      "display_name": "qwen4-max",
       "effective_context_window_percent": 95,
       "experimental_supported_tools": [],
-      "input_modalities": ["text", "image"],
-      "max_context_window": 1048576,
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "max_context_window": 1000000,
       "priority": 1001,
       "service_tiers": [],
       "shell_type": "shell_command",
-      "slug": "kimi-k3.1-pro",
+      "slug": "qwen4-max",
       "support_verbosity": false,
       "supported_in_api": true,
       "supported_reasoning_levels": [
-        {"description": "Fast responses with lighter reasoning", "effort": "low"},
-        {"description": "Greater reasoning depth for complex problems", "effort": "high"},
-        {"description": "Maximum reasoning depth for the hardest problems", "effort": "max"}
+        {
+          "description": "Fast responses with lighter reasoning",
+          "effort": "low"
+        },
+        {
+          "description": "Greater reasoning depth for complex problems",
+          "effort": "high"
+        },
+        {
+          "description": "Extra high reasoning depth for complex problems",
+          "effort": "xhigh"
+        }
       ],
       "supports_image_detail_original": false,
       "supports_parallel_tool_calls": false,
       "supports_reasoning_summaries": true,
       "supports_search_tool": false,
-      "truncation_policy": {"limit": 10000, "mode": "bytes"},
+      "truncation_policy": {
+        "limit": 10000,
+        "mode": "bytes"
+      },
       "upgrade": null,
       "visibility": "list"
     }
@@ -661,7 +713,7 @@ default_subagent_model = "deepseek-v4.1-flash"
 }
 ```
 
-当前机器上该目录由 CC Switch 管理；CC Switch 版本为 `4.0.24`。新电脑可以选择：
+当前机器上该目录由 CC Switch `4.0.30` 管理。新电脑可以选择：
 
 - 方案 A：复制本 JSON，手动配置 provider token。
 - 方案 B：安装 CC Switch，在 CC Switch 中重新添加相同 provider 和模型。
@@ -678,7 +730,7 @@ default_subagent_model = "deepseek-v4.1-flash"
 |---|---|---|
 | `openai-primary-runtime` | `<USERPROFILE>\.cache\codex-runtimes\codex-primary-runtime\plugins\openai-primary-runtime` | Desktop 自动维护，不复制 |
 | `openai-bundled` | `<CODEX_HOME>\.tmp\bundled-marketplaces\openai-bundled` | Desktop 自动维护，不复制 |
-| `ars-codex` | `<CODEX_HOME>\local-marketplaces\academic-research-skills-codex` | 优先 GitHub 重装；Windows 异常时复制本地 marketplace |
+| `ars-codex` | `<CODEX_HOME>\.tmp\marketplaces\ars-codex`（Git 来源） | 优先 GitHub 重装；Windows 异常时使用本地 marketplace 回退 |
 
 另外，`openai-api-curated` 会在某些环境中被自动发现，但当前没有从该 marketplace 安装的插件。它不是本次恢复的必要项。
 
@@ -688,23 +740,23 @@ default_subagent_model = "deepseek-v4.1-flash"
 
 | 插件 | 当前版本 | 用途 | 恢复方式 |
 |---|---:|---|---|
-| `codex-app-tools` | `26.1106.51428` | Desktop 工具/本地 MCP 服务 | Desktop Plugin Manager 或 `codex plugin add` |
-| `browser` | `26.1106.51428` | 操作 Codex in-app browser、local web target | 同上 |
-| `unified-computer-use` | `26.1106.51428` | 浏览器/桌面统一 CUA runtime | 同上，必须重启 Codex |
-| `chrome` | `26.1106.51428` | 控制已有 Chrome 会话、标签和登录态 | 同上 |
-| `computer-use` | `26.1106.51428` | Windows Desktop 原生应用控制 | 同上 |
+| `codex-app-tools` | `26.1111.71704` | Desktop 工具/本地 MCP 服务 | Desktop Plugin Manager 或 `codex plugin add` |
+| `browser` | `26.1111.71704` | 操作 Codex in-app browser、local web target | 同上 |
+| `unified-computer-use` | `26.1111.71704` | 浏览器/桌面统一 CUA runtime | 同上，必须重启 Codex |
+| `chrome` | `26.1111.71704` | 控制已有 Chrome 会话、标签和登录态 | 同上 |
+| `computer-use` | `26.1111.71704` | Windows Desktop 原生应用控制 | 同上 |
 | `latex` | `0.2.8` | LaTeX 编译、诊断和 TeX Live/Tectonic 辅助 | 同上 |
-| `visualize` | `1.0.91` | 交互式图表、地图、模拟和可视化页面 | 同上 |
+| `visualize` | `1.0.97` | 交互式图表、地图、模拟和可视化页面 | 同上 |
 
 #### OpenAI Primary Runtime（5 个）
 
 | 插件 | 当前版本 | 用途 | 恢复方式 |
 |---|---:|---|---|
-| `documents` | `26.1105.12137` | Word/文档创建和编辑 | Desktop Plugin Manager 或 `codex plugin add` |
-| `pdf` | `26.1105.12137` | PDF 读取、生成、渲染和验证 | 同上 |
-| `spreadsheets` | `26.1105.12137` | Excel/表格创建、分析和验证 | 同上 |
-| `presentations` | `26.1105.12137` | PPT/演示文稿创建、编辑和渲染 | 同上 |
-| `template-creator` | `26.1105.12137` | 从文档、表格、PPT、图片等创建模板 | 同上 |
+| `documents` | `26.1118.11504` | Word/文档创建和编辑 | Desktop Plugin Manager 或 `codex plugin add` |
+| `pdf` | `26.1118.11504` | PDF 读取、生成、渲染和验证 | 同上 |
+| `spreadsheets` | `26.1118.11504` | Excel/表格创建、分析和验证 | 同上 |
+| `presentations` | `26.1118.11504` | PPT/演示文稿创建、编辑和渲染 | 同上 |
+| `template-creator` | `26.1118.11504` | 从文档、表格、PPT、图片等创建模板 | 同上 |
 
 #### ARS-Codex（1 个）
 
@@ -761,7 +813,7 @@ codex plugin marketplace upgrade ars-codex
 codex plugin add ars-codex@ars-codex
 ```
 
-如果 Windows 上出现 `os error 5`、`marketplace-upgrade-*` 残留目录或磁盘持续增长，先停止重复重试，并参考上游 `docs/windows-marketplace-recovery.md`。本机当前的 ARS 来源就是本地 marketplace，因此可以使用资源包中的备份：
+如果 Windows 上出现 `os error 5`、`marketplace-upgrade-*` 残留目录或磁盘持续增长，先停止重复重试，并参考上游 `docs/windows-marketplace-recovery.md`。本机当前的 ARS 来源是 GitHub marketplace。Windows 更新异常时可以使用资源包中的本地 marketplace 备份：
 
 ```powershell
 $codexHome = Join-Path $env:USERPROFILE '.codex'
@@ -783,9 +835,9 @@ codex plugin add ars-codex@ars-codex
 
 ## 6. 技能清单
 
-### 6.1 用户技能：15 个
+### 6.1 用户技能：29 个
 
-这些目录应放在：
+这些目录放在：
 
 ```text
 %USERPROFILE%\.codex\skills\
@@ -793,27 +845,41 @@ codex plugin add ars-codex@ars-codex
 
 | 技能 | 作用 | 当前来源/记录方式 |
 |---|---|---|
-| `answer-me-with-html` | 将回答做成单页视觉 HTML；仅在显式调用时使用 | GitHub `QingYunA/answer-me-with-html`；本机也有一份 `.agents` 副本 |
-| `deep-research` | 深度文献调查、来源验证、MECE 综合 | 未记录可靠上游；从原机复制 |
-| `figure-designer` | 科研论文核心图表的设计和审查建议 | 未记录可靠上游；从原机复制 |
-| `html-docs` | HTML 文档、教程、讲解视频和课程页面 | 未记录可靠上游；从原机复制 |
+| `answer-me-with-html` | 将回答做成单页视觉 HTML；仅在显式调用时使用 | GitHub `QingYunA/answer-me-with-html`；本机另有一份 `.agents` 副本 |
+| `deep-research` | 深度文献调查、来源验证、MECE 综合 | 从原机复制；未记录可靠上游 |
+| `domain-modeling` | 维护项目术语、词汇表和 ADR | 从原机复制；未记录可靠上游 |
+| `figure-designer` | 科研论文核心图表的设计和审查建议 | 从原机复制；未记录可靠上游 |
+| `grill-me` | 用连续追问压测计划或设计；入口技能 | 从原机复制；未记录可靠上游 |
+| `grill-with-docs` | 压测设计并同步产出 ADR 和词汇表 | 从原机复制；未记录可靠上游 |
+| `grilling` | 按设计树轮次追问并形成共同理解 | 从原机复制；未记录可靠上游 |
+| `html-docs` | HTML 文档、教程、讲解视频和课程页面 | 从原机复制；未记录可靠上游 |
 | `html-document-creator` | 分页式 HTML 手册、宣传册和受控导出 | GitHub `huzhe2003/html-document-creator`；从原机复制也可 |
-| `idea-evaluator` | 研究想法评估、风险审计和可行性判断 | 未记录可靠上游；从原机复制 |
+| `humanizer` | 去除 AI 腔并保留原意 | 从原机复制；未记录可靠上游 |
+| `i-have-adhd` | 面向 ADHD 读者的行动优先输出格式 | 从原机复制；未记录可靠上游 |
+| `idea-evaluator` | 研究想法评估、风险审计和可行性判断 | 从原机复制；未记录可靠上游 |
+| `manage-skills` | 通过 skills-manager-cli 管理采集、部署和源信息 | 从原机复制；未记录可靠上游 |
 | `md2html` | 长 Markdown 转单页 HTML，含 Mermaid/主题 | GitHub `haidang1810/md2html`；从原机复制也可 |
-| `nature-figure` | 科研绘图、多面板图、图形摘要和图形 QA | 未记录可靠上游；从原机复制 |
-| `nature-paper-xray` | 单篇论文的深度结构还原和证据阅读 | 未记录可靠上游；从原机复制 |
-| `nature-paper2word` | Markdown 论文转 Word，处理公式、交叉引用和参考文献 | 未记录可靠上游；从原机复制 |
-| `nature-ref-verifier` | 参考文献逐字段多源核验 | 未记录可靠上游；从原机复制 |
+| `nature-figure` | 科研绘图、多面板图、图形摘要和图形 QA | 从原机复制；未记录可靠上游 |
+| `nature-paper-xray` | 单篇论文的深度结构还原和证据阅读 | 从原机复制；未记录可靠上游 |
+| `nature-paper2word` | Markdown 论文转 Word，处理公式、交叉引用和参考文献 | 从原机复制；未记录可靠上游 |
+| `nature-ref-verifier` | 参考文献逐字段多源核验 | 从原机复制；未记录可靠上游 |
 | `nature-shared` | Nature 系列技能的共享支持包，不单独调用 | 必须与相关 Nature 技能一起复制 |
-| `paper-polish` | 学术英文/中译英润色，保留原意并降低 AI 腔 | 未记录可靠上游；从原机复制 |
-| `pre-submission-reviewer` | 投稿前的宏观逻辑、写作、语法、LaTeX 和图表审查 | 未记录可靠上游；从原机复制 |
-| `tech-paper-template` | 技术论文骨架、逻辑链和贡献结构 | 未记录可靠上游；从原机复制 |
+| `paper-polish` | 学术英文和中译英润色，保留原意并校准语气 | 从原机复制；未记录可靠上游 |
+| `paper-spine` | 论文研究、写作、制图和审阅的编排入口 | PaperSpine v6.0.0-beta.2；由内置更新器管理 |
+| `paper-spine-study` | 研究问题、证据组织和研究执行 | PaperSpine v6.0.0-beta.2 |
+| `paper-spine-followwriting` | 依据真实结果和参考论文结构写作 | PaperSpine v6.0.0-beta.2 |
+| `paper-spine-figures` | 依据真实研究证据设计、绘制和修订科研图 | PaperSpine v6.0.0-beta.2 |
+| `paper-spine-review` | 审阅稿件、证据、引用和图件并验证修改 | PaperSpine v6.0.0-beta.2 |
+| `paper-spine-deliver` | 渲染、检查并打包论文的可编辑交付件 | PaperSpine v6.0.0-beta.2 |
+| `pre-submission-reviewer` | 投稿前的宏观逻辑、写作、语法、LaTeX 和图表审查 | 从原机复制；未记录可靠上游 |
+| `prompt-master` | 为指定 AI 工具生成优化后的提示词 | 从原机复制；未记录可靠上游 |
+| `tech-paper-template` | 技术论文骨架、逻辑链和贡献结构 | 从原机复制；未记录可靠上游 |
 
 说明：
 
-- `nature-shared` 是支持包，不要把它删掉；其他 Nature 技能可能通过相邻目录读取它。
-- 不建议只复制单个 Nature 技能。若使用自然科学校验工作流，应保留所有相关目录。
-- `answer-me-with-html` 在当前机器同时存在于 `.codex\skills` 和 `.agents\skills`。迁移时保留两份可以最大程度复现现状；如果只想保留一份，应确认新 Codex 版本的技能发现优先级后再删除。
+- `nature-shared` 是支持包，其他 Nature 技能可能通过相邻目录读取它。
+- PaperSpine 六项来自受管理的 `PaperSpine v6.0.0-beta.2` 技能包；更新器元数据位于 `%USERPROFILE%\.codex\.paperspine-skills`。
+- `answer-me-with-html` 同时存在于 `.codex\skills` 和 `.agents\skills`。迁移时保留两份可以复现当前发现状态。
 
 ### 6.2 已知来源的重装命令
 
@@ -861,17 +927,18 @@ if (-not (Test-Path -LiteralPath $dest)) {
       "sourceType": "github",
       "sourceUrl": "https://github.com/QingYunA/answer-me-with-html.git",
       "skillPath": "skills/answer-me-with-html/SKILL.md",
-      "skillFolderHash": "8007aad826a73cd28b6cbcb697cd1459a88b0bf0",
+      "skillFolderHash": "193227a0df61d26c2c1ba7a8730daaa47de88ec1",
       "installMode": "copy",
       "installedAt": "2026-11-11T13:32:41.933Z",
-      "updatedAt": "2026-11-11T13:32:41.933Z"
+      "updatedAt": "2026-11-19T02:19:00.741Z",
+      "commit": "912bad4cb7ccdb3729262bf885f5280b3da941ee"
     }
   },
   "dismissed": {}
 }
 ```
 
-该文件不是密钥；可以复制。它只记录技能来源、安装方式和目录哈希，不包含用户对话。
+该文件只记录技能来源、安装方式和目录哈希，不包含用户对话。
 
 ---
 
@@ -925,7 +992,7 @@ Use $latex-compile to compile a minimal TeX project.
 
 ### 7.1 当前记录
 
-通过 `codex mcp list --json` 观察到的记录如下：
+通过 `codex mcp list --json` 观察到的记录如下。`codex doctor` 只统计 `config.toml` 中显式声明的 `node_repl`，插件注册项需单独查看：
 
 | 名称 | 来源 | 当前状态 | 迁移处理 |
 |---|---|---|---|
@@ -976,7 +1043,7 @@ codex mcp list --json
 low, medium, high, xhigh, ultra, persistent, max
 ```
 
-其中当前 provider 的模型目录实际声明了 `low`、`high`、`max` 三档。`xhigh`、`ultra`、`persistent` 是 Desktop 的可用选项，不代表自定义 provider 一定接受每个值；遇到 400 或配置拒绝时，把 `model_reasoning_effort` 改回 `max`、`high` 或 `low`。
+`deepseek-v4.1-flash` 在模型目录中声明 `low`、`high`、`max` 三档，默认用 `high`；`qwen4-max` 声明 `low`、`high`、`xhigh` 三档。`ultra`、`persistent` 是 Desktop 的可用选项，不代表自定义 provider 接受每个值；遇到 400 或配置拒绝时，改回当前模型声明的档位。
 
 字体族来自当前 Windows 用户字体目录。安装 16 个 `MapleMono-NF-CN-*.ttf` 字体文件后，Codex 才能稳定显示主题指定的字重。
 
@@ -986,18 +1053,19 @@ low, medium, high, xhigh, ultra, persistent, max
 
 | 依赖 | 当前状态 | Codex 中的用途 |
 |---|---|---|
-| Python | `3.14.10`，`%USERPROFILE%\.local\bin\python.exe` | 技能脚本、模型目录、部分文档处理 |
-| Node.js | `26.13.0` | Desktop/CUA/浏览器工具和部分 skills |
+| Python | `3.14.10`，`%LOCALAPPDATA%\Programs\Python\Python314\python.exe` | 技能脚本、模型目录、部分文档处理 |
+| Node.js | `26.13.1` | Desktop/CUA/浏览器工具和部分 skills |
 | npm | `11.20.0` | Node 相关工具 |
-| Git | `2.56.0.windows.4` | 插件 marketplace、技能安装、项目操作 |
-| ripgrep | `15.2.0`，Codex 自带 | 文件搜索 |
-| PowerShell | Windows 自带 | 本文档所有命令 |
-| CC Switch | `4.0.24` | 当前 provider/model catalog 管理 |
-| OpenCode Desktop | `2.2.7`，可选 | 独立桌面应用，不是 Codex 运行必需 |
+| Git | `2.56.1.windows.1` | 插件 marketplace、技能安装、项目操作 |
+| ripgrep | `15.2.0` | 文件搜索 |
+| PowerShell | `7.6.9`，Primary Runtime 自带 | 本文档命令和部分 skills |
+| CC Switch | `4.0.30` | 当前 provider/model catalog 管理 |
+| OpenCode | `2.3.0`，可选 | 独立桌面应用，不是 Codex 运行必需 |
 | R / Rscript | 未安装 | `nature-figure` 的 R 路线需要另行安装 |
-| Pandoc | 未安装 | 某些文档转换的可选工具 |
+| Pandoc | `3.14` | Markdown/文档转换 |
 | LibreOffice | 未安装 | 某些 Office 转换/渲染的可选工具 |
-| 系统 TeX | 未安装 | LaTeX 插件可使用自身管理的工具链；另跑 `latex-doctor` |
+| MiKTeX | `25.12`，系统 TeX | LaTeX 编译和诊断 |
+| Tectonic | `0.17.0`，Primary Runtime 自带 | LaTeX 插件的便携编译后端 |
 
 内置插件依赖由 Codex Primary Runtime 和 Desktop 自带 runtime 提供，通常不需要手动安装 Node 包。用户技能如果包含自己的 `requirements.txt`、Python 包或命令行工具，应在首次调用时运行该技能自带的依赖检查。
 
@@ -1019,43 +1087,24 @@ codex --version
 
 ### 10.1 Desktop 本地项目
 
-当前 Desktop 记录的本地项目名称：
+当前 Desktop 记录了两个本地项目：
 
-| 项目名称 |
-|---|
-| `MasterGraduationProject` |
-| `community.wiki` |
-| `deepseek-harness` |
-| `flink-jobs` |
-| `InferTuner` |
+| 项目名称 | 路径 |
+|---|---|
+| `2026Spring2Winter` | `Q:\workspace\2026Spring2Winter` |
+| `MasterGraduationProject` | `Q:\workspace\2026Spring2Winter\MasterGraduationProject` |
 
-当前 `config.toml` 的受信任工作区：
-
-| 工作区路径 |
-|---|
-| `C:\workspace\2026Spring2Winter` |
-| `C:\workspace\community.wiki` |
-| `C:\workspace\deepseek-harness` |
-| `C:\workspace\infertuner` |
-
-新电脑应通过 Codex Desktop 重新打开这些项目并确认 trust 提示。工作区根路径变化时保留新路径，不要强行复制旧路径。
-
-### 10.2 SSH 连接
-
-当前 Desktop 发现/管理了 8 个连接别名：
+当前 `config.toml` 的稳定受信任工作区是：
 
 ```text
-jump
-k8s-14
-k8s-15
-k8s-16
-k8s-17
-k8s-18
-k8s-19
-k8s-20
+Q:\workspace\2026Spring2Winter
 ```
 
-这些只是别名，不是可直接迁移的 SSH 配置。新电脑需要在 Codex Desktop 的远程连接界面重新发现或添加连接，并在系统 SSH 客户端中准备好相应认证。不要复制主机地址、端口、私钥、agent forwarding 配置或任何登录凭据到本文件。
+另有一条为当前任务生成的临时目录信任记录，不应迁移。新电脑应通过 Codex Desktop 重新打开项目并确认 trust 提示。
+
+### 10.2 远程连接
+
+当前快照中没有需要迁移的 SSH 连接别名。新电脑需要按需在 Codex Desktop 的远程连接界面重新发现或添加连接，并在系统 SSH 客户端中准备认证。不要复制主机地址、端口、私钥、agent forwarding 配置或任何登录凭据到本文件。
 
 ---
 
@@ -1091,7 +1140,7 @@ $agentsSkill = Join-Path $env:USERPROFILE '.agents\skills\answer-me-with-html'
 Test-Path -LiteralPath $agentsSkill
 ```
 
-预期用户技能为 15 个目录；另有一个 `.system` 目录。如果 Names 中出现旧版本的重复目录，请先确认来源，不要直接删除仍在使用的副本。
+预期用户技能为 29 个目录，另有一个 `.system` 目录。如果 Names 中出现旧版本的重复目录，请先确认来源，不要直接删除仍在使用的副本。
 
 ### 11.3 插件和模型 smoke test
 
@@ -1114,7 +1163,7 @@ Test-Path -LiteralPath $agentsSkill
 | MCP 启动失败 | 是否复制了旧 runtime 路径；删除旧 MCP 块并重启 Desktop |
 | 主题字体不显示 | Maple Mono NF CN 是否安装到当前用户字体目录 |
 | 技能不可见 | 技能目录层级是否正确、是否打开了新对话、`nature-shared` 是否仍在相邻目录 |
-| `codex doctor` 报 `disable_response_storage` | 该键已失效，迁移模板中不要包含它 |
+| reasoning effort 报 400 | 使用当前模型声明的档位：`deepseek-v4.1-flash` 为 low/high/max，`qwen4-max` 为 low/high/xhigh |
 | `codex doctor` 报 MCP env 变量缺失 | 先重启 Desktop/重新启用 CUA 插件；不要填旧机器值 |
 
 ---
