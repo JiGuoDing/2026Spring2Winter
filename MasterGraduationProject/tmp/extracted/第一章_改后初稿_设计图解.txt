@@ -1,0 +1,413 @@
+第一章 · 设计图解
+背景
+四类对象
+总体闭环
+研究点一
+研究点二
+实验
+参考文献
+🌙 深色
+
+毕业设计 · 第一部分
+
+# 面向流式智能体的异质缓存机制与生命周期管理策略
+
+把 Agent 执行全链路的四类中间结果纳入统一缓存，用价值建模决定「值不值得留」，用有效性检查决定「这次能不能用」，再用生命周期管理应对持续到来的知识更新。
+
+## 1 问题背景
+
+流式 Agent 的运行形态，决定了缓存既有机会、也有新约束。
+
+图 1 · 任务处理与知识更新两条流交错，构成区别于一次性问答的流式形态
+[1]
+
+缓存机会：
+相似任务反复需要相同的证据、工具结果、计划与回答，而知识在两次更新之间保持稳定。
+
+新约束：
+知识更新令缓存过时，复用前须确认有效；热点与来源状态随时间变化，保存与淘汰须动态判断。
+[2]
+
+传统按命中率、相似度、访问频率的策略，衡量不了复用相对重新执行的真实净收益，也处理不了对象间的依赖一致性。现有 Agent 缓存工作还有两点不足：
+
+#### ① 只覆盖局部
+
+语义缓存复用回答
+[3]
+[5]
+、KV 缓存复用推理状态
+[7]
+、工具缓存复用调用结果
+[9]
+，尚未形成贯穿规划、检索、调用、回答的统一系统。
+
+#### ② 未因地制宜
+
+机制多面向静态语料或独立请求，没有利用「更新间稳定、变更以事件到达、运行反馈持续产生」这些流式有利条件。
+
+## 2 四类缓存对象
+
+把执行全链路的中间结果统一纳入缓存，会话上下文与外部数据、工具版本作为适用性与依赖来源。
+
+图 2 · 四类对象对应执行链的四个阶段，各自省去一类重复工作
+
+## 3 总体设计闭环
+
+两个研究点相互衔接：价值建模与检索复用（研究点一）支撑生命周期管理（研究点二），运行反馈再回到估值。
+
+图 3 · 估值 → 复用 → 准入淘汰 → 依赖修复 → 反馈回估值
+
+## 4 研究点一 · 价值建模与检索复用
+
+先估计每条缓存的价值，再判断当前请求能否安全复用。
+
+### 4.1 价值建模 1.2.1
+
+四类对象共用一个基础价值，再按各自特点修正。
+[5]
+[6]
+基础价值用「预计能省多少用户等待时间」衡量：
+
+图 4 · 基础价值 = 有效复用次数 × 单次净节省 − 失败额外开销（例：检查 30ms 后发现过期再调用，多花的 30ms 即额外开销）
+
+四类对象各有专属价值，用来校正基础估值或补充决策依据：
+
+resp
+
+#### 边际覆盖价值
+
+回放有/无该回答，看它新增了多少安全复用机会；已被现有缓存覆盖的不重复计。
+[3]
+
+rag
+
+#### 来源版本感知
+
+按来源统计实际使用，再按各来源版本剩余有效时长加权，修正未来复用机会。
+[6]
+[8]
+[19]
+
+act
+
+#### 下游调用支撑
+
+统计直接用过该结果的不同下游工具数，支撑越广越值得保留。
+[9]
+
+plan
+
+#### 计划执行质量
+
+用顺利完成率衡量复用后能否少返工、少回退地完成任务。
+[10]
+[11]
+
+把基础价值换算成无量纲分数，再叠加专属修正，得到用于准入、保留、淘汰的最终评分：
+
+$$V_{\mathrm{final}}(i,H)=\frac{V_{\mathrm{base}}(i,H)}{T_{\mathrm{ref}}}+\Delta S_{\mathrm{type}}(i,H)$$
+T_ref 为四类对象共用的参考时长；resp/rag 修正净节省，act/plan 分别按下游支撑数与顺利完成率加权。
+
+LLM 辅助分簇：
+用 LLM 把表述不同但回答需求一致的请求归入同簇，簇内频次估计需求、簇内样本回放估计边际覆盖。分簇只用于估值与抽样，是否复用仍由有效性检查决定。
+[12]
+
+### 4.2 检索与有效性检查 1.2.2
+
+统一的在线流程：召回候选 → 检查当前有效性 → 复用或正常执行 → 记录反馈。
+
+```
+flowchart LR
+  A[按对象召回候选] --> B{有效性检查}
+  B -->|通过| C[复用缓存]
+  B -->|不通过| D[正常执行原流程]
+  C --> E[记录反馈]
+  D --> E
+  E --> F[更新价值估计]
+```
+
+图 5 · 四类对象共用的在线复用流程
+
+| 对象 | 怎么找候选 | 命中后检查什么 |
+| resp | 精确键优先，再按问题语义召回 [3] [4] [13] | 权限、实体、时间范围、限定条件、证据版本，再做风险判断 |
+| rag | 按问题/子需求做证据块关键词与语义检索 | 逐块查权限与来源版本，再判断证据覆盖，缺则补检 [7] [8] |
+| act | 工具+版本+规范化参数+访问范围精确匹配 [6] [9] | 权限 [24] [25] 与依赖数据状态，有效则复用否则重调（限只读工具） |
+| plan | 按任务阶段与工具缩小范围，再按目标语义召回 [10] [14] [15] | 绑定参数后查前置条件、工具可用性与权限 |
+
+回答缓存的误复用风险控制（借鉴 vCache）：
+[3]
+按「回答条目 + 版本 + 相似度区间」积累反馈。新版本反馈不足时，有限借用同簇、同区间、版本相容的标注；自身标注越多，借用占比越小。
+[13]
+
+图 6 · 版本感知的簇内反馈借用：先检查有效性，再用加权风险决定复用或重生成
+
+$$\widehat{p}_i=\frac{e_i+m\,p_c}{n_i+m}$$
+无兼容反馈时 m=0；样本量达标后按风险与目标 δ 计算重生成概率，正常生成后再由轻量 LLM 判定旧回答并回填反馈。
+
+使用前再核对版本：
+更新可能与检索交错，实际使用前以系统当前已接收的版本为准；失效证据剔除、失效回答退出本次复用。
+
+## 5 研究点二 · 生命周期管理
+
+用价值决定准入与淘汰，用依赖定位决定更新后如何修复。
+
+### 5.1 分层准入与淘汰 1.3.1
+
+四类缓存共用价值决策：候选先过有效性检查，加入后整体评分上升才准入；空间不足时按「移除损失 ÷ 释放空间」选出拟淘汰条目，替换后评分上升才执行。
+[6]
+[5]
+[17]
+
+```
+flowchart TD
+  A[候选进入准入流程] --> B{有效性检查通过?}
+  B -->|否| X[不写入候选]
+  B -->|是| C{空间充足?}
+  C -->|否| D[清理失效项选出拟淘汰条目]
+  C -->|是| E{满足容量且整体评分上升?}
+  D --> E
+  E -->|是| F[写入候选并移除拟淘汰项]
+  E -->|否| X
+```
+
+图 7 · 准入与淘汰：先选拟淘汰集合，再比较替换前后整体评分（ΔS>0 才写入）
+
+图 8 · resp 两层：静态层供标准答案，动态层跟上线上需求；登记的是复用入口而非搬移回答
+[16]
+
+### 5.2 依赖传播与缓存修复 1.3.2
+
+外部资料随时间以事件形式流入，与请求处理、修复交错。首版聚焦单轮 rag→resp：记录依赖 → 定位影响 → 选择修复方式 → 核验后按版本写回。
+[18]
+[19]
+[22]
+
+```
+flowchart TD
+  A[收到证据更新] --> B[暂停待判定回答并重新检索]
+  B --> C{检索结果或依据有变化?}
+  C -->|否| D[恢复旧回答复用]
+  C -->|是| E{可定位影响且证据充分?}
+  E -->|是| F[局部修复]
+  E -->|否| G[完整重生成]
+  F --> H{事实核验通过?}
+  H -->|否| G
+  H -->|是| I{提交时版本仍一致?}
+  G --> J{结果通过核验?}
+  J -->|否| L[不写入缓存]
+  J -->|是| I
+  I -->|否| B
+  I -->|是| K[新版本进入准入流程]
+```
+
+图 9 · 更新后的影响定位、选择性修复与版本条件提交
+
+图 10 · 依赖链定位受影响事实；修复期间再次更新时，旧候选不得覆盖新状态
+[17]
+[18]
+
+修复选择：
+影响局部、替代证据充分、其余表述仍有支撑 → 只改相关表述；影响不清、改变整体推理或证据不足 → 完整重生成，仍不足则说明无法确认。
+[20]
+
+## 6 实验设计与预期结论
+
+四条结论、四个实验，共用一套实验台；每个实验只扫一个轴，策略对比阶段不调用模型。
+
+事件回放器按处理时间回放请求、证据更新与任务完成三类事件
+[23]
+。“不用缓存会怎样”这一反事实对任何策略都相同，因此预先算好一次，把执行分成两部分：
+
+离线回放
+
+#### 标签表
+
+预计算无缓存生成结果、判官标签与各项单价；各策略在表上回放，对比阶段零模型调用。
+
+实测标定
+
+#### 单价表
+
+300 条请求真实执行，标定单价表，并报告建模时延相对实测时延的偏差（MAPE）。
+
+数据与规模。
+单场景受控台：2–3 千篇带版本文档、3,000 条单轮短请求、40 个更新事件；四类对象共用同一时钟（
+act
+50 个只读查询、
+plan
+30 个模板）。真值不依赖判官：
+resp
+由检索相关性与版本重算确定，
+act
+由规则引擎给出，
+plan
+对照金标序列。候选与标签表约 15,000 行。
+
+| 指标 | 定义 |
+| 回答正确率 | 判定为正确的回答数 ÷ 总回答数 |
+| 质量约束 | 相对无缓存基线的正确率下降（pp） |
+| P95 时延 | 单请求端到端时延的 95 分位 |
+| 推理成本 | token、调用次数与后台时间按同一单价表折算 |
+| 安全复用 | 命中且质量达标的请求数 ÷ 总请求数 |
+| 修复成本 | 检索 + 生成 + 核验 |
+| goodput | 满足质量与 SLO 的请求数 ÷ 单位时间 |
+
+只报用户可见的结果，不报预测精度一类中间指标；越权与过期复用次数作为硬断言，要求为零。工具与任务环境参考
+[26]
+[27]
+[28]
+[29]
+[30]
+，更新事件构造参考
+[22]
+，主张核验参考
+[21]
+。
+
+### 四条预期结论 字母为待实测数字
+
+C1
+
+#### 质量约束下的前沿
+
+正确率下降 ≤1pp 时，相比固定阈值与 vCache 式门控，P95 时延降
+a%
+、成本降
+b%
+；1 / 3 / 5 pp 三点上前沿始终位于左上。
+
+C2
+
+#### 装不下时留得对
+
+同一门槛与容量下，相比 LRU / LFU / GDSF 分别多
+x% / y% / z%
+安全复用，时延降
+c%
+、成本降
+d%
+。
+
+C3
+
+#### 质量贴重生成，成本贴直改
+
+修复成本降
+Z%
+（检索 ↓ r%、生成 ↓ g%），修复期时延降
+s%
+，质量不降；比直改贵
+e%
+，正确率高
+w
+pp。
+
+C4
+
+#### 合起来更好
+
+相比最强单一机制，goodput 升
+u%
+、总成本降
+v%
+、正确率不降。
+
+### 四个实验 与结论一一对应
+
+#### 实验一 · 复用决策（C1）
+
+变量：
+质量约束 1 / 3 / 5 pp，每点为各策略选最优配置，得到前沿
+
+对比：
+全局相似度阈值 / vCache 式逐条目门控 / 本文
+
+指标：
+P95 时延、推理成本、正确率、安全复用
+
+主图：
+质量-时延前沿 + 去借用消融
+
+#### 实验二 · 容量受限（C2）
+
+变量：
+容量 10% / 25% / 50% 工作集
+
+对比：
+LRU / LFU / GDSF / 本文，共用候选集、硬门槛与成本表
+
+指标：
+安全复用、P95 时延、累计成本、准入淘汰抖动
+
+主图：
+容量-收益曲线 + 静态层开关
+
+#### 实验三 · 更新与修复（C3）
+
+变量：
+更新率 5 / 20 / 50 事件每千请求
+
+对比：
+完整重生成 / LLM 直接改写 / 本文依赖定位修复
+
+指标：
+修复成本分解、修复期时延、正确率、回退率
+
+主图：
+质量-成本散点 + 成本分解堆叠柱
+
+#### 实验四 · 整体收益（C4）
+
+变量：
+无
+
+对比：
+无缓存 / 最强单一机制 / 完整系统 / 去掉单项的完整系统
+
+指标：
+goodput、P95 时延、总成本、正确率
+
+主图：
+分组柱状 + 更新前后各 30 分钟时序
+
+规模与边界：
+8 张主图、5–6 页、约 7–8 周。不做扩展性与跨硬件实验；不做 Flink 真实部署，仅借其状态管理接口；不单独做参数敏感性分析，实验一的前沿已覆盖风险目标；不与已有工作报告数字直接对齐，只做趋势比较。
+
+## 参考文献
+
+按正文引用顺序列出。预印本已标注，详细书目信息与使用位置见
+参考文献汇总表
+。
+
+- Xie J, Zheng Q, Zhang R, et al. StreamRAG: Enhancing Real-Time Video Understanding with Retrieval Augmentation[C]//Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR). 2026. https://openaccess.thecvf.com/content/CVPR2026/html/Xie_StreamRAG_Enhancing_Real-Time_Video_Understanding_with_Retrieval_Augmentation_CVPR_2026_paper.html .
+- Ouyang J, Pan T, Cheng M, et al. HoH: A Dynamic Benchmark for Evaluating the Impact of Outdated Information on Retrieval-Augmented Generation[C]//Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). 2025. https://aclanthology.org/2025.acl-long.301/ .
+- Schroeder L G, Desai A, Cuadron A, et al. vCache: Verified Semantic Prompt Caching[C]//International Conference on Learning Representations (ICLR). 2026. arXiv:2502.03771. https://iclr.cc/virtual/2026/poster/10006471 .
+- Noshad A, Zheng Z, Wu Y. MVR-cache: Optimizing Semantic Caching via Multi-Vector Retrieval and Learned Prompt Segmentation[C]//International Conference on Machine Learning (ICML). 2026. arXiv:2605.24914. https://icml.cc/virtual/2026/poster/63545 .
+- Liu X, Atalar B, Dai X, et al. Semantic Caching for Low-Cost LLM Serving: From Offline Learning to Online Adaptation[C]//IEEE INFOCOM 2026—IEEE Conference on Computer Communications. IEEE, 2026: 1-10. DOI: 10.1109/INFOCOM59046.2026.11571467
+- Ruan C, Bi C, Zheng K, et al. Cortex: Achieving Low-Latency, Cost-Efficient Remote Data Access for LLM via Semantic-Aware Knowledge Caching[C]//23rd USENIX Symposium on Networked Systems Design and Implementation (NSDI). USENIX Association, 2026: 2407-2421. https://www.usenix.org/conference/nsdi26/presentation/ruan-cortex .
+- Jin C, Zhang Z, Jiang X, et al. RAGCache: Efficient Knowledge Caching for Retrieval-Augmented Generation[J]. ACM Transactions on Computer Systems, 2026, 44(1): 1-27. DOI: 10.1145/3768628
+- Verma A, Pillai S, Das S, et al. Safe and Sufficient Caching: Validated Evidence Reuse for Production Retrieval-Augmented Generation[C]//Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing: Industry Track. 2026: 1272-1279. DOI: 10.18653/2026.emnlp-industry.75
+- Kumar A V, Kataria B, Oh B, et al. TVCACHE: A Tool-Value Cache for Post-Training LLM Agents[C]//Proceedings of the 43rd International Conference on Machine Learning. PMLR, 2026, 306: 61539-61558. https://proceedings.mlr.press/v306/kumar26d.html .
+- Zhang Q, Wornow M, Olukotun K. Agentic Plan Caching: Test-Time Memory for Fast and Cost-Efficient LLM Agents[C]//Advances in Neural Information Processing Systems 38 (NeurIPS). 2025. https://proceedings.neurips.cc/paper_files/paper/2025/hash/9549f7d06700f0966d5f938f1d11022a-Abstract-Conference.html .
+- Fan S, Cong X, Zhang Z, et al. Generalizing Experience for Language Agents with Hierarchical MetaFlows[C]//Advances in Neural Information Processing Systems 38 (NeurIPS). 2025. https://proceedings.neurips.cc/paper_files/paper/2025/hash/5c882988ce5fac487974ee4f415b96a9-Abstract-Conference.html .
+- Basu A. Why Agent Caching Fails and How to Fix It: Structured Intent Canonicalization with Few-Shot Learning[EB/OL]. arXiv:2602.18922, 2026. https://arxiv.org/abs/2602.18922 .（预印本）
+- Liang J, Wang Y, Jiang T, et al. LaCache: Robust Semantic Caching for LLM Serving[C]//Advances in Neural Information Processing Systems (NeurIPS). 2026. arXiv:2608.01718. https://neurips.cc/virtual/2026/poster/152812 .
+- Chillara V, Kline D, Alvares C, et al. SemanticALLI: Caching Reasoning, Not Just Responses, in Agentic Systems[EB/OL]. arXiv:2601.16286, 2026. https://arxiv.org/abs/2601.16286 .（预印本）
+- Kim H, Wu Y, Tambe T. AgenticCache: Cache-Driven Asynchronous Planning for Embodied AI Agents[C]//Proceedings of Machine Learning and Systems (MLSys). 2026. https://mlsys.org/virtual/2026/poster/3583 .
+- Singh A K, Wang H, Attaluri L N S, et al. Asynchronous Verified Semantic Caching for Tiered LLM Architectures[C]//Proceedings of the Sixth European Workshop on Machine Learning and Systems (EuroMLSys). 2026: 192-199. DOI: 10.1145/3805621.3807627
+- Mohamed A, Haque K, Khan A A, et al. Workload-Aware Caching for Multi-Agent Systems[EB/OL]. arXiv:2607.20495, 2026. https://arxiv.org/abs/2607.20495 .（预印本）
+- Zeng L, Jin Y. FinCacheServe: Dependency-Consistent Answer Reuse for Cost-Efficient RAG Serving over Mutable Enterprise Documents[EB/OL]. arXiv:2607.26076, 2026. https://arxiv.org/abs/2607.26076 .（预印本）
+- Mansoor M, Ahmad T, Yoon Y C. Risk-Constrained Freshness-Aware Semantic Caching for Open-Web Retrieval-Augmented LLMs[EB/OL]. arXiv:2607.04281, 2026. https://arxiv.org/abs/2607.04281 .（预印本）
+- Gao L, Dai Z, Pasupat P, et al. RARR: Researching and Revising What Language Models Say, Using Language Models[C]//Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). 2023. https://aclanthology.org/2023.acl-long.910/ .
+- Niu C, Wu Y, Zhu J, et al. RAGTruth: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models[C]//Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). 2024. https://aclanthology.org/2024.acl-long.585/ .
+- Singh V K, Priyam P, Bhowmick G. ChurnBench: A Drift-Aware Benchmark Demonstrating That Refresh Scheduling, Not Cache Age, Governs Staleness in Agentic AI[EB/OL]. arXiv:2609.11515, 2026. https://arxiv.org/abs/2609.11515 .（预印本）
+- Apache Software Foundation. Apache Flink Documentation: Stateful Stream Processing (Release 1.20)[EB/OL]. [2026-11-18]. https://nightlies.apache.org/flink/flink-docs-release-1.20/ .
+- Wu G, Wang T, Zhang Y, et al. When Cache Poisoning Meets LLM Systems: Semantic Cache Poisoning and Its Countermeasures[C]//Proceedings 2026 Network and Distributed System Security Symposium (NDSS). 2026. DOI: 10.14722/ndss.2026.240200
+- Zhang Z, Liu Z, Xie Y, et al. From Similarity to Vulnerability: Key Collision Attack on LLM Semantic Caching[C]//International Conference on Machine Learning (ICML). 2026. arXiv:2601.23088. https://icml.cc/virtual/2026/poster/65663 .
+- Liu X, Yu H, Zhang H, et al. AgentBench: Evaluating LLMs as Agents[C]//International Conference on Learning Representations (ICLR). 2024. arXiv:2308.03688. https://github.com/THUDM/AgentBench .
+- Zhou S, Xu F F, Zhu H, et al. WebArena: A Realistic Web Environment for Building Autonomous Agents[C]//International Conference on Learning Representations (ICLR). 2024. arXiv:2307.13854. https://github.com/web-arena-x/webarena .
+- Qin Y, Liang S, Ye Y, et al. ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs[C]//International Conference on Learning Representations (ICLR). 2024. arXiv:2307.16789. https://github.com/OpenBMB/ToolBench .
+- Guo Z, Cheng S, Wang H, et al. StableToolBench: Towards Stable Large-Scale Benchmarking on Tool Learning of Large Language Models[C]//Findings of the Association for Computational Linguistics: ACL 2024. 2024: 11143-11156. DOI: 10.18653/v1/2024.findings-acl.664
+- Yao S, Chen H, Yang J, et al. WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents[C]//Advances in Neural Information Processing Systems 35 (NeurIPS). 2022. arXiv:2207.01206. https://webshop-pnlp.github.io .
+
+来源：第一章_改后初稿.md · 本页以图解呈现第一部分的设计思路、组织与实验安排。
