@@ -411,9 +411,36 @@ def p4() -> None:
             for s in r["gold_fact_spans"]:
                 assert ids.is_valid_block_id(s["chunk_id"]), f"{r['req_id']} 非法块 {s['chunk_id']}"
 
+    def streams():
+        for s in PARAMS["seeds"]:
+            f = e / "streams" / f"seed{s}.jsonl"
+            assert f.is_file(), f"缺 {f.name}"
+            n = sum(1 for _ in io.read_jsonl(f))
+            assert n == st["primary_len"], f"{f.name} {n} 条"
+        longs = sorted((e / "streams").glob("long_*.jsonl"))
+        assert len(longs) == st["long_count"], f"长流 {len(longs)} 条"
+        for f in longs:
+            n = sum(1 for _ in io.read_jsonl(f))
+            assert n == st["long_len"], f"{f.name} {n} 条"
+
+    def calibration():
+        f = e / "real_calibration_300.template.csv"
+        assert f.is_file(), "缺校准模板"
+        lines = f.read_text(encoding="utf-8").splitlines()
+        head = lines[0].split(",")
+        want = ["req_id", "t_plan_ms", "t_rag_ms", "t_act_ms", "t_resp_ms",
+                "t_total_ms", "token_cost"]
+        assert head == want, f"表头不符: {head}"
+        assert len(lines) - 1 == PARAMS["calibration"]["requests"], \
+            f"行数 {len(lines) - 1}"
+        assert (e / "CALIBRATION.md").is_file(), "缺 CALIBRATION.md"
+        filled = sum(1 for ln in lines[1:] if ln.split(",")[3].strip() not in ("", "NA"))
+        assert filled >= 0.9 * (len(lines) - 1), f"t_act_ms 实测仅 {filled} 行"
+
     for name, fn in (("文件齐备", files), ("schema 合规", schemas), ("规模", stream_size),
                      ("五类更新齐备", update_classes), ("无未来快照泄漏", no_leak),
-                     ("ID 合法", ids_valid)):
+                     ("ID 合法", ids_valid), ("种子流与长流", streams),
+                     ("校准模板", calibration)):
         check(name, fn)
 
 
@@ -446,7 +473,15 @@ def p5() -> None:
         rows = list(io.read_jsonl(lb / "branch_pairs.jsonl"))
         assert len(rows) == PARAMS["labels"]["branch_pairs"], f"配对数 {len(rows)}"
 
-    for name, fn in (("成本表", cost_table), ("安全复用标签", label_table), ("分支配对", pairs)):
+    def review_csv():
+        f = lb / "to_review.csv"
+        assert f.is_file(), "缺待人工复核清单"
+        lines = f.read_text(encoding="utf-8").splitlines()
+        assert len(lines) - 1 >= PARAMS["labels"]["human_review"], \
+            f"待复核 {len(lines) - 1} 行，应 ≥ {PARAMS['labels']['human_review']}"
+
+    for name, fn in (("成本表", cost_table), ("安全复用标签", label_table), ("分支配对", pairs),
+                     ("待复核清单", review_csv)):
         check(name, fn)
 
 
