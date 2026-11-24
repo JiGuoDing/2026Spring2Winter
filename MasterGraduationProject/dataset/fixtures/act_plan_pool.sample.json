@@ -1,0 +1,46 @@
+{
+  "acts": [
+    {
+      "act_cost": 0.35,
+      "act_key": "act_sql_exec",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.05,
+      "act_key": "act_schema_lookup",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.08,
+      "act_key": "act_lineage_trace",
+      "downstream_tools": [],
+      "readonly": true
+    }
+  ],
+  "plans": [
+    {
+      "completion_rate": 0.92,
+      "plan_cost": 0.6,
+      "plan_id": "plan_01",
+      "steps": [
+        "解析口径",
+        "定位表",
+        "生成 SQL",
+        "执行",
+        "组织回答"
+      ]
+    },
+    {
+      "completion_rate": 0.88,
+      "plan_cost": 0.45,
+      "plan_id": "plan_02",
+      "steps": [
+        "解析口径",
+        "执行",
+        "组织回答"
+      ]
+    }
+  ]
+}

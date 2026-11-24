@@ -1,0 +1,432 @@
+{
+  "edge_count": 84,
+  "edges": [
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t09"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t09"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t10"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t10"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t11"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t11"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t12"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t12"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t13"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t13"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t14"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t14"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t15"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t15"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t16"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t16"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t17"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t17"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t18"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t18"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t19"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t19"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t20"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t20"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t21"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t21"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t22"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t22"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t23"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t23"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t24"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t24"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t25"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t25"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t26"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t26"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t27"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t27"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t28"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t28"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t29"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t29"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t30"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t30"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t31"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t31"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t32"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t32"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t33"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t33"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t34"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t34"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t35"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t35"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t36"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t36"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t37"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t37"
+    },
+    {
+      "from": "t06",
+      "kind": "fk",
+      "to": "t38"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t38"
+    },
+    {
+      "from": "t07",
+      "kind": "fk",
+      "to": "t39"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t39"
+    },
+    {
+      "from": "t08",
+      "kind": "fk",
+      "to": "t40"
+    },
+    {
+      "from": "t03",
+      "kind": "fk",
+      "to": "t40"
+    },
+    {
+      "from": "t01",
+      "kind": "fk",
+      "to": "t41"
+    },
+    {
+      "from": "t04",
+      "kind": "fk",
+      "to": "t41"
+    },
+    {
+      "from": "t02",
+      "kind": "fk",
+      "to": "t42"
+    },
+    {
+      "from": "t05",
+      "kind": "fk",
+      "to": "t42"
+    },
+    {
+      "from": "t11",
+      "kind": "aggregate",
+      "to": "t43"
+    },
+    {
+      "from": "t12",
+      "kind": "aggregate",
+      "to": "t44"
+    },
+    {
+      "from": "t13",
+      "kind": "aggregate",
+      "to": "t45"
+    },
+    {
+      "from": "t14",
+      "kind": "aggregate",
+      "to": "t46"
+    },
+    {
+      "from": "t15",
+      "kind": "aggregate",
+      "to": "t47"
+    },
+    {
+      "from": "t16",
+      "kind": "aggregate",
+      "to": "t48"
+    },
+    {
+      "from": "t17",
+      "kind": "aggregate",
+      "to": "t49"
+    },
+    {
+      "from": "t18",
+      "kind": "aggregate",
+      "to": "t50"
+    },
+    {
+      "from": "t19",
+      "kind": "aggregate",
+      "to": "t51"
+    },
+    {
+      "from": "t20",
+      "kind": "aggregate",
+      "to": "t52"
+    },
+    {
+      "from": "t21",
+      "kind": "aggregate",
+      "to": "t53"
+    },
+    {
+      "from": "t22",
+      "kind": "aggregate",
+      "to": "t54"
+    },
+    {
+      "from": "t09",
+      "kind": "derive",
+      "to": "t11"
+    },
+    {
+      "from": "t12",
+      "kind": "derive",
+      "to": "t13"
+    },
+    {
+      "from": "t14",
+      "kind": "derive",
+      "to": "t39"
+    },
+    {
+      "from": "t09",
+      "kind": "derive",
+      "to": "t16"
+    }
+  ],
+  "generated_by": "tools/gen_catalog.py",
+  "three_hop_chain": [
+    "t04",
+    "t09",
+    "t11",
+    "t43"
+  ]
+}

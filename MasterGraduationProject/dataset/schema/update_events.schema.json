@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "update_events.schema.json",
+  "title": "update_events",
+  "description": "外部知识/结构更新事件。changed_chunk_ids 为空表示整篇替换。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id", "timestamp", "doc_id", "old_ver", "new_ver",
+    "changed_chunk_ids", "change_type", "domain", "permission"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "pattern": "^u[0-9]{4}$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "doc_id": { "type": "string" },
+    "old_ver": { "type": "integer", "minimum": 1 },
+    "new_ver": { "type": "integer", "minimum": 2 },
+    "changed_chunk_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "#p[0-9]{2}$" }
+    },
+    "change_type": {
+      "enum": [
+        "metric_revision",
+        "schema_change",
+        "lineage_switch",
+        "codebook_revision",
+        "data_row_change"
+      ]
+    },
+    "domain": { "type": "string", "minLength": 1 },
+    "permission": { "enum": ["public", "staff", "restricted"] },
+    "answer_impact": {
+      "enum": ["unchanged", "changed", "unknown"],
+      "description": "该更新是否改变依赖文档的答案；unknown 仅允许出现在构造未完成时。"
+    }
+  }
+}

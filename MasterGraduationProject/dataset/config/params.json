@@ -1,0 +1,51 @@
+{
+  "global_seed": 42,
+  "seeds": [42, 43, 44, 45, 46],
+  "semantic_threshold": 0.88,
+  "cache_capacity_tiers": [0.25, 0.5, 0.75],
+  "stale_penalty_weight": 1.0,
+  "ttl_scale_fractions": { "short": 0.03, "mid": 0.18, "long": 0.75 },
+  "db": {
+    "tables": 60,
+    "fields_per_table": 20,
+    "rows_target": 50000,
+    "snapshots": ["v0", "v1", "v2"],
+    "composition": { "dim": 8, "fact": 34, "agg": 12, "log": 6 }
+  },
+  "knowledge": {
+    "field_cards": 1200,
+    "whitepapers": 200,
+    "metrics": 150,
+    "tools": 100,
+    "plans": 60,
+    "notes": 290,
+    "docs_total": 2000,
+    "versions": 3
+  },
+  "tasks": {
+    "total": 200,
+    "single_table": 60,
+    "join": 70,
+    "nested_agg": 70
+  },
+  "updates": {
+    "primary": 40,
+    "ext": 20,
+    "classes": [
+      "metric_revision",
+      "schema_change",
+      "lineage_switch",
+      "codebook_revision",
+      "data_row_change"
+    ]
+  },
+  "streams": {
+    "primary_len": 3000,
+    "long_len": 5000,
+    "long_count": 2,
+    "seed_copies": 5,
+    "time_span_hours": 18
+  },
+  "calibration": { "requests": 300 },
+  "labels": { "branch_pairs": 120, "safe_reuse": 300, "human_review": 60 }
+}

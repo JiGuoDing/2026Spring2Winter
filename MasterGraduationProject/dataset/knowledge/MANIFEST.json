@@ -1,0 +1,26 @@
+{
+  "build.py": {
+    "rows": 1311,
+    "sha256": "991ac1c7862fd9a5217738ed73410d1a4c6aeab7ead70397b2fffaaa01c7610b"
+  },
+  "docs.jsonl": {
+    "doc_counts": {
+      "field": 1200,
+      "metric": 150,
+      "note": 290,
+      "plan": 60,
+      "tool": 100,
+      "whitepaper": 200
+    },
+    "rows": 6000,
+    "sha256": "0b2db62f0426e26a7604d1615bf0fc346eadb6fc8cf53e364f736d6b33012b2a"
+  },
+  "selfcheck.py": {
+    "rows": 295,
+    "sha256": "183df259d28479a63bf840c35eeb3dfd29a76e14d873f9008f10d1a9b174d3cb"
+  },
+  "version_changes.jsonl": {
+    "rows": 1360,
+    "sha256": "300b229b4135cd5c06ad4e2020fcc796ffbf5e4eec4a935bd0d05cd98bc300bd"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "act_plan_pool.schema.json",
+  "title": "act_plan_pool",
+  "description": "只读工具池与计划模板池。act_cost/plan_cost 为归一化重算成本（相对单位，1.0=一次完整回答生成）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["acts", "plans"],
+  "properties": {
+    "acts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["act_key", "act_cost", "downstream_tools", "readonly"],
+        "properties": {
+          "act_key": { "type": "string", "pattern": "^act_[a-z0-9_]+$" },
+          "act_cost": { "type": "number", "exclusiveMinimum": 0 },
+          "downstream_tools": { "type": "array", "items": { "type": "string" } },
+          "readonly": { "const": true },
+          "state_version": { "type": "string" }
+        }
+      }
+    },
+    "plans": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["plan_id", "plan_cost", "completion_rate", "steps"],
+        "properties": {
+          "plan_id": { "type": "string", "pattern": "^plan_[0-9]{2}$" },
+          "plan_cost": { "type": "number", "exclusiveMinimum": 0 },
+          "completion_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+          "steps": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

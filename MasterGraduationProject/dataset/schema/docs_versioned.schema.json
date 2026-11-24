@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs_versioned.schema.json",
+  "title": "docs_versioned",
+  "description": "版本化知识文档流。每行是一个文档的一个版本；chunk_id 跨版本稳定。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["doc_id", "version", "doc_type", "domain", "permission", "updated_at", "chunks"],
+  "properties": {
+    "doc_id": {
+      "type": "string",
+      "pattern": "^(fld_t[0-9]{2}_[0-9]{2}|wp_[0-9]{3}|metric_[0-9]{3}|tool_[0-9]{3}|plan_[0-9]{2}|note_[0-9]{3})$"
+    },
+    "version": { "type": "integer", "minimum": 1 },
+    "doc_type": {
+      "enum": ["field", "whitepaper", "metric", "tool", "plan", "note"]
+    },
+    "domain": { "type": "string", "minLength": 1 },
+    "permission": { "enum": ["public", "staff", "restricted"] },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "chunks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["chunk_id", "text"],
+        "properties": {
+          "chunk_id": {
+            "type": "string",
+            "pattern": "^(fld_t[0-9]{2}_[0-9]{2}|wp_[0-9]{3}|metric_[0-9]{3}|tool_[0-9]{3}|plan_[0-9]{2}|note_[0-9]{3})#p[0-9]{2}$"
+          },
+          "text": { "type": "string", "minLength": 1 },
+          "hash": { "type": "string", "pattern": "^[0-9a-f]{16}$" }
+        }
+      }
+    }
+  }
+}
