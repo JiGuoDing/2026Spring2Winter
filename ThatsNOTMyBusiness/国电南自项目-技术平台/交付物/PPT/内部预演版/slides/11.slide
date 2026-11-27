@@ -1,0 +1,61 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 凭什么这么定</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>必改 5 项，轻改 3 项，不动 2 项</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>不是所有应用都要为多租户改一遍。按“是否触碰租户边界”划线，改的只有控制面那五个。</Text>
+
+        <svg width={1160} height={363.02} viewBox='0 0 1100 344.7'>
+            <rect x='0' y='0' width='1100' height='99.1' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <rect x='0' y='0' width='8' height='99.1' fill='#B3261E' />
+            <text x='26' y='40.93' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>必改</text>
+            <text x='26' y='81.87' fontSize='26' fontWeight='bold' fill='#B3261E' fontFamily='Microsoft YaHei'>5 项</text>
+            <rect x='160' y='28.01' width='140' height='43.09' fill='#FBEDEB' stroke='#D9B5B1' strokeWidth='1' />
+            <text x='230' y='56.01' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>多租户管理</text>
+            <rect x='310' y='28.01' width='140' height='43.09' fill='#FBEDEB' stroke='#D9B5B1' strokeWidth='1' />
+            <text x='380' y='56.01' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>统一身份接入</text>
+            <rect x='460' y='28.01' width='140' height='43.09' fill='#FBEDEB' stroke='#D9B5B1' strokeWidth='1' />
+            <text x='530' y='56.01' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>API 网关</text>
+            <rect x='610' y='28.01' width='140' height='43.09' fill='#FBEDEB' stroke='#D9B5B1' strokeWidth='1' />
+            <text x='680' y='56.01' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>低代码平台</text>
+            <rect x='760' y='28.01' width='140' height='43.09' fill='#FBEDEB' stroke='#D9B5B1' strokeWidth='1' />
+            <text x='830' y='56.01' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>集成平台</text>
+            <text x='925' y='47.4' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>不触碰租户边界</text>
+            <text x='925' y='68.94' fontSize='13' fontWeight='bold' fill='#B3261E' fontFamily='Microsoft YaHei'>就无法开通租户</text>
+
+            <rect x='0' y='118.49' width='1100' height='99.1' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <rect x='0' y='118.49' width='8' height='99.1' fill='#2E6DA4' />
+            <text x='26' y='159.43' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>轻改</text>
+            <text x='26' y='200.36' fontSize='26' fontWeight='bold' fill='#2E6DA4' fontFamily='Microsoft YaHei'>3 项</text>
+            <rect x='160' y='146.5' width='140' height='43.09' fill='#EEF3F9' stroke='#C9D8E8' strokeWidth='1' />
+            <text x='230' y='174.51' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>统一门户</text>
+            <rect x='310' y='146.5' width='140' height='43.09' fill='#EEF3F9' stroke='#C9D8E8' strokeWidth='1' />
+            <text x='380' y='174.51' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>待办中心</text>
+            <rect x='460' y='146.5' width='140' height='43.09' fill='#EEF3F9' stroke='#C9D8E8' strokeWidth='1' />
+            <text x='530' y='174.51' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>时序库适配</text>
+            <text x='925' y='165.89' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>只加适配与上下文</text>
+            <text x='925' y='187.43' fontSize='13' fontWeight='bold' fill='#2E6DA4' fontFamily='Microsoft YaHei'>不动业务逻辑</text>
+
+            <rect x='0' y='236.98' width='1100' height='99.1' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <rect x='0' y='236.98' width='8' height='99.1' fill='#7A8699' />
+            <text x='26' y='277.92' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>不动</text>
+            <text x='26' y='318.85' fontSize='26' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>2 项</text>
+            <rect x='160' y='264.99' width='140' height='43.09' fill='#F2F5F9' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='230' y='293' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>大数据平台</text>
+            <rect x='310' y='264.99' width='140' height='43.09' fill='#F2F5F9' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='380' y='293' fontSize='14' fill='#3D4C63' textAnchor='middle' fontFamily='Microsoft YaHei'>大模型工具链</text>
+            <text x='925' y='284.38' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>只在网关接计量</text>
+            <text x='925' y='305.92' fontSize='13' fontWeight='bold' fill='#7A8699' fontFamily='Microsoft YaHei'>内核一行不改</text>
+        </svg>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>必改的五个都是控制面组件，改造量集中、可控；业务应用侧基本零改动，这才是分期能落地的前提。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>“轻改”指只加适配层与租户上下文透传，不改数据模型与流程定义</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>11 / 12</Text>
+        </Box>
+    </Box>
+</Slide>

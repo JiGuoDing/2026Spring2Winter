@@ -1,0 +1,50 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 16 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>01 为什么必须改</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>三个缺口，决定这件工作必须做</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>都不是“能力不够”，而是“规则没立”：缺判据、缺执行点、缺边界。</Text>
+
+        <Box style={{ flexDirection: 'column', marginTop: 12 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 28, paddingTop: 20, paddingBottom: 20, borderTop: '1px solid #D9DEE7' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#A9B7CE', width: 56, lineHeight: 1 }}>01</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864' }}>没有判据，档位靠博弈</Text>
+                    <Text style={{ fontSize: 16, color: '#3D4C63', lineHeight: 1.6 }}>客户材料表述“根据配置可以实现多租户共享或者分离”，但没说“什么业务该共享、什么业务必须独立”。</Text>
+                </Box>
+                <Box style={{ width: 340, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 14, color: '#7A8699' }}>后果</Text>
+                    <Text style={{ fontSize: 16, color: '#B3261E', lineHeight: 1.6 }}>评审无法复核；极端情况下所有租户都要求独立部署，平台退化为资源转售。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 28, paddingTop: 20, paddingBottom: 20, borderTop: '1px solid #D9DEE7' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#A9B7CE', width: 56, lineHeight: 1 }}>02</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864' }}>没有执行点，配额停在纸面</Text>
+                    <Text style={{ fontSize: 16, color: '#3D4C63', lineHeight: 1.6 }}>已有 Prometheus + Grafana 能看 CPU、内存、磁盘，但 API 调用量、Token、并发三项在 K8s 层完全不可见。</Text>
+                </Box>
+                <Box style={{ width: 340, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 14, color: '#7A8699' }}>后果</Text>
+                    <Text style={{ fontSize: 16, color: '#B3261E', lineHeight: 1.6 }}>单租户可挤占共享资源，算力与 Token 无约束，答不出“某租户占了多少”。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 28, paddingTop: 20, borderTop: '1px solid #D9DEE7' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#A9B7CE', width: 56, lineHeight: 1 }}>03</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864' }}>没有边界，身份只到登录</Text>
+                    <Text style={{ fontSize: 16, color: '#3D4C63', lineHeight: 1.6 }}>现状每个租户同步全量组织架构与用户信息；集团 4A 的接口规格未知。</Text>
+                </Box>
+                <Box style={{ width: 340, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 14, color: '#7A8699' }}>后果</Text>
+                    <Text style={{ fontSize: 16, color: '#B3261E', lineHeight: 1.6 }}>一致性与存储成本随租户数放大，跨租户的权限边界形同虚设。</Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>04 / 12</Text>
+    </Box>
+</Slide>

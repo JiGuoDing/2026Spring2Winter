@@ -50,6 +50,7 @@ def requests() -> list[dict]:
             "permission": "public",
             "snapshot": {"index": "v0", "as_of": V0},
             "obj_types": ["rag", "act", "resp"],
+            "cluster_id": "cls_sales_metric",
         })
     return out
 
@@ -58,6 +59,8 @@ def updates() -> list[dict]:
     return [{
         "event_id": ids.upd_id(1),
         "timestamp": V1,
+        "effective_at": V0,
+        "notification_delay_s": 21600.0,
         "doc_id": "metric_001",
         "old_ver": 1,
         "new_ver": 2,
@@ -66,6 +69,7 @@ def updates() -> list[dict]:
         "domain": "sales",
         "permission": "public",
         "answer_impact": "changed",
+        "negative_control": False,
     }]
 
 

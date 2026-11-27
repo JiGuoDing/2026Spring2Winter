@@ -1,0 +1,69 @@
+{
+  "README.md": {
+    "bytes": 21204,
+    "rows": 260,
+    "sha256": "6e10b59026c76515891b2366258f4e0c70eedd34bf91a8af299bd6ecb7188fdc"
+  },
+  "path_costs.backfill.template.csv": {
+    "bytes": 682,
+    "rows": 4,
+    "sha256": "9b1ff5c54ab38577a77daf09fb38233482ef0b2276995b3c0acee12fcbe96278"
+  },
+  "path_costs.csv": {
+    "bytes": 95226,
+    "rows": 222,
+    "sha256": "509221e096061260bec3b63d860e0fd19344928ccd1d13e57964a45bf1c58d5c"
+  },
+  "runner.py": {
+    "bytes": 58690,
+    "rows": 1307,
+    "sha256": "7eeca56df708c58ab97de6717f04a0d54769f73d01e499cd3d257a5743a7003d"
+  },
+  "stats": {
+    "backfill_source": null,
+    "build_model_label": "shared-index",
+    "cold_start": "excluded by 5 warmup runs per cell",
+    "concurrency_levels": [
+      1,
+      8,
+      32
+    ],
+    "diagnostics": {
+      "BM25 recall@5": "0.670（命中任一 gold 证据文档即算）",
+      "判别力（代入 v2 时刻）": "156/200 条判为失效，说明检查读的是版本与哈希而不是常量",
+      "块哈希完整性": "0/13770 个块哈希与正文重算不符",
+      "更新事件命中率": "148/1360 事件命中依赖文档，受影响 claim 均值 0.43（最大 32）",
+      "有效性检查通过": "200/200 条（as_of=v0）",
+      "缺版本": "0 处引用了 as_of 时刻尚无版本的文档",
+      "越权引用": "0 处文档权限高于请求方",
+      "过期引用": "0 处文档超出 TTL"
+    },
+    "environment": {
+      "cpu_count": 24,
+      "platform": "Windows-11-10.0.26300-SP0",
+      "python": "3.14.10"
+    },
+    "evaluator_cost": "excluded (compare.py is not called here)",
+    "models": [
+      "local-small-7b",
+      "api-large-placeholder"
+    ],
+    "paths": [
+      "validity_check",
+      "exact_hit",
+      "semantic_hit",
+      "act",
+      "partial_repair",
+      "full_regen"
+    ],
+    "percentile_method": "linear interpolation type-7 over all samples",
+    "reps": 30,
+    "rows_backfilled": 0,
+    "rows_in_main_grid": 220,
+    "rows_measured": 218,
+    "rows_mock": 4,
+    "rows_total": 222,
+    "timer": "time.perf_counter",
+    "warmup": 5
+  }
+}

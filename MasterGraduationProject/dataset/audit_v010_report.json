@@ -1,0 +1,241 @@
+{
+  "1_clock_gap": {
+    "distribution_hours": {
+      "max": 3.083,
+      "mean": 1.582,
+      "min": 0.033,
+      "n": 40,
+      "p50": 1.643,
+      "p95": 2.963
+    },
+    "negative_delay_count": 0,
+    "rows": [
+      {
+        "delay_hours": 0.083,
+        "doc_id": "wp_049",
+        "effective_at": "2024-05-15T06:00:00Z",
+        "event_id": "u0001",
+        "timestamp": "2024-05-15T06:05:00Z"
+      },
+      {
+        "delay_hours": 0.203,
+        "doc_id": "wp_102",
+        "effective_at": "2024-05-15T06:00:00Z",
+        "event_id": "u0002",
+        "timestamp": "2024-05-15T06:12:12Z"
+      },
+      {
+        "delay_hours": 0.323,
+        "doc_id": "wp_090",
+        "effective_at": "2024-05-15T06:00:00Z",
+        "event_id": "u0003",
+        "timestamp": "2024-05-15T06:19:24Z"
+      },
+      {
+        "delay_hours": 0.443,
+        "doc_id": "metric_095",
+        "effective_at": "2024-05-15T06:00:00Z",
+        "event_id": "u0004",
+        "timestamp": "2024-05-15T06:26:36Z"
+      },
+      {
+        "delay_hours": 0.563,
+        "doc_id": "wp_126",
+        "effective_at": "2024-05-15T06:00:00Z",
+        "event_id": "u0005",
+        "timestamp": "2024-05-15T06:33:48Z"
+      }
+    ]
+  },
+  "2_act_plan": {
+    "act_cost": {
+      "max": 0.77,
+      "mean": 0.318,
+      "min": 0.02,
+      "n": 100,
+      "p50": 0.21,
+      "p95": 0.73
+    },
+    "act_downstream_dist": {
+      "0": 60,
+      "1": 20,
+      "2": 8,
+      "3": 8,
+      "4": 4
+    },
+    "act_downstream_nonempty_ratio": 0.4,
+    "plan_completion": {
+      "max": 0.971,
+      "mean": 0.834,
+      "min": 0.702,
+      "n": 60,
+      "p50": 0.825,
+      "p95": 0.966
+    },
+    "plan_completion_by_steps": {
+      "3": 0.828,
+      "4": 0.838,
+      "5": 0.854,
+      "6": 0.816
+    },
+    "plan_count": 60
+  },
+  "3_clusters": {
+    "domain_dist": {
+      "?": 3000
+    },
+    "has_cluster_field": false,
+    "per_task_frequency": {
+      "max": 131,
+      "mean": 15.0,
+      "min": 3,
+      "n": 200,
+      "p50": 10,
+      "p95": 43
+    },
+    "tasks_seen": 200,
+    "tasks_total": 200,
+    "variant_dist": {
+      "1": 958,
+      "2": 1067,
+      "3": 975
+    }
+  },
+  "4_update_impact": {
+    "affected_pairs": 439,
+    "claim_level_requests_dedup": 415,
+    "claim_level_requests_total": 439,
+    "doc_level_requests_total": 3440,
+    "local_ratio": 0.0,
+    "major_ratio": 1.0,
+    "top_claim_level": [
+      {
+        "change_type": "lineage_switch",
+        "claim_level": 68,
+        "doc_level": 68,
+        "event_id": "u0019"
+      },
+      {
+        "change_type": "metric_revision",
+        "claim_level": 61,
+        "doc_level": 68,
+        "event_id": "u0034"
+      },
+      {
+        "change_type": "metric_revision",
+        "claim_level": 48,
+        "doc_level": 58,
+        "event_id": "u0032"
+      },
+      {
+        "change_type": "schema_change",
+        "claim_level": 28,
+        "doc_level": 50,
+        "event_id": "u0003"
+      },
+      {
+        "change_type": "metric_revision",
+        "claim_level": 23,
+        "doc_level": 23,
+        "event_id": "u0030"
+      }
+    ],
+    "top_doc_level": [
+      {
+        "change_type": "lineage_switch",
+        "claim_level": 0,
+        "doc_level": 602,
+        "event_id": "u0023"
+      },
+      {
+        "change_type": "schema_change",
+        "claim_level": 17,
+        "doc_level": 291,
+        "event_id": "u0016"
+      },
+      {
+        "change_type": "schema_change",
+        "claim_level": 17,
+        "doc_level": 291,
+        "event_id": "u0033"
+      },
+      {
+        "change_type": "data_row_change",
+        "claim_level": 0,
+        "doc_level": 250,
+        "event_id": "u0020"
+      },
+      {
+        "change_type": "data_row_change",
+        "claim_level": 0,
+        "doc_level": 250,
+        "event_id": "u0035"
+      }
+    ],
+    "zero_impact_events": 6
+  },
+  "5_similarity": {
+    "N1_entity_mismatch": {
+      "max": 0.766,
+      "mean": 0.28,
+      "min": 0.146,
+      "n": 30,
+      "p50": 0.252,
+      "p95": 0.573
+    },
+    "N2_permission": {
+      "max": 1.0,
+      "mean": 0.96,
+      "min": 0.905,
+      "n": 30,
+      "p50": 0.953,
+      "p95": 1.0
+    },
+    "N3_stale_but_looks_right": {
+      "max": 1.0,
+      "mean": 0.944,
+      "min": 0.819,
+      "n": 35,
+      "p50": 0.941,
+      "p95": 1.0
+    },
+    "N4_time_window": {
+      "max": 0.682,
+      "mean": 0.366,
+      "min": 0.154,
+      "n": 30,
+      "p50": 0.331,
+      "p95": 0.632
+    },
+    "N6_reasoning_chain": {
+      "max": 0.564,
+      "mean": 0.38,
+      "min": 0.25,
+      "n": 25,
+      "p50": 0.374,
+      "p95": 0.519
+    },
+    "safe": {
+      "max": 1.0,
+      "mean": 0.955,
+      "min": 0.823,
+      "n": 150,
+      "p50": 0.954,
+      "p95": 1.0
+    }
+  },
+  "6_claims": {
+    "claims_per_request": {
+      "2": 3000
+    },
+    "claims_per_task": {
+      "2": 200
+    },
+    "degenerate": true,
+    "request_claim_count_values": [
+      2
+    ]
+  },
+  "dataset_version": "0.1.0",
+  "generated_by": "tools/audit_v010.py"
+}

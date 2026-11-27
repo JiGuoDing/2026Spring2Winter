@@ -1,0 +1,67 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 凭什么这么定</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>先跑通 S2，六步可验收</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>不验收“架构图画得对不对”，只验收“这套东西在 S2 场景下跑不跑得通、拦不拦得住”。</Text>
+
+        <svg width={1160} height={388.01} viewBox='0 0 1100 368.28'>
+            <line x1='90' y1='57.87' x2='1010' y2='57.87' stroke='#D9DEE7' strokeWidth='2' />
+
+            <circle cx='90' cy='57.87' r='22' fill='#1F3864' />
+            <text x='90' y='67.08' fontSize='16' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>1</text>
+            <text x='90' y='128.9' fontSize='15' fontWeight='bold' fill='#1F3864' textAnchor='middle' fontFamily='Microsoft YaHei'>基线快照</text>
+            <text x='90' y='163.1' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>接管前固化</text>
+            <text x='90' y='192.03' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>存量租户与配额</text>
+
+            <circle cx='274' cy='57.87' r='22' fill='#1F3864' />
+            <text x='274' y='67.08' fontSize='16' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>2</text>
+            <text x='274' y='128.9' fontSize='15' fontWeight='bold' fill='#1F3864' textAnchor='middle' fontFamily='Microsoft YaHei'>S2 全流程</text>
+            <text x='274' y='163.1' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>申请、开通、配权</text>
+            <text x='274' y='192.03' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>到下线走一遍</text>
+
+            <circle cx='458' cy='57.87' r='22' fill='#B3261E' />
+            <text x='458' y='67.08' fontSize='16' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>3</text>
+            <text x='458' y='128.9' fontSize='15' fontWeight='bold' fill='#B3261E' textAnchor='middle' fontFamily='Microsoft YaHei'>20 组越权</text>
+            <text x='458' y='163.1' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>A 租户访问 B 的</text>
+            <text x='458' y='192.03' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>每一类资源</text>
+
+            <circle cx='642' cy='57.87' r='22' fill='#1F3864' />
+            <text x='642' y='67.08' fontSize='16' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>4</text>
+            <text x='642' y='128.9' fontSize='15' fontWeight='bold' fill='#1F3864' textAnchor='middle' fontFamily='Microsoft YaHei'>三层配额</text>
+            <text x='642' y='163.1' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>逐层打满</text>
+            <text x='642' y='192.03' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>看哪层先拦住</text>
+
+            <circle cx='826' cy='57.87' r='22' fill='#1F3864' />
+            <text x='826' y='67.08' fontSize='16' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>5</text>
+            <text x='826' y='128.9' fontSize='15' fontWeight='bold' fill='#1F3864' textAnchor='middle' fontFamily='Microsoft YaHei'>故障注入</text>
+            <text x='826' y='163.1' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>杀节点、断网</text>
+            <text x='826' y='192.03' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>打满存储</text>
+
+            <circle cx='1010' cy='57.87' r='22' fill='#2E6DA4' />
+            <text x='1010' y='67.08' fontSize='16' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>6</text>
+            <text x='1010' y='128.9' fontSize='15' fontWeight='bold' fill='#2E6DA4' textAnchor='middle' fontFamily='Microsoft YaHei'>审计回溯</text>
+            <text x='1010' y='163.1' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>一次越权尝试</text>
+            <text x='1010' y='192.03' fontSize='13' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>追到人与时间</text>
+
+            <rect x='0' y='249.91' width='1100' height='94.7' fill='#F2F5F9' />
+            <line x1='550' y1='249.91' x2='550' y2='344.61' stroke='#D9DEE7' strokeWidth='1' />
+
+            <text x='24' y='286.74' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>门槛一 · 效率</text>
+            <text x='24' y='323.56' fontSize='17' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>L1 租户开通 ≤ 10 min（含配额与网络策略）</text>
+
+            <text x='574' y='286.74' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>门槛二 · 安全</text>
+            <text x='574' y='323.56' fontSize='17' fontWeight='bold' fill='#B3261E' fontFamily='Microsoft YaHei'>20 组越权用例 100% 拒绝，零漏放</text>
+        </svg>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>六步全部通过，才敢说“能上生产”；任何一步不过，都回到设计而不是加补丁。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>S2 为跨板块二级租户场景，是本方案约定的原型验证环境</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>18 / 20</Text>
+        </Box>
+    </Box>
+</Slide>

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面向流式智能体的异质缓存统一模型与闭环算法重构蓝图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Utilitarian Deep Research · Answer-first compact hero · Formalism -> Architecture -> Path Utility -> Alg1 -> Alg2/3 -> Comparison · IBM Plex Sans + Noto Sans SC + IBM Plex Mono · Crisp white (#FFFFFF) + cobalt (#1D4ED8/#1E3A8A) + teal (#0F766E/#115E59) + 1 cool slate full-bleed band (#F4F6F8) · 0px radius · Single emphasis formula band · Full-width dual-stream architecture SVG centerpiece · 4 inline technical SVGs (architecture, path-shortcut, Alg1 flowchart, Alg2+3 pruning/gating flowchart) */
+
+:root {
+  --paper: #FFFFFF;
+  --band: #F4F6F8;
+  --ink: #0F172A;
+  --ink2: #334155;
+  --mute: #475569;
+  --hair: #CBD5E1;
+  --accent: #1D4ED8;
+  --accent-text: #1E3A8A;
+  --accent-2: #0F766E;
+  --accent-2-text: #115E59;
+  --warn-text: #991B1B;
+  --warn-stroke: #DC2626;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.72;
+  overflow-x: hidden;
+}
+
+.page {
+  padding: 64px clamp(24px, 8.5vw, 112px) 96px;
+}
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.col-full { grid-column: 1 / -1; }
+.col-left-4 { grid-column: 1 / 5; }
+.col-right-8 { grid-column: 5 / -1; }
+.col-left-5 { grid-column: 1 / 6; }
+.col-right-7 { grid-column: 6 / -1; }
+.col-half-l { grid-column: 1 / 7; }
+.col-half-r { grid-column: 7 / -1; }
+
+.measure {
+  max-width: 68ch;
+}
+
+/* Typography */
+h1 {
+  font-size: clamp(32px, 3.6vw, 48px);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  text-wrap: balance;
+  max-width: 24ch;
+}
+
+.deck {
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--ink2);
+  max-width: 64ch;
+}
+
+h2 {
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 16px;
+  color: var(--ink2);
+  margin-bottom: 14px;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  font-size: 0.9em;
+}
+
+code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  color: var(--accent-text);
+  background: transparent;
+}
+
+/* Sections & Hairlines */
+.sec {
+  margin-top: 68px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hair);
+}
+
+.sec-tight {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hair);
+}
+
+/* Open Metric Strip (0 cards) */
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
+}
+
+.metric-item {
+  padding-right: 12px;
+}
+
+.metric-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--accent-text);
+  white-space: nowrap;
+}
+
+.metric-title {
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.metric-desc {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mute);
+}
+
+/* Single Full-Bleed Band for Formal Problem Formulation */
+.full-band {
+  margin-top: 64px;
+  margin-left: calc(-1 * clamp(24px, 8.5vw, 112px));
+  margin-right: calc(-1 * clamp(24px, 8.5vw, 112px));
+  padding: 52px clamp(24px, 8.5vw, 112px);
+  background: var(--band);
+  border-top: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair);
+}
+
+.formula-display {
+  margin: 22px 0;
+  padding: 18px 0 18px 20px;
+  border-left: 3px solid var(--accent);
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink);
+  overflow-x: auto;
+}
+
+.formula-display .f-sub {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink2);
+  font-size: 14px;
+}
+
+/* Figures & SVGs (full content width, 0 boxes) */
+figure {
+  margin: 36px 0 12px;
+  width: 100%;
+}
+
+.fig-title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+figcaption {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--mute);
+  max-width: 78ch;
+}
+
+/* Open Lists (0 cards) */
+ul.clean-list {
+  list-style: none;
+  margin-top: 12px;
+}
+
+ul.clean-list li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 12px;
+  font-size: 15.5px;
+  line-height: 1.68;
+  color: var(--ink2);
+}
+
+ul.clean-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+}
+
+/* Pseudocode Blocks (Open left-rule academic style, 0 boxes) */
+.algo-block {
+  margin-top: 24px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+
+.algo-head {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hair);
+  margin-bottom: 12px;
+}
+
+.algo-io {
+  font-size: 13.5px;
+  color: var(--mute);
+  margin-bottom: 10px;
+  line-height: 1.55;
+}
+
+.algo-code {
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  font-size: 13.5px;
+  line-height: 1.72;
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.algo-kw {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.algo-cm {
+  color: var(--mute);
+}
+
+/* Open Tables (max 2, no zebra, crisp hairlines) */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 24px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+thead th {
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  padding: 12px 14px 12px 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  vertical-align: bottom;
+}
+
+tbody td {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink2);
+  padding: 14px 14px 14px 0;
+  border-bottom: 1px solid var(--hair);
+  vertical-align: top;
+}
+
+tbody td:first-child {
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.tag-old {
+  color: var(--warn-text);
+  font-weight: 600;
+}
+
+.tag-new {
+  color: var(--accent-2-text);
+  font-weight: 600;
+}
+
+/* Pull Quote */
+.pull-quote {
+  margin-top: 40px;
+  padding-left: 24px;
+  border-left: 3px solid var(--accent-2);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--ink);
+  max-width: 56ch;
+}
+
+.pull-quote-note {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--mute);
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .col-left-4, .col-right-8, .col-left-5, .col-right-7, .col-half-l, .col-half-r {
+    grid-column: 1 / -1;
+  }
+  .metric-strip {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- HERO: Answer-First Compact Technical Brief -->
+  <header>
+    <h1>用一个约束集合优化模型，将碎片化缓存规则升维为紧耦合闭环算法</h1>
+    <p class="deck">针对“方案偏像代码技术文档、缺乏统一算法模型”的导师意见，本重构方案保留你原有的全部核心思想与 1.4 节实验设计，通过引入“异质执行路径与版本依赖双图抽象”，将 1.2–1.3 节收束为一个 NP-hard 约束优化问题与三段可分析的近似算法，并彻底修复公式套娃、小样本过早放行与在线复杂度三处算法硬伤。</p>
+
+    <div class="metric-strip">
+      <div class="metric-item">
+        <div class="metric-num">1 个统一问题</div>
+        <div class="metric-title">容量与风险约束下的路径效用最大化</div>
+        <div class="metric-desc">取代四段各自为战的工程流程，明确 NP-hard 理论根源与三阶段解耦依据。</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-num">3 段闭环算法</div>
+        <div class="metric-title">级联门控 · 增量剪枝调度 · 价值门控修复</div>
+        <div class="metric-desc">每段配套规范伪代码与复杂度/一致性性质，1.2 估值直接前置驱动 1.3 修复。</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-num">0 处实验推翻</div>
+        <div class="metric-title">100% 兼容 dataset-v0.2.0 与 C1–C4 实验</div>
+        <div class="metric-desc">原有四类对象、消融项与评测指标全部保留，且与新数学符号精确一一对应。</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- DIAGRAM 1: Signature Full-Width Architecture SVG -->
+  <section class="sec">
+    <h2>重构后的端到端模型架构：双流输入驱动三阶段闭环</h2>
+    <p class="measure">重构的核心变化在于<strong>消除模块割裂</strong>：原稿中 1.2.1 估值只服务于 1.3.1 准入淘汰，1.3.2 更新修复则盲目对所有受影响回答重检重算；重构后，<strong>统一效用模型</strong>同时驱动准入淘汰（Algorithm 2）与更新修复前置过滤（Algorithm 3），而在线复用反馈（Algorithm 1）持续回灌估值与簇先验，构成完整闭环。</p>
+
+    <figure>
+      <div class="fig-title">双流输入经双图抽象进入三段紧耦合算法，效用估计与版本依赖图贯穿全生命周期</div>
+      <svg viewBox="0 0 960 520" width="100%" role="img" aria-label="面向流式智能体的异质缓存统一模型与三阶段闭环算法架构图">
+        <defs>
+          <marker id="arr-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#1D4ED8"/>
+          </marker>
+          <marker id="arr-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E"/>
+          </marker>
+          <marker id="arr-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+          </marker>
+        </defs>
+
+        <!-- Layer 1: Dual Streams (Top) -->
+        <rect x="24" y="18" width="420" height="58" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="1.5"/>
+        <text x="42" y="42" font-family="IBM Plex Sans, Noto Sans SC" font-size="14" font-weight="700" fill="#1E3A8A">用户请求流 Q = {q_t}（在线到达）</text>
+        <text x="42" y="63" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">触发异质执行路径 P(q)：plan → rag / act → resp</text>
+
+        <rect x="516" y="18" width="420" height="58" fill="#F0FDFA" stroke="#0F766E" stroke-width="1.5"/>
+        <text x="534" y="42" font-family="IBM Plex Sans, Noto Sans SC" font-size="14" font-weight="700" fill="#115E59">外部更新流 U = {u_t}（异步交错）</text>
+        <text x="534" y="63" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">驱动底层文档版本、数据快照与业务口径变更</text>
+
+        <!-- Arrows down to Dual-Graph Abstraction -->
+        <line x1="234" y1="76" x2="234" y2="114" stroke="#1D4ED8" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+        <line x1="726" y1="76" x2="726" y2="114" stroke="#0F766E" stroke-width="1.8" marker-end="url(#arr-teal)"/>
+
+        <!-- Layer 2: Unified Formal Abstraction -->
+        <rect x="24" y="122" width="912" height="92" fill="#F8FAFC" stroke="#0F172A" stroke-width="1.5"/>
+        <text x="42" y="146" font-family="IBM Plex Sans, Noto Sans SC" font-size="14" font-weight="700" fill="#0F172A">统一形式化双图抽象与路径效用模型（第 1.2.1 节）</text>
+
+        <rect x="42" y="158" width="415" height="44" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+        <text x="56" y="177" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="600" fill="#1E3A8A">异质执行路径模型 P(q) 与效用函数 U(i, H)</text>
+        <text x="56" y="195" font-family="IBM Plex Mono, Noto Sans SC" font-size="12.5" fill="#475569">路径去重净节省 ΔT(q|M) / T_ref + 结构偏好 ψ_struct(i)</text>
+
+        <rect x="484" y="158" width="434" height="44" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+        <text x="498" y="177" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="600" fill="#115E59">版本化依赖图 G_t = (V_t, E_t)（即 ctx 状态）</text>
+        <text x="498" y="195" font-family="IBM Plex Mono, Noto Sans SC" font-size="12.5" fill="#475569">反向索引：来源版本 → 证据块 → 回答事实表述</text>
+
+        <!-- Arrows down to 3 Algorithms -->
+        <line x1="165" y1="214" x2="165" y2="264" stroke="#1D4ED8" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+        <line x1="480" y1="214" x2="480" y2="264" stroke="#1D4ED8" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+        <line x1="795" y1="214" x2="795" y2="264" stroke="#0F766E" stroke-width="1.8" marker-end="url(#arr-teal)"/>
+
+        <!-- Layer 3: Three Coupled Algorithms -->
+        <!-- Alg 1 -->
+        <rect x="24" y="272" width="282" height="148" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.8"/>
+        <rect x="24" y="272" width="282" height="32" fill="#1D4ED8"/>
+        <text x="38" y="293" font-family="IBM Plex Mono, Noto Sans SC" font-size="13.5" font-weight="600" fill="#FFFFFF">Algorithm 1 · 在线复用与门控</text>
+        <text x="38" y="326" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="600" fill="#0F172A">1. 级联短路查表（resp → plan/rag/act）</text>
+        <text x="38" y="350" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">2. 硬校验（权限 / 版本 / 时间窗）</text>
+        <text x="38" y="374" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">3. 保守经验贝叶斯簇内借用风险门控</text>
+        <text x="38" y="398" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">4. 使用前基于 G_t 二次核验状态</text>
+
+        <!-- Alg 2 -->
+        <rect x="339" y="272" width="282" height="148" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.8"/>
+        <rect x="339" y="272" width="282" height="32" fill="#1E3A8A"/>
+        <text x="353" y="293" font-family="IBM Plex Mono, Noto Sans SC" font-size="13.5" font-weight="600" fill="#FFFFFF">Algorithm 2 · 增量集合调度</text>
+        <text x="353" y="326" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="600" fill="#0F172A">1. 受影响子集剪枝 Q_aff(i, E)</text>
+        <text x="353" y="350" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">2. 单位空间边际损失贪心淘汰 E</text>
+        <text x="353" y="374" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">3. 集合边际增益判据 ΔS &gt; 0 准入</text>
+        <text x="353" y="398" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">4. 统一收编静态层验证后映射竞价</text>
+
+        <!-- Alg 3 -->
+        <rect x="654" y="272" width="282" height="148" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.8"/>
+        <rect x="654" y="272" width="282" height="32" fill="#0F766E"/>
+        <text x="668" y="293" font-family="IBM Plex Mono, Noto Sans SC" font-size="13.5" font-weight="600" fill="#FFFFFF">Algorithm 3 · 价值门控修复</text>
+        <text x="668" y="326" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="600" fill="#0F172A">1. 门控一：低价值冷条目直接失效</text>
+        <text x="668" y="350" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">2. 门控二：按 ρ_i 与期望代价路由</text>
+        <text x="668" y="374" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">3. 局部修复 / 完整重生成 + 事实核验</text>
+        <text x="668" y="398" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">4. 乐观并发版本条件提交（CAS）</text>
+
+        <!-- Inter-algorithm coupling arrows -->
+        <line x1="306" y1="346" x2="331" y2="346" stroke="#475569" stroke-width="1.8" marker-end="url(#arr-slate)"/>
+        <line x1="654" y1="346" x2="629" y2="346" stroke="#0F766E" stroke-width="1.8" marker-end="url(#arr-teal)"/>
+
+        <!-- Bottom Feedback Loop Bar -->
+        <path d="M 165 420 L 165 478 L 480 478 L 480 428" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arr-slate)"/>
+        <path d="M 480 478 L 795 478 L 795 428" fill="none" stroke="#0F766E" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arr-teal)"/>
+        <rect x="285" y="460" width="390" height="34" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+        <text x="480" y="482" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="600" fill="#334155">异步执行反馈闭环：更新滑动到达率 λ_i、簇先验 p_c 与回退耗时</text>
+      </svg>
+      <figcaption>图 1：重构后的全章核心架构（拟作为论文图 1-2）。相比原稿，新增“双图抽象层”作为统一数学底座，并将 1.2.1 效用模型双向耦合至准入淘汰（Alg.2）与更新修复前置过滤（Alg.3）。</figcaption>
+    </figure>
+  </section>
+
+  <!-- FULL-BLEED BAND: Formal Problem Formulation (Single Emphasis Moment) -->
+  <section class="full-band">
+    <div class="grid-12">
+      <div class="col-left-4">
+        <h2>顶层形式化：把全章收束为一个约束集合优化问题</h2>
+        <p style="margin-top:14px;">导师觉得方案“像代码文档”，首要原因就是缺少一个<strong>统领全局的数学目标函数</strong>。在 1.2 节开头建立如下形式化问题定义后，后续所有模块不再是拍脑袋加的规则，而是该 NP-hard 问题的 principled 近似分解。</p>
+      </div>
+      <div class="col-right-8">
+        <div class="formula-display">
+          max<sub>M, π</sub>  U(M, π; H) = E<sub>q ~ Q<sub>H</sub></sub> [ ΔT(q | M, π, G<sub>t</sub>) / T<sub>ref</sub> ] + Σ<sub>i ∈ M</sub> ψ<sub>struct</sub>(i)
+          <span class="f-sub">s.t.  (1) 容量约束：Σ<sub>i ∈ M</sub> c<sub>i</sub> ≤ B</span>
+          <span class="f-sub">      (2) 硬有效约束：∀ i ∈ M, Valid(i, G<sub>t</sub>, perm(q)) = 1</span>
+          <span class="f-sub">      (3) 质量风险约束：P(Err(q, i) | Reuse(q, i; π)) ≤ δ  （针对语义回答候选）</span>
+        </div>
+        <p><strong>为什么这个问题不 trivial（理论难点点题）？</strong> 即使在静态离线设定下，该问题同时包含：① <strong>背包容量约束</strong>（条目占用空间 <i>c</i><sub>i</sub> 异质）；② <strong>同类覆盖次模性</strong>（语义相近的 <code>resp</code> 边际增益递减）；③ <strong>跨类型路径替代耦合</strong>（复用 <code>resp</code> 会短路下游 <code>rag</code>/<code>act</code>，目标函数非简单线性可加）；④ <strong>流式非平稳漂移</strong>（更新流 <i>u</i><sub>t</sub> 动态破坏约束 (2)）。因此精确求解为 <strong>NP-hard</strong>，必须将其解耦为在线风险门控（满足约束 2–3）、增量集合边际调度（近似求解约束 1 下的集合优化）与价值门控流式维护（应对状态漂移）三个子问题。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Module 1 (1.2.1 Utility Model + Math Fixes + Diagram 2) -->
+  <section class="sec">
+    <div class="grid-12">
+      <div class="col-left-5">
+        <h2>1.2.1 重构：消除数学套娃，用路径去重公式定义效用</h2>
+        <p style="margin-top:14px;">原稿在 1.2.1(3) 中先算 <i>V</i><sub>base</sub>，再对 <code>resp</code> 与 <code>rag</code> 加上 (<i>V</i><sub>resp</sub> − <i>V</i><sub>base</sub>) / <i>T</i><sub>ref</sub>，数学上直接把 <i>V</i><sub>base</sub> 减掉了，显得像形式化拼凑。</p>
+        <p>重构后直接从<strong>单次请求的路径执行节省</strong> Δ<i>T</i>(<i>q</i> | <i>M</i>) 出发：若 <code>resp</code> 命中则短路整条路径，下游阶段不再重复计省；若 <code>resp</code> 未命中，则累加实际命中的 <code>plan</code>、<code>rag</code>、<code>act</code> 净节省并扣除检查/回退额外开销。随后统一写成无冗余的两项效用：</p>
+      </div>
+      <div class="col-right-7">
+        <div class="formula-display" style="margin-top:0;">
+          U(i, H) = Ṽ<sub>time</sub>(i, H) / T<sub>ref</sub> + ψ<sub>struct</sub>(i)
+          <span class="f-sub">• 基础时间净节省：V<sub>base</sub>(i, H) = λ̂<sub>i</sub> · min(H, τ<sub>i</sub><sup>rem</sup>) · Δt̄<sub>i</sub> − F̂<sub>i</sub>(H)</span>
+          <span class="f-sub">• 校正时间项 Ṽ<sub>time</sub>：resp 取路径边际增量 V<sub>resp</sub>；rag 取来源有效时长加权 V<sub>rag</sub>；act/plan 取 V<sub>base</sub></span>
+          <span class="f-sub">• 结构质量偏好 ψ<sub>struct</sub>(i)：act 取 w<sub>act</sub>·min(d<sub>i</sub>/D<sub>ref</sub>, 1)；plan 取 w<sub>plan</sub>·q<sub>i</sub>；resp/rag 为 0</span>
+        </div>
+        <p style="font-size:14.5px; color:var(--mute);">注：通过将 <i>T</i><sub>ref</sub> 标定为验证集上单条缓存时间净节省的参考分位（如 P90），保证时间分项与 <i>ψ</i><sub>struct</sub> ∈ [0, <i>w</i>] 处于同一无量纲量级，彻底回应答辩评委对量纲对齐的质询。</p>
+      </div>
+    </div>
+
+    <!-- DIAGRAM 2: Execution Path Short-Circuit & Cross-Type Deduplication SVG -->
+    <figure>
+      <div class="fig-title">路径级效用模型按短路规则计算单请求净节省，彻底杜绝跨类型重复计费</div>
+      <svg viewBox="0 0 960 350" width="100%" role="img" aria-label="异质缓存执行路径短路与跨类型去重净节省示意图">
+        <defs>
+          <marker id="a2-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#1D4ED8"/>
+          </marker>
+          <marker id="a2-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E"/>
+          </marker>
+          <marker id="a2-gray" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748B"/>
+          </marker>
+        </defs>
+
+        <!-- Row 1: Full Execution Path (No Cache) -->
+        <text x="16" y="42" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#0F172A">无缓存基线路径</text>
+        <text x="16" y="61" font-family="IBM Plex Mono, Noto Sans SC" font-size="12.5" fill="#475569">完整执行总耗时 T_full</text>
+
+        <rect x="210" y="22" width="130" height="46" fill="#F8FAFC" stroke="#64748B" stroke-width="1.4"/>
+        <text x="275" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="13.5" font-weight="600" fill="#0F172A">plan</text>
+        <text x="275" y="60" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">任务规划</text>
+
+        <line x1="340" y1="45" x2="376" y2="45" stroke="#64748B" stroke-width="1.5" marker-end="url(#a2-gray)"/>
+
+        <rect x="384" y="22" width="130" height="46" fill="#F8FAFC" stroke="#64748B" stroke-width="1.4"/>
+        <text x="449" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="13.5" font-weight="600" fill="#0F172A">rag</text>
+        <text x="449" y="60" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">证据检索</text>
+
+        <line x1="514" y1="45" x2="550" y2="45" stroke="#64748B" stroke-width="1.5" marker-end="url(#a2-gray)"/>
+
+        <rect x="558" y="22" width="130" height="46" fill="#F8FAFC" stroke="#64748B" stroke-width="1.4"/>
+        <text x="623" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="13.5" font-weight="600" fill="#0F172A">act</text>
+        <text x="623" y="60" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">只读工具</text>
+
+        <line x1="688" y1="45" x2="724" y2="45" stroke="#64748B" stroke-width="1.5" marker-end="url(#a2-gray)"/>
+
+        <rect x="732" y="22" width="130" height="46" fill="#F8FAFC" stroke="#64748B" stroke-width="1.4"/>
+        <text x="797" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="13.5" font-weight="600" fill="#0F172A">resp</text>
+        <text x="797" y="60" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">回答生成</text>
+
+        <line x1="16" y1="92" x2="944" y2="92" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Row 2: Scenario A (resp Hit Short-Circuit) -->
+        <text x="16" y="138" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#1E3A8A">情形 A：resp 命中</text>
+        <text x="16" y="158" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" fill="#475569">整条路径短路，中间结果</text>
+        <text x="16" y="175" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" fill="#991B1B">绝不重复计入节省</text>
+
+        <!-- Bypass arc over plan, rag, act -->
+        <path d="M 210 148 Q 470 100 726 142" fill="none" stroke="#1D4ED8" stroke-width="2.4" marker-end="url(#a2-blue)"/>
+        <text x="468" y="114" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="600" fill="#1E3A8A">直接返回校验通过的 resp（跳过前序全部阶段）</text>
+
+        <rect x="210" y="142" width="130" height="40" fill="#FFFFFF" stroke="#CBD5E1" stroke-dasharray="4,3"/>
+        <text x="275" y="166" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#94A3B8">plan（不计省）</text>
+
+        <rect x="384" y="142" width="130" height="40" fill="#FFFFFF" stroke="#CBD5E1" stroke-dasharray="4,3"/>
+        <text x="449" y="166" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#94A3B8">rag（不计省）</text>
+
+        <rect x="558" y="142" width="130" height="40" fill="#FFFFFF" stroke="#CBD5E1" stroke-dasharray="4,3"/>
+        <text x="623" y="166" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#94A3B8">act（不计省）</text>
+
+        <rect x="732" y="138" width="130" height="46" fill="#DBEAFE" stroke="#1D4ED8" stroke-width="2"/>
+        <text x="797" y="160" text-anchor="middle" font-family="IBM Plex Mono" font-size="13.5" font-weight="700" fill="#1E3A8A">resp HIT</text>
+        <text x="797" y="176" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#1E3A8A">ΔT = T_full − c_chk</text>
+
+        <line x1="16" y1="208" x2="944" y2="208" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Row 3: Scenario B (resp Miss, Partial Intermediate Hits) -->
+        <text x="16" y="254" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#115E59">情形 B：resp 未命中</text>
+        <text x="16" y="274" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" fill="#475569">按需复用中间结果，仅累加</text>
+        <text x="16" y="291" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" fill="#115E59">实际命中阶段的净节省</text>
+
+        <rect x="210" y="236" width="130" height="46" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.8"/>
+        <text x="275" y="257" text-anchor="middle" font-family="IBM Plex Mono" font-size="13.5" font-weight="700" fill="#115E59">plan HIT</text>
+        <text x="275" y="274" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#115E59">+Δt_plan (q_i)</text>
+
+        <line x1="340" y1="259" x2="376" y2="259" stroke="#0F766E" stroke-width="1.6" marker-end="url(#a2-teal)"/>
+
+        <rect x="384" y="236" width="130" height="46" fill="#FEF2F2" stroke="#DC2626" stroke-width="1.4"/>
+        <text x="449" y="257" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#991B1B">rag 过期回退</text>
+        <text x="449" y="274" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#991B1B">−f_fallback</text>
+
+        <line x1="514" y1="259" x2="550" y2="259" stroke="#64748B" stroke-width="1.6" marker-end="url(#a2-gray)"/>
+
+        <rect x="558" y="236" width="130" height="46" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.8"/>
+        <text x="623" y="257" text-anchor="middle" font-family="IBM Plex Mono" font-size="13.5" font-weight="700" fill="#115E59">act HIT</text>
+        <text x="623" y="274" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#115E59">+Δt_act (d_i)</text>
+
+        <line x1="688" y1="259" x2="724" y2="259" stroke="#64748B" stroke-width="1.6" marker-end="url(#a2-gray)"/>
+
+        <rect x="732" y="236" width="130" height="46" fill="#F8FAFC" stroke="#64748B" stroke-width="1.4"/>
+        <text x="797" y="257" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#0F172A">resp 正常生成</text>
+        <text x="797" y="274" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#475569">写入新缓存候选</text>
+
+        <!-- Bottom summary bar -->
+        <text x="210" y="324" font-family="IBM Plex Mono, Noto Sans SC" font-size="13" font-weight="600" fill="#0F172A">净节省统一口径：ΔT(q | M) = (resp 命中 ? T_full − c_chk : Σ_{k ∈ {plan,rag,act}} 𝟙[hit_k]·Δt_k − Σ 𝟙[fail_k]·f_k)</text>
+      </svg>
+      <figcaption>图 2：异质执行路径的短路与去重净节省计算逻辑。该公式直接支撑 1.3.1 节集合评分 S(M, H) 的计算，避免独立估值导致的高估偏差。</figcaption>
+    </figure>
+  </section>
+
+  <!-- SECTION 4: Module 2 (1.2.2 Algorithm 1 + Flowchart + Pseudocode) -->
+  <section class="sec">
+    <h2>1.2.2 重构：将零散步骤收敛为 Algorithm 1（级联短路与保守经验贝叶斯门控）</h2>
+    <p class="measure">原稿 1.2.2 存在两个薄弱点：一是四类对象的查询顺序未形式化为级联状态机；二是风险估计直接采用点估计 <i>p̂</i><sub>i</sub> = (<i>e</i><sub>i</sub> + <i>m</i>·<i>p</i><sub>c</sub>) / (<i>n</i><sub>i</sub> + <i>m</i>)，在小样本且 <i>e</i><sub>i</sub> = 0, <i>p</i><sub>c</sub> = 0 时会过于乐观地以 1 − <i>ε</i> 概率直接放行。重构后引入<strong>保守先验平滑（<i>α</i><sub>0</sub>, <i>β</i><sub>0</sub>）与显式冷启动门槛 <i>N</i><sub>min</sub></strong>，使风险门控在样本稀疏期具备统计稳健性。</p>
+
+    <!-- DIAGRAM 3: Algorithm 1 Flowchart SVG -->
+    <figure>
+      <div class="fig-title">Algorithm 1 按级联短路顺序执行在线校验，并借助保守经验贝叶斯估计阻断小样本误放行</div>
+      <svg viewBox="0 0 960 320" width="100%" role="img" aria-label="Algorithm 1 在线级联检索与版本感知保守经验贝叶斯风险门控流程图">
+        <defs>
+          <marker id="a3-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#1D4ED8"/>
+          </marker>
+          <marker id="a3-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E"/>
+          </marker>
+          <marker id="a3-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#DC2626"/>
+          </marker>
+        </defs>
+
+        <!-- Step 1 -->
+        <rect x="16" y="42" width="132" height="62" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="1.6"/>
+        <text x="82" y="68" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#1E3A8A">1. 请求到达 q_t</text>
+        <text x="82" y="88" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" fill="#334155">精确/语义召回 resp</text>
+
+        <line x1="148" y1="73" x2="180" y2="73" stroke="#1D4ED8" stroke-width="1.6" marker-end="url(#a3-blue)"/>
+
+        <!-- Step 2 -->
+        <rect x="188" y="42" width="152" height="62" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.5"/>
+        <text x="264" y="66" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#0F172A">2. 硬有效性校验</text>
+        <text x="264" y="86" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">权限 / 实体 / 时间窗 / 版本</text>
+
+        <line x1="340" y1="73" x2="376" y2="73" stroke="#1D4ED8" stroke-width="1.6" marker-end="url(#a3-blue)"/>
+        <text x="358" y="64" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#1E3A8A">通过</text>
+
+        <!-- Step 3: Conservative EB Risk -->
+        <rect x="384" y="32" width="224" height="82" fill="#F8FAFC" stroke="#1D4ED8" stroke-width="1.8"/>
+        <text x="496" y="56" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#1E3A8A">3. 保守经验贝叶斯风险估计</text>
+        <text x="496" y="79" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" fill="#0F172A">p̃_i = (e_i + m·p_c + α_0) / (n_i + m + α_0 + β_0)</text>
+        <text x="496" y="100" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">检查冷启动门槛 n_i + m ≥ N_min</text>
+
+        <line x1="608" y1="73" x2="646" y2="73" stroke="#1D4ED8" stroke-width="1.6" marker-end="url(#a3-blue)"/>
+
+        <!-- Step 4: Risk Gate -->
+        <rect x="654" y="42" width="136" height="62" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.6"/>
+        <text x="722" y="66" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#115E59">4. 风险门控抽样</text>
+        <text x="722" y="86" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#334155">r = max(ε, 1−δ/p̃_i)</text>
+
+        <line x1="790" y1="73" x2="824" y2="73" stroke="#0F766E" stroke-width="1.6" marker-end="url(#a3-teal)"/>
+
+        <!-- Step 5: Direct Return -->
+        <rect x="832" y="42" width="112" height="62" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.8"/>
+        <text x="888" y="67" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#115E59">复用返回</text>
+        <text x="888" y="87" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#115E59">使用前复核 G_t</text>
+
+        <!-- Downward fallback paths to Cascade Execution -->
+        <path d="M 264 104 L 264 194 L 304 194" fill="none" stroke="#DC2626" stroke-width="1.5" marker-end="url(#a3-red)"/>
+        <text x="234" y="152" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#991B1B">未通过</text>
+
+        <path d="M 496 114 L 496 164" fill="none" stroke="#DC2626" stroke-width="1.5" marker-end="url(#a3-red)"/>
+        <text x="536" y="144" font-family="IBM Plex Mono, Noto Sans SC" font-size="12" fill="#991B1B">样本不足</text>
+
+        <path d="M 722 104 L 722 194 L 680 194" fill="none" stroke="#DC2626" stroke-width="1.5" marker-end="url(#a3-red)"/>
+        <text x="760" y="152" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#991B1B">触发重生成</text>
+
+        <!-- Cascade Fallback Box -->
+        <rect x="312" y="172" width="360" height="68" fill="#FEF2F2" stroke="#DC2626" stroke-width="1.5"/>
+        <text x="492" y="198" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#991B1B">5. 级联中间层复用与正常执行</text>
+        <text x="492" y="220" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" fill="#334155">按序尝试 plan → rag（缺失则补检）→ act（校验状态）→ 生成新 resp</text>
+
+        <!-- Async Feedback Path -->
+        <path d="M 492 240 L 492 288 L 492 288" fill="none" stroke="#475569" stroke-width="1.5"/>
+        <rect x="200" y="266" width="584" height="38" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2"/>
+        <text x="492" y="290" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" fill="#334155">旁路异步判官（不阻塞响应）：比对旧候选与新回答 → 写回 (e_i, n_i) 与同簇先验 p_c → 触发 Alg.2 准入</text>
+      </svg>
+      <figcaption>图 3：Algorithm 1 的在线级联执行与风险门控流程。先验参数 (α_0, β_0) 确保当 n_i + m 较小且尚无负反馈时，风险估计仍高于 0，防止过早乐观放行。</figcaption>
+    </figure>
+
+    <div class="algo-block">
+      <div class="algo-head">Algorithm 1: 在线级联检索与版本感知经验贝叶斯风险门控（CascadeReuse）</div>
+      <div class="algo-io"><strong>输入：</strong>当前请求 q_t，缓存集合 M，版本依赖图 G_t，风险目标 δ，最低抽样率 ε，冷启动门槛 N_min，先验 (α_0, β_0)　|　<strong>输出：</strong>回答 y_t</div>
+      <pre class="algo-code"><span class="algo-kw">1:</span> cand ← RetrieveResp(M, q_t)                                      <span class="algo-cm">// 优先精确键，其次按相似度分桶 B_k 语义召回</span>
+<span class="algo-kw">2:</span> <span class="algo-kw">if</span> cand ≠ ∅ <span class="algo-kw">and</span> HardValid(cand, q_t, G_t) <span class="algo-kw">then</span>
+<span class="algo-kw">3:</span>     <span class="algo-kw">if</span> cand.is_exact <span class="algo-kw">then return</span> CommitCheck(cand, G_t)          <span class="algo-cm">// 精确命中直接复核版本后返回</span>
+<span class="algo-kw">4:</span>     (e_i, n_i, p_c, m) ← FetchClusterStats(cand, B_k, G_t)       <span class="algo-cm">// 仅借用同簇、同桶、版本一致标注</span>
+<span class="algo-kw">5:</span>     <span class="algo-kw">if</span> n_i + m ≥ N_min <span class="algo-kw">then</span>
+<span class="algo-kw">6:</span>         p̃_i ← (e_i + m·p_c + α_0) / (n_i + m + α_0 + β_0)       <span class="algo-cm">// 保守经验贝叶斯风险估计</span>
+<span class="algo-kw">7:</span>         r ← ε <span class="algo-kw">if</span> p̃_i ≤ δ <span class="algo-kw">else</span> max(ε, 1 − δ / p̃_i)
+<span class="algo-kw">8:</span>         <span class="algo-kw">if</span> Uniform(0,1) &gt; r <span class="algo-kw">and</span> CommitCheck(cand, G_t) <span class="algo-kw">then return</span> cand.resp
+<span class="algo-kw">9:</span> y_t ← CascadeExecute(q_t, M, G_t)                                <span class="algo-cm">// 依次尝试复用 plan → rag → act 并补全生成</span>
+<span class="algo-kw">10:</span> AsyncUpdateJudgeAndAdmit(q_t, cand, y_t, M, G_t)                <span class="algo-cm">// 异步判官更新统计，调用 Alg.2 评估准入</span>
+<span class="algo-kw">11:</span> <span class="algo-kw">return</span> y_t</pre>
+    </div>
+  </section>
+
+  <!-- SECTION 5: Module 3 (1.3.1 + 1.3.2 Algorithm 2 & Algorithm 3 + Diagram 4) -->
+  <section class="sec">
+    <h2>1.3 重构：增量受影响子集剪枝（Alg.2）与两级价值门控修复（Alg.3）</h2>
+    <p class="measure">这是整篇论文最能体现<strong>算法深度与系统原创性</strong>的部分。我们同时解决原稿两处最易被审稿人击穿的硬伤：① 用<strong>受影响请求子集剪枝</strong> <i>Q</i><sub>aff</sub>(<i>i</i>, <i>E</i>) 把集合边际增益 Δ<i>S</i> 的在线计算从全量重放降至局部增量计算；② 在更新修复前焊入 <strong>1.2.1 价值门控</strong>与<strong>主张变更比例 <i>ρ</i><sub>i</sub> 期望代价路由</strong>，避免对 600 条冷门回答白做重检和 LLM 修复。</p>
+
+    <!-- DIAGRAM 4: Alg 2 Incremental Pruning + Alg 3 Two-Stage Value-Gated CAS Repair -->
+    <figure>
+      <div class="fig-title">增量剪枝将准入复杂度压至局部子集，两级代价门控在更新流中阻断低价值无效修复</div>
+      <svg viewBox="0 0 960 440" width="100%" role="img" aria-label="Algorithm 2 增量集合边际剪枝与 Algorithm 3 两级价值门控选择性修复流程图">
+        <defs>
+          <marker id="a4-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#1D4ED8"/>
+          </marker>
+          <marker id="a4-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E"/>
+          </marker>
+          <marker id="a4-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#DC2626"/>
+          </marker>
+        </defs>
+
+        <!-- TOP LANE: Algorithm 2 Incremental Marginal-Gain Scheduling -->
+        <text x="16" y="24" font-family="IBM Plex Sans, Noto Sans SC" font-size="14" font-weight="700" fill="#1E3A8A">Algorithm 2 · 基于受影响子集剪枝的增量集合边际调度（1.3.1 节）</text>
+
+        <rect x="16" y="40" width="175" height="72" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.3"/>
+        <text x="103" y="65" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="600" fill="#334155">代表性请求窗口 Q_rep</text>
+        <text x="103" y="85" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#475569">全量重放 O(|Q_rep|·|M|)</text>
+        <text x="103" y="102" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#991B1B">在线不可行</text>
+
+        <line x1="191" y1="76" x2="225" y2="76" stroke="#1D4ED8" stroke-width="1.8" marker-end="url(#a4-blue)"/>
+
+        <rect x="233" y="40" width="215" height="72" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="1.8"/>
+        <text x="340" y="64" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#1E3A8A">倒排索引局部剪枝</text>
+        <text x="340" y="84" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#0F172A">仅取 Q_aff(i, E) ⊆ Q_rep</text>
+        <text x="340" y="102" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#334155">同簇 / 同键受影响子集</text>
+
+        <line x1="448" y1="76" x2="482" y2="76" stroke="#1D4ED8" stroke-width="1.8" marker-end="url(#a4-blue)"/>
+
+        <rect x="490" y="40" width="222" height="72" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5"/>
+        <text x="601" y="64" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13.5" font-weight="700" fill="#0F172A">单位空间损失贪心选 E</text>
+        <text x="601" y="84" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#1E3A8A">min  loss(j) / c_j  直满容量</text>
+        <text x="601" y="102" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#475569">复杂度 O(|Q_aff| + |M|log|M|)</text>
+
+        <line x1="712" y1="76" x2="746" y2="76" stroke="#1D4ED8" stroke-width="1.8" marker-end="url(#a4-blue)"/>
+
+        <rect x="754" y="40" width="190" height="72" fill="#DBEAFE" stroke="#1D4ED8" stroke-width="1.8"/>
+        <text x="849" y="66" text-anchor="middle" font-family="IBM Plex Mono, Noto Sans SC" font-size="13.5" font-weight="700" fill="#1E3A8A">判据 ΔS &gt; 0 ？</text>
+        <text x="849" y="86" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" fill="#0F172A">是 → 替换写入（含静态映射）</text>
+        <text x="849" y="103" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">否 → 放弃准入，保留原 M</text>
+
+        <!-- Divider between Alg 2 and Alg 3 -->
+        <line x1="16" y1="146" x2="944" y2="146" stroke="#CBD5E1" stroke-width="1.2" stroke-dasharray="6,4"/>
+
+        <!-- BOTTOM LANE: Algorithm 3 Two-Stage Value-Gated Selective Repair + CAS -->
+        <text x="16" y="178" font-family="IBM Plex Sans, Noto Sans SC" font-size="14" font-weight="700" fill="#115E59">Algorithm 3 · 两级代价门控选择性修复与乐观版本条件提交（1.3.2 节）</text>
+
+        <!-- Node 1: Update arrives -->
+        <rect x="16" y="200" width="128" height="68" fill="#F0FDFA" stroke="#0F766E" stroke-width="1.6"/>
+        <text x="80" y="226" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="700" fill="#115E59">更新事件 u_t</text>
+        <text x="80" y="247" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#334155">查 G_t 反向索引</text>
+        <text x="80" y="262" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#334155">暂停关联 resp</text>
+
+        <line x1="144" y1="234" x2="174" y2="234" stroke="#0F766E" stroke-width="1.6" marker-end="url(#a4-teal)"/>
+
+        <!-- Gate 1: Value Filter -->
+        <rect x="182" y="196" width="174" height="76" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="1.8"/>
+        <text x="269" y="220" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="700" fill="#1E3A8A">门控一：价值准入过滤</text>
+        <text x="269" y="240" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#0F172A">U(i, H)·T_ref &gt; C_rep ?</text>
+        <text x="269" y="259" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#334155">联动 1.2.1 效用模型</text>
+
+        <!-- Drop branch from Gate 1 -->
+        <line x1="269" y1="272" x2="269" y2="332" stroke="#DC2626" stroke-width="1.5" marker-end="url(#a4-red)"/>
+        <text x="294" y="306" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#991B1B">否（冷条目）</text>
+        <rect x="188" y="340" width="162" height="46" fill="#FEF2F2" stroke="#DC2626" stroke-width="1.4"/>
+        <text x="269" y="360" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="600" fill="#991B1B">直接失效丢弃</text>
+        <text x="269" y="377" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">省去重检与 LLM 开销</text>
+
+        <line x1="356" y1="234" x2="390" y2="234" stroke="#0F766E" stroke-width="1.6" marker-end="url(#a4-teal)"/>
+        <text x="373" y="224" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#115E59">高价值</text>
+
+        <!-- Gate 2: Claim Ratio & Expected Cost Routing -->
+        <rect x="398" y="196" width="194" height="76" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.8"/>
+        <text x="495" y="218" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="700" fill="#115E59">门控二：期望代价路由</text>
+        <text x="495" y="238" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#0F172A">ρ_i = |C_aff| / |C_all| ≤ θ ?</text>
+        <text x="495" y="258" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#475569">且 E[Cost_local] &lt; Cost_full</text>
+
+        <!-- Branch to Full Regen -->
+        <line x1="495" y1="272" x2="495" y2="332" stroke="#475569" stroke-width="1.5" marker-end="url(#a4-teal)"/>
+        <text x="536" y="306" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">否（大范围变更）</text>
+        <rect x="415" y="340" width="160" height="46" fill="#F8FAFC" stroke="#475569" stroke-width="1.4"/>
+        <text x="495" y="360" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="600" fill="#0F172A">短路走完整重生成</text>
+        <text x="495" y="377" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#475569">避免局部修复失败回退</text>
+
+        <!-- Branch to Selective Local Repair -->
+        <line x1="592" y1="234" x2="626" y2="234" stroke="#0F766E" stroke-width="1.6" marker-end="url(#a4-teal)"/>
+        <text x="609" y="224" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#115E59">是</text>
+
+        <rect x="634" y="200" width="136" height="68" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.6"/>
+        <text x="702" y="224" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="700" fill="#115E59">局部修复 + 核验</text>
+        <text x="702" y="244" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#334155">只改受影响主张</text>
+        <text x="702" y="260" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#991B1B">核验失败→回退重生成</text>
+
+        <!-- Merge Full Regen up to CAS -->
+        <path d="M 575 363 L 866 363 L 866 276" fill="none" stroke="#0F766E" stroke-width="1.5" marker-end="url(#a4-teal)"/>
+
+        <line x1="770" y1="234" x2="796" y2="234" stroke="#0F766E" stroke-width="1.6" marker-end="url(#a4-teal)"/>
+
+        <!-- Final Node: CAS Commit -->
+        <rect x="804" y="196" width="140" height="76" fill="#0F766E" stroke="#115E59" stroke-width="1.6"/>
+        <text x="874" y="220" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="13" font-weight="700" fill="#FFFFFF">CAS 版本条件提交</text>
+        <text x="874" y="240" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#CCFBF1">ver == G_t.ver ?</text>
+        <text x="874" y="259" text-anchor="middle" font-family="IBM Plex Sans, Noto Sans SC" font-size="12" fill="#FFFFFF">匹配→准入 / 否则重试</text>
+
+        <!-- Footer Note inside SVG -->
+        <text x="16" y="422" font-family="IBM Plex Sans, Noto Sans SC" font-size="12.5" font-weight="600" fill="#334155">一致性性质：CAS 条件提交将版本核验与缓存写入原子化，保证任何依赖过时版本的修复结果均不会覆盖新状态。</text>
+      </svg>
+      <figcaption>图 4：Algorithm 2（增量受影响子集剪枝）与 Algorithm 3（两级价值门控选择性修复 + CAS 提交）的核心机理对比。</figcaption>
+    </figure>
+
+    <div class="grid-12" style="margin-top:24px;">
+      <div class="col-half-l">
+        <div class="algo-block" style="margin-top:0;">
+          <div class="algo-head">Algorithm 2: 增量集合边际准入淘汰（IncSetSchedule）</div>
+          <pre class="algo-code"><span class="algo-kw">1:</span> <span class="algo-kw">if</span> ¬HardValid(i, G_t) <span class="algo-kw">then return</span> Reject
+<span class="algo-kw">2:</span> E ← CleanExpired(M, G_t)
+<span class="algo-kw">3:</span> <span class="algo-kw">while</span> Cost(M \ E) + c_i &gt; B <span class="algo-kw">do</span>
+<span class="algo-kw">4:</span>     j* ← argmin<sub>j ∈ M\E</sub>  Loss<sub>Q_aff(j)</sub>(j) / c_j
+<span class="algo-kw">5:</span>     E ← E ∪ {j*}
+<span class="algo-kw">6:</span> Q_aff ← InvertLookup(Q_rep, i, E)      <span class="algo-cm">// 局部剪枝</span>
+<span class="algo-kw">7:</span> ΔS ← EvalDelta(Q_aff, M, i, E)
+<span class="algo-kw">8:</span> <span class="algo-kw">if</span> ΔS &gt; 0 <span class="algo-kw">then</span> M ← (M \ E) ∪ {i}</pre>
+        </div>
+      </div>
+      <div class="col-half-r">
+        <div class="algo-block" style="margin-top:0;">
+          <div class="algo-head">Algorithm 3: 价值门控修复与条件提交（ValueGatedRepair）</div>
+          <pre class="algo-code"><span class="algo-kw">1:</span> A ← ReverseIndex(G_t, u_t); Suspend(A)
+<span class="algo-kw">2:</span> <span class="algo-kw">for each</span> i ∈ A <span class="algo-kw">do</span>
+<span class="algo-kw">3:</span>     <span class="algo-kw">if</span> U(i, H)·T_ref ≤ C_rep <span class="algo-kw">then</span> Drop(i); <span class="algo-kw">continue</span>
+<span class="algo-kw">4:</span>     v_snap ← G_t.ver; ΔE ← ReRetrieve(i, v_snap)
+<span class="algo-kw">5:</span>     <span class="algo-kw">if</span> ΔE = ∅ <span class="algo-kw">and</span> G_t.ver == v_snap <span class="algo-kw">then</span> Resume(i)
+<span class="algo-kw">6:</span>     ρ_i ← |C_aff(i, ΔE)| / |C_all(i)|
+<span class="algo-kw">7:</span>     y' ← LocalRepair <span class="algo-kw">if</span> (ρ_i ≤ θ ∧ E[C_loc] &lt; C_full) <span class="algo-kw">else</span> FullRegen
+<span class="algo-kw">8:</span>     <span class="algo-kw">if</span> Verify(y') <span class="algo-kw">then</span> CAS_Admit(y', v_snap, Alg2)</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: Before vs After Comparison & 1.4 Compatibility -->
+  <section class="sec">
+    <h2>重构前后对比：如何洗掉“代码文档感”且 100% 兼容现有实验</h2>
+    <p class="measure">下表总结了此次方案升维在学术深度、数学严密性与实验对齐上的直接收益。所有重构均落在你的原有业务直觉之内，无需重做数据集或推翻 1.4 节 C1–C4 评测方案。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>评审维度</th>
+            <th>原稿状态（偏代码技术文档）</th>
+            <th>重构后状态（完整学术模型与算法）</th>
+            <th>对 1.4 节 C1–C4 实验的支撑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>问题定义</td>
+            <td><span class="tag-old">碎片化</span>：四块机制各自陈述，缺乏统一数学目标</td>
+            <td><span class="tag-new">统一形式化</span>：一个 NP-hard 约束集合优化问题 + 三阶段解耦</td>
+            <td>C4 端到端收益直接对应总效用目标 <i>U</i>(<i>M</i>, <i>π</i>; <i>H</i>)</td>
+          </tr>
+          <tr>
+            <td>1.2.1 价值公式</td>
+            <td><span class="tag-old">公式套娃</span>：<i>V</i><sub>base</sub> + (<i>V</i><sub>resp</sub> − <i>V</i><sub>base</sub>) 抵消，缺少显式公式</td>
+            <td><span class="tag-new">路径去重效用</span>：定义 Δ<i>T</i>(<i>q</i> | <i>M</i>) 与无套娃 <i>U</i>(<i>i</i>, <i>H</i>)</td>
+            <td>直接对应 C4 中 <code>act</code>(<i>d</i><sub>i</sub>) 与 <code>plan</code>(<i>q</i><sub>i</sub>) 消融项</td>
+          </tr>
+          <tr>
+            <td>1.2.2 风险门控</td>
+            <td><span class="tag-old">小样本过乐观</span>：<i>e</i><sub>i</sub> = 0, <i>p</i><sub>c</sub> = 0 时以 1 − <i>ε</i> 过早放行</td>
+            <td><span class="tag-new">Algorithm 1</span>：保守经验贝叶斯平滑 + 显式冷启动门槛 <i>N</i><sub>min</sub></td>
+            <td>直接对应 C1 质量-时延前沿与更新后 500 请求恢复曲线</td>
+          </tr>
+          <tr>
+            <td>1.3.1 集合调度</td>
+            <td><span class="tag-old">复杂度黑盒</span>：全量重放 <i>Q</i><sub>rep</sub> 不可行，静态层像外挂</td>
+            <td><span class="tag-new">Algorithm 2</span>：受影响子集 <i>Q</i><sub>aff</sub> 增量剪枝 + 统一竞价入口</td>
+            <td>直接对应 C2 容量曲线（10%/25%/50%）与静态层开关</td>
+          </tr>
+          <tr>
+            <td>1.3.2 流式修复</td>
+            <td><span class="tag-old">与 1.2 割裂</span>：冷热回答一律重检修复，全靠 LLM 主观判</td>
+            <td><span class="tag-new">Algorithm 3</span>：1.2.1 价值过滤 + <i>ρ</i><sub>i</sub> 期望代价路由 + CAS 提交</td>
+            <td>直接对应 C3 成本分解、回退率与质量-成本散点</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <blockquote class="pull-quote">
+      把“怎么写代码”翻译成“在什么约束下求解什么优化问题、为什么必须近似、以及各模块如何共享同一目标闭环”，就是从技术文档跨向顶会级论文算法章节的分水岭。
+      <div class="pull-quote-note">下一步建议：确认上述统一目标函数、三个算法伪代码与两级门控逻辑符合你的实现边界后，即可直接生成 1.2–1.3 节的重构修改计划书交由执行 Agent 落盘。</div>
+    </blockquote>
+  </section>
+
+</main>
+</body>
+</html>

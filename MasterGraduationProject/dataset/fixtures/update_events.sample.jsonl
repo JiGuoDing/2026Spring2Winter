@@ -1,1 +1,1 @@
-{"answer_impact":"changed","change_type":"metric_revision","changed_chunk_ids":["metric_001#p01"],"doc_id":"metric_001","domain":"sales","event_id":"u0001","new_ver":2,"old_ver":1,"permission":"public","timestamp":"2024-05-15T06:00:00Z"}
+{"answer_impact":"changed","change_type":"metric_revision","changed_chunk_ids":["metric_001#p01"],"doc_id":"metric_001","domain":"sales","effective_at":"2024-05-15T00:00:00Z","event_id":"u0001","negative_control":false,"new_ver":2,"notification_delay_s":21600.0,"old_ver":1,"permission":"public","timestamp":"2024-05-15T06:00:00Z"}

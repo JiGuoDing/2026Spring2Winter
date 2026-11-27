@@ -1,0 +1,68 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 14 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>02 改成什么样</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>隔离分四档，不是一个开关</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>四档只是隔离强度的差别，四档之上全部资源仍在同一个分区内。</Text>
+
+        <Box style={{ flexDirection: 'column', marginTop: 10 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'stretch', paddingLeft: 0, borderTop: '1px solid #D9DEE7' }}>
+                <Box style={{ width: 4, background: '#D9DEE7' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6, padding: '18px 0 18px 20px' }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 14 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#7A8699' }}>L0</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#3D4C63' }}>共享实例、共享数据，仅配置隔离</Text>
+                        <Text style={{ fontSize: 14, color: '#B3261E' }}>仅限非生产，登记例外</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, color: '#3D4C63' }}>同命名空间共享 Deployment ｜ 共享库 tenant_id 行级过滤 ｜ 同 Ingress 靠路径分流</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'stretch', paddingLeft: 24, borderTop: '1px solid #D9DEE7' }}>
+                <Box style={{ width: 4, background: '#1F3864' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6, padding: '18px 0 18px 20px' }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 14 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F3864' }}>L1</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>逻辑隔离（默认档）</Text>
+                        <Text style={{ fontSize: 14, color: '#2E6DA4' }}>覆盖约 80% 的二级租户</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, color: '#3D4C63' }}>独立 Namespace + ResourceQuota + 默认拒绝的 NetworkPolicy ｜ 独立 schema ｜ 独立 Ingress 与限流</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'stretch', paddingLeft: 48, borderTop: '1px solid #D9DEE7' }}>
+                <Box style={{ width: 4, background: '#2E6DA4' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6, padding: '18px 0 18px 20px' }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 14 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#2E6DA4' }}>L2</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>强化隔离</Text>
+                        <Text style={{ fontSize: 14, color: '#7A8699' }}>区域核心、主数据供给方</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, color: '#3D4C63' }}>L1 全部 + 独立节点池 ｜ 独立数据库实例 ｜ 独立入口 IP 与独立 WAF 策略</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'stretch', paddingLeft: 72, borderTop: '1px solid #D9DEE7', borderBottom: '1px solid #D9DEE7' }}>
+                <Box style={{ width: 4, background: '#1F3864' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6, padding: '18px 0 18px 20px' }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 14 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F3864' }}>L3</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>物理隔离</Text>
+                        <Text style={{ fontSize: 14, color: '#7A8699' }}>外部开发商、涉密场景，目标 ≤ 5 个集群</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, color: '#3D4C63' }}>独立 K8s 集群 + 独立资源池 + 独立控制面 ｜ 独立中间件集群 ｜ 独立网络平面</Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 14 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>注意</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>L3 的“物理隔离”是独立集群、独立资源池、独立控制面，不等于跨区——它仍在安全Ⅲ区内。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>08 / 20</Text>
+        </Box>
+    </Box>
+</Slide>

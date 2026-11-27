@@ -1,0 +1,60 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 16 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>01 为什么必须改</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>数量多，不等于可信度高</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 48, marginTop: 16 }}>
+            <Box style={{ width: 540, flexDirection: 'column' }}>
+                <svg width={540} height={455} viewBox='0 0 540 455'>
+                    <line x1='60' y1='398.12' x2='520' y2='398.12' stroke='#1F3864' strokeWidth='1.25' />
+                    <line x1='60' y1='398.12' x2='60' y2='34.12' stroke='#1F3864' strokeWidth='1.25' />
+                    <line x1='60' y1='216.12' x2='520' y2='216.12' stroke='#D9DEE7' strokeWidth='1' strokeDasharray='4 4' />
+                    <line x1='290' y1='34.12' x2='290' y2='398.12' stroke='#D9DEE7' strokeWidth='1' strokeDasharray='4 4' />
+
+                    <text x='70' y='25.02' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>信任等级 高</text>
+                    <text x='70' y='423.15' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>信任等级 低</text>
+                    <text x='420' y='423.15' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>租户数量 多</text>
+
+                    <circle cx='150' cy='125.12' r='7' fill='#1F3864' />
+                    <text x='164' y='120.57' fontSize='16' fill='#1F3864' fontFamily='Microsoft YaHei'>集团总部租户</text>
+                    <text x='164' y='143.32' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>1 个</text>
+
+                    <circle cx='300' cy='170.62' r='7' fill='#1F3864' />
+                    <text x='314' y='166.07' fontSize='16' fill='#1F3864' fontFamily='Microsoft YaHei'>区域/省公司</text>
+                    <text x='314' y='188.82' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>31 个，管三类业态</text>
+
+                    <circle cx='450' cy='109.2' r='7' fill='#1F3864' />
+                    <text x='330' y='86.45' fontSize='16' fill='#1F3864' fontFamily='Microsoft YaHei'>厂站租户 近 700 个</text>
+
+                    <circle cx='150' cy='341.25' r='9' fill='#B3261E' />
+                    <text x='164' y='336.7' fontSize='16' fill='#B3261E' fontFamily='Microsoft YaHei'>第三方开发商</text>
+                    <text x='164' y='359.45' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>数量少，但不可信</text>
+
+                    <rect x='306' y='263.9' width='214' height='65.97' fill='#F2F5F9' />
+                    <text x='320' y='291.2' fontSize='15' fill='#1F3864' fontFamily='Microsoft YaHei'>分类依据是信任等级，</text>
+                    <text x='320' y='316.22' fontSize='15' fill='#1F3864' fontFamily='Microsoft YaHei'>不是租户数量</text>
+                </svg>
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 24, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>租户边界，与组织边界对不上</Text>
+                    <Text style={{ fontSize: 16, color: '#3D4C63', lineHeight: 1.7 }}>一个区域公司既是一级租户，又管着水电、新能源、煤电三类业态的若干厂站；一个人的权限横跨多个租户。</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>二级租户没人，也没必要自管</Text>
+                    <Text style={{ fontSize: 16, color: '#3D4C63', lineHeight: 1.7 }}>厂站侧通常只有 1–2 名信息化人员，且多为兼职；要求他们自建门户、自运维，等于把规则挂在无人执行的地方。</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>规模一上来，人工维护失效</Text>
+                    <Text style={{ fontSize: 16, color: '#3D4C63', lineHeight: 1.7 }}>约 900 个租户 × 15 项配额 = 13500 个配额对象，靠人填表、靠人核对，做不到。</Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>05 / 20</Text>
+    </Box>
+</Slide>

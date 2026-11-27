@@ -1,0 +1,37 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 16 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>01 为什么必须改</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>能建租户，不等于能管租户</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>平台已在 31 个省级区域、近 700 个场站运行；七大板块都在，但“能配置”与“可治理”是两件事。</Text>
+
+        <Table
+            style={{ width: '100%', height: 372, marginTop: 8 }}
+            defaultTextStyle={{ fontSize: 16, textAlign: 'left', color: '#3D4C63' }}
+            defaultCellStyle={{ border: { bottom: { width: 1, color: '#D9DEE7' } }, padding: 12 }}
+            cells={[
+                [
+                    { text: '能力板块', textStyle: { fontSize: 16, bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                    { text: '客户材料表述（未提供验证证据者标“蓝图”）', textStyle: { fontSize: 16, bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                    { text: '状态', textStyle: { fontSize: 16, bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                ],
+                ['应用构建（低代码）', '设计态沙箱、运行态发布，表单/流程/报表/字典', { text: '已落地', textStyle: { bold: true, color: '#1F3864' } }],
+                [{ text: '应用集成（API 网关）', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '微服务框架、API 网关、iPaaS 集成', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '已落地', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }],
+                ['时序数据', '支持 600 万测点同时写入（能力声明，非实测）', { text: '蓝图', textStyle: { bold: true, color: '#2E6DA4' } }],
+                [{ text: '大数据平台', cellStyle: { background: { color: '#FAFBFC' } } }, { text: 'Doris 独立库、采集存储开发服务、实时计算', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '已落地', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }],
+                ['大模型工具链', '模型托管、智能体编排、算力调度', { text: '蓝图', textStyle: { bold: true, color: '#2E6DA4' } }],
+                [{ text: '多租户管理', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '租户模型完整、六类配置模板齐备，可“共享或分离”', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '缺口', textStyle: { bold: true, color: '#B3261E' }, cellStyle: { background: { color: '#FAFBFC' } } }],
+            ]}
+        />
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 14 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>数据面底子不差（8 个独立库、独立中间件实例），缺的是判据、执行点与边界——三样都在控制面。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>03 / 20</Text>
+        </Box>
+    </Box>
+</Slide>

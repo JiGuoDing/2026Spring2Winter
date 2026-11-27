@@ -122,7 +122,8 @@ tr:nth-child(even) td{background:rgba(0,0,0,.012)}
 html[data-theme="dark"] tr:nth-child(even) td{background:rgba(255,255,255,.018)}
 td code{white-space:nowrap}
 p.caption{text-align:center;font-family:var(--sans);font-size:12.6px;color:var(--muted);margin:.2em 0 1.6em}
-p.caption em{font-style:normal}\np.tbl-title{text-align:center;font-family:var(--sans);font-size:13.4px;font-weight:700;color:var(--ink);margin:1.5em 0 .6em;letter-spacing:.02em}
+p.caption em{font-style:normal}
+article p.tbl-title{text-indent:0;text-align:center;font-family:var(--sans);font-size:13.4px;font-weight:700;color:var(--ink);margin:1.5em 0 .6em;letter-spacing:.02em}
 
 /* callout */
 .callout{border:1px solid #e6d9bf;border-radius:14px;padding:18px 22px 14px;margin:1.4em 0;
@@ -154,6 +155,10 @@ p.caption em{font-style:normal}\np.tbl-title{text-align:center;font-family:var(-
 .ref-item{text-indent:0;padding-left:3.1em;text-indent:-3.1em;font-size:13.2px;line-height:1.75;
   color:var(--muted);margin:.55em 0;font-family:var(--sans);word-break:break-word;text-align:left}
 .ref-item .refno{color:var(--accent);font-family:var(--mono);font-size:12px;margin-right:.5em}
+
+.flow[data-flow],.flowwrap .node{scroll-margin-top:24px}
+.flowwrap .node + .node{margin-top:10px}
+.flowwrap .b a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
 /* math */
 math{font-size:1.04em}
@@ -196,20 +201,18 @@ footer{max-width:1180px;margin:0 auto;padding:0 34px 70px;font-family:var(--sans
 
 <header class="hero">
   <div class="hero-inner">
-    <div class="kicker">硕士学位论文 · 第一章 <span>· 第二版</span></div>
+    <div class="kicker">硕士学位论文 · 第一章 <span>· 第二版修订</span></div>
     <h1 class="title"><span class="ch">CHAPTER 01</span>面向流式智能体的异质缓存机制与生命周期管理策略</h1>
-    <p class="subtitle">1.0 预留素材 · 本章导语 · 1.1 问题背景与分析</p>
+    <p class="subtitle">问题背景与分析 · 缓存机制 · 实验设计</p>
     <div class="chips">
-      <span class="chip">3 张表</span>
+      <span class="chip">问题分析含 2 张表</span>
       <span class="chip">2 幅流程图</span>
       <span class="chip">35 条参考文献</span>
-      <span class="chip">2026-11-24</span>
+      <span class="chip">2026-11-25</span>
     </div>
-    <p class="abstract"><b>本页说明</b>　改后初稿（第二版）。1.0
-为绪论与相关工作预留素材（暂存，不进入本章正文）；本章导语按定稿位置预留（章标题下、1.1
-前）；1.1 按重复计算与成本、异质对象分类、净收益判据、TTL
-两难、信号错配、物化视图、两项核心难点、两个子问题、研究边界与符号说明的顺序重写；1.2
-至 1.5 沿用第一版内容，参考文献按正文首次出现顺序重排。</p>
+    <p class="abstract"><b>本页说明</b>　改后初稿（第二版修订）。1.0
+为绪论与相关工作的预留素材，不进入本章正文；本章正文自章首导语起。第 1.4
+节给出实验设计，尚不报告策略评估结果。</p>
   </div>
 </header>
 
@@ -217,323 +220,214 @@ footer{max-width:1180px;margin:0 auto;padding:0 34px 70px;font-family:var(--sans
   <aside class="toc">
     <div class="toc-card">
       <p class="toc-head">目录 · CONTENTS</p>
-      <ul class="toc-list"><li class="toc-h2"><a href="#10-绪论与相关工作预留素材暂存不放入本章正文">1.0 绪论与相关工作预留素材（暂存，不放入本章正文）</a></li><li class="toc-h3"><a href="#101-流式智能体的范式演进与连续服务特征">1.0.1 流式智能体的范式演进与连续服务特征</a></li><li class="toc-h3"><a href="#102-现有大模型与智能体缓存研究脉络及空白">1.0.2 现有大模型与智能体缓存研究脉络及空白</a></li><li class="toc-h2"><a href="#本章导语章首引言">本章导语（章首引言）</a></li><li class="toc-h2"><a href="#11-问题背景与分析">1.1 问题背景与分析</a></li><li class="toc-h2"><a href="#12-基于异质中间结果价值建模与有效性检查的缓存机制">1.2 基于异质中间结果价值建模与有效性检查的缓存机制</a></li><li class="toc-h3"><a href="#121-面向流式智能体的异质缓存价值建模">1.2.1 面向流式智能体的异质缓存价值建模</a></li><li class="toc-h3"><a href="#122-基于语义与结构匹配的缓存检索与有效性检查">1.2.2 基于语义与结构匹配的缓存检索与有效性检查</a></li><li class="toc-h2"><a href="#13-基于价值决策与依赖感知的缓存生命周期管理策略">1.3 基于价值决策与依赖感知的缓存生命周期管理策略</a></li><li class="toc-h3"><a href="#131-基于缓存价值的分层准入与淘汰机制">1.3.1 基于缓存价值的分层准入与淘汰机制</a></li><li class="toc-h3"><a href="#132-面向流式更新的依赖传播与缓存修复策略">1.3.2 面向流式更新的依赖传播与缓存修复策略</a></li><li class="toc-h2"><a href="#14-实验评估与分析">1.4 实验评估与分析</a></li><li class="toc-h3"><a href="#141-实验设置">1.4.1 实验设置</a></li><li class="toc-h3"><a href="#142-预期结论">1.4.2 预期结论</a></li><li class="toc-h3"><a href="#143-实验一复用决策c1">1.4.3 实验一：复用决策（C1）</a></li><li class="toc-h3"><a href="#144-实验二容量受限c2">1.4.4 实验二：容量受限（C2）</a></li><li class="toc-h3"><a href="#145-实验三更新与修复c3">1.4.5 实验三：更新与修复（C3）</a></li><li class="toc-h3"><a href="#146-实验四整体收益c4">1.4.6 实验四：整体收益（C4）</a></li><li class="toc-h3"><a href="#147-结果讨论">1.4.7 结果讨论</a></li><li class="toc-h2"><a href="#15-本章小结">1.5 本章小结</a></li><li class="toc-h2"><a href="#参考文献">参考文献</a></li></ul>
+      <ul class="toc-list"><li class="toc-h2"><a href="#10-绪论与相关工作预留素材暂存不放入本章正文">1.0 绪论与相关工作预留素材（暂存，不放入本章正文）</a></li><li class="toc-h3"><a href="#101-流式智能体的连续服务特征">1.0.1 流式智能体的连续服务特征</a></li><li class="toc-h3"><a href="#102-现有大模型与智能体缓存研究">1.0.2 现有大模型与智能体缓存研究</a></li><li class="toc-h2"><a href="#本章导语章首引言">本章导语（章首引言）</a></li><li class="toc-h2"><a href="#11-问题背景与分析">1.1 问题背景与分析</a></li><li class="toc-h2"><a href="#12-基于异质中间结果价值建模与有效性检查的缓存机制">1.2 基于异质中间结果价值建模与有效性检查的缓存机制</a></li><li class="toc-h3"><a href="#121-面向流式智能体的异质缓存价值建模">1.2.1 面向流式智能体的异质缓存价值建模</a></li><li class="toc-h3"><a href="#122-基于语义与结构匹配的缓存检索与有效性检查">1.2.2 基于语义与结构匹配的缓存检索与有效性检查</a></li><li class="toc-h2"><a href="#13-基于价值决策与依赖感知的缓存生命周期管理策略">1.3 基于价值决策与依赖感知的缓存生命周期管理策略</a></li><li class="toc-h3"><a href="#131-基于缓存价值的分层准入与淘汰机制">1.3.1 基于缓存价值的分层准入与淘汰机制</a></li><li class="toc-h3"><a href="#132-面向流式更新的依赖传播与缓存修复策略">1.3.2 面向流式更新的依赖传播与缓存修复策略</a></li><li class="toc-h2"><a href="#14-实验评估与分析">1.4 实验评估与分析</a></li><li class="toc-h3"><a href="#141-实验设置">1.4.1 实验设置</a></li><li class="toc-h3"><a href="#142-实验检验问题">1.4.2 实验检验问题</a></li><li class="toc-h3"><a href="#143-实验一复用决策c1">1.4.3 实验一：复用决策（C1）</a></li><li class="toc-h3"><a href="#144-实验二容量受限c2">1.4.4 实验二：容量受限（C2）</a></li><li class="toc-h3"><a href="#145-实验三更新与修复c3">1.4.5 实验三：更新与修复（C3）</a></li><li class="toc-h3"><a href="#146-实验四整体收益c4">1.4.6 实验四：整体收益（C4）</a></li><li class="toc-h3"><a href="#147-结果讨论">1.4.7 结果讨论</a></li><li class="toc-h2"><a href="#15-本章小结">1.5 本章小结</a></li><li class="toc-h2"><a href="#参考文献">参考文献</a></li></ul>
     </div>
   </aside>
   <main>
     <div class="map"><a class="mapcard" href="#10-绪论与相关工作预留素材暂存不放入本章正文"><span class="num">1.0</span><span class="ttl">绪论与相关工作预留素材（暂存，不放入本章正文）</span></a><a class="mapcard" href="#本章导语章首引言"><span class="num">§</span><span class="ttl">本章导语（章首引言）</span></a><a class="mapcard" href="#11-问题背景与分析"><span class="num">1.1</span><span class="ttl">问题背景与分析</span></a><a class="mapcard" href="#12-基于异质中间结果价值建模与有效性检查的缓存机制"><span class="num">1.2</span><span class="ttl">基于异质中间结果价值建模与有效性检查的缓存机制</span></a><a class="mapcard" href="#13-基于价值决策与依赖感知的缓存生命周期管理策略"><span class="num">1.3</span><span class="ttl">基于价值决策与依赖感知的缓存生命周期管理策略</span></a><a class="mapcard" href="#14-实验评估与分析"><span class="num">1.4</span><span class="ttl">实验评估与分析</span></a><a class="mapcard" href="#15-本章小结"><span class="num">1.5</span><span class="ttl">本章小结</span></a><a class="mapcard" href="#参考文献"><span class="num">§</span><span class="ttl">参考文献</span></a></div>
     <article>
       <h2 id="10-绪论与相关工作预留素材暂存不放入本章正文"><span class="num">1.0</span><span class="ttl">绪论与相关工作预留素材（暂存，不放入本章正文）</span></h2>
-<blockquote>
-<p><em>注：本节内容从原 1.1
-节中剥离，适用于论文整体第一章（绪论）的“研究背景与意义”及第二章（相关工作）的“智能体与大模型推理缓存研究现状”，在整理本章正文时可直接移出。</em></p>
-</blockquote>
-<h3 id="101-流式智能体的范式演进与连续服务特征"><span class="num">1.0.1</span><span class="ttl">流式智能体的范式演进与连续服务特征</span></h3>
-<p>在典型的单任务交互模式下，大语言模型智能体（LLM
-Agent）围绕单次用户请求依次执行“意图理解—任务规划—外部检索—工具调用—回答生成”的串行链路，请求结束后即丢弃执行过程中产生的检索证据、规划模板、工具结果与最终回答等中间产物。然而，在实际生产部署中，智能体越来越多地以<strong>连续服务（Continuous
-Service）<strong>形态运行，形成“流式智能体（Streaming
-Agent）”工作负载——系统持续接收交织到达的</strong>用户任务流</strong>与<strong>外部内容更新流</strong>。与单次离线的交互式调用相比，流式智能体运行环境呈现三方面显著差异：</p>
-<ol type="1">
-<li><strong>稳定的跨请求复用窗口</strong>：在业务高峰或周期性任务场景下，高频查询、热点知识片段、固定工具查询与标准任务流程会在连续时间窗口内反复出现；</li>
-<li><strong>事件驱动的外部状态演化</strong>：底层知识库文档、离线数据分区表、业务规则与外部工具接口会随时间持续发生版本变更，导致历史中间产物的有效性随外部事件动态变化；</li>
-<li><strong>持续积累的执行反馈记录</strong>：连续运行过程中产生的命中记录、重算开销与错误回退信号为缓存价值的动态估计提供了可观测依据。</li>
-</ol>
-<h3 id="102-现有大模型与智能体缓存研究脉络及空白"><span class="num">1.0.2</span><span class="ttl">现有大模型与智能体缓存研究脉络及空白</span></h3>
-<p>现有面向大语言模型与智能体系统的缓存研究主要沿两条技术主线展开：</p>
+<h3 id="101-流式智能体的连续服务特征"><span class="num">1.0.1</span><span class="ttl">流式智能体的连续服务特征</span></h3>
+<p>大语言模型智能体可按任务需要执行规划、外部检索、工具调用与回答生成。即使系统保留正常的会话上下文，若未对这些阶段的结果建立跨请求缓存，后续请求仍可能重复部分工作。本章考察的流式智能体是持续接收用户请求与外部更新通知的智能体服务。请求与更新可以交错到达，分别改变缓存的复用需求与有效范围。</p>
+<p>连续运行使跨请求复用机会及其变化可被持续观测。在一定时间内，系统可能反复收到相近的查询、执行相同的只读工具调用，或使用可适配到多个请求的计划模板。与此同时，文档、数据及业务口径的变化可能使部分结果不再适用。服务过程中积累的访问、实际耗时和回退记录可用于估计复用收益，其代表性仍取决于负载与版本变化。</p>
+<h3 id="102-现有大模型与智能体缓存研究"><span class="num">1.0.2</span><span class="ttl">现有大模型与智能体缓存研究</span></h3>
 <ul>
-<li><strong>模型推理层 KV Cache 复用</strong>[1,2,3]：聚焦于 Transformer
-注意力计算中的键值张量复用，通过前缀共享、分层卸载与显存调度降低预填充（Prefill）与解码（Decode）阶段的计算与访存开销。此类方法严格依赖
-token
-级前缀匹配，无法覆盖工具调用、外部检索与高层规划等推理引擎之外的异质中间产物。</li>
-<li><strong>应用层语义回答缓存（Semantic Answer
-Cache）</strong>[4,5]：通过向量相似度检索历史问答对，直接返回语义相近的历史回答以跳过完整的模型推理链路。此外，近期少量研究开始探索针对单一中间产物（如规划模板或检索块）的专用缓存机制[6,7,8]。</li>
+<li><strong>推理层 KV Cache 复用。</strong> CachedAttention、KVFlow 和
+RAGCache 等工作在不同推理场景中复用或管理 Transformer
+的键值状态[1–3]。基于前缀匹配的方案要求共享相同的 token
+前缀；也有方法通过选择性重算复用非前缀文本块的 KV 状态，第 1.1 节提到的
+Cache-Craft
+属于这一类。这类方法复用模型推理状态，不直接替代应用层的检索、工具执行或规划。</li>
+<li><strong>应用层结果复用。</strong>
+语义回答缓存以历史回答为候选，通过语义匹配及质量控制减少重复生成[4,5]。相关工作也探索了工具相关信息、计划经验和工作流结果的缓存与复用[6–8]。</li>
 </ul>
-<p>综合来看，现有工作存在两类互补的研究空白：<strong>其一，缺乏面向异质对象的统一价值度量准则</strong>，现有策略多依赖时间、频次或静态规则，未能围绕“未来预期净收益”对不同类型对象的复用收益与误用代价进行统一量化；<strong>其二，缺乏面向内容持续演化的跨对象生命周期与依赖管理机制</strong>，在外部来源更新时难以兼顾缓存一致性与重算开销控制。此外，工作负载的非平稳特性进一步放大了上述两类问题的求解难度。</p>
+<p>这些工作为相应层次或对象的复用提供了方法。本章关注多类应用层对象在同一请求路径上的收益如何计量，以及这些收益如何影响有限容量下的保留和更新决策。具体问题见第
+1.1 节。</p>
 <h2 id="本章导语章首引言">本章导语（章首引言）</h2>
-<p>面向持续提供服务的流式智能体系统，单次请求往往串联任务规划、知识检索、工具调用与回答生成等多个高开销阶段，直接重复执行全链路会带来显著的响应延迟与推理成本。在用户任务流与外部更新流交织到达的运行环境中，如何对执行链路产生的多类异质中间产物实施高效缓存，并在内容持续演化时维持复用收益与结果正确性的平衡，是降低端到端开销的关键问题。针对上述需求，本章提出一种面向流式智能体的异质缓存机制与生命周期管理策略。</p>
-<p>本章的组织结构如下：第 1.1
-节分析流式智能体中的异质缓存复用特征、现有判定信号的结构性错配与核心研究问题，并给出本章主要符号定义；第
-1.2 节构建面向多类异质对象的统一净收益价值模型与风险受控复用机制；第 1.3
-节设计基于集合增益的准入淘汰调度策略，以及面向单轮
-<code>rag → resp</code> 链路的依赖传播与缓存修复机制；第 1.4
-节通过离线事件回放与真实请求标定实验对所提方法进行评测与分析；第 1.5
-节总结本章工作。</p>
+<p>本章所称流式智能体，是在连续服务中处理用户请求并接收外部证据或数据更新通知的智能体系统。请求与更新通知可交错到达：不同请求可能重复执行相同的规划、检索、工具调用或回答生成，外部更新则可能使先前的结果不再适用。各类结果的复用粒度、有效条件和可替代的开销不同。缓存收益取决于实际省去的工作和复用本身的开销，能否复用仍受权限、语义适用性和数据时效约束。收到更新通知后，系统还需判断哪些条目应暂停复用，以及是否值得修复。本章据此研究应用层异质缓存的复用决策与生命周期管理。</p>
+<p>第 1.1
+节分析复用机会、决策约束及缓存对象之间的依赖与收益重叠，提出研究问题并界定范围；第
+1.2
+节估计各类对象的时间净节省，构建综合调度评分，并设计有效性检查与回答风险门控；第
+1.3 节讨论基于集合边际增益的准入与淘汰，以及单轮 <code>rag → resp</code>
+链路的依赖维护与修复；第 1.4
+节给出实验设计，说明如何通过事件回放和抽样执行评估所提机制；第 1.5
+节总结本章。</p>
 <h2 id="11-问题背景与分析"><span class="num">1.1</span><span class="ttl">问题背景与分析</span></h2>
-<p>在连续服务场景下，流式智能体需要持续处理交织到达的用户请求流与底层知识/数据更新流。研究表明，智能体执行链路中的重复计算具有高度集中性与高昂成本：在检索增强生成（RAG）负载中，约
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">3/4</annotation></semantics></math>
-的检索文本块在连续请求间重复出现[9]，外部检索环节可占据端到端响应时间的
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>40</mn><mi>%</mi><mtext mathvariant="normal">–</mtext><mn>50</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">40\%\text{--}50\%</annotation></semantics></math>[10]；在复杂推理与任务编排场景下，FinanceBench
-基准测试中规划阶段消耗了超过
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>90</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">90\%</annotation></semantics></math>
-的大语言模型调用开销[11]，而在具身智能体任务中，规划与重规划耗时更是占到总运行时间的
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>70</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">70\%</annotation></semantics></math>
-以上[12]。</p>
-<blockquote>
-<p><em>[待补充：此处建议后续结合第 1.4
-节评测集，补充一组本章自测的动机实验数据与柱状/折线图（图
-1-1），直观展示不同阶段耗时占比及传统 TTL/LRU
-策略在更新流冲击下的有效命中率与过期误用率对比。]</em></p>
-</blockquote>
-<p>与传统 Web 缓存或单一粒度的 KV Cache[1]
-不同，流式智能体在单次请求执行链路中会产生多种语义层级、生成开销与失效规律迥异的中间产物。为便于后文统一建模，表
+<p>在请求与外部更新交错到达的流式智能体服务中，不同请求可能触发相同或相近的执行步骤。Cache-Craft
+在 Sys-X 工作负载中观察到，查询检索到的文本块约有 75%
+被重复处理，因而存在重复预填充计算[9]。另一些工作报告了特定执行阶段的开销：在单张
+H100 上运行 Search-R1 时，外部数据检索约占总执行时间的
+40%–50%[10]；Agentic Plan Caching 在 FinanceBench
+主结果配置中报告，用于规划的大模型产生的费用占该配置总费用的
+94.17%[11]。在 AgenticCache 测试的具身任务中，用于规划的 LLM
+调用耗时超过总运行时间的
+70%[12]。这些结果分别说明了重复处理现象和特定阶段的开销，不能直接推算本章工作负载中应用层缓存可以节省的时间。</p>
+<p>判断可节省的开销，首先需要明确缓存对象和正常执行路径。应用层缓存的内容可以是最终回答，也可以是规划、检索和工具执行的阶段性结果。结构化查询中的语义规范化与多粒度缓存是其中两类设计实例[13,14]。表
 1-1
-将流式智能体运行过程中的关键对象划分为四类可复用缓存对象与一类非复用依赖状态。</p>
-<p class="tbl-title">表 1-1 流式智能体中的异质缓存对象分类与复用特征</p>
+给出了本章考虑的四类缓存对象及其复用条件，并单列辅助决策的上下文与依赖状态。</p>
+<p class="tbl-title">表 1-1 流式智能体中的异质缓存对象与复用条件</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
-<th style="text-align: left;">对象标识</th>
-<th style="text-align: left;">对象类型</th>
-<th style="text-align: left;">典型内容与作用</th>
-<th style="text-align: left;">复用判定特征与演化敏感性</th>
+<th style="text-align: left;">标识</th>
+<th style="text-align: left;">对象</th>
+<th style="text-align: left;">缓存内容及可替代的工作</th>
+<th style="text-align: left;">主要复用条件</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>resp</code></td>
-<td style="text-align: left;">最终回答对象</td>
-<td style="text-align: left;">面向用户查询生成的最终自然语言回答</td>
+<td style="text-align: left;">最终回答</td>
 <td
-style="text-align: left;">语义相似度匹配；存在语义覆盖冗余，受上游检索证据版本变更的级联影响；高稳定性回答与动态回答在验证成本与驻留收益上存在分化</td>
+style="text-align: left;">离线筛选的常见问题回答或在线生成的回答；直接复用可跳过本次请求原本需要的部分或全部执行阶段</td>
+<td
+style="text-align: left;">按规范化请求精确匹配或语义召回，检查权限、上下文、请求条件及证据版本；语义候选还需经过风险判断</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>rag</code></td>
-<td style="text-align: left;">检索证据对象</td>
-<td style="text-align: left;">从外部文档库召回的证据块集合</td>
+<td style="text-align: left;">检索证据</td>
 <td
-style="text-align: left;">强依赖底层文档来源版本；文档更新后易失效，但未变更来源的证据块可跨请求稳定复用</td>
+style="text-align: left;">一次检索取得的证据块集合；条件满足时可减少或跳过完整检索</td>
+<td
+style="text-align: left;">逐块检查权限与版本，并确认有效证据覆盖当前问题；覆盖不足时补检或执行完整检索</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>act</code></td>
-<td style="text-align: left;">工具调用结果对象</td>
-<td style="text-align: left;">只读外部工具或结构化查询的返回结果</td>
+<td style="text-align: left;">只读工具结果</td>
 <td
-style="text-align: left;">结构化参数精确匹配；单次调用常支撑下游多个推理步骤或工具链，误用会直接污染后续计算</td>
+style="text-align: left;">外部工具或结构化查询的返回结果；可省去一次只读调用，输出字段也可能被多个下游工具使用</td>
+<td
+style="text-align: left;">匹配工具标识、版本、规范化参数及访问范围，并核对权限和结果所依赖的数据状态</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>plan</code></td>
-<td style="text-align: left;">任务规划模板对象</td>
-<td style="text-align: left;">多步任务分解方案与执行路径模板</td>
+<td style="text-align: left;">任务计划模板</td>
 <td
-style="text-align: left;">面向结构相似的任务簇复用；复用价值高度依赖历史执行完成率与稳定性</td>
+style="text-align: left;">可绑定当前任务参数的步骤与执行路径；可减少从头规划</td>
+<td
+style="text-align: left;">检查任务结构、前置条件、工具可用性与权限，并评估适配开销；模板通过检查后，执行仍可能需要返工或重新规划</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ctx</code></td>
 <td style="text-align: left;">上下文与依赖状态</td>
 <td
-style="text-align: left;">会话状态、版本快照与跨对象血缘映射（不直接复用）</td>
+style="text-align: left;">会话上下文、版本快照及依赖关系；用于有效性校验和更新传播</td>
 <td
-style="text-align: left;">记录对象间的依赖与版本边界，用于支撑有效性校验与更新传播，本身不作为复用候选</td>
+style="text-align: left;">不参与本章的跨请求缓存候选选择；会话上下文仍按正常流程使用</td>
 </tr>
 </tbody>
 </table></div>
-<p>如表 1-1
-所示，四类可复用对象在匹配粒度、生成代价与时效边界上存在本质差异[13,14]。在实际业务中，复用收益与误用代价往往源于同一机制：一旦复用发生误判（例如命中过期证据或错误回答），不仅无法节省开销，反而会引发下游重算、答案幻觉或结果污染。因此，缓存决策不能停留在“能否命中”：命中只说明存在可复用的候选，是否真正复用，还要看在给定未来时间窗口内，复用带来的预期开销节省是否高于其潜在的误用代价。</p>
-<div class="callout example"><div class="callout-kicker">示例 · 版本边界</div><p>以典型的 T+1
-离线分区表查询场景为例[15,16,17]：假设某业务数据表每日午夜
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>00</mn><mo>:</mo><mn>00</mn></mrow><annotation encoding="application/x-tex">00{:}00</annotation></semantics></math>
-完成分区切换与数据更新，针对该表产生的
-<code>rag</code>、<code>act</code>、<code>plan</code> 与
-<code>resp</code>
-缓存条目若采用静态生存时间（TTL）策略，将陷入两难困境——若设置
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>24</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> h</mtext></mrow></mrow><annotation encoding="application/x-tex">24\text{ h}</annotation></semantics></math>
-长 TTL，用户在
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>23</mn><mo>:</mo><mn>58</mn></mrow><annotation encoding="application/x-tex">23{:}58</annotation></semantics></math>
-写入的旧分区结果会在次日
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>00</mn><mo>:</mo><mn>05</mn></mrow><annotation encoding="application/x-tex">00{:}05</annotation></semantics></math>
-被继续命中，造成严重的过期数据误用；若为避免过期而将 TTL 缩短至
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> h</mtext></mrow></mrow><annotation encoding="application/x-tex">1\text{ h}</annotation></semantics></math>，则在午夜更新后的
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>00</mn><mo>:</mo><mn>30</mn></mrow><annotation encoding="application/x-tex">00{:}30</annotation></semantics></math>，大量本可在全天稳定复用的有效缓存条目会被过早驱逐，导致频繁重算。上述案例表明，脱离外部演化信号与对象特性的静态策略无法同时兼顾高复用率与低误用风险。</p></div>
-<p>TTL
-两难只是时间信号失效的一个具体表现。更一般地，现有缓存系统通常依据时间衰减、访问频次、静态类型规则或局部置信度信号作出准入、命中与淘汰决策[2,4,18,19]。然而，将其直接迁移至流式智能体异质缓存场景时，上述信号与“最大化未来净收益”的系统目标之间存在结构性错配，具体对比如表
-1-2 所示。</p>
-<p class="tbl-title">表 1-2
-现有缓存判定信号与流式智能体净收益目标的错配分析</p>
+<p><strong>当前复用的隐性开销与语义风险。</strong>
+候选被召回后，系统首先核对权限、依赖版本和适用条件。读取、校验、补检或适配都需计入复用耗时；若尝试后仍需正常执行，前期尝试还会增加开销。语义相近的回答即使通过前置检查，也可能不适用于当前请求。新条目或新版本缺少自身标注时，仅靠条目历史较难估计误复用风险。判断条目是否仍有效还须核对其依赖状态，仅凭条目年龄无法识别依赖变化。</p>
+<div class="callout example"><div class="callout-kicker">示例 · 版本边界</div><p><strong>依赖更新与单一决策信号的局限。</strong>
+以离线分区查询为例，假设新分区于 00:00
+发布，“最新”指最新已发布分区。23:58
+缓存的旧分区查询结果在切换后已不适用，但如果系统只检查 1
+小时的固定生存时间（time to live，TTL），这一条目在 00:05
+仍可能被当作有效结果返回。另一条在 23:20
+缓存的指标口径证据未被此次更新改变，却会在 00:20 因同样的 TTL
+到期而退出复用。这个示例说明，仅按条目年龄设置统一固定
+TTL，既可能保留已不适用的结果，也可能过早停止复用有效结果。第 1.4.1
+节第（3）项的动机实验将按对象比较正常执行与复用的耗时，并记录失败尝试的回退开销；更新前后的有效复用、过期误用和不必要重算，则用于比较固定
+TTL 与感知版本的策略。</p></div>
+<!-- 定稿时根据动机实验结果，在此处补入核心图及说明。 -->
+
+<p>过时信息对 RAG
+的影响已有专门的评测[15]。对于可变来源上的回答缓存，已有工作通过来源版本和依赖指纹约束回答复用[16]，或估计新鲜度风险以辅助复用决策[17]。表
+1-2
+区分到期判断、容量分配与当前复用等决策，并归纳各类信号单独使用时的局限[2,4,18,19]。</p>
+<p class="tbl-title">表 1-2 常见缓存决策信号及其局限</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
-<th style="text-align: left;">现有信号类别</th>
-<th style="text-align: left;">典型代表方法</th>
-<th style="text-align: left;">隐含假设</th>
-<th style="text-align: left;">在流式智能体场景下的结构性错配</th>
+<th style="text-align: left;">决策信号</th>
+<th style="text-align: left;">典型规则</th>
+<th style="text-align: left;">对应决策与作用</th>
+<th style="text-align: left;">单独使用时的局限</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">时间类信号</td>
-<td style="text-align: left;">固定 TTL、LRU</td>
+<td style="text-align: left;">条目年龄</td>
+<td style="text-align: left;">固定 TTL</td>
+<td style="text-align: left;">到期判断：根据条目年龄判定是否到期</td>
 <td
-style="text-align: left;">条目价值随时间单调衰减，且各对象失效周期均匀</td>
-<td
-style="text-align: left;">无法刻画事件驱动的突发性更新（如午夜分区切换），易导致“更新前过早失效、更新后延迟过期”</td>
+style="text-align: left;">不区分来源是否发生更新，可能保留旧结果或提前停止有效结果的复用</td>
 </tr>
 <tr>
-<td style="text-align: left;">频次类信号</td>
+<td style="text-align: left;">最近访问时间</td>
+<td style="text-align: left;">LRU</td>
+<td style="text-align: left;">淘汰选择：优先淘汰最久未被访问的条目</td>
+<td
+style="text-align: left;">不核对来源版本，也不直接比较保留不同条目可节省的工作</td>
+</tr>
+<tr>
+<td style="text-align: left;">访问频次</td>
 <td style="text-align: left;">LFU、访问计数</td>
-<td style="text-align: left;">高频条目必然具有高缓存价值</td>
+<td style="text-align: left;">保留排序：优先保留访问更频繁的条目</td>
 <td
-style="text-align: left;">忽视不同对象间的重算代价差异与误用惩罚，易将低开销条目留在缓存而淘汰高开销的
-<code>plan</code>/<code>act</code> 对象</td>
+style="text-align: left;">不反映每次复用实际避免的开销，以及校验与回退代价</td>
 </tr>
 <tr>
-<td style="text-align: left;">静态类型规则</td>
-<td style="text-align: left;">按对象类型固定优先级或配额</td>
-<td style="text-align: left;">同类对象具有相近的复用收益与稳定性</td>
+<td style="text-align: left;">对象类型</td>
+<td style="text-align: left;">固定优先级或配额</td>
 <td
-style="text-align: left;">忽略同类对象内部的语义覆盖冗余（如高度重叠的
-<code>resp</code> 条目边际增益趋近于零[3,5]）与历史质量分化</td>
+style="text-align: left;">容量分配或排序：按对象类型设定配额或优先级</td>
+<td
+style="text-align: left;">不反映同类条目的覆盖范围、有效性及适配成本差异</td>
 </tr>
 <tr>
-<td style="text-align: left;">局部学习/验证信号</td>
-<td style="text-align: left;">单条目相似度阈值、独立置信度门控</td>
-<td style="text-align: left;">各条目反馈样本充足且相互独立</td>
+<td style="text-align: left;">语义相似度与条目反馈</td>
+<td style="text-align: left;">固定相似度阈值、逐条目风险门控</td>
 <td
-style="text-align: left;">在新条目冷启动或文档版本更新后缺乏足够单条目历史样本，难以可靠估计误用风险并权衡重生成代价</td>
+style="text-align: left;">当前复用：用相似度初判匹配，或根据历史反馈调整复用决策</td>
+<td
+style="text-align: left;">固定阈值难以反映风险差异；逐条目门控在新条目或新版本反馈不足时难以获得稳定估计</td>
 </tr>
 </tbody>
 </table></div>
-<p>进一步从数据演化与对象耦合视角看，流式智能体的异质缓存体系在结构上类似于数据库中的**物化视图（Materialized
-View）**维护问题，但约束更为严苛：一方面，大语言模型从检索证据生成最终回答的推导过程具有非唯一性，难以通过纯关系代数规则直接增量重算；另一方面，上游来源版本的局部更新会沿对象依赖链路向下游传导（例如
-<code>rag</code> 证据更新导致依赖该证据的 <code>resp</code>
-回答失效），而语义空间中相似回答的集合覆盖效应又使得缓存条目的边际价值并非简单线性可加[3,5]。</p>
-<p>把上述线索合起来看：对象异质与信号错配使单条目的复用价值与误用风险难以准确度量，语义覆盖与跨对象演化耦合又放大了有限容量下的调度与一致性维护难度。因此，在有限缓存容量与外部内容持续演化的约束下，构建高效、可靠的异质缓存机制主要面临以下两项核心技术难点：</p>
+<p><strong>有限容量下的集合边际收益。</strong> 表 1-2
+所列信号各自服务于特定决策，不能直接给出新增一个条目对缓存集合的影响。准入与保留应估计该条目在未来一段时间内为集合增加的时间净节省，考虑相容请求的到达情况、条目的有效范围，以及其他缓存已提供的复用机会。若已有回答能在相同约束下为同一批请求提供等效服务，新增回答在这批请求上的边际覆盖收益为零[5]。不同类型的条目也可能节省同一段工作：直接复用最终回答时，原本需要的检索或工具执行已经被跳过，不能再将相应中间结果的命中计作同一次请求的节省；若整条回答不可复用，中间结果仍可能有价值。因此，仅按条目独立估值和排序，可能高估加入某个条目所带来的收益。准入与淘汰应在给定容量约束下比较变更前后的执行路径。</p>
+<p><strong>外部更新引发的依赖维护与修复权衡。</strong>
+证据块由来源版本派生，回答中不同事实表述又可能依赖不同证据块。因而，来源更新可能只影响回答中的部分事实。这一关系与数据库物化视图的依赖维护相似，但证据到自然语言回答的生成过程通常没有可直接套用的关系增量规则。一律废弃受影响的回答并完整重生成，可能重复处理仍有证据支持的表述；局部修复则需要定位变化、复核修改和保留的事实，其总成本未必更低。无论采用局部修复还是完整重生成，写回前均需核验事实表述是否得到证据支持。提交时再核对系统已知的依赖版本，避免将处理期间因收到新版本而不再适用的结果写回。</p>
+<p>据此，本章研究以下两个问题：</p>
 <ol type="1">
-<li><p><strong>多类型异质对象的统一净收益建模与稀疏反馈下的风险判定困难。</strong>
-四类对象在单次重算开销、预期复用次数与误用后果上相差悬殊，长期价值又分别受语义覆盖、来源版本、下游调用范围与执行稳定性等结构属性影响，难以在同一尺度上衡量未来净收益。与此同时，复用收益与误用风险共生：新入池或刚经历版本变更的条目缺少自身历史样本，按相似度放行容易引入高代价错误，保守拒绝又会错失本可复用的机会。如何在异质属性统一量化与稀疏反馈风险控制之间取得平衡，是价值评估与复用决策的首要难点。</p></li>
-<li><p><strong>有限容量下的集合级收益优化与并发演化中的跨对象一致性维护困难。</strong>
-有限容量下，缓存集合的整体收益不是各条目价值的线性叠加：语义高度重叠的回答会造成边际覆盖衰减，不同回答在验证成本与驻留收益上也有明显分化，按单条目得分贪心排序难以逼近集合最优。另一方面，文档更新与用户请求在时间上交错，上游变更会沿“来源版本
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
-证据块
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
-回答事实表述”向下游传导；受生成过程非唯一性的限制，更新时若一律整条失效并重算，开销过高，若放任旧回答继续服务或并发写回，又会残留过期事实或造成版本覆盖。如何在控制重算代价的同时保证演化过程中的事实准确性与版本一致性，是生命周期管理的核心难点。</p></li>
-</ol>
-<p>围绕上述两项难点，本章将研究问题凝练为两个紧密耦合的子问题：</p>
-<ul>
-<li><strong>子问题一（异质缓存价值建模与风险受控复用，对应第 1.2
-节）</strong>：如何面向
-<code>resp</code>、<code>rag</code>、<code>act</code>、<code>plan</code>
-四类异质对象，建立统一量纲的未来净收益估值模型与类型特定修正项，并在语义与结构召回、硬有效性校验的基础上，设计版本感知的簇内反馈借用与风险门控机制，以在稀疏反馈下实现收益与风险的可控权衡？</li>
-<li><strong>子问题二（集合增益生命周期调度与跨对象依赖维护，对应第 1.3
-节）</strong>：如何在有限容量约束下设计基于集合边际增益的统一准入/淘汰与分层晋升策略，并针对外部文档更新构建覆盖
-<code>来源版本 → 证据块 → 回答事实表述</code> 的单轮
+<li><strong>异质缓存估值与当前复用决策。</strong>
+如何在计入读取、校验、适配和回退耗时后估计各类缓存的未来时间净节省，并结合对象特有的信息形成调度评分？当语义回答候选自身反馈不足时，如何权衡当前复用机会与误用风险？</li>
+<li><strong>有限容量下的缓存调度与更新维护。</strong>
+如何根据候选条目给当前缓存集合带来的边际收益决定准入与淘汰？收到外部证据更新后，如何定位单轮
 <code>rag → resp</code>
-依赖追踪、选择性局部修复与版本条件提交机制？</li>
-</ul>
-<p><strong>研究边界界定</strong>：本章聚焦于应用层异质缓存的价值建模、复用风险控制与生命周期调度策略设计，通过标准化的估值信号与策略接口与底层推理引擎及存储系统解耦，不涉及大语言模型参数微调、推理引擎底层
+链路中受影响的回答，在局部修复与完整重生成之间选择，并避免依赖旧版本的结果写回？</li>
+</ol>
+<p><strong>研究范围。</strong> 本章对表 1-1
+中的四类缓存对象采用统一的估值与调度框架，具体复用条件按对象区分。工具结果的跨请求复用仅针对只读调用，按调用签名、权限与数据状态检查；计划模板则检查任务前置条件和工具可用性。语义召回的回答即使通过前置检查，仍可能无法满足当前请求，因此基于反馈的风险门控用于判断这类回答候选。考虑到回答中的事实可能分别依赖不同的检索证据，事实级依赖追踪与选择性修复聚焦于单轮
+<code>rag → resp</code>
+短回答。评测方案结合构造请求流上的事件回放与抽样执行标定。研究对象是应用层缓存策略，不改动模型参数、推理层
 KV Cache
-算子改造或分布式存储内核修改；实验评测聚焦于离线事件回放与真实请求延迟/成本校准下的策略有效性验证，分布式在线流处理引擎部署与超大规模集群吞吐扩展不在本章讨论范围内。</p>
-<p>为便于后文阐述，表 1-3
-总结了本章核心建模与调度算法所使用的主要数学符号。</p>
-<p class="tbl-title">表 1-3 本章主要符号说明</p>
-<div class="tbl-wrap"><table>
-<thead>
-<tr>
-<th style="text-align: left;">符号</th>
-<th style="text-align: left;">含义说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>,</mo><mi>H</mi></mrow><annotation encoding="application/x-tex">i, H</annotation></semantics></math></td>
-<td style="text-align: left;">候选缓存条目
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-及未来估值时间窗口长度
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math></td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">V_{\mathrm{base}}(i, H)</annotation></semantics></math></td>
-<td style="text-align: left;">条目
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-在窗口
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
-内的基础预期净收益，<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mover><mi>N</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><msub><mover><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow><mo accent="true">¯</mo></mover><mi>i</mi></msub><mo>−</mo><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">V_{\mathrm{base}}(i,H)=\widehat{N}_i(H)\overline{\Delta t}_i-\widehat{F}_i(H)</annotation></semantics></math></td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>N</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo><msub><mover><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow><mo accent="true">¯</mo></mover><mi>i</mi></msub><mo>,</mo><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\widehat{N}_i(H), \overline{\Delta t}_i, \widehat{F}_i(H)</annotation></semantics></math></td>
-<td style="text-align: left;">条目
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-在窗口
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
-内的预期复用次数、单次复用平均节省开销及预期误用代价</td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></msub><mo>,</mo><msub><mi>T</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi></mrow></msub><mo>,</mo><mi mathvariant="normal">Δ</mi><msub><mi>S</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">V_{\mathrm{final}}, T_{\mathrm{ref}}, \Delta S_{\mathrm{type}}</annotation></semantics></math></td>
-<td
-style="text-align: left;">归一化后的最终综合价值、参考时间归一化因子及类型特定价值修正项</td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo>,</mo><msub><mi>q</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">d_i, q_i</annotation></semantics></math></td>
-<td style="text-align: left;"><code>act</code>
-对象关联的下游工具调用数量
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>i</mi></msub><annotation encoding="application/x-tex">d_i</annotation></semantics></math>；<code>plan</code>
-对象的历史平滑完成率
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mi>i</mi></msub><annotation encoding="application/x-tex">q_i</annotation></semantics></math></td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>p</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo>,</mo><msub><mi>p</mi><mi>c</mi></msub><mo>,</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">\widehat{p}_i, p_c, m</annotation></semantics></math></td>
-<td style="text-align: left;">经簇内反馈借用平滑后的条目误用风险估计
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>p</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><annotation encoding="application/x-tex">\widehat{p}_i</annotation></semantics></math>、同簇先验误用率
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>c</mi></msub><annotation encoding="application/x-tex">p_c</annotation></semantics></math>
-及平滑先验权重
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math></td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>e</mi><mi>i</mi></msub><mo>,</mo><msub><mi>n</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">e_i, n_i</annotation></semantics></math></td>
-<td style="text-align: left;">条目
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-在当前版本下的历史错误次数
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mi>i</mi></msub><annotation encoding="application/x-tex">e_i</annotation></semantics></math>
-与总复用观测次数
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>i</mi></msub><annotation encoding="application/x-tex">n_i</annotation></semantics></math></td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>,</mo><mi>ε</mi></mrow><annotation encoding="application/x-tex">\delta, \varepsilon</annotation></semantics></math></td>
-<td
-style="text-align: left;">风险门控重生成机制中的置信容忍参数与风险上界阈值</td>
-</tr>
-<tr>
-<td
-style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>,</mo><mi>E</mi><mo>,</mo><mi mathvariant="normal">Δ</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">M, E, \Delta S</annotation></semantics></math></td>
-<td style="text-align: left;">当前缓存集合
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>、拟淘汰条目集合
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
-及引入条目
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-后的集合边际增益
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>S</mi><mo>=</mo><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mo stretchy="false" form="prefix">(</mo><mi>M</mi><mo>\</mo><mi>E</mi><mo stretchy="false" form="postfix">)</mo><mo>∪</mo><mo stretchy="false" form="prefix">{</mo><mi>i</mi><mo stretchy="false" form="postfix">}</mo><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mi>M</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\Delta S = S((M\setminus E)\cup\{i\},H)-S(M,H)</annotation></semantics></math></td>
-</tr>
-</tbody>
-</table></div>
+算子或分布式存储内核，也不评估分布式流处理引擎的在线部署与集群扩展能力。</p>
 <h2 id="12-基于异质中间结果价值建模与有效性检查的缓存机制"><span class="num">1.2</span><span class="ttl">基于异质中间结果价值建模与有效性检查的缓存机制</span></h2>
-<blockquote>
-<p>研究点一。本节内容待对齐后填写。</p>
-</blockquote>
 <h3 id="121-面向流式智能体的异质缓存价值建模"><span class="num">1.2.1</span><span class="ttl">面向流式智能体的异质缓存价值建模</span></h3>
-<p>本节先以预计节省的用户等待时间衡量四类对象共有的基础缓存价值，再分别考虑回答的新增覆盖、证据的来源版本、工具结果的下游支撑范围和计划的执行质量。以净收益衡量复用价值、按成本感知方式管理缓存的思路见文献[5,10]。</p>
-<p><strong>（1）基础缓存价值。</strong> 设当前时刻起的估值窗口长度为
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>，缓存条目
+<p>本节以未来估值窗口内的预计时间净节省作为四类对象的共同计量基础，并结合回答的新增覆盖、证据的来源版本、工具结果的下游支撑范围和计划的执行质量构建调度评分。相关的收益建模与成本感知缓存策略见文献[5,10]。</p>
+<p><strong>（1）时间净节省估计。</strong>
+设从当前估值时刻起的未来窗口长度为
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>。该窗口用于预测后续收益，不决定条目的保留时长。窗口内，缓存条目
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-的基础价值为：</p>
+的基础时间净节省为：</p>
 <div class="mathblock"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mover><mi>N</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mspace width="0.167em"></mspace><msub><mover><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow><mo accent="true">¯</mo></mover><mi>i</mi></msub><mo>−</mo><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">
 V_{\mathrm{base}}(i,H)=\widehat{N}_{i}(H)\,\overline{\Delta t}_{i}-\widehat{F}_{i}(H).
 </annotation></semantics></math></div>
 <ul>
 <li><strong>预计有效复用次数
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>N</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\widehat{N}_{i}(H)</annotation></semantics></math></strong>：根据近期滑动窗口内的相容需求、条目的剩余有效期及历史选用情况估计。需求统计覆盖已复用和经正常执行满足的相容请求或执行步骤。</li>
-<li><strong>单次复用净节省
+<li><strong>单次有效复用的平均时间净节省
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow><mo accent="true">¯</mo></mover><mi>i</mi></msub><annotation encoding="application/x-tex">\overline{\Delta t}_{i}</annotation></semantics></math></strong>：用正常执行的平均耗时减去成功复用的平均耗时。成功路径计入缓存读取、有效性检查以及必要的补检或适配。</li>
-<li><strong>失败尝试的额外开销
+<li><strong>尝试失败后回退的预期额外耗时
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\widehat{F}_{i}(H)</annotation></semantics></math></strong>：用预计失败次数乘以平均额外耗时。额外耗时是“尝试后回退”的总耗时减去“直接正常执行”的耗时。例如，检查工具结果用时
 30 ms，发现过期后调用工具用时 200 ms，而直接调用用时 200
-ms，则额外开销为 30 ms。尝试前已排除的候选不产生此项开销。</li>
+ms，则额外开销为 30
+ms。此项只计入尝试复用后回退所增加的时间。该估计不对已返回的错误回答等质量损失定价；权限、版本和回答质量由有效性检查、风险门控与实验指标分别处理。</li>
 </ul>
 <p><strong>（2）类型专属价值。</strong>
 回答和证据的专属价值用于校正基础估值，工具结果和计划的专属价值分别反映依赖结构和执行质量。</p>
@@ -562,7 +456,7 @@ ms，则额外开销为 30 ms。尝试前已排除的候选不产生此项开销
 <td>对每条结果，统计直接使用过其输出字段的不同下游工具数，同一工具重复使用只计一次。优先根据参数绑定记录确认字段来源；缺少绑定记录时，结合调用先后、字段含义和参数值推断。</td>
 </tr>
 <tr>
-<td><code>plan</code> 计划模板或片段</td>
+<td><code>plan</code> 任务计划模板</td>
 <td>计划执行质量价值</td>
 <td>根据复用该计划后的执行日志计算顺利完成率：成功完成且未发生返工、回退或重新规划的次数，除以使用该计划进入执行阶段的总次数。同时记录任务完成率和平均调整次数，分别反映完成情况和执行稳定性。</td>
 </tr>
@@ -573,15 +467,14 @@ ms，则额外开销为 30 ms。尝试前已排除的候选不产生此项开销
 <code>resp</code> 条目对应的请求需求分簇。系统借助 LLM
 提取请求意图、关键实体、时间范围和限定条件，将表述不同但回答需求一致的请求归入同一簇，并将缓存回答关联到其原始请求所在的簇。滑动窗口内各簇的请求频次用于估计潜在复用需求；估计边际覆盖价值时，从对应簇抽取近期请求，回放有、无该回答两种情况。当前请求能否复用该回答，仍由
 1.2.2 的有效性检查决定。请求意图规范化与簇划分可参考文献[20]。</p>
-<p><strong>（3）最终缓存价值与决策依据。</strong>
-将基础价值换算为无量纲分数，再结合各类对象的专属价值计算最终评分：</p>
-<div class="mathblock"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><msub><mi>T</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi></mrow></msub></mfrac><mo>+</mo><mi mathvariant="normal">Δ</mi><msub><mi>S</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
-V_{\mathrm{final}}(i,H)=\frac{V_{\mathrm{base}}(i,H)}{T_{\mathrm{ref}}}+\Delta S_{\mathrm{type}}(i,H),
+<p><strong>（3）综合调度评分。</strong>
+将基础时间净节省换算为无量纲分数，再结合各类对象的修正项计算综合调度评分：</p>
+<div class="mathblock"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo></mrow><msub><mi>T</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi></mrow></msub></mfrac><mo>+</mo><msub><mi>ϕ</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
+V_{\mathrm{final}}(i,H)=\frac{V_{\mathrm{base}}(i,H)}{T_{\mathrm{ref}}}+\phi_{\mathrm{type}}(i,H),
 </annotation></semantics></math></div>
 <p>其中，<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi></mrow></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">T_{\mathrm{ref}}&gt;0</annotation></semantics></math>
-为同一估值窗口下四类对象共用的参考时长。专属修正分
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><msub><mi>S</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\Delta S_{\mathrm{type}}</annotation></semantics></math>
-按对象计算：</p>
+是同一估值窗口下四类对象共用的参考时长，<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϕ</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">y</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi></mrow></msub><annotation encoding="application/x-tex">\phi_{\mathrm{type}}</annotation></semantics></math>
+为对象类型对应的评分修正项：</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
@@ -614,15 +507,15 @@ V_{\mathrm{final}}(i,H)=\frac{V_{\mathrm{base}}(i,H)}{T_{\mathrm{ref}}}+\Delta S
 <td><code>plan</code></td>
 <td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi></mrow></msub><msub><mi>q</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">w_{\mathrm{plan}}q_i</annotation></semantics></math></td>
 <td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mi>i</mi></msub><mo>∈</mo><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">q_i\in[0,1]</annotation></semantics></math>
-是该计划的顺利完成率，执行样本不足时可参考同类计划的统计。</td>
+是按执行日志统计的顺利完成率，成功且未发生返工、回退或重新规划才计为顺利完成；样本不足时可参考同类计划的统计。</td>
 </tr>
 </tbody>
 </table></div>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">t</mi></mrow></msub><annotation encoding="application/x-tex">w_{\mathrm{act}}</annotation></semantics></math>
 和
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi></mrow></msub><annotation encoding="application/x-tex">w_{\mathrm{plan}}</annotation></semantics></math>
-为正权重，分别表示下游支撑范围和计划执行质量在决策中的重要程度。参考时长、归一化上限和权重在验证阶段确定，正式评估时固定。最终评分用于准入、保留与淘汰，预计耗时节省单独报告；缓存容量作为
-1.3.1 的决策约束。</p>
+为正权重，分别表示下游支撑范围和计划执行质量在决策中的重要程度。参考时长、归一化上限和权重在验证阶段确定，正式评估时固定。综合调度评分用于准入、保留与淘汰。评分包含未折算为时间的修正项，因此预计耗时节省单独报告；缓存容量作为第
+1.3.1 节的决策约束。</p>
 <p>请求到达和执行反馈推动滑动窗口内的估计更新；证据版本或工具依赖状态变化时，重新评估受影响条目的有效复用机会。由此得到的估值供
 1.3.1 的准入、保留和淘汰使用，当前请求是否可以复用则由 1.2.2
 的有效性检查决定。</p>
@@ -656,43 +549,44 @@ V_{\mathrm{final}}(i,H)=\frac{V_{\mathrm{base}}(i,H)}{T_{\mathrm{ref}}}+\Delta S
 <td>检查权限及结果依赖的数据状态；状态仍有效时复用，否则重新调用工具。</td>
 </tr>
 <tr>
-<td><code>plan</code> 计划模板或片段</td>
-<td>按任务阶段和工具需求缩小范围，再按关键词和任务目标的语义召回 plan
-或模板。</td>
+<td><code>plan</code> 任务计划模板</td>
+<td>按任务阶段和工具需求缩小范围，再按关键词和任务目标检索可适配的计划模板。</td>
 <td>绑定当前任务的参数，检查前置条件、所需工具的可用性及权限；适配后满足条件时使用，否则重新规划。</td>
 </tr>
 </tbody>
 </table></div>
-<p>四类对象的检索与有效性检查分别参考：回答的语义召回与风险门控[4,21,22]、证据块索引与新鲜度核验[3,19]、工具调用签名与状态检查[6,10]、计划模板检索与适配[11,12,23]。</p>
-<p><strong><code>act</code> 的复用边界与幂等扩展。</strong>
-跨请求结果复用限于只读工具。幂等工具可按两种方式扩展：同一业务操作的重试，按业务操作
-ID
-查执行台账，已成功则直接返回记录结果；以达成固定状态为目的的操作（如定值写入、确保资源存在），先检查目标状态仍成立再跳过执行，检查开销计入复用成本。参数相同的不同业务操作须各自执行，幂等性本身不作为跳过一次新业务动作的依据。权限隔离与缓存投毒等安全边界参见文献[24,25]，作为硬有效性门槛的设计参考。</p>
+<p>四类对象的检索与有效性检查分别参考：回答的语义召回与风险门控[4,21,22]、检索证据的有效性核验[19]、工具调用签名与状态检查[6,10]、计划模板检索与适配[11,12,23]。</p>
+<p><strong><code>act</code> 的复用边界。</strong>
+本章只评估只读工具结果的跨请求复用。带副作用的操作不进入该策略：同一业务操作的重试应由独立的执行台账去重；对于以达成固定状态为目的的操作，是否需要再次执行应由业务逻辑根据当前目标状态判断。不同业务操作即使参数相同，也不能仅凭幂等性复用上一次的执行结果。权限隔离与缓存投毒等安全边界参见文献[24,25]，作为硬有效性门槛的设计参考。</p>
 <p><strong>（2）基于版本感知的簇内反馈判断回答能否复用。</strong>
 语义候选先检查权限、请求条件和证据版本，通过后才估计误复用风险。借鉴
 vCache
-的逐条目在线风险估计[4]，系统按回答条目、版本和相似度区间积累反馈，再根据风险决定重生成概率；响应侧的安全复用判断另见文献[22]。</p>
+的逐条目在线反馈思路[4]，系统按回答条目、版本和相似度区间积累反馈，并据此设定重生成概率；回答的安全复用判断另见文献[22]。</p>
 <ul>
 <li><p><strong>新版本反馈不足时，有限借用同簇反馈。</strong> 利用 1.2.1
 的 LLM
-请求簇，只从同簇其他条目借用同一相似度区间、权限范围相容且相关证据版本一致的近期标注。设候选当前版本有
+请求簇，只从同簇其他条目借用同一相似度区间、权限范围相容且相关证据版本一致的近期标注。设候选当前版本在对应相似度区间有
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>i</mi></msub><annotation encoding="application/x-tex">n_i</annotation></semantics></math>
-条自身标注，其中
+条有效的自身标注，其中
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mi>i</mi></msub><annotation encoding="application/x-tex">e_i</annotation></semantics></math>
-条不匹配；同簇反馈的不匹配比例为
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>c</mi></msub><annotation encoding="application/x-tex">p_c</annotation></semantics></math>，借用的等效样本数为
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>，取可借用样本数与预设上限的较小值。风险估计为：</p>
+条判为不匹配；兼容的同簇标注中，不匹配比例为
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>c</mi></msub><annotation encoding="application/x-tex">p_c</annotation></semantics></math>，借用的等效样本数
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+取可借用样本数与预设上限的较小值。当
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>i</mi></msub><mo>+</mo><mi>m</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">n_i+m&gt;0</annotation></semantics></math>
+时，误复用风险的点估计为：</p>
 <div class="mathblock"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>p</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>e</mi><mi>i</mi></msub><mo>+</mo><mi>m</mi><msub><mi>p</mi><mi>c</mi></msub></mrow><mrow><msub><mi>n</mi><mi>i</mi></msub><mo>+</mo><mi>m</mi></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
 \widehat p_i=\frac{e_i+m p_c}{n_i+m}.
 </annotation></semantics></math></div>
 <p>无兼容反馈时取
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">m=0</annotation></semantics></math>，自身标注越多，借用占比
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">m=0</annotation></semantics></math>，不计同簇项。给定
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>，自身标注越多，借用占比
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>/</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>n</mi><mi>i</mi></msub><mo>+</mo><mi>m</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">m/(n_i+m)</annotation></semantics></math>
-越小。合计样本量未达到最低要求时，走正常生成。证据更新产生新回答版本后，从新版本开始累计自身反馈。</p></li>
+越小。合计样本量未达到最低要求时，执行正常生成。证据更新产生新回答版本后，从新版本开始累计自身反馈。</p></li>
 <li><p><strong>按风险随机选择复用或生成。</strong> 样本量达标后，设
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>
-为误复用风险目标，<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>
-为最低抽样概率。当
+为计算重生成概率所用的误复用风险目标，<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>
+为最低抽样重生成概率。当
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>p</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo>≤</mo><mi>δ</mi></mrow><annotation encoding="application/x-tex">\widehat p_i\le\delta</annotation></semantics></math>
 时，以概率
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>
@@ -703,17 +597,18 @@ vCache
 正常生成，其余情况直接复用。正常生成时先返回新回答，再由轻量 LLM
 根据当前问题、可用证据和新回答，判断通过前置检查的旧候选是否答错、漏答或违反约束；判定明确时，将结果记入该候选的条目版本及相似度区间。</p></li>
 </ul>
-<p>风险目标用于计算重生成概率，实际误复用率通过流式回放测量。固定检索、判官与决策规则，对比启用和关闭簇内借用，观察证据更新后在相近误复用率下，有效命中能否更快恢复，并记录用户端时延。</p>
+<p>该规则以经验点估计为输入，不提供实际误复用率不超过
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>
+的保证。实验按独立真值测量实际误复用率。固定检索、标注和门控规则，比较启用与关闭簇内借用的效果，重点观察证据更新后的有效命中恢复过程及请求端时延。</p>
 <p><strong>（3）在实际使用前核对依赖状态。</strong>
-流式更新可能与候选检索交错。即使条目已被召回，实际使用前也要以系统当前已接收的版本状态为准。若此时收到来源更新，<code>rag</code>
+流式更新可能与候选检索交错。使用已召回的条目前，系统根据上下文与依赖状态
+<code>ctx</code>
+中记录的当前已知版本，再次核对条目的依赖。若此时收到来源更新，<code>rag</code>
 剔除受影响的旧证据块，再判断是否需要补检；依赖该来源且已失效的
 <code>resp</code>
 回答退出本次复用。系统记录实际采用的条目、检查结果和耗时，为 1.2.1
 更新价值估计；更新事件影响哪些缓存及如何修复，由 1.3.2 处理。</p>
 <h2 id="13-基于价值决策与依赖感知的缓存生命周期管理策略"><span class="num">1.3</span><span class="ttl">基于价值决策与依赖感知的缓存生命周期管理策略</span></h2>
-<blockquote>
-<p>研究点二。本节内容待对齐后填写。</p>
-</blockquote>
 <h3 id="131-基于缓存价值的分层准入与淘汰机制"><span class="num">1.3.1</span><span class="ttl">基于缓存价值的分层准入与淘汰机制</span></h3>
 <p>本节将 1.2.1
 的缓存评分用于准入、保留和淘汰。四类缓存共用价值决策；回答缓存
@@ -742,27 +637,11 @@ vCache
 </annotation></semantics></math></div>
 <p>集合评分
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-沿用 1.2.1
-的评分口径，在同一批代表性请求上评估两种缓存配置：同一次请求中实际避免的工作只计一次，再按
-1.2.1 的权重计入工具结果的下游支撑和计划的执行质量。以
+沿用第 1.2.1
+节的计量口径，在同一批代表性请求上比较替换前后的执行路径。同一次请求中实际避免的工作只计一次，再按同节的权重计入工具结果的下游支撑和计划的执行质量。拟淘汰集合由启发式规则给出；当变更满足容量约束且
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>S</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\Delta S&gt;0</annotation></semantics></math>
-作为写入或替换的价值条件，缓存容量单独约束。</p>
-<p>
-<div class="flowwrap">
-<div class="flow">
-  <div class="node start"><span class="idx">1</span><div class="nbody"><b>候选进入准入流程</b><span class="sub">起点</span></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">2</span><div class="nbody"><b>有效性检查通过？</b>
-    <div class="branches"><span class="b no">否 → 不写入候选</span><span class="b yes">是 → 进入容量判断</span></div></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">3</span><div class="nbody"><b>空间充足？</b>
-    <div class="branches"><span class="b no">否 → 清理无需修复的失效项，仍不足时选出拟淘汰条目</span><span class="b yes">是 → 直接比较评分</span></div></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">4</span><div class="nbody"><b>方案满足容量且整体评分上升？</b>
-    <div class="branches"><span class="b yes">是 → 写入候选并移除拟淘汰项</span><span class="b no">否 → 不写入候选</span></div></div></div>
-</div>
-</div>
-</p>
+时，才接受该准入或替换方案。</p>
+<p><div class="flowwrap" data-flow="1" aria-label="流程步骤与分支"><div class="flow"><div class="node start" id="flow-1-1" data-node="A"><span class="idx">1</span><div class="nbody"><b>候选进入准入流程</b><div class="branches"><span class="b " data-edge="A:B" data-condition="">下一步 → <a href="#flow-1-2">步骤 2：有效性检查通过？</a></span></div></div></div><div class="node decision" id="flow-1-2" data-node="B"><span class="idx">2</span><div class="nbody"><b>有效性检查通过？</b><div class="branches"><span class="b no" data-edge="B:X" data-condition="否">否 → 不写入候选</span><span class="b yes" data-edge="B:C" data-condition="是">是 → <a href="#flow-1-3">步骤 3：空间充足？</a></span></div></div></div><div class="node decision" id="flow-1-3" data-node="C"><span class="idx">3</span><div class="nbody"><b>空间充足？</b><div class="branches"><span class="b no" data-edge="C:D" data-condition="否">否 → <a href="#flow-1-4">步骤 4：清理无需修复的失效项，仍不足时选出拟淘汰条目</a></span><span class="b yes" data-edge="C:E" data-condition="是">是 → <a href="#flow-1-5">步骤 5：方案满足容量且整体评分上升？</a></span></div></div></div><div class="node" id="flow-1-4" data-node="D"><span class="idx">4</span><div class="nbody"><b>清理无需修复的失效项，仍不足时选出拟淘汰条目</b><div class="branches"><span class="b " data-edge="D:E" data-condition="">下一步 → <a href="#flow-1-5">步骤 5：方案满足容量且整体评分上升？</a></span></div></div></div><div class="node decision" id="flow-1-5" data-node="E"><span class="idx">5</span><div class="nbody"><b>方案满足容量且整体评分上升？</b><div class="branches"><span class="b yes" data-edge="E:F" data-condition="是">是 → 写入候选并移除拟淘汰项</span><span class="b no" data-edge="E:X" data-condition="否">否 → 不写入候选</span></div></div></div></div></div></p>
 <p class="caption"><em>图：四类缓存共用的准入与淘汰流程。</em></p>
 <p><strong>（2）<code>resp</code> 的静态层与动态层提升。</strong> 参考
 Krites 的双层回答缓存与异步验证思路[18]，两层分别保存：</p>
@@ -798,16 +677,16 @@ Krites 的双层回答缓存与异步验证思路[18]，两层分别保存：</p
 <p>RAG
 依赖的外部资料会随时间新增、修改或删除，这些变更以更新事件的形式持续进入流式智能体系统，形成证据更新流。更新事件可能在系统处理请求或修复缓存时到达，因此，证据更新与请求处理、缓存修复会在时间上交错。本节聚焦单轮
 <code>rag → resp</code>
-的短回答，依次完成<strong>记录依赖、定位影响、选择修复方式、核验写回</strong>，使缓存回答与系统当前已知的证据版本一致。可变文档上的依赖一致答案复用见文献[16]，新鲜度风险与刷新调度对陈旧的影响见文献[17,27]。</p>
+的短回答，依次完成<strong>记录依赖、定位影响、选择修复方式、核验写回</strong>，在系统已知的证据版本下管理缓存回答的可用性。可变文档上的依赖一致答案复用见文献[16]，新鲜度风险与刷新调度对陈旧的影响见文献[17,27]。</p>
 <p><strong>（1）生成时记录事实与证据的依赖。</strong>
-缓存回答时保存原问题、检索配置、索引版本和 Top-k
-证据，并记录“<strong>来源版本 → 证据块 →
+缓存回答时保存原问题、检索配置和 Top-k 证据，并在 <code>ctx</code>
+中记录索引版本以及“<strong>来源版本 → 证据块 →
 回答中的事实表述</strong>”的依赖关系。借助反向索引，系统能从变更证据定位到受影响的回答及具体表述；证据与表述的对应关系不清时，该回答走完整重生成路径。依赖感知的失效传播参考多智能体缓存的
 DAG 依赖建模[26]与可变文档答案复用[16]。</p>
 <p><strong>（2）更新时定位影响并暂停旧回答复用。</strong>
 收到证据新增、修改或删除事件后，先暂停尚未判定影响的缓存回答。首版用固定的确定性检索器对缓存查询完整重检，对比新旧
 Top-k 的证据 ID、内容版本或哈希及排序。这样也能发现新进入 Top-k
-的证据。检索结果与回答依据均未变化时恢复复用；发生变化时，把证据差异与依赖记录结合起来，定位受影响的表述。</p>
+的证据。检索结果与回答依据均未变化、且用于判定的版本仍是系统当前已知版本时，恢复条目的可复用状态；发生变化时，结合证据差异与依赖记录定位受影响的表述。</p>
 <p><strong>（3）根据影响范围选择局部修复或完整重生成。</strong>
 将原问题、旧回答、证据变更及更新后的相关证据交给轻量
 LLM，判断影响范围并提出修复候选（证据驱动的文本修订参考 RARR[28]）：</p>
@@ -831,250 +710,231 @@ LLM，判断影响范围并提出修复候选（证据驱动的文本修订参�
 </table></div>
 <p><strong>（4）核验回答，再按版本条件写回。</strong>
 逐条核验候选回答中的事实，包括修改和保留的表述（细粒度主张核验与幻觉标注参考
-RAGTruth[29]）。局部修复未通过核验时，回退到完整重生成。提交时复核任务绑定的索引版本和来源版本；若修复期间又收到相关更新，丢弃旧候选，按最新版本重新定位。通过核验且版本仍一致的结果，连同新依赖记录进入
-1.3.1 的准入流程；待修复的旧回答保持不可复用。</p>
-<p>
-<div class="flowwrap">
-<div class="flow">
-  <div class="node start"><span class="idx">1</span><div class="nbody"><b>收到证据更新</b><span class="sub">起点</span></div></div>
-  <div class="arrow"></div>
-  <div class="node"><span class="idx">2</span><div class="nbody"><b>暂停待判定回答并重新检索</b></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">3</span><div class="nbody"><b>检索结果或回答依据有变化？</b>
-    <div class="branches"><span class="b no">否 → 恢复旧回答复用</span><span class="b yes">是 → 定位影响</span></div></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">4</span><div class="nbody"><b>可定位影响且证据充分？</b>
-    <div class="branches"><span class="b yes">是 → 局部修复</span><span class="b no">否 → 完整重生成</span></div></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">5</span><div class="nbody"><b>事实核验通过？</b>
-    <div class="branches"><span class="b no">否 → 转完整重生成</span><span class="b yes">是 → 检查提交版本</span></div></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">6</span><div class="nbody"><b>提交时版本仍一致？</b>
-    <div class="branches"><span class="b no">否 → 回到步骤 2 重新定位</span><span class="b yes">是 → 新版本进入准入流程</span></div></div></div>
-  <div class="arrow"></div>
-  <div class="node decision"><span class="idx">7</span><div class="nbody"><b>完整重生成的结果通过核验？</b>
-    <div class="branches"><span class="b no">否 → 不写入缓存</span><span class="b yes">是 → 回到步骤 6 检查版本</span></div></div></div>
-</div>
-</div>
-</p>
+RAGTruth[29]）。局部修复未通过核验时，回退到完整重生成。完整重生成的结果若仍未通过核验，则不进入缓存。通过核验的候选及其依赖记录先按第
+1.3.1
+节评估准入。满足准入条件后，将索引版本和来源版本的核对与写入合并为一次条件提交；若当前已知版本已不匹配，则不写入旧候选，按最新版本重新定位。待修复的旧回答保持不可复用。</p>
+<p><div class="flowwrap" data-flow="2" aria-label="流程步骤与分支"><div class="flow"><div class="node start" id="flow-2-1" data-node="A"><span class="idx">1</span><div class="nbody"><b>收到证据更新</b><div class="branches"><span class="b " data-edge="A:B" data-condition="">下一步 → <a href="#flow-2-2">步骤 2：暂停待判定回答并重新检索</a></span></div></div></div><div class="node" id="flow-2-2" data-node="B"><span class="idx">2</span><div class="nbody"><b>暂停待判定回答并重新检索</b><div class="branches"><span class="b " data-edge="B:C" data-condition="">下一步 → <a href="#flow-2-3">步骤 3：检索结果或回答依据有变化？</a></span></div></div></div><div class="node decision" id="flow-2-3" data-node="C"><span class="idx">3</span><div class="nbody"><b>检索结果或回答依据有变化？</b><div class="branches"><span class="b no" data-edge="C:D" data-condition="否">否 → <a href="#flow-2-4">步骤 4：判定版本仍一致？</a></span><span class="b yes" data-edge="C:E" data-condition="是">是 → <a href="#flow-2-5">步骤 5：可定位影响且证据充分？</a></span></div></div></div><div class="node decision" id="flow-2-4" data-node="D"><span class="idx">4</span><div class="nbody"><b>判定版本仍一致？</b><div class="branches"><span class="b yes" data-edge="D:R" data-condition="是">是 → 恢复旧回答的可复用状态</span><span class="b no" data-edge="D:B" data-condition="否">否 → <a href="#flow-2-2">步骤 2：暂停待判定回答并重新检索</a></span></div></div></div><div class="node decision" id="flow-2-5" data-node="E"><span class="idx">5</span><div class="nbody"><b>可定位影响且证据充分？</b><div class="branches"><span class="b yes" data-edge="E:F" data-condition="是">是 → <a href="#flow-2-6">步骤 6：局部修复</a></span><span class="b no" data-edge="E:G" data-condition="否">否 → <a href="#flow-2-7">步骤 7：完整重生成</a></span></div></div></div><div class="node" id="flow-2-6" data-node="F"><span class="idx">6</span><div class="nbody"><b>局部修复</b><div class="branches"><span class="b " data-edge="F:H" data-condition="">下一步 → <a href="#flow-2-8">步骤 8：事实核验通过？</a></span></div></div></div><div class="node" id="flow-2-7" data-node="G"><span class="idx">7</span><div class="nbody"><b>完整重生成</b><div class="branches"><span class="b " data-edge="G:J" data-condition="">下一步 → <a href="#flow-2-10">步骤 10：事实核验通过？</a></span></div></div></div><div class="node decision" id="flow-2-8" data-node="H"><span class="idx">8</span><div class="nbody"><b>事实核验通过？</b><div class="branches"><span class="b no" data-edge="H:G" data-condition="否">否 → <a href="#flow-2-7">步骤 7：完整重生成</a></span><span class="b yes" data-edge="H:N" data-condition="是">是 → <a href="#flow-2-9">步骤 9：符合准入条件？</a></span></div></div></div><div class="node decision" id="flow-2-9" data-node="N"><span class="idx">9</span><div class="nbody"><b>符合准入条件？</b><div class="branches"><span class="b no" data-edge="N:L" data-condition="否">否 → 不写入缓存</span><span class="b yes" data-edge="N:I" data-condition="是">是 → <a href="#flow-2-11">步骤 11：版本条件提交成功？</a></span></div></div></div><div class="node decision" id="flow-2-10" data-node="J"><span class="idx">10</span><div class="nbody"><b>事实核验通过？</b><div class="branches"><span class="b no" data-edge="J:L" data-condition="否">否 → 不写入缓存</span><span class="b yes" data-edge="J:N" data-condition="是">是 → <a href="#flow-2-9">步骤 9：符合准入条件？</a></span></div></div></div><div class="node decision" id="flow-2-11" data-node="I"><span class="idx">11</span><div class="nbody"><b>版本条件提交成功？</b><div class="branches"><span class="b no" data-edge="I:B" data-condition="版本不匹配">版本不匹配 → <a href="#flow-2-2">步骤 2：暂停待判定回答并重新检索</a></span><span class="b yes" data-edge="I:K" data-condition="是">是 → 写入新版本及依赖记录</span></div></div></div></div></div></p>
 <p class="caption"><em>图：证据更新后的影响定位、修复与版本条件提交。</em></p>
 <p>例如，活动公告将开始时间从 <strong>10:00 改为
-10:30</strong>，地点和入场规则的依据仍有效，系统只修改时间，再核验整条回答。若提交前公告又改为
-<strong>11:00</strong>，10:30
-的修复结果作废，系统按最新证据重新处理。</p>
+10:30</strong>，地点和入场规则的依据仍有效，系统只修改时间，再核验整条回答。若提交前系统又收到公告改为
+<strong>11:00</strong> 的更新，10:30
+的修复结果不能写入缓存，需按新版本重新处理。</p>
 <p>该方法与完整重生成、轻量 LLM 直接改写的对比见 1.4.5。</p>
 <h2 id="14-实验评估与分析"><span class="num">1.4</span><span class="ttl">实验评估与分析</span></h2>
-<p>本章实验围绕四条结论组织：每个实验检验一条，四个实验共用同一实验台、同一请求序列与同一成本表。实验一在质量约束下比较复用决策，实验二在容量受限下比较保留策略，实验三比较知识更新后的修复代价，实验四比较整体收益。</p>
+<p>本节给出实验设计。四项评估以同一智能取数实验台为基础，分别考察复用决策、容量受限时的保留策略、证据更新后的修复代价，以及完整方案的端到端表现。主基准采用同一构造请求流；涉及不同更新强度的补充回放单独报告。</p>
 <h3 id="141-实验设置"><span class="num">1.4.1</span><span class="ttl">实验设置</span></h3>
-<p><strong>（1）离线回放与实测标定。</strong>
-实验在事件回放器上进行，按处理时间回放请求、证据更新与任务完成三类事件[30]。“不用缓存会怎样”这一反事实对任何策略都相同，因此预先算好一次，把执行分成两部分：</p>
+<p><strong>（1）离线回放与抽样执行标定。</strong>
+实验按系统收到请求、更新通知或任务反馈的顺序回放事件[30]。无缓存基线关闭本章的四类应用层缓存，保留正常会话上下文，并与其他方法使用相同的请求和外部状态。</p>
 <ul>
-<li><strong>离线回放</strong>：预先计算每条请求的无缓存生成结果、每条候选的判官标签与各项单价，形成标签表；各策略在这张表上回放，策略对比阶段不产生模型调用。</li>
-<li><strong>实测标定</strong>：抽取 300
-条请求真实执行，标定单价表，并报告建模时延相对实测时延的偏差（MAPE）。</li>
+<li><strong>离线回放：</strong>
+预先计算无缓存执行结果，准备候选复用的标注和各阶段成本。策略在回放时只读取当时已到达的事件；候选标注仅按被评估策略实际触发的重生成或核验流程向策略披露，不将评估真值作为决策输入。</li>
+<li><strong>执行标定：</strong> 计划抽取 300
+条构造请求，实际执行相应路径，标定其时延与成本；在独立验证样本上比较回放估计和实际执行时延，并报告平均绝对百分比误差（MAPE）。全量回放的时延为建模结果，抽样执行的实测结果另行报告。本地阶段已进行部分标定，尚未完成模型路径标定。</li>
 </ul>
-<p>全量结果报建模时延，正文同时给出 MAPE，说明其可信区间。</p>
-<p><strong>（2）数据与规模。</strong> 单场景受控实验台：2–3
-千篇带版本文档、3,000 条单轮短请求、40
-个更新事件；四类对象共用同一时钟，其中 <code>act</code> 为 50
-个只读状态查询、<code>plan</code> 为 30
-个模板。真值不依赖判官：<code>resp</code>
-由检索相关性与版本重算确定，<code>act</code>
-由规则引擎给出，<code>plan</code> 对照金标序列；工具与任务环境参考
-AgentBench[31]、WebArena[32]、ToolBench[33]、StableToolBench[34] 与
-WebShop[35] 的公开任务与沙箱接口。候选与标签表约 15,000
-行。判官只用于风险估计与主张核验，其与人工标注的一致率单独报告。</p>
-<p><strong>（3）指标。</strong>
-只报用户可见的结果，不报预测精度一类中间指标。</p>
+<p><strong>（2）数据与规模。</strong> 主基准包含 2,000
+篇带版本文档、3,000 条构造的单轮请求及 40 个更新事件；当前数据池含 100
+个只读工具结果候选与 60
+个计划模板。请求、到达过程和更新事件由受控实验台构造，不代表生产用户流量。评估真值独立于模型判官：数值事实依据对应快照上的参考查询结果，口径及证据支持依据版本化指标卡和事实标注，工具结果与计划执行分别对照规则和任务参考路径。模型判官用于风险估计和候选回答核验，其判断与人工复核的一致性另行报告。工具与任务环境的设计参考
+AgentBench[31]、WebArena[32]、ToolBench[33]、StableToolBench[34] 和
+WebShop[35]，不将其报告结果作为本章的实验结果。</p>
+<p><strong>（3）动机实验口径。</strong>
+按对象比较正常执行与成功复用的耗时，计入读取、核验、补检或适配，并单独记录失败尝试后的回退开销。针对更新前后的请求，在相同缓存容量与替换规则下，比较统一固定
+TTL
+与感知版本的有效性策略，区分有效复用、过期误用和不必要重算。该实验用于检验第
+1.1 节讨论的复用空间与固定 TTL
+的局限，不以阶段耗时占比代替可节省的时间。</p>
+<p><strong>（4）指标。</strong>
+主要指标反映复用质量、时延与开销；诊断指标用于解释回退、修复和替换的影响。</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
-<th>指标</th>
-<th>定义</th>
+<th style="text-align: left;">指标</th>
+<th style="text-align: left;">定义</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>回答正确率</td>
-<td>判定为正确的回答数除以总回答数</td>
+<td style="text-align: left;">回答正确率</td>
+<td style="text-align: left;">判定为正确的回答数除以总回答数</td>
 </tr>
 <tr>
-<td>质量约束</td>
-<td>相对无缓存基线的正确率下降（百分点）</td>
+<td style="text-align: left;">质量约束</td>
+<td
+style="text-align: left;">相对无缓存基线允许的回答正确率下降，单位为百分点</td>
 </tr>
 <tr>
-<td>P95 时延</td>
-<td>单请求端到端时延的 95 分位</td>
+<td style="text-align: left;">P95 时延</td>
+<td style="text-align: left;">单请求端到端时延的第 95 百分位数</td>
 </tr>
 <tr>
-<td>推理成本</td>
-<td>token、调用次数与后台时间按同一单价表折算</td>
+<td style="text-align: left;">推理成本</td>
+<td
+style="text-align: left;">按统一计费口径核算的模型及相关执行开销，计入后台模型调用</td>
 </tr>
 <tr>
-<td>安全复用</td>
-<td>命中且质量达标的请求数除以总请求数</td>
+<td style="text-align: left;">安全复用率</td>
+<td
+style="text-align: left;">实际复用了缓存且按真值判定复用有效、结果达标的请求数除以总请求数</td>
 </tr>
 <tr>
-<td>修复成本</td>
-<td>检索、生成与核验三项之和</td>
+<td style="text-align: left;">回答误复用率</td>
+<td
+style="text-align: left;">实际复用了缓存回答但按独立真值不适用或不正确的请求数除以总请求数；另报告在已复用回答中的占比</td>
 </tr>
 <tr>
-<td>goodput</td>
-<td>满足质量与 SLO 的请求数除以单位时间</td>
+<td style="text-align: left;">修复成本</td>
+<td
+style="text-align: left;">更新后影响定位、重检、生成、核验和回退所产生的总开销；同一工作不重复计入</td>
+</tr>
+<tr>
+<td style="text-align: left;">goodput</td>
+<td
+style="text-align: left;">单位回放时间内满足质量与时延目标（SLO）的请求数</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>（4）边界。</strong> 不做扩展性与跨硬件实验；不做 Flink
-真实部署，仅借用其状态管理接口；不单独做参数敏感性分析，实验一的前沿已覆盖风险目标；不与已有工作报告数字直接对齐，只做趋势比较。越权与过期复用次数作为硬断言报告，要求为零。</p>
-<h3 id="142-预期结论"><span class="num">1.4.2</span><span class="ttl">预期结论</span></h3>
-<p>四条结论与四个实验一一对应，式中字母为待实测数字。</p>
+<p><strong>（5）评测边界。</strong>
+本实验不评估跨硬件或分布式系统的扩展性。在线决策以系统已收到的更新为准；评估旧结果是否仍适用时，按数据实际生效的版本判定。分别检查越权复用、已知失效后继续复用及通知前发生的过期误用。如果主基准未覆盖“版本已生效但系统尚未收到更新”的请求，不用零违规推断该时段不存在风险。策略对比使用本章实验台的测量结果，不直接比较其他论文在不同负载下报告的数字。</p>
+<h3 id="142-实验检验问题"><span class="num">1.4.2</span><span class="ttl">实验检验问题</span></h3>
 <ul>
-<li><strong>C1 复用决策。</strong> 在回答正确率相对无缓存下降不超过 1
-个百分点的约束下，相比按固定阈值和 vCache 复现的逐条目风险门控，本文将
-P95 时延降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">a\%</annotation></semantics></math>、推理成本降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">b\%</annotation></semantics></math>；在
-1、3、5 个百分点三个约束点上，本文前沿始终位于基线左上方。</li>
+<li><strong>C1 复用决策。</strong> 在相同回答质量约束下，不同复用策略的
+P95
+时延、推理成本与安全复用率有何差异？簇内反馈借用能否帮助新版本更快恢复有效命中？</li>
 <li><strong>C2 容量受限。</strong>
-在同一有效性门槛与同一缓存容量下，相比 LRU、LFU、GDSF，本文分别多
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">x\%</annotation></semantics></math>、<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">y\%</annotation></semantics></math>、<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">z\%</annotation></semantics></math>
-的安全复用，P95 时延降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">c\%</annotation></semantics></math>、成本降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">d\%</annotation></semantics></math>。</li>
+在相同候选集、有效性门槛和容量约束下，依据集合边际评分的策略与
+LRU、LFU、GDSF 在安全复用、时延和成本上有何差异？</li>
 <li><strong>C3 更新与修复。</strong>
-相比完整重生成，本文的选择性修复将修复成本降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">Z\%</annotation></semantics></math>（检索降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">r\%</annotation></semantics></math>、生成降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">g\%</annotation></semantics></math>）、修复期
-P95 时延降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">s\%</annotation></semantics></math>，事实正确率与证据支持率不降；相比
-LLM 直接改写，成本仅高
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">e\%</annotation></semantics></math>，正确率高
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math>
-个百分点。</li>
-<li><strong>C4 整体收益。</strong> 相比任何单一机制，完整系统的 goodput
-提升
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">u\%</annotation></semantics></math>、总成本降低
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mi>%</mi></mrow><annotation encoding="application/x-tex">v\%</annotation></semantics></math>、正确率不降。</li>
+与完整重生成及直接改写相比，选择性修复在计入影响定位、重检、核验和回退后，具有怎样的成本与质量表现？这种表现如何随更新影响范围变化？</li>
+<li><strong>C4 整体收益。</strong>
+与无缓存、预先选定的单机制配置以及去掉单一组件的配置相比，完整方案在有效请求处理速率、时延、总成本和正确率上有何差异？</li>
 </ul>
 <h3 id="143-实验一复用决策c1"><span class="num">1.4.3</span><span class="ttl">实验一：复用决策（C1）</span></h3>
-<p>检验复用决策能否在质量约束下取得更多收益。质量约束取 1、3、5
-个百分点三点，每点下为各策略选择其最优配置，得到一条前沿。</p>
+<p>以相对无缓存基线允许的正确率下降为质量约束，分别考察 1、3、5
+个百分点三个约束点。各方法使用相同的候选、前置检查和标注口径，在独立验证回放上选取配置，再到测试回放上报告质量与时延；未达到质量约束的结果单独标记。</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
-<th>项</th>
-<th>内容</th>
+<th style="text-align: left;">项目</th>
+<th style="text-align: left;">内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>对比</td>
-<td>全局相似度阈值（单点）、按 vCache 复现的逐条目风险门控、本文</td>
+<td style="text-align: left;">对比</td>
+<td style="text-align: left;">全局相似度阈值、基于 vCache
+逐条目反馈思路的门控基线、本文方法；另比较关闭簇内借用的配置</td>
 </tr>
 <tr>
-<td>指标</td>
-<td>P95 时延、推理成本、回答正确率、安全复用</td>
+<td style="text-align: left;">指标</td>
+<td style="text-align: left;">P95
+时延、推理成本、回答正确率、安全复用率、回答误复用率</td>
 </tr>
 <tr>
-<td>主图</td>
-<td>质量-时延前沿（本文整条位于左上方）；去簇内借用的消融柱状</td>
+<td style="text-align: left;">主图</td>
+<td
+style="text-align: left;">质量与时延的权衡曲线；证据更新后有效命中的变化</td>
 </tr>
 </tbody>
 </table></div>
-<p>共 3,000 请求、3 个策略、3 个约束点，由离线回放完成。另单列更新后的
-500
-条请求，观察新版本标注稀少时命中恢复的速度——这是簇内借用唯一显形的条件；<code>act</code>
-与 <code>plan</code> 在同一批请求上以任务成功率与时延小表报告。</p>
+<p>在主基准上评估各策略，并单列更新后新版本自身标注较少的请求，观察有效命中随反馈积累的恢复过程。该分组用于检验簇内借用在反馈稀疏时的作用；同时保留全流量结果，以检验整体表现。只读工具结果与计划模板的复用另报告任务成功率和时延，不混入回答门控的消融。</p>
 <h3 id="144-实验二容量受限c2"><span class="num">1.4.4</span><span class="ttl">实验二：容量受限（C2）</span></h3>
-<p>检验容量不足时保留决策的质量。容量取工作集的 10%、25%、50%
-三点。四类策略共用同一候选集、同一硬门槛与同一成本表，差异只在保留决策。</p>
+<p>容量取工作集容量的 10%、25%、50% 三点。LRU、LFU、GDSF
+与本文策略共用候选集、有效性门槛和成本估计。在比较保留策略时固定回答缓存的层级设置，另对静态层配置做开关对照。</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
-<th>项</th>
-<th>内容</th>
+<th style="text-align: left;">项目</th>
+<th style="text-align: left;">内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>对比</td>
-<td>LRU、LFU、GDSF、本文</td>
+<td style="text-align: left;">对比</td>
+<td style="text-align: left;">LRU、LFU、GDSF、本文方法</td>
 </tr>
 <tr>
-<td>指标</td>
-<td>安全复用、P95 时延、累计成本、准入淘汰抖动</td>
+<td style="text-align: left;">指标</td>
+<td style="text-align: left;">安全复用率、P95
+时延、累计成本、准入与淘汰次数</td>
 </tr>
 <tr>
-<td>主图</td>
-<td>容量-收益曲线；<code>resp</code> 静态层开关的结果对比</td>
+<td style="text-align: left;">主图</td>
+<td
+style="text-align: left;">容量与收益曲线；回答缓存静态层开关的对照</td>
 </tr>
 </tbody>
 </table></div>
-<p>容量单位在设置中固定：<code>resp</code> 计 1，<code>rag</code>
-按证据块数计，<code>act</code> 与 <code>plan</code> 各计 1。</p>
+<p>主实验采用逻辑容量单位：每个
+<code>resp</code>、<code>act</code>、<code>plan</code> 条目计 1
+个单位，<code>rag</code>
+按所含证据块数计。该口径用于比较给定容量约束下的策略行为，不代表各类条目具有同样的物理存储开销。</p>
 <h3 id="145-实验三更新与修复c3"><span class="num">1.4.5</span><span class="ttl">实验三：更新与修复（C3）</span></h3>
-<p>检验知识更新后的修复代价。更新率取每千请求 5、20、50
-个事件三点，事件类型与构造方式参考 ChurnBench[27]。</p>
+<p>在主基准的 40 个更新事件上，评估单轮 <code>rag → resp</code>
+短回答的维护策略。以更新事件与受检回答的配对为统计单位，分别观察未受影响、影响可局部定位和需要完整重生成的情形。计划另构造不同更新率的补充回放，分别报告实际事件数与受检回答数；更新事件的设计参考
+ChurnBench[27]。</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
-<th>项</th>
-<th>内容</th>
+<th style="text-align: left;">项目</th>
+<th style="text-align: left;">内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>对比</td>
-<td>完整重生成、LLM 直接改写、本文依赖定位修复</td>
+<td style="text-align: left;">对比</td>
+<td style="text-align: left;">完整重生成、轻量 LLM
+直接改写、本文依赖定位与选择性修复</td>
 </tr>
 <tr>
-<td>指标</td>
-<td>修复成本（检索/生成/核验分解）、修复期 P95
-时延、事实正确率、证据支持率、回退率</td>
+<td style="text-align: left;">指标</td>
+<td style="text-align: left;">整体修复成本及分项、修复期间 P95
+时延、事实正确率、证据支持率、局部修复回退率</td>
 </tr>
 <tr>
-<td>主图</td>
-<td>质量-成本散点；成本分解堆叠柱</td>
+<td style="text-align: left;">主图</td>
+<td
+style="text-align: left;">质量与成本的对照；重检、生成、核验等开销的分解</td>
 </tr>
 </tbody>
 </table></div>
-<p>共 40 个事件、约 1,600 条受影响回答、3
-种方式。理想结果是本文落在完整重生成的正下方、直接改写的正右方：质量贴着重生成，成本贴着直改。回退率说明成本优势在何种条件下收窄。</p>
+<p>各方法根据同一批输入、同一版本的资料和同一评估真值比较。选择性修复若经核验失败并回退，其首次修复和后续重生成的开销均计入总成本。根据证据及事实表述的变化范围，分析定位和核验开销是否抵消生成阶段的节省。</p>
 <h3 id="146-实验四整体收益c4"><span class="num">1.4.6</span><span class="ttl">实验四：整体收益（C4）</span></h3>
-<p>检验完整系统相对单一机制的整体收益，在含更新事件的混合负载上比较四个配置。</p>
+<p>在含更新事件的混合负载上比较完整方案与对照配置。所报告的结论限于实际参与对比的配置。</p>
 <div class="tbl-wrap"><table>
 <thead>
 <tr>
-<th>项</th>
-<th>内容</th>
+<th style="text-align: left;">项目</th>
+<th style="text-align: left;">内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>对比</td>
-<td>无缓存、最强单一机制、完整系统、去掉单项的完整系统</td>
+<td style="text-align: left;">对比</td>
+<td
+style="text-align: left;">无缓存、预先选定的单机制配置、完整方案、分别关闭单一组件后的完整方案</td>
 </tr>
 <tr>
-<td>指标</td>
-<td>goodput、P95 时延、总成本、回答正确率</td>
+<td style="text-align: left;">指标</td>
+<td style="text-align: left;">goodput、P95 时延、总成本、回答正确率</td>
 </tr>
 <tr>
-<td>主图</td>
-<td>分组柱状；更新事件前后各 30 分钟的时序曲线</td>
+<td style="text-align: left;">主图</td>
+<td
+style="text-align: left;">各配置的主要指标；更新事件前后的时延和有效复用变化</td>
 </tr>
 </tbody>
 </table></div>
-<p>去掉单项分别检验 <code>act</code>/<code>plan</code>
-价值项、依赖修复与簇内借用的边际贡献。</p>
+<p>消融分别移除 <code>act</code> 类型修正项、<code>plan</code>
+类型修正项、选择性修复和簇内反馈借用，观察各项机制对端到端表现的影响。</p>
 <h3 id="147-结果讨论"><span class="num">1.4.7</span><span class="ttl">结果讨论</span></h3>
-<p>讨论三类情形：收益收窄的条件（容量极小时价值决策退化、更新率过高时回退率上升、请求重复度低时命中不足）；建模时延与实测时延的偏差来源；构造数据的边界（到达过程、重复与更新事件为构造，真值来源与偏差在数据卡中声明）。</p>
+<p>实验完成后，重点报告不同容量、更新强度和请求重复度下的表现，分析效果持平或下降的条件。讨论回放估计与实测时延的差异，以及由具体构造规则、版本通知方式和任务范围带来的适用边界。</p>
 <h2 id="15-本章小结"><span class="num">1.5</span><span class="ttl">本章小结</span></h2>
-<blockquote>
-<p>待对齐后填写。</p>
-</blockquote>
+<p>本章以连续服务中的应用层结果为研究对象，区分了当前请求的复用判断、有限容量下的保留决策，以及证据更新后的缓存维护。针对四类对象，本文以时间净节省作为共同计量基础，并结合对象特征构建综合调度评分；针对当前复用，引入按对象的有效性检查与回答风险门控。在生命周期管理中，准入与淘汰以集合边际增益为依据；证据更新后的选择性修复限于单轮
+<code>rag → resp</code> 链路。第 1.4
+节给出了检验这些机制的对照设计。</p>
 <h2 id="参考文献">参考文献</h2>
-<p class="refs-note">下列文献按正文引用顺序编号；预印本已标注，出处以正式发表版本为准。详细书目与使用位置见《第一章_参考文献汇总.xlsx》。</p>
+<p class="refs-note">下列文献按本稿首次引用的顺序编号。将第 1.0
+节的预留素材移出后，文献编号随论文全文统一调整。预印本已标注，书目信息可参照《第一章_参考文献汇总.xlsx》。</p>
 <p class="ref-item"><span class="refno">[1]</span> Gao B, He Z, Sharma P, et al. Cost-Efficient Large Language Model
 Serving for Multi-turn Conversations with
 CachedAttention[C]//Proceedings of the 2024 USENIX Annual Technical
@@ -1223,8 +1083,8 @@ href="https://webshop-pnlp.github.io">https://webshop-pnlp.github.io</a>.</p>
 </div>
 
 <footer>
-  第一章《面向流式智能体的异质缓存机制与生命周期管理策略》· 第二版 · 2026-11-24<br>
-  本页由 Markdown 源文件 <code>第一章_改后初稿_第二版.md</code> 转换生成，正文内容与源文件一致；阅读辅助元素（目录、叙事链、流程图、明暗主题）仅用于呈现。
+  第一章《面向流式智能体的异质缓存机制与生命周期管理策略》· 第二版修订 · 2026-11-25<br>
+  本页由 Markdown 源文件 <code>第一章_改后初稿_第二版.md</code> 转换生成，正文内容与源文件一致；阅读辅助元素（目录、流程图、明暗主题）仅用于呈现。
 </footer>
 
 <button class="toolbtn" id="totop" title="回到顶部" aria-label="回到顶部">↑</button>

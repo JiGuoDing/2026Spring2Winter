@@ -7,12 +7,14 @@
   "additionalProperties": false,
   "required": [
     "req_id", "timestamp", "query_text", "query_emb", "plan_id", "act_key",
-    "gold_doc_ids", "gold_fact_spans", "domain", "permission", "snapshot", "obj_types"
+    "gold_doc_ids", "gold_fact_spans", "domain", "permission", "snapshot", "obj_types",
+    "cluster_id"
   ],
   "properties": {
     "req_id": { "type": "string", "pattern": "^r[0-9]{6}$" },
     "timestamp": { "type": "string", "format": "date-time" },
     "query_text": { "type": "string", "minLength": 1 },
+    "cluster_id": { "type": "string", "pattern": "^cls_[a-z0-9_]+$" },
     "query_emb": {
       "oneOf": [
         { "type": "array", "items": { "type": "number" }, "minItems": 8 },

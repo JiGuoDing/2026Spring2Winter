@@ -1,0 +1,5 @@
+profile,label,measured,model_s,rag_calls,act_calls,attempts,rag_s,act_s,tool_s,total_s,tool_share_pct,save_if_tool_cached_s
+P1_local_measured,当前部署：27B 慢模型 + 本地工具,True,198.867,1,3.42,1.0,0.0062,0.0038,0.01,198.877,0.005,0.01
+P2_slow_model_remote,慢模型 + 远程工具（假设）,False,198.867,1,3.42,1.0525,0.3157,1.7998,2.1155,200.983,1.053,2.1155
+P3_fast_model_remote,快模型 + 远程工具（假设，生产常见）,False,4.0,1,3.42,1.0525,0.3157,1.7998,2.1155,6.116,34.593,2.1155
+P4_fast_model_warehouse,快模型 + 数仓/长排队（假设）,False,4.0,1,3.42,1.11,0.444,7.5924,8.0364,12.036,66.767,8.0364

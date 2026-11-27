@@ -1,16 +1,40 @@
 {
+  "dataset_version": "0.3.0",
   "global_seed": 42,
-  "seeds": [42, 43, 44, 45, 46],
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
   "semantic_threshold": 0.88,
-  "cache_capacity_tiers": [0.25, 0.5, 0.75],
+  "cache_capacity_tiers": [
+    0.25,
+    0.5,
+    0.75
+  ],
   "stale_penalty_weight": 1.0,
-  "ttl_scale_fractions": { "short": 0.03, "mid": 0.18, "long": 0.75 },
+  "ttl_scale_fractions": {
+    "short": 0.03,
+    "mid": 0.18,
+    "long": 0.75
+  },
   "db": {
     "tables": 60,
     "fields_per_table": 20,
     "rows_target": 50000,
-    "snapshots": ["v0", "v1", "v2"],
-    "composition": { "dim": 8, "fact": 34, "agg": 12, "log": 6 }
+    "snapshots": [
+      "v0",
+      "v1",
+      "v2"
+    ],
+    "composition": {
+      "dim": 8,
+      "fact": 34,
+      "agg": 12,
+      "log": 6
+    }
   },
   "knowledge": {
     "field_cards": 1200,
@@ -26,7 +50,19 @@
     "total": 200,
     "single_table": 60,
     "join": 70,
-    "nested_agg": 70
+    "nested_agg": 70,
+    "claims_per_task": {
+      "1": 0.15,
+      "2": 0.2,
+      "3": 0.3,
+      "4": 0.2,
+      "5": 0.15
+    }
+  },
+  "clusters": {
+    "count": 40,
+    "min_size": 3,
+    "max_size": 6
   },
   "updates": {
     "primary": 40,
@@ -37,7 +73,44 @@
       "lineage_switch",
       "codebook_revision",
       "data_row_change"
-    ]
+    ],
+    "local_repair_ratio_target": [
+      0.65,
+      0.75
+    ],
+    "negative_control_max": 8
+  },
+  "act_plan": {
+    "min_nonempty_ratio": 0.65,
+    "min_distinct_downstream_buckets": 4,
+    "plan_completion_by_steps": {
+      "3": [
+        0.9,
+        0.98
+      ],
+      "4": [
+        0.8,
+        0.9
+      ],
+      "5": [
+        0.8,
+        0.88
+      ],
+      "6": [
+        0.7,
+        0.82
+      ]
+    }
+  },
+  "embedding": {
+    "model": "BAAI/bge-small-zh-v1.5",
+    "onnx_repo": "Xenova/bge-small-zh-v1.5",
+    "onnx_revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "dim": 512,
+    "normalize": "l2",
+    "path": "embeddings/query_embeddings.npz",
+    "status": "generated",
+    "note": "真实 ONNX 编码，非 TF-IDF 代理；同模型同批序重跑逐字节一致"
   },
   "streams": {
     "primary_len": 3000,
@@ -46,6 +119,33 @@
     "seed_copies": 5,
     "time_span_hours": 18
   },
-  "calibration": { "requests": 300 },
-  "labels": { "branch_pairs": 120, "safe_reuse": 300, "human_review": 60 }
+  "calibration": {
+    "requests": 300,
+    "status": "measured",
+    "config": {
+      "max_tokens": 32768,
+      "context_window": 65536,
+      "reasoning_effort": "xhigh",
+      "temperature": 0.0,
+      "timeout_s": 2700,
+      "max_retries": 2,
+      "act_source": "template"
+    },
+    "model": {
+      "slot": "local-qwen3-8-27b",
+      "served_model": "qwen3.8-27b",
+      "deployment": "single GPU, serial"
+    },
+    "measured_at": "2026-11-26",
+    "n_requests": 300,
+    "n_branch_pairs": 30,
+    "resp_truncated": 0,
+    "empty_outputs": 0,
+    "service_restart_at_request": 259
+  },
+  "labels": {
+    "branch_pairs": 120,
+    "safe_reuse": 300,
+    "human_review": 60
+  }
 }

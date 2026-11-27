@@ -1,0 +1,120 @@
+=== boot pid=100864 ts=2026-11-26 22:11:11.897 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js create 内部预演版.pptx ===
+[2026-11-26 22:11:11.896] [INFO ] [pid=100864] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=109480 ts=2026-11-26 22:12:21.407 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/01.slide ===
+[2026-11-26 22:12:21.407] [INFO ] [pid=109480] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:21.431] [INFO ] [pid=109480] [slide-version] fileId=8598A7A7 version=0 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=83496 ts=2026-11-26 22:12:24.017 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/02.slide ===
+[2026-11-26 22:12:24.017] [INFO ] [pid=83496] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:24.039] [INFO ] [pid=83496] [slide-version] fileId=8598A7A7 version=1 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=87808 ts=2026-11-26 22:12:26.852 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/03.slide ===
+[2026-11-26 22:12:26.852] [INFO ] [pid=87808] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:26.875] [INFO ] [pid=87808] [slide-version] fileId=8598A7A7 version=2 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=110156 ts=2026-11-26 22:12:29.505 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/04.slide ===
+[2026-11-26 22:12:29.504] [INFO ] [pid=110156] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:29.527] [INFO ] [pid=110156] [slide-version] fileId=8598A7A7 version=3 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=109964 ts=2026-11-26 22:12:32.166 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/05.slide ===
+[2026-11-26 22:12:32.165] [INFO ] [pid=109964] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:32.188] [INFO ] [pid=109964] [slide-version] fileId=8598A7A7 version=4 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=109352 ts=2026-11-26 22:12:34.804 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/06.slide ===
+[2026-11-26 22:12:34.803] [INFO ] [pid=109352] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:34.826] [INFO ] [pid=109352] [slide-version] fileId=8598A7A7 version=5 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=110812 ts=2026-11-26 22:12:37.411 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/07.slide ===
+[2026-11-26 22:12:37.410] [INFO ] [pid=110812] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:37.433] [INFO ] [pid=110812] [slide-version] fileId=8598A7A7 version=6 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=53036 ts=2026-11-26 22:12:40.107 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/08.slide ===
+[2026-11-26 22:12:40.106] [INFO ] [pid=53036] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:40.129] [INFO ] [pid=53036] [slide-version] fileId=8598A7A7 version=7 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=110116 ts=2026-11-26 22:12:42.989 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/09.slide ===
+[2026-11-26 22:12:42.988] [INFO ] [pid=110116] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:43.011] [INFO ] [pid=110116] [slide-version] fileId=8598A7A7 version=8 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=91232 ts=2026-11-26 22:12:45.716 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/10.slide ===
+[2026-11-26 22:12:45.715] [INFO ] [pid=91232] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:45.738] [INFO ] [pid=91232] [slide-version] fileId=8598A7A7 version=9 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=109308 ts=2026-11-26 22:12:48.527 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/11.slide ===
+[2026-11-26 22:12:48.526] [INFO ] [pid=109308] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:48.549] [INFO ] [pid=109308] [slide-version] fileId=8598A7A7 version=10 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=96936 ts=2026-11-26 22:12:51.229 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/12.slide ===
+[2026-11-26 22:12:51.229] [INFO ] [pid=96936] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:12:51.253] [INFO ] [pid=96936] [slide-version] fileId=8598A7A7 version=11 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=89564 ts=2026-11-26 22:12:59.526 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 0 --out preview/b1.png --from-disk ===
+[2026-11-26 22:12:59.524] [INFO ] [pid=89564] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=107596 ts=2026-11-26 22:13:01.876 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 1 --out preview/b2.png --from-disk ===
+[2026-11-26 22:13:01.874] [INFO ] [pid=107596] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=98088 ts=2026-11-26 22:13:04.155 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 2 --out preview/b3.png --from-disk ===
+[2026-11-26 22:13:04.153] [INFO ] [pid=98088] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=56340 ts=2026-11-26 22:13:06.371 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 3 --out preview/b4.png --from-disk ===
+[2026-11-26 22:13:06.369] [INFO ] [pid=56340] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=93292 ts=2026-11-26 22:13:08.638 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 4 --out preview/b5.png --from-disk ===
+[2026-11-26 22:13:08.636] [INFO ] [pid=93292] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=104668 ts=2026-11-26 22:13:10.814 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 5 --out preview/b6.png --from-disk ===
+[2026-11-26 22:13:10.812] [INFO ] [pid=104668] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=99276 ts=2026-11-26 22:13:12.992 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 6 --out preview/b7.png --from-disk ===
+[2026-11-26 22:13:12.990] [INFO ] [pid=99276] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=110316 ts=2026-11-26 22:13:15.216 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 7 --out preview/b8.png --from-disk ===
+[2026-11-26 22:13:15.214] [INFO ] [pid=110316] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=103824 ts=2026-11-26 22:13:17.502 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 8 --out preview/b9.png --from-disk ===
+[2026-11-26 22:13:17.500] [INFO ] [pid=103824] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=89564 ts=2026-11-26 22:13:19.730 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 9 --out preview/b10.png --from-disk ===
+[2026-11-26 22:13:19.729] [INFO ] [pid=89564] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=100436 ts=2026-11-26 22:13:21.965 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 10 --out preview/b11.png --from-disk ===
+[2026-11-26 22:13:21.963] [INFO ] [pid=100436] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=108932 ts=2026-11-26 22:13:24.167 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 11 --out preview/b12.png --from-disk ===
+[2026-11-26 22:13:24.165] [INFO ] [pid=108932] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=99344 ts=2026-11-26 22:13:43.911 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/07.slide --page-index 6 ===
+[2026-11-26 22:13:43.910] [INFO ] [pid=99344] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:13:43.933] [INFO ] [pid=99344] [slide-version] fileId=8598A7A7 version=12 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=101896 ts=2026-11-26 22:13:45.800 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 6 --out preview/b7.png --from-disk ===
+[2026-11-26 22:13:45.798] [INFO ] [pid=101896] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=110316 ts=2026-11-26 22:14:30.672 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 0 --out preview/b1.png --from-disk ===
+[2026-11-26 22:14:30.669] [INFO ] [pid=110316] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=99432 ts=2026-11-26 22:14:32.939 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 1 --out preview/b2.png --from-disk ===
+[2026-11-26 22:14:32.938] [INFO ] [pid=99432] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=104636 ts=2026-11-26 22:14:35.119 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 2 --out preview/b3.png --from-disk ===
+[2026-11-26 22:14:35.117] [INFO ] [pid=104636] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=93792 ts=2026-11-26 22:14:37.296 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 3 --out preview/b4.png --from-disk ===
+[2026-11-26 22:14:37.294] [INFO ] [pid=93792] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=59836 ts=2026-11-26 22:14:39.531 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 4 --out preview/b5.png --from-disk ===
+[2026-11-26 22:14:39.529] [INFO ] [pid=59836] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=103848 ts=2026-11-26 22:14:41.802 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 5 --out preview/b6.png --from-disk ===
+[2026-11-26 22:14:41.800] [INFO ] [pid=103848] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=94800 ts=2026-11-26 22:14:43.983 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 6 --out preview/b7.png --from-disk ===
+[2026-11-26 22:14:43.981] [INFO ] [pid=94800] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=105416 ts=2026-11-26 22:14:46.164 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 7 --out preview/b8.png --from-disk ===
+[2026-11-26 22:14:46.162] [INFO ] [pid=105416] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=103728 ts=2026-11-26 22:14:48.506 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 8 --out preview/b9.png --from-disk ===
+[2026-11-26 22:14:48.504] [INFO ] [pid=103728] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=102936 ts=2026-11-26 22:14:50.724 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 9 --out preview/b10.png --from-disk ===
+[2026-11-26 22:14:50.722] [INFO ] [pid=102936] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=106752 ts=2026-11-26 22:14:52.931 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 10 --out preview/b11.png --from-disk ===
+[2026-11-26 22:14:52.929] [INFO ] [pid=106752] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=87860 ts=2026-11-26 22:14:55.122 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 11 --out preview/b12.png --from-disk ===
+[2026-11-26 22:14:55.120] [INFO ] [pid=87860] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=102104 ts=2026-11-26 22:15:06.187 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版.pptx --dsl-file slides/07.slide --page-index 6 ===
+[2026-11-26 22:15:06.187] [INFO ] [pid=102104] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:15:06.210] [INFO ] [pid=102104] [slide-version] fileId=8598A7A7 version=14 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx
+=== boot pid=109764 ts=2026-11-26 22:15:08.126 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 6 --out preview/b7.png --from-disk ===
+[2026-11-26 22:15:08.123] [INFO ] [pid=109764] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=81672 ts=2026-11-26 22:24:00.713 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 0 --out preview/b1.png --from-disk ===
+[2026-11-26 22:24:00.711] [INFO ] [pid=81672] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=104256 ts=2026-11-26 22:24:02.918 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 1 --out preview/b2.png --from-disk ===
+[2026-11-26 22:24:02.916] [INFO ] [pid=104256] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=62780 ts=2026-11-26 22:24:05.124 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 2 --out preview/b3.png --from-disk ===
+[2026-11-26 22:24:05.122] [INFO ] [pid=62780] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=99636 ts=2026-11-26 22:24:07.319 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 3 --out preview/b4.png --from-disk ===
+[2026-11-26 22:24:07.317] [INFO ] [pid=99636] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=106060 ts=2026-11-26 22:24:09.553 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 4 --out preview/b5.png --from-disk ===
+[2026-11-26 22:24:09.551] [INFO ] [pid=106060] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=107692 ts=2026-11-26 22:24:11.735 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 5 --out preview/b6.png --from-disk ===
+[2026-11-26 22:24:11.733] [INFO ] [pid=107692] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=100684 ts=2026-11-26 22:24:13.925 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 6 --out preview/b7.png --from-disk ===
+[2026-11-26 22:24:13.923] [INFO ] [pid=100684] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=95620 ts=2026-11-26 22:24:16.250 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 7 --out preview/b8.png --from-disk ===
+[2026-11-26 22:24:16.248] [INFO ] [pid=95620] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=100080 ts=2026-11-26 22:24:18.494 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 8 --out preview/b9.png --from-disk ===
+[2026-11-26 22:24:18.492] [INFO ] [pid=100080] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=109744 ts=2026-11-26 22:24:20.706 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 9 --out preview/b10.png --from-disk ===
+[2026-11-26 22:24:20.704] [INFO ] [pid=109744] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=62348 ts=2026-11-26 22:24:22.869 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 10 --out preview/b11.png --from-disk ===
+[2026-11-26 22:24:22.867] [INFO ] [pid=62348] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+=== boot pid=100364 ts=2026-11-26 22:24:25.057 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版 argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js screenshot 内部预演版.pptx --page-index 11 --out preview/b12.png --from-disk ===
+[2026-11-26 22:24:25.055] [INFO ] [pid=100364] [server-url] baseUrl=http://127.0.0.1:39099 source=env

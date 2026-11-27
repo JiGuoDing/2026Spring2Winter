@@ -1,0 +1,342 @@
+{
+  "CALIBRATION.md": {
+    "rows": 85,
+    "sha256": "1e44405a40b581d57659a08ff6e76061bd560cefc6f0128e5afd9f933327563d"
+  },
+  "README.md": {
+    "rows": 123,
+    "sha256": "e06d88dba97bf3db8f12f6f63510068f9a380a574de4a51bb9300b94c8fff1b1"
+  },
+  "act_plan_pool.json": {
+    "rows": 1,
+    "sha256": "436ec89cc3d54b7069cf69ec8fbea22e662e28f95d7f9d49fa4793f13e77cdb4"
+  },
+  "build.py": {
+    "rows": 1272,
+    "sha256": "15ab4cfeb844c791e1d54586b9e32afee138e35ea3d2d00783776efcf52b42f6"
+  },
+  "calibrate.py": {
+    "rows": 100,
+    "sha256": "f0bcf9981eb83b362017ce7ac64c846de7acaa20b9709bfc61b43aa6f6263253"
+  },
+  "calibration_sample.jsonl": {
+    "rows": 300,
+    "sha256": "e2d155df1c810b1febb9900e27c71eb0b7d84b8729e81d16926d4eff07f5ca64"
+  },
+  "docs_versioned.jsonl": {
+    "rows": 6000,
+    "sha256": "0b2db62f0426e26a7604d1615bf0fc346eadb6fc8cf53e364f736d6b33012b2a"
+  },
+  "real_calibration_300.csv": {
+    "rows": 300,
+    "sha256": "f42a1d57084a496ece34f0e1f138561f470dd3785139f066e46c962ebc3291a3"
+  },
+  "real_calibration_300.template.csv": {
+    "measured": true,
+    "note": "只有 t_act_ms 是 calibrate.py 真实执行 gold_sql 的实测值，其余列留空",
+    "rows": 300,
+    "sha256": "ce10ab09f205adfdc345d569cdbd98b8ca8af400b962c807ede4d5b7e72bb75a",
+    "tolerance": "计时随机器波动，重测会改变哈希"
+  },
+  "request_context.jsonl": {
+    "rows": 3000,
+    "sha256": "6b89a13fba27e11e9a4593530aa1bf1eef9633dd83eda134d041016d6460a479"
+  },
+  "request_stream.jsonl": {
+    "rows": 3000,
+    "sha256": "c746932ba60bf00b2b8f51a0da95bfad239b7508d03136620551b11f598efe3a"
+  },
+  "selfcheck.py": {
+    "rows": 797,
+    "sha256": "468856bd0578efc45e1e8a5296980affe5100b70f72a9c9e5425407acf350c31"
+  },
+  "stats": {
+    "calibration": {
+      "blank_columns": [
+        "t_plan_ms",
+        "t_rag_ms",
+        "t_resp_ms",
+        "t_total_ms",
+        "token_cost"
+      ],
+      "measured_columns": [
+        "t_act_ms"
+      ],
+      "sample_rows": 300,
+      "target_rows": 300,
+      "template_note": "req_id 集合未变时保留已实测 t_act_ms，不重测"
+    },
+    "docs_versioned": {
+      "doc_types": {
+        "field": 1200,
+        "metric": 150,
+        "note": 290,
+        "plan": 60,
+        "tool": 100,
+        "whitepaper": 200
+      },
+      "rows": 6000,
+      "versions": {
+        "1": 2000,
+        "2": 2000,
+        "3": 2000
+      }
+    },
+    "pool": {
+      "act_cost_max": 0.77,
+      "act_cost_min": 0.02,
+      "acts": 100,
+      "downstream_buckets": {
+        "0": 20,
+        "1": 20,
+        "2": 7,
+        "3": 53
+      },
+      "downstream_nonempty_ratio": 0.8,
+      "downstream_target": {
+        "0": 0.3,
+        "1": 0.3,
+        "2": 0.25,
+        "3plus": 0.15
+      },
+      "plan_completion": [
+        0.708,
+        0.978
+      ],
+      "plan_completion_by_steps": {
+        "3": 0.9364,
+        "4": 0.8495,
+        "5": 0.8439,
+        "6": 0.7496
+      },
+      "plan_cost": [
+        0.3,
+        1.2
+      ],
+      "plan_steps": {
+        "3": 16,
+        "4": 16,
+        "5": 15,
+        "6": 13
+      },
+      "plans": 60
+    },
+    "streams": {
+      "claims_per_request": {
+        "1": 485,
+        "2": 803,
+        "3": 771,
+        "4": 602,
+        "5": 339
+      },
+      "distinct_clusters": 40,
+      "distinct_query_text": 600,
+      "distinct_tasks": 200,
+      "hot_set_size": 40,
+      "hot_share_first_6h": 0.5993,
+      "long": [
+        5000,
+        5000
+      ],
+      "primary": 3000,
+      "query_emb": "all null",
+      "reuse_rate": 0.358,
+      "seed_copies": 5,
+      "snapshot_index": {
+        "v0": 871,
+        "v1": 1309,
+        "v2": 820
+      },
+      "switch_hours": {
+        "long_01": 5,
+        "long_02": 13,
+        "seed42": 9,
+        "seed43": 7,
+        "seed44": 10,
+        "seed45": 8,
+        "seed46": 11
+      },
+      "tail_set_size": 120,
+      "time_span_hours": 18
+    },
+    "tenants": {
+      "counts": {
+        "tenant_public": 1205,
+        "tenant_restricted": 741,
+        "tenant_staff": 1054
+      },
+      "note": "租户在 schema 里只能通过 permission 落地：tenant_restricted 一律 permission=restricted，其余租户沿用题目 permission；租户与源题映射见 request_context.jsonl",
+      "permission_negatives": 1603
+    },
+    "updates": {
+      "answer_impact": {
+        "changed": 30,
+        "unchanged": 10
+      },
+      "by_class": {
+        "codebook_revision": 6,
+        "data_row_change": 6,
+        "lineage_switch": 6,
+        "metric_revision": 8,
+        "schema_change": 14
+      },
+      "chunk_level_rows": 30,
+      "claim_level_requests_dedup": 874,
+      "claim_level_requests_total": 1102,
+      "delay_hours": {
+        "max": 3.0,
+        "mean": 1.5577,
+        "min": 0.0333,
+        "n": 40,
+        "p50": 1.6117
+      },
+      "doc_level_requests_total": 2791,
+      "doc_level_rows": 34,
+      "first_event": "2024-05-15T06:03:00Z",
+      "last_event": "2024-05-15T15:00:00Z",
+      "negative_control_rows": 6,
+      "post_event_claim_rows": 29,
+      "post_event_rows": 34,
+      "rho": {
+        "affected_pairs": 1102,
+        "local": 805,
+        "local_ratio": 0.7305,
+        "major": 297,
+        "rule": "ρ=命中主张数/该请求主张总数；ρ<0.5 记局部修复",
+        "target": [
+          0.65,
+          0.75
+        ]
+      },
+      "rows": 40,
+      "top_by_claim_requests": [
+        {
+          "change_type": "data_row_change",
+          "claim_level": 217,
+          "doc_id": "fld_t04_01",
+          "doc_level": 433,
+          "event_id": "u0034",
+          "local": 211,
+          "major": 6
+        },
+        {
+          "change_type": "data_row_change",
+          "claim_level": 131,
+          "doc_id": "fld_t34_07",
+          "doc_level": 174,
+          "event_id": "u0013",
+          "local": 131,
+          "major": 0
+        },
+        {
+          "change_type": "metric_revision",
+          "claim_level": 68,
+          "doc_id": "metric_002",
+          "doc_level": 68,
+          "event_id": "u0035",
+          "local": 7,
+          "major": 61
+        },
+        {
+          "change_type": "schema_change",
+          "claim_level": 58,
+          "doc_id": "wp_124",
+          "doc_level": 180,
+          "event_id": "u0002",
+          "local": 58,
+          "major": 0
+        },
+        {
+          "change_type": "lineage_switch",
+          "claim_level": 58,
+          "doc_id": "wp_017",
+          "doc_level": 58,
+          "event_id": "u0011",
+          "local": 58,
+          "major": 0
+        }
+      ],
+      "top_by_doc_requests": [
+        {
+          "change_type": "lineage_switch",
+          "claim_level": 0,
+          "doc_id": "wp_002",
+          "doc_level": 503,
+          "event_id": "u0014",
+          "local": 0,
+          "major": 0
+        },
+        {
+          "change_type": "data_row_change",
+          "claim_level": 217,
+          "doc_id": "fld_t04_01",
+          "doc_level": 433,
+          "event_id": "u0034",
+          "local": 211,
+          "major": 6
+        },
+        {
+          "change_type": "schema_change",
+          "claim_level": 23,
+          "doc_id": "wp_100",
+          "doc_level": 204,
+          "event_id": "u0033",
+          "local": 6,
+          "major": 17
+        },
+        {
+          "change_type": "schema_change",
+          "claim_level": 58,
+          "doc_id": "wp_124",
+          "doc_level": 180,
+          "event_id": "u0002",
+          "local": 58,
+          "major": 0
+        },
+        {
+          "change_type": "schema_change",
+          "claim_level": 58,
+          "doc_id": "wp_124",
+          "doc_level": 180,
+          "event_id": "u0019",
+          "local": 58,
+          "major": 0
+        }
+      ],
+      "window": "timestamp ≥ effective_at（= new_ver 的 updated_at），落在 18 小时窗口内",
+      "zero_impact_rows": 6
+    }
+  },
+  "streams/long_01.jsonl": {
+    "rows": 5000,
+    "sha256": "ebaf1ad574b74cfc2e0bd255d61d23c0f14940551a224aace9121eb956d43b9f"
+  },
+  "streams/long_02.jsonl": {
+    "rows": 5000,
+    "sha256": "5c68188a9e0957d2b9914673f989b094323606a565746641ec33068326a20f8f"
+  },
+  "streams/seed42.jsonl": {
+    "rows": 3000,
+    "sha256": "c746932ba60bf00b2b8f51a0da95bfad239b7508d03136620551b11f598efe3a"
+  },
+  "streams/seed43.jsonl": {
+    "rows": 3000,
+    "sha256": "e1ca682f117f906e921967a2aac1b60bcfe5df3ce22ff7ebd3007b950033da46"
+  },
+  "streams/seed44.jsonl": {
+    "rows": 3000,
+    "sha256": "c40e02b0ead5bdfad76f2245c3870caac38f6080c803017144e8f3f0316ea958"
+  },
+  "streams/seed45.jsonl": {
+    "rows": 3000,
+    "sha256": "3d01b865da6ca1776211fc15a28346548786ecdfd90dc2cf59c158637b7553a8"
+  },
+  "streams/seed46.jsonl": {
+    "rows": 3000,
+    "sha256": "d3af8011058c27b70d2a74c549ecf0b055e0bc58ce951c90810b8ce51396feb3"
+  },
+  "update_events.jsonl": {
+    "rows": 40,
+    "sha256": "2e1cbd1e7a0ea633dcdf80442a296fd10e8bce943ccde6fcbe549e43f698190a"
+  }
+}

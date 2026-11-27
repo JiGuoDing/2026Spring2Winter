@@ -1,0 +1,43 @@
+{
+  "artifact": "query_embeddings.npz",
+  "dim": 512,
+  "dtype": "float32",
+  "matrix_sha256": "6e6cccc8d73e388cf94b545dabf7ab6302a7b451339b88d9ad5ded5c2f426062",
+  "model": {
+    "id": "BAAI/bge-small-zh-v1.5",
+    "max_length": 512,
+    "onnx_commit": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "onnx_repo": "Xenova/bge-small-zh-v1.5",
+    "onnx_sha256": "69a0b846f4f116b5e6aabf9546ea6754d02264f3211a13a1bd69b31b8040749a",
+    "tokenizer": "tokenizers"
+  },
+  "n": 600,
+  "norm_stats": {
+    "max": 1.00000001,
+    "mean": 1.0,
+    "min": 0.99999999
+  },
+  "normalized": "l2",
+  "npz_sha256": "5a30251c694079056b1077a0f3c7a18ec9ff5f03ecff5a2f1821e54d7f37bcd0",
+  "pooling": "cls",
+  "query_texts_sha256": "983efe0bf1d6d1e854d4988e659bfc03dad9100d5aaa5cc3b78228168e341d48",
+  "schema_version": 1,
+  "script": {
+    "name": "build_embeddings.py",
+    "version": "0.2.0"
+  },
+  "source": {
+    "file": "events/request_stream.jsonl",
+    "limit": 0,
+    "order": "first_occurrence",
+    "rows_scanned": 3000,
+    "sha256": "3b1436874865fa9e9ed50f1afebd572e092dc12cdf0727f73e35063fa5bdb02c",
+    "unique_texts": 600
+  },
+  "token_length": {
+    "max": 118,
+    "min": 47,
+    "p50": 89,
+    "truncated": 0
+  }
+}

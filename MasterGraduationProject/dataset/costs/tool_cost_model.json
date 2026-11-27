@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "purpose": "工具/RAG 调用的成本构成模型：把'单次成功调用'扩展为'多次调用 × 失败重试'。用于说明当前标定低估工具段占比的程度。",
+  "status": {
+    "measured": [
+      "per_call_latency.local（来自 v0.3.0 标定：rag 6.2ms / act 1.1ms）",
+      "calls.act_fanout_mean = 2.42（来自 events/act_plan_pool.json，实测分布）",
+      "calls.plan_steps_mean = 4.42（同上）"
+    ],
+    "assumed": [
+      "calls.rag_calls = 1（生产可能多轮检索，本文取 1，保守）",
+      "failure.p_fail（各场景假设值，见 profiles）",
+      "failure.max_retries = 2",
+      "per_call_latency 的 remote 值（生产量级假设，非本仓库测量）"
+    ],
+    "note": "assumed 项不得当作实测值写进论文；引用时必须标注为场景假设，并说明取值范围来源。"
+  },
+  "calls": {
+    "rag_calls_per_request": 1,
+    "act_calls_per_request_base": 1,
+    "act_fanout_mean": 2.42,
+    "act_calls_per_request_total": 3.42,
+    "plan_steps_mean": 4.42
+  },
+  "failure": {
+    "max_retries": 2,
+    "attempts_formula": "1 + p + p^2",
+    "typical_p_fail": {"sql_error": 0.05, "timeout": 0.02, "permission_denied": 0.01}
+  },
+  "profiles": [
+    {
+      "id": "P1_local_measured",
+      "label": "当前部署：27B 慢模型 + 本地工具",
+      "measured": true,
+      "model_ms": 198867,
+      "rag_ms_per_call": 6.2,
+      "act_ms_per_call": 1.1,
+      "p_fail": 0.0
+    },
+    {
+      "id": "P2_slow_model_remote",
+      "label": "慢模型 + 远程工具（假设）",
+      "measured": false,
+      "model_ms": 198867,
+      "rag_ms_per_call": 300,
+      "act_ms_per_call": 500,
+      "p_fail": 0.05
+    },
+    {
+      "id": "P3_fast_model_remote",
+      "label": "快模型 + 远程工具（假设，生产常见）",
+      "measured": false,
+      "model_ms": 4000,
+      "rag_ms_per_call": 300,
+      "act_ms_per_call": 500,
+      "p_fail": 0.05
+    },
+    {
+      "id": "P4_fast_model_warehouse",
+      "label": "快模型 + 数仓/长排队（假设）",
+      "measured": false,
+      "model_ms": 4000,
+      "rag_ms_per_call": 400,
+      "act_ms_per_call": 2000,
+      "p_fail": 0.10
+    }
+  ]
+}

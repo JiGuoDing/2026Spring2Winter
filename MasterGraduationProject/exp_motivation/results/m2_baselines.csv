@@ -1,0 +1,5 @@
+policy,ttl_hours,hits,safe,stale,missed_safe,n,hit_rate_pct,valid_rate_pct,stale_rate_pct,missed_safe_per_1k
+ttl_short,0.54,1386,1160,226,957,3000,46.2,83.69,16.31,319.0
+ttl_mid,3.24,2299,1575,724,175,3000,76.63,68.51,31.49,58.3
+ttl_long,13.5,2715,1095,1620,0,3000,90.5,40.33,59.67,0.0
+semantic_0.88,,2946,1904,1042,0,3000,98.2,64.63,35.37,0.0

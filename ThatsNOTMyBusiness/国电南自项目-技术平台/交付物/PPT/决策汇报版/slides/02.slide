@@ -1,0 +1,44 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>摘要</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>三句话说完</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>如果只记三件事，就是这三件；后面 6 页是把它们坐实。</Text>
+
+        <Box style={{ flexDirection: 'column', marginTop: 6 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32, paddingTop: 32, paddingBottom: 32, borderBottom: '1px solid #D9DEE7' }}>
+                <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.1, width: 300 }}>约 80%</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864' }}>二级租户（厂站级）停在 L1，不往上走</Text>
+                    <Text style={{ fontSize: 15, color: '#3D4C63' }}>L1 是最便宜也够用的一档：Namespace + 配额 + 网络策略；只有涉敏、外部主体才升到 L2 / L3。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32, paddingTop: 32, paddingBottom: 32, borderBottom: '1px solid #D9DEE7' }}>
+                <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.1, width: 300 }}>45%–55%</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864' }}>资源当量，以“全量落 L2”为 100%</Text>
+                    <Text style={{ fontSize: 15, color: '#3D4C63' }}>省下的不是软件许可，是每户一套实例、一套节点池台账和一份运维值班。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32, paddingTop: 32, paddingBottom: 20 }}>
+                <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.1, width: 300 }}>约 109.5</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864' }}>人月，分三期投入：43.5 + 34.0 + 32.0</Text>
+                    <Text style={{ fontSize: 15, color: '#3D4C63' }}>测试与验证约占 24%，不压缩；先跑通 S2 场景，六步验收通过再进 P0。</Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>先定判据与红线，再谈隔离与投入——顺序反了，成本会翻倍。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>02 / 08</Text>
+        </Box>
+    </Box>
+</Slide>

@@ -7,10 +7,15 @@
   "additionalProperties": false,
   "required": [
     "task_id", "question", "difficulty", "gold_sql", "snapshot", "answer_shape",
-    "expected_columns", "truth", "metric_refs", "permission", "time_window"
+    "expected_columns", "truth", "metric_refs", "permission", "time_window", "cluster_id"
   ],
   "properties": {
     "task_id": { "type": "string", "pattern": "^q[0-9]{3}$" },
+    "cluster_id": {
+      "type": "string",
+      "pattern": "^cls_[a-z0-9_]+$",
+      "description": "语义簇：同簇题目意图相近、共享部分证据文档，用于簇内反馈借用与同簇难负例"
+    },
     "question": { "type": "string", "minLength": 4 },
     "difficulty": { "enum": ["single_table", "join", "nested_agg"] },
     "gold_sql": { "type": "string", "minLength": 10 },

@@ -1,0 +1,95 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 凭什么这么定</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>打法先看分，边界看两条判例</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>四维打分把“该多隔离”变成可复核的数字；一个 D 的跳变，就足以把租户从 L1 推到 L2。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 36, marginTop: 6 }}>
+            <Box style={{ width: 660, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#3D4C63' }}>四维各打 1–5 分，总分 T = B + D + R + S（4–20）</Text>
+                <Table
+                    style={{ width: '100%', height: 250 }}
+                    defaultTextStyle={{ fontSize: 14, textAlign: 'left', color: '#3D4C63' }}
+                    defaultCellStyle={{ border: { bottom: { width: 1, color: '#D9DEE7' } }, padding: 10 }}
+                    cells={[
+                        [
+                            { text: '维度', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                            { text: '1 分', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                            { text: '3 分', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                            { text: '5 分', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                        ],
+                        [{ text: 'B 业务', textStyle: { bold: true, color: '#1F3864' } }, '协同办公、门户展示', '生产实时数据汇聚（只读）', '含控制指令下发'],
+                        [{ text: 'D 数据', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }, { text: '可公开', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '财务、人事等企业敏感', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '国家核心数据、涉密', cellStyle: { background: { color: '#FAFBFC' } } }],
+                        [{ text: 'R 监管', textStyle: { bold: true, color: '#1F3864' } }, '无特定要求', '等保 2.0 三级', '涉密、分保或专项审查'],
+                        [{ text: 'S SLA', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }, { text: '99.5%', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '99.95%', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '生产连续不可中断', cellStyle: { background: { color: '#FAFBFC' } } }],
+                    ]}
+                />
+                <Box style={{ flexDirection: 'row', gap: 8 }}>
+                    <Box style={{ flex: 1, padding: 10, background: '#D9DEE7' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#3D4C63' }}>L0</Text>
+                        <Text style={{ fontSize: 13, color: '#3D4C63' }}>T ≤ 6</Text>
+                    </Box>
+                    <Box style={{ flex: 1, padding: 10, background: '#1F3864' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>L1</Text>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>7–9</Text>
+                    </Box>
+                    <Box style={{ flex: 1, padding: 10, background: '#2E6DA4' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>L2</Text>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>10–13</Text>
+                    </Box>
+                    <Box style={{ flex: 1, padding: 10, background: '#142645' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>L3</Text>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>T ≥ 14</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#3D4C63' }}>同一应用，两个结果</Text>
+
+                <Box style={{ flexDirection: 'column', gap: 8, padding: 16, background: '#FFFFFF', border: '1px solid #D9DEE7' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#1F3864' }}>C-1　某水电厂 · 检修管理</Text>
+                    <Text style={{ fontSize: 13, color: '#7A8699' }}>不供主数据、不接实时数据</Text>
+                    <Box style={{ flexDirection: 'row', gap: 6, marginTop: 2 }}>
+                        <Box style={{ flex: 1, padding: 6, background: '#F2F5F9' }}><Text style={{ fontSize: 12, color: '#7A8699' }}>B</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#3D4C63' }}>2</Text></Box>
+                        <Box style={{ flex: 1, padding: 6, background: '#F2F5F9' }}><Text style={{ fontSize: 12, color: '#7A8699' }}>D</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#3D4C63' }}>2</Text></Box>
+                        <Box style={{ flex: 1, padding: 6, background: '#F2F5F9' }}><Text style={{ fontSize: 12, color: '#7A8699' }}>R</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#3D4C63' }}>3</Text></Box>
+                        <Box style={{ flex: 1, padding: 6, background: '#F2F5F9' }}><Text style={{ fontSize: 12, color: '#7A8699' }}>S</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#3D4C63' }}>2</Text></Box>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2 }}>
+                        <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#1F3864' }}>9</Text>
+                        <Box style={{ padding: 8, background: '#1F3864' }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>落 L1</Text></Box>
+                        <Text style={{ fontSize: 12, color: '#7A8699' }}>默认路径，S2 原型场景</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'column', gap: 8, padding: 16, background: '#FFFFFF', border: '1px solid #1F3864' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#1F3864' }}>C-2　同一应用 · 向集团供台账</Text>
+                    <Text style={{ fontSize: 13, color: '#B3261E', fontWeight: 'bold' }}>一旦成为“重要数据”提供方，D 从 2 抬到 4</Text>
+                    <Box style={{ flexDirection: 'row', gap: 6, marginTop: 2 }}>
+                        <Box style={{ flex: 1, padding: 6, background: '#F2F5F9' }}><Text style={{ fontSize: 12, color: '#7A8699' }}>B</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#3D4C63' }}>2</Text></Box>
+                        <Box style={{ flex: 1, padding: 6, background: '#FBEDEB' }}><Text style={{ fontSize: 12, color: '#B3261E' }}>D</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#B3261E' }}>4</Text></Box>
+                        <Box style={{ flex: 1, padding: 6, background: '#F2F5F9' }}><Text style={{ fontSize: 12, color: '#7A8699' }}>R</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#3D4C63' }}>3</Text></Box>
+                        <Box style={{ flex: 1, padding: 6, background: '#F2F5F9' }}><Text style={{ fontSize: 12, color: '#7A8699' }}>S</Text><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#3D4C63' }}>2</Text></Box>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2 }}>
+                        <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#B3261E' }}>11</Text>
+                        <Box style={{ padding: 8, background: '#B3261E' }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>落 L2</Text></Box>
+                        <Text style={{ fontSize: 12, color: '#7A8699' }}>成本升到 2.5–3.0×</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>升级触发点是“是否跨租户提供 / 接收数据”，不是数据量大小——这条要写进准入校验。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>另有 5 条一票否决：B=5 不得进场、R=5 或 D=5 至少 L3、R=4 至少 L2、S≥4 且 B≥3 至少 L2、外部主体一律 L3</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>08 / 12</Text>
+        </Box>
+    </Box>
+</Slide>

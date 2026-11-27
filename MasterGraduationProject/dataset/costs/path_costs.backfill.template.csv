@@ -1,0 +1,5 @@
+path,stage,model,concurrency,n,metric,value_ms,measured,mock,note
+partial_repair,rewrite,local-small-7b,1,0,pending_model_measure,,,pending,填写 value_ms 后作为 --backfill 输入；measured/mock 由 runner 改写
+partial_repair,rewrite,api-large-placeholder,1,0,pending_model_measure,,,pending,填写 value_ms 后作为 --backfill 输入；measured/mock 由 runner 改写
+full_regen,generate,local-small-7b,1,0,pending_model_measure,,,pending,填写 value_ms 后作为 --backfill 输入；measured/mock 由 runner 改写
+full_regen,generate,api-large-placeholder,1,0,pending_model_measure,,,pending,填写 value_ms 后作为 --backfill 输入；measured/mock 由 runner 改写

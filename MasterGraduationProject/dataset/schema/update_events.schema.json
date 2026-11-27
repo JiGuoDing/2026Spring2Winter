@@ -2,16 +2,31 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "update_events.schema.json",
   "title": "update_events",
-  "description": "外部知识/结构更新事件。changed_chunk_ids 为空表示整篇替换。",
+  "description": "外部知识/结构更新事件。双时间戳：effective_at 为文档新版本生效时刻（等于 docs_versioned 中该 (doc_id,new_ver) 的 updated_at），timestamp 为系统接收/通知时刻（notified_at）。两者之差即通知延迟。",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "event_id", "timestamp", "doc_id", "old_ver", "new_ver",
-    "changed_chunk_ids", "change_type", "domain", "permission"
+    "event_id", "timestamp", "effective_at", "notification_delay_s",
+    "doc_id", "old_ver", "new_ver", "changed_chunk_ids", "change_type",
+    "domain", "permission"
   ],
   "properties": {
     "event_id": { "type": "string", "pattern": "^u[0-9]{4}$" },
-    "timestamp": { "type": "string", "format": "date-time" },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "notified_at：系统收到更新事件的时刻，必须 >= effective_at"
+    },
+    "effective_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "文档新版本在底层生效的时刻；真值判旧以它为准"
+    },
+    "notification_delay_s": {
+      "type": "number",
+      "minimum": 0,
+      "description": "timestamp - effective_at，单位秒"
+    },
     "doc_id": { "type": "string" },
     "old_ver": { "type": "integer", "minimum": 1 },
     "new_ver": { "type": "integer", "minimum": 2 },
@@ -32,7 +47,11 @@
     "permission": { "enum": ["public", "staff", "restricted"] },
     "answer_impact": {
       "enum": ["unchanged", "changed", "unknown"],
-      "description": "该更新是否改变依赖文档的答案；unknown 仅允许出现在构造未完成时。"
+      "description": "该更新是否改变依赖文档的答案"
+    },
+    "negative_control": {
+      "type": "boolean",
+      "description": "true 表示刻意的“无关更新”负对照，不要求影响任何请求"
     }
   }
 }

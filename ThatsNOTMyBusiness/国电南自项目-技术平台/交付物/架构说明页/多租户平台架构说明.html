@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>集团级多租户技术平台 · 架构说明</title>
+<style>
+  :root{
+    --navy:#1F3864; --blue:#2E6DA4; --red:#B3261E;
+    --ink:#3D4C63; --grey:#7A8699; --line:#D9DEE7;
+    --soft:#F2F5F9; --soft2:#EEF3F9; --bg:#F7F9FC;
+    --maxw:1120px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:74px}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* ---------- Hero ---------- */
+  .hero{background:var(--navy);color:#fff;padding:64px 0 48px}
+  .hero .kicker{font-size:13px;letter-spacing:.14em;color:#9DB0CC}
+  .hero h1{font-size:40px;line-height:1.25;font-weight:700;margin:14px 0 0;letter-spacing:-.01em;text-wrap:balance}
+  .hero .sub{margin-top:14px;font-size:17px;color:#C9D4E4;max-width:760px}
+  .hero .rule{width:64px;height:2px;background:#4C6B9E;margin:24px 0 0}
+  .hero .meta{margin-top:18px;font-size:13px;color:#8FA3BF}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#3A5480;margin-top:36px;border:1px solid #3A5480}
+  .stat{background:var(--navy);padding:18px 20px}
+  .stat b{display:block;font-size:28px;line-height:1.2;font-weight:700;color:#fff}
+  .stat span{display:block;font-size:12.5px;color:#9DB0CC;margin-top:4px}
+
+  /* ---------- TOC ---------- */
+  .toc{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .toc-in{max-width:var(--maxw);margin:0 auto;padding:0 24px;display:flex;gap:28px;overflow-x:auto}
+  .toc a{display:block;padding:14px 0 12px;font-size:14px;color:var(--grey);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent}
+  .toc a:hover{color:var(--navy);border-bottom-color:var(--line)}
+  .toc a b{font-weight:700;color:var(--navy);margin-right:6px;font-variant-numeric:tabular-nums}
+
+  /* ---------- Section ---------- */
+  main{padding:40px 0 72px}
+  .sec{background:#fff;border:1px solid var(--line);padding:40px;margin-bottom:24px}
+  .sec-head{display:flex;gap:18px;align-items:flex-start;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:28px}
+  .sec-no{font-size:13px;font-weight:700;color:var(--blue);letter-spacing:.08em;padding-top:6px;min-width:28px}
+  .sec-head h2{font-size:26px;line-height:1.35;color:var(--navy);font-weight:700;text-wrap:balance}
+  .sec-head p{font-size:15px;color:var(--grey);margin-top:6px}
+
+  h3{font-size:18px;color:var(--navy);font-weight:700;margin:36px 0 6px;line-height:1.5;text-wrap:pretty}
+  h3:first-of-type{margin-top:0}
+  h3 .tag{display:inline-block;font-size:11.5px;font-weight:600;color:var(--blue);background:var(--soft2);padding:2px 8px;margin-left:10px;vertical-align:2px;letter-spacing:.02em}
+  .lead{font-size:15.5px;color:var(--ink);margin-bottom:18px}
+  p.body{font-size:15.5px;margin-bottom:14px}
+
+  /* ---------- Figures ---------- */
+  figure{margin:22px 0 26px}
+  .fig-frame{border:1px solid var(--line);background:#fff;padding:18px;overflow-x:auto}
+  .fig-frame > svg{display:block;width:100%;min-width:640px;height:auto;font-family:inherit}
+  .ph svg{flex:none;width:52px;height:52px;min-width:0}
+  .fig-swipe{display:none;font-size:12px;color:var(--grey);margin-top:8px;text-align:right}
+  figcaption{display:flex;gap:10px;align-items:baseline;font-size:13px;color:var(--grey);margin-top:10px;line-height:1.6}
+  figcaption .no{flex:none;font-weight:700;color:var(--blue);font-size:12px;letter-spacing:.04em}
+
+  /* 占位 */
+  .ph{border:1px dashed #B7C2D2;background:var(--soft);min-height:280px;padding:40px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .ph .ph-ico{display:block;margin-bottom:14px;flex:none}
+  .ph b{display:block;font-size:14px;color:var(--ink);font-weight:600}
+  .ph span{display:block;font-size:12.5px;color:var(--grey);margin-top:8px;max-width:560px}
+
+  /* ---------- Cards / grids ---------- */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{border:1px solid var(--line);padding:20px;background:#fff}
+  .card .no{font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.06em}
+  .card h4{font-size:16px;color:var(--navy);font-weight:700;margin:6px 0 8px;line-height:1.4}
+  .card p{font-size:14px;color:var(--ink);line-height:1.7}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip{font-size:11.5px;color:var(--ink);background:var(--soft);padding:3px 8px;border:1px solid var(--line)}
+  .chip.hot{color:var(--red);background:#FBEDEB;border-color:#E6C6C2}
+  .chip.blue{color:var(--blue);background:var(--soft2);border-color:#C9D8E8}
+
+  /* 表 */
+  .tbl{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 6px}
+  .tbl th{background:var(--navy);color:#fff;font-weight:600;text-align:left;padding:11px 14px;font-size:13.5px}
+  .tbl td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.65}
+  .tbl tr:nth-child(even) td{background:#FAFBFC}
+  .tbl td.k{font-weight:600;color:var(--navy);white-space:nowrap}
+
+  /* 意图条 */
+  .intent{display:flex;gap:12px;background:var(--soft);border-left:3px solid var(--navy);padding:14px 18px;font-size:14.5px;line-height:1.7;margin:20px 0 4px}
+  .intent b{flex:none;color:var(--navy);font-weight:700}
+
+  /* 契约列表 */
+  .contracts{list-style:none;margin:16px 0 0}
+  .contracts li{display:flex;gap:14px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14.5px;line-height:1.7}
+  .contracts li:last-child{border-bottom:none}
+  .contracts .dir{flex:none;width:86px;font-weight:700;color:var(--blue);font-size:13px;font-variant-numeric:tabular-nums}
+  .contracts .fail{color:var(--red)}
+
+  .hl{color:var(--navy);font-weight:700}
+  .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--line);background:#fff;padding:32px 0 56px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-start}
+  footer p{font-size:12.5px;color:var(--grey);line-height:1.8;max-width:640px}
+  footer .mark{font-size:12.5px;color:var(--grey);text-align:right}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:960px){
+    .hero h1{font-size:32px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .grid-3{grid-template-columns:1fr}
+    .sec{padding:28px}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 18px}
+    .hero{padding:44px 0 36px}
+    .hero h1{font-size:26px}
+    .hero .sub{font-size:15px}
+    .stats{grid-template-columns:1fr 1fr;margin-top:26px}
+    .stat{padding:14px 14px}
+    .stat b{font-size:22px}
+    .sec{padding:22px 18px;margin-bottom:16px}
+    .sec-head{flex-direction:column;gap:6px}
+    .sec-head h2{font-size:21px}
+    .grid-2{grid-template-columns:1fr}
+    .toc-in{gap:14px}
+    .toc a{font-size:12.5px;padding:12px 0 10px}
+    .toc a b{margin-right:4px}
+
+    /* 图：窄屏不为塞进一屏而缩小字号，保持可读、横向滑动 */
+    figure .fig-frame{padding:8px 10px 10px;-webkit-overflow-scrolling:touch}
+    .fig-frame > svg{min-width:760px}
+    .fig-swipe{display:block}
+    .ph{min-height:220px;padding:28px 18px}
+    .ph span{max-width:none}
+
+    /* 表：堆叠为卡片，首列作标题，其余单元格带字段名 */
+    .tbl,.tbl tbody,.tbl tr{display:block;width:100%}
+    .tbl thead{display:none}
+    .tbl{font-size:14px;margin:16px 0 4px}
+    .tbl tr{border:1px solid var(--line);margin-bottom:12px;padding:0 0 10px}
+    .tbl td,.tbl td.k,.tbl tr:nth-child(even) td{display:block;background:transparent;border:none;padding:8px 14px 0;white-space:normal;word-break:normal}
+    .tbl td::before{content:attr(data-label);display:block;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.06em;margin-bottom:1px}
+    .tbl td.hd{display:block;background:var(--soft);padding:11px 14px;margin-bottom:8px;font-size:15px;font-weight:700;color:var(--navy)}
+    .tbl td.hd::before{display:inline-block;float:right;margin:3px 0 0 10px;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--grey);background:#fff;border:1px solid var(--line);padding:1px 6px}
+    footer .wrap{flex-direction:column}
+    footer .mark{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">集团级多租户技术平台 · 架构设计方案 v0.1</div>
+    <h1>一套能管住 900 个租户的控制面</h1>
+    <p class="sub">以安全分区为第一约束，以信任等级定隔离强度，以控制面为改造重心。平台已在 31 个省级区域、近 700 个场站运行，七大板块都在——缺的是判据、执行点与边界。</p>
+    <div class="rule"></div>
+    <div class="meta">面向中国华电集团体系 · 华电睿思数智底座</div>
+
+    <div class="stats">
+      <div class="stat"><b>约 80%</b><span>二级租户落在 L1</span></div>
+      <div class="stat"><b>45%–55%</b><span>资源当量（全量 L2 为 100%）</span></div>
+      <div class="stat"><b>≈ 109.5</b><span>人月，分三期投入</span></div>
+      <div class="stat"><b>≤ 5</b><span>L3 独立集群上限</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-in">
+    <a href="#arch"><b>01</b>整体架构</a>
+    <a href="#modules"><b>02</b>核心模块</a>
+    <a href="#flow"><b>03</b>交互与数据流程</a>
+    <a href="#feature"><b>04</b>方案特点</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============ 01 整体架构 ============ -->
+  <section class="sec" id="arch">
+    <div class="sec-head">
+      <div class="sec-no">01</div>
+      <div>
+        <h2>整体架构</h2>
+        <p>一条红线定边界，四层结构定职责，控制面与数据面定风险。</p>
+      </div>
+    </div>
+
+    <h3>一条红线：全部资源只落安全Ⅲ区<span class="tag">第一约束</span></h3>
+    <p class="lead">依据《电力监控系统安全防护规定》（2024 年第 27 号令，2025-01-01 施行）：平台全部资源，包括 L3 物理隔离的独立集群，只能部署在<span class="hl">管理信息区（安全Ⅲ区）</span>。生产控制区的数据单向进入，控制指令一律不回写。</p>
+
+    <figure>
+      <div class="fig-frame">
+        <svg viewBox="0 0 1000 344" role="img" aria-label="安全分区与部署形态示意图">
+          <rect x="0" y="0" width="1000" height="64" fill="#F2F5F9"/>
+          <text x="20" y="28" font-size="15" font-weight="700" fill="#3D4C63">生产控制区（安全Ⅰ区 / 安全Ⅱ区）</text>
+          <text x="20" y="50" font-size="12" fill="#7A8699">被采集系统（DCS / 水电监控 / 风电主控）· 采集代理 · 不使用无线通信产品</text>
+
+          <line x1="420" y1="64" x2="420" y2="88" stroke="#2E6DA4" stroke-width="1.5"/>
+          <polygon points="420,98 413,86 427,86" fill="#2E6DA4"/>
+          <text x="436" y="80" font-size="11.5" fill="#2E6DA4">电力专用横向单向安全隔离装置</text>
+
+          <rect x="150" y="98" width="620" height="56" fill="#FFFFFF" stroke="#2E6DA4" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="166" y="122" font-size="13.5" font-weight="700" fill="#2E6DA4">安全接入区</text>
+          <text x="166" y="142" font-size="11.5" fill="#7A8699">通信代理 + 端到端身份认证 ｜ 不得存储重要数据</text>
+
+          <line x1="420" y1="154" x2="420" y2="178" stroke="#2E6DA4" stroke-width="1.5"/>
+          <polygon points="420,188 413,176 427,176" fill="#2E6DA4"/>
+
+          <rect x="0" y="188" width="1000" height="156" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.5"/>
+          <text x="20" y="214" font-size="15" font-weight="700" fill="#1F3864">管理信息区（安全Ⅲ区 / 安全Ⅳ区）</text>
+          <text x="20" y="234" font-size="11.5" fill="#7A8699">平台全部资源都在这里——L3 的独立集群也不跨区</text>
+
+          <rect x="20" y="248" width="300" height="76" fill="#EEF3F9" stroke="#C9D8E8"/>
+          <text x="36" y="276" font-size="13" font-weight="700" fill="#1F3864">集团中心云</text>
+          <text x="36" y="296" font-size="11.5" fill="#3D4C63">管控面 · 平台服务 · 数据面</text>
+          <text x="36" y="313" font-size="11" fill="#7A8699">管控面与数据面故障域分离</text>
+
+          <rect x="336" y="248" width="300" height="76" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="352" y="276" font-size="13" font-weight="700" fill="#1F3864">区域节点</text>
+          <text x="352" y="296" font-size="11.5" fill="#3D4C63">汇聚 · 就近接入</text>
+          <text x="352" y="313" font-size="11" fill="#7A8699">承接受理与就近算力</text>
+
+          <rect x="652" y="248" width="328" height="76" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="668" y="276" font-size="13" font-weight="700" fill="#1F3864">场站边缘采集</text>
+          <text x="668" y="296" font-size="11.5" fill="#3D4C63">只缓存非重要数据，原始数据直传</text>
+          <text x="668" y="313" font-size="11" fill="#7A8699">不采用“每站一个边缘云”</text>
+
+          <line x1="962" y1="188" x2="962" y2="64" stroke="#B3261E" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <line x1="952" y1="118" x2="972" y2="138" stroke="#B3261E" stroke-width="2"/>
+          <line x1="972" y1="118" x2="952" y2="138" stroke="#B3261E" stroke-width="2"/>
+          <rect x="898" y="146" width="128" height="44" fill="#FFFFFF"/>
+          <text x="962" y="165" font-size="11" fill="#B3261E" text-anchor="middle">不得回写</text>
+          <text x="962" y="181" font-size="11" fill="#B3261E" text-anchor="middle">控制指令</text>
+        </svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 1</span>安全分区与三级部署形态。Ⅰ/Ⅱ区数据经单向隔离装置进入Ⅲ区；红色 ✕ 标出Ⅳ区→Ⅲ区以外的反向路径并不存在，即任何“用 L3 把租户部署到生产控制区”的诉求本方案明确不支持。</figcaption>
+    </figure>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="no">约束一</div>
+        <h4>数据单向进入</h4>
+        <p>生产实时数据经电力专用横向单向安全隔离装置进入平台，只做汇聚与展示，不回写任何控制类指令。</p>
+      </div>
+      <div class="card">
+        <div class="no">约束二</div>
+        <h4>安全接入区不存重要数据</h4>
+        <p>该区只承担通信代理与端到端身份认证；场站边缘节点因此只缓存非重要数据，原始数据一律直传。</p>
+      </div>
+      <div class="card">
+        <div class="no">约束三</div>
+        <h4>三级部署，不做“每站一边缘云”</h4>
+        <p>集团中心云 + 区域节点 + 场站边缘采集。近 700 场站的规模下，每站一朵边缘云在成本上不可行。</p>
+      </div>
+      <div class="card">
+        <div class="no">约束四</div>
+        <h4>L3 是隔离强度，不是跨区通行证</h4>
+        <p>L3 指独立集群、独立资源池、独立控制面，但仍落在Ⅲ区内；需要控制类系统的业务须独立建设、单独测评。</p>
+      </div>
+    </div>
+
+    <h3>四层结构：层间只走四条契约</h3>
+    <p class="lead">分层不是画出四层框就算数。层与层之间只暴露契约、不允许跨层直连；每条契约都必须显式定义、可校验，否则分层会退化成示意图。</p>
+
+    <figure>
+      <div class="fig-frame">
+        <svg viewBox="0 0 1000 424" role="img" aria-label="四层逻辑架构与层间契约示意图">
+          <!-- L4 -->
+          <rect x="0" y="0" width="1000" height="70" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="18" y="30" font-size="13.5" font-weight="700" fill="#3D4C63">L4 应用与门户</text>
+          <text x="18" y="50" font-size="11" fill="#7A8699">渠道层</text>
+          <rect x="168" y="20" width="190" height="30" fill="#FFFFFF" stroke="#D9DEE7"/>
+          <text x="182" y="40" font-size="12" fill="#3D4C63">统一门户</text>
+          <rect x="368" y="20" width="190" height="30" fill="#FFFFFF" stroke="#D9DEE7"/>
+          <text x="382" y="40" font-size="12" fill="#3D4C63">统一待办</text>
+          <rect x="568" y="20" width="190" height="30" fill="#FFFFFF" stroke="#D9DEE7"/>
+          <text x="582" y="40" font-size="12" fill="#3D4C63">租户自建应用</text>
+          <rect x="768" y="20" width="212" height="30" fill="#FFFFFF" stroke="#D9DEE7"/>
+          <text x="782" y="40" font-size="12" fill="#3D4C63">外部厂商应用</text>
+
+          <!-- 契约 1 -->
+          <rect x="0" y="78" width="1000" height="28" fill="#EEF3F9"/>
+          <text x="168" y="97" font-size="11.5" fill="#2E6DA4">→ 仅经网关调用：应用不得直连服务实例，这是跨租户留痕的前提</text>
+
+          <!-- L3 -->
+          <rect x="0" y="114" width="1000" height="80" fill="#FFFFFF" stroke="#D9DEE7"/>
+          <text x="18" y="144" font-size="13.5" font-weight="700" fill="#3D4C63">L3 平台服务</text>
+          <text x="18" y="164" font-size="11" fill="#7A8699">七板块 + 中间件</text>
+          <rect x="168" y="124" width="104" height="58" fill="#FBEDEB" stroke="#E6C6C2"/>
+          <text x="220" y="148" font-size="11.5" fill="#3D4C63" text-anchor="middle">应用构建</text>
+          <text x="220" y="168" font-size="10.5" fill="#B3261E" text-anchor="middle">必改</text>
+          <rect x="280" y="124" width="104" height="58" fill="#FBEDEB" stroke="#E6C6C2"/>
+          <text x="332" y="148" font-size="11.5" fill="#3D4C63" text-anchor="middle">应用集成</text>
+          <text x="332" y="168" font-size="10.5" fill="#B3261E" text-anchor="middle">必改</text>
+          <rect x="392" y="124" width="104" height="58" fill="#FBEDEB" stroke="#E6C6C2"/>
+          <text x="444" y="148" font-size="11.5" fill="#3D4C63" text-anchor="middle">数据集成</text>
+          <text x="444" y="168" font-size="10.5" fill="#B3261E" text-anchor="middle">必改</text>
+          <rect x="504" y="124" width="104" height="58" fill="#EEF3F9" stroke="#C9D8E8"/>
+          <text x="556" y="148" font-size="11.5" fill="#3D4C63" text-anchor="middle">时序数据</text>
+          <text x="556" y="168" font-size="10.5" fill="#2E6DA4" text-anchor="middle">轻改</text>
+          <rect x="616" y="124" width="104" height="58" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="668" y="148" font-size="11.5" fill="#3D4C63" text-anchor="middle">大数据</text>
+          <text x="668" y="168" font-size="10.5" fill="#7A8699" text-anchor="middle">不动</text>
+          <rect x="728" y="124" width="104" height="58" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="780" y="148" font-size="11.5" fill="#3D4C63" text-anchor="middle">大模型</text>
+          <text x="780" y="168" font-size="10.5" fill="#7A8699" text-anchor="middle">不动</text>
+          <rect x="840" y="124" width="140" height="58" fill="#EEF3F9" stroke="#C9D8E8"/>
+          <text x="910" y="148" font-size="11.5" fill="#3D4C63" text-anchor="middle">中间件</text>
+          <text x="910" y="168" font-size="10.5" fill="#2E6DA4" text-anchor="middle">轻改</text>
+
+          <!-- 契约 2 -->
+          <rect x="0" y="202" width="1000" height="28" fill="#EEF3F9"/>
+          <text x="168" y="221" font-size="11.5" fill="#2E6DA4">↑ 状态上报与计量流水：实际用量与策略生效状态回传，供对账与漂移检测</text>
+
+          <!-- L2 -->
+          <rect x="0" y="238" width="1000" height="88" fill="#EEF3F9" stroke="#2E6DA4" stroke-width="1.5"/>
+          <text x="18" y="270" font-size="13.5" font-weight="700" fill="#1F3864">L2 管控面</text>
+          <text x="18" y="290" font-size="11" fill="#2E6DA4">改造重心 · 四类事实源</text>
+          <rect x="168" y="248" width="128" height="68" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="232" y="272" font-size="11.5" fill="#1F3864" text-anchor="middle">租户管理</text>
+          <text x="232" y="292" font-size="10.5" fill="#2E6DA4" text-anchor="middle">事实源</text>
+          <rect x="304" y="248" width="128" height="68" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="368" y="272" font-size="11.5" fill="#1F3864" text-anchor="middle">身份联邦</text>
+          <text x="368" y="292" font-size="10.5" fill="#2E6DA4" text-anchor="middle">事实源</text>
+          <rect x="440" y="248" width="128" height="68" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="504" y="272" font-size="11.5" fill="#1F3864" text-anchor="middle">配额与准入</text>
+          <text x="504" y="292" font-size="10.5" fill="#2E6DA4" text-anchor="middle">事实源</text>
+          <rect x="576" y="248" width="128" height="68" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="640" y="272" font-size="11.5" fill="#1F3864" text-anchor="middle">开通编排</text>
+          <text x="640" y="292" font-size="10.5" fill="#2E6DA4" text-anchor="middle">事实源</text>
+          <rect x="712" y="248" width="128" height="68" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="776" y="272" font-size="11.5" fill="#1F3864" text-anchor="middle">计量采集</text>
+          <text x="776" y="292" font-size="10.5" fill="#2E6DA4" text-anchor="middle">事实源</text>
+          <rect x="848" y="248" width="132" height="68" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="914" y="272" font-size="11.5" fill="#1F3864" text-anchor="middle">审计与合规</text>
+          <text x="914" y="292" font-size="10.5" fill="#2E6DA4" text-anchor="middle">横向覆盖</text>
+
+          <!-- 契约 3 -->
+          <rect x="0" y="334" width="1000" height="28" fill="#EEF3F9"/>
+          <text x="168" y="353" font-size="11.5" fill="#2E6DA4">↓ 配额下发与准入拦截：配额以声明式对象下发，准入在写入前拦截</text>
+
+          <!-- L1 -->
+          <rect x="0" y="370" width="1000" height="54" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="18" y="394" font-size="13.5" font-weight="700" fill="#3D4C63">L1 基础设施</text>
+          <text x="18" y="412" font-size="11" fill="#7A8699">沿用，不替换</text>
+          <text x="168" y="404" font-size="11.5" fill="#3D4C63">信创服务器（鲲鹏 / 飞腾 / 海光）· 虚拟化或裸金属 · 容器运行时 · 块与文件存储 · VPC 与防火墙</text>
+        </svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 2</span>四层结构与四条契约带。L2 是改造重心：租户、配额、落档、授权四类事实以其为唯一来源；L3 七个板块按“必改 5 / 轻改 3 / 不动 2”差异化适配，业务应用侧基本零改动。</figcaption>
+    </figure>
+
+    <ul class="contracts">
+      <li><span class="dir">L4 → L3</span><span>仅经网关调用：应用不得直连服务实例。<em class="fail">被绕过 → 跨租户计量与留痕同时失效。</em></span></li>
+      <li><span class="dir">L2 → L3</span><span>租户上下文注入：服务实例不采信调用方自报的租户身份。<em class="fail">被绕过 → 越权防护失效。</em></span></li>
+      <li><span class="dir">L3 → L2</span><span>状态上报与计量流水：实际用量与策略生效状态回传，供对账与漂移检测。<em class="fail">被绕过 → 漂移检测失效。</em></span></li>
+      <li><span class="dir">L2 → L1</span><span>配额下发与准入拦截：配额声明式下发，准入在写入前拦截。<em class="fail">被绕过 → 配额治理整体失效。</em></span></li>
+    </ul>
+
+    <div class="intent">
+      <b>设计意图</b>
+      <span>分层不是为了好看，是为了把“谁负责任么”钉死在契约上。任何一条契约被绕过，都会直接摧毁本章后面的一个具体结论——所以这四条要写进接入规范，由准入校验强制执行。</span>
+    </div>
+
+    <h3>控制面与数据面分离</h3>
+    <p class="lead">控制面承载租户元数据、配额、落档、授权、模板、计量与审计策略；数据面承载业务流量与业务数据。分离的标准不是画两列框，而是五个维度都独立。</p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th style="width:16%">维度</th><th style="width:42%">要求</th><th>为什么必须独立</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="k hd" data-label="维度">故障域</td><td data-label="要求">控制面不可用时，已开通租户的业务照最后一次下发的配置继续跑</td><td data-label="为什么必须独立">控制面恢复后按期望状态收敛（声明式 + 定期对账）</td></tr>
+        <tr><td class="k hd" data-label="维度">网络路径</td><td data-label="要求">管理流量与业务流量物理或逻辑隔离，管理面不向租户网络开放</td><td data-label="为什么必须独立">避免租户侧横向探测到管控接口</td></tr>
+        <tr><td class="k hd" data-label="维度">权限路径</td><td data-label="要求">管理员进数据面须走高危动作流程：限时 + 双人 + 录屏 + 租户可见</td><td data-label="为什么必须独立">平台方的访问必须可被租户审计</td></tr>
+        <tr><td class="k hd" data-label="维度">变更节奏</td><td data-label="要求">控制面变更视同生产发布：双人复核、灰度、可回滚</td><td data-label="为什么必须独立">一次错误下发会同时打到大量租户</td></tr>
+        <tr><td class="k hd" data-label="维度">对账机制</td><td data-label="要求">控制面记期望状态，数据面定期上报实际状态，差异超阈值告警</td><td data-label="为什么必须独立">隔离策略的漂移检测也靠这套机制</td></tr>
+      </tbody>
+    </table>
+
+    <div class="intent">
+      <b>设计意图</b>
+      <span>把两类风险放进同一个故障域，等于拿“单租户级”的运维纪律去管“全平台级”的变更。分开之后，控制面按生产发布标准管，数据面按租户维度做灰度与降级，两者的责任人与节奏可以不同。</span>
+    </div>
+  </section>
+
+  <!-- ============ 02 核心模块 ============ -->
+  <section class="sec" id="modules">
+    <div class="sec-head">
+      <div class="sec-no">02</div>
+      <div>
+        <h2>核心模块</h2>
+        <p>控制面六个功能域，分别回答“谁、多少、怎么给、用了多少、留了什么痕”。</p>
+      </div>
+    </div>
+
+    <p class="lead">六个模块不是并列的六个功能，而是一条有先后的链路：<span class="hl">租户管理</span>给主键，<span class="hl">身份联邦</span>给人，<span class="hl">配额与准入</span>给量，<span class="hl">开通编排</span>把前三者落成资源，<span class="hl">计量采集</span>把实际用量回写，<span class="hl">审计</span>横向覆盖全部写操作。</p>
+
+    <figure>
+      <div class="fig-frame">
+        <svg viewBox="0 0 1000 306" role="img" aria-label="控制面六模块关系示意图">
+          <text x="36" y="18" font-size="11.5" fill="#7A8699">谁 · 多少 · 怎么给 · 用了多少 —— 一条有先后的链路，不是六个并列功能</text>
+
+          <rect x="36" y="34" width="168" height="112" fill="#EEF3F9" stroke="#2E6DA4" stroke-width="1.5"/>
+          <text x="52" y="58" font-size="10.5" fill="#2E6DA4">01 事实源 · 主键</text>
+          <text x="52" y="82" font-size="13" font-weight="700" fill="#1F3864">租户管理</text>
+          <text x="52" y="104" font-size="11" fill="#3D4C63">租户层级、组织人员、</text>
+          <text x="52" y="120" font-size="11" fill="#3D4C63">资源域、生命周期状态机</text>
+          <text x="52" y="138" font-size="10.5" fill="#7A8699">一级 ≤ 50 / 合计 ≤ 900</text>
+
+          <polygon points="212,90 224,84 224,96" fill="#7A8699"/>
+
+          <rect x="232" y="34" width="168" height="112" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="248" y="58" font-size="10.5" fill="#2E6DA4">02 事实源</text>
+          <text x="248" y="82" font-size="13" font-weight="700" fill="#1F3864">身份联邦与授权</text>
+          <text x="248" y="104" font-size="11" fill="#3D4C63">4A 为权威，平台做 SP</text>
+          <text x="248" y="120" font-size="11" fill="#3D4C63">OIDC + SAML 双栈</text>
+          <text x="248" y="138" font-size="10.5" fill="#7A8699">Realm 与一级租户 1:1</text>
+
+          <polygon points="408,90 420,84 420,96" fill="#7A8699"/>
+
+          <rect x="428" y="34" width="168" height="112" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="444" y="58" font-size="10.5" fill="#2E6DA4">03 事实源</text>
+          <text x="444" y="82" font-size="13" font-weight="700" fill="#1F3864">配额与准入</text>
+          <text x="444" y="104" font-size="11" fill="#3D4C63">15 项配额 × 分档 × 倍数</text>
+          <text x="444" y="120" font-size="11" fill="#3D4C63">一票否决硬编码</text>
+          <text x="444" y="138" font-size="10.5" fill="#7A8699">唯一同时读两个事实源</text>
+
+          <polygon points="604,90 616,84 616,96" fill="#7A8699"/>
+
+          <rect x="624" y="34" width="168" height="112" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="640" y="58" font-size="10.5" fill="#2E6DA4">04 事实源</text>
+          <text x="640" y="82" font-size="13" font-weight="700" fill="#1F3864">模板与开通编排</text>
+          <text x="640" y="104" font-size="11" fill="#3D4C63">六类模板作为输入</text>
+          <text x="640" y="120" font-size="11" fill="#3D4C63">声明式下发 + 流水线</text>
+          <text x="640" y="138" font-size="10.5" fill="#7A8699">L1 开通目标 ≤ 10 min</text>
+
+          <polygon points="800,90 812,84 812,96" fill="#7A8699"/>
+
+          <rect x="820" y="34" width="144" height="112" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="836" y="58" font-size="10.5" fill="#2E6DA4">05 事实源</text>
+          <text x="836" y="82" font-size="13" font-weight="700" fill="#1F3864">计量采集</text>
+          <text x="836" y="104" font-size="11" fill="#3D4C63">12 项计量，</text>
+          <text x="836" y="120" font-size="11" fill="#3D4C63">复用既有监控</text>
+          <text x="836" y="138" font-size="10.5" fill="#7A8699">只补标签与聚合</text>
+
+          <rect x="36" y="164" width="928" height="60" fill="#F2F5F9"/>
+          <rect x="36" y="164" width="3" height="60" fill="#B3261E"/>
+          <text x="56" y="188" font-size="12.5" font-weight="700" fill="#1F3864">06 审计与合规 · 横向覆盖</text>
+          <text x="56" y="210" font-size="11.5" fill="#3D4C63">每次开通、变更、降档、越权尝试都记“用户 + 激活租户 + 时间 + 结果”；平台方访问数据面须限时、双人、录屏，且租户可见。</text>
+
+          <text x="36" y="256" font-size="11.5" fill="#3D4C63">读数：配额与准入是唯一同时读“身份”与“租户”两个事实源的模块——越权拦截就落在这里，所以它必须是硬编码，不交人工判定。</text>
+          <text x="36" y="282" font-size="11.5" fill="#7A8699">900 租户 × 15 项 ≈ 13500 个配额对象，人工维护不可行 → 模板化下发、变更走 GitOps。</text>
+        </svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 3</span>控制面六个功能域及其依赖顺序。审计不代表不占事实源名额，它横向读全部写操作日志，是“出事能追到源头”的兜底。</figcaption>
+    </figure>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="no">模块 01</div>
+        <h4>租户管理</h4>
+        <p>定义一级 / 二级租户、组织与人员归属、资源域与订购关系，用状态机管住从申请到注销的全过程。</p>
+        <div class="chips"><span class="chip blue">唯一事实源</span><span class="chip">9 个状态</span><span class="chip">≥ 30 天冷静期</span></div>
+      </div>
+      <div class="card">
+        <div class="no">模块 02</div>
+        <h4>身份联邦与授权</h4>
+        <p>集团 4A 是唯一权威，平台只做 SP；OIDC 与 SAML 双栈并行，存量 CAS 保留兼容层；外部账号另立账号域。</p>
+        <div class="chips"><span class="chip blue">连接而非替换</span><span class="chip">双栈</span><span class="chip hot">外部账号不进 4A</span></div>
+      </div>
+      <div class="card">
+        <div class="no">模块 03</div>
+        <h4>配额与准入</h4>
+        <p>15 项配额按四档给默认值、倍数上限与突破审批；一票否决硬编码在准入校验里，优先于总分。</p>
+        <div class="chips"><span class="chip">分档 + 倍数 + 审批</span><span class="chip hot">5 条否决</span></div>
+      </div>
+      <div class="card">
+        <div class="no">模块 04</div>
+        <h4>模板与开通编排</h4>
+        <p>沿用客户六类配置模板作为流水线输入，把命名空间、库、配置、域名、管理员账号一次性备齐。</p>
+        <div class="chips"><span class="chip">六类模板</span><span class="chip">声明式下发</span></div>
+      </div>
+      <div class="card">
+        <div class="no">模块 05</div>
+        <h4>计量采集与聚合</h4>
+        <p>12 项计量中 4 项客户已有数据，方案只补强制标签、聚合口径与展示，不新建监控体系。</p>
+        <div class="chips"><span class="chip blue">补齐而非重建</span><span class="chip">P0 只出用量</span></div>
+      </div>
+      <div class="card">
+        <div class="no">模块 06</div>
+        <h4>审计与合规</h4>
+        <p>以“用户 + 激活租户”为二元组记录写操作，支持租户视角审计与跨租户操作回溯。</p>
+        <div class="chips"><span class="chip">租户可见</span><span class="chip">高危动作留痕</span></div>
+      </div>
+    </div>
+
+    <h3>L3 的适配策略：差异化，不一刀切</h3>
+    <p class="lead">七个能力板块按“是否触碰租户边界”划线，改的只有控制面那五个；大数据与大模型只接计量、内核一行不改。</p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th style="width:14%">改造强度</th><th style="width:30%">板块</th><th>理由</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="k hd" style="color:var(--red)" data-label="改造强度">必改 5 项</td><td data-label="板块">多租户管理、统一身份接入、API 网关、低代码平台、集成平台</td><td data-label="理由">不触碰租户边界，租户根本无法开通；网关还是配额与计量的唯一执行点</td></tr>
+        <tr><td class="k hd" style="color:var(--blue)" data-label="改造强度">轻改 3 项</td><td data-label="板块">统一门户、待办中心、时序库适配</td><td data-label="理由">只加适配层与租户上下文透传，不动数据模型与流程定义</td></tr>
+        <tr><td class="k hd" data-label="改造强度">不动 2 项</td><td data-label="板块">大数据平台、大模型工具链</td><td data-label="理由">重构风险大于收益；只在网关接计量，内核不改</td></tr>
+      </tbody>
+    </table>
+
+    <div class="intent">
+      <b>设计意图</b>
+      <span>“必改”的五个都是控制面组件，改造量集中、可控；业务应用侧基本零改动。这是分期能落地、也是 109.5 人月这个量级成立的前提。</span>
+    </div>
+  </section>
+
+  <!-- ============ 03 交互与数据流程 ============ -->
+  <section class="sec" id="flow">
+    <div class="sec-head">
+      <div class="sec-no">03</div>
+      <div>
+        <h2>交互与数据流程</h2>
+        <p>三条主链路：把租户开出来、把人登进来、把配额管住。</p>
+      </div>
+    </div>
+
+    <h3>3.1 租户开通：申请到运行的五个环节</h3>
+    <p class="lead">打分落档发生在审批环节，并且<span class="hl">一票否决优先于总分</span>——它在开通之前就拦住不合规的租户，而不是上线后再整改。</p>
+
+    <figure>
+      <div class="fig-frame">
+        <svg viewBox="0 0 1000 236" role="img" aria-label="租户开通流水线示意图">
+          <text x="30" y="20" font-size="11.5" fill="#7A8699">客户动作（申请、审批）与平台动作（编排、下发、对账）在同一条流水线上衔接</text>
+
+          <rect x="30" y="34" width="176" height="98" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="46" y="58" font-size="10.5" fill="#7A8699">01 客户</text>
+          <text x="46" y="82" font-size="13" font-weight="700" fill="#1F3864">申请</text>
+          <text x="46" y="104" font-size="11" fill="#3D4C63">业态与层级已选</text>
+          <text x="46" y="120" font-size="11" fill="#3D4C63">配额模板已选</text>
+
+          <polygon points="212,83 224,77 224,89" fill="#7A8699"/>
+
+          <rect x="230" y="34" width="176" height="98" fill="#FBEDEB" stroke="#E6C6C2"/>
+          <text x="246" y="58" font-size="10.5" fill="#B3261E">02 客户 + 平台</text>
+          <text x="246" y="82" font-size="13" font-weight="700" fill="#1F3864">审批与落档</text>
+          <text x="246" y="104" font-size="11" fill="#3D4C63">四维打分 → T 值</text>
+          <text x="246" y="120" font-size="11" fill="#B3261E">一票否决先校验</text>
+
+          <polygon points="412,83 424,77 424,89" fill="#7A8699"/>
+
+          <rect x="430" y="34" width="176" height="98" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="446" y="58" font-size="10.5" fill="#2E6DA4">03 平台</text>
+          <text x="446" y="82" font-size="13" font-weight="700" fill="#1F3864">模板编排</text>
+          <text x="446" y="104" font-size="11" fill="#3D4C63">按落档选模板版本</text>
+          <text x="446" y="120" font-size="11" fill="#3D4C63">校验资源域容量</text>
+
+          <polygon points="612,83 624,77 624,89" fill="#7A8699"/>
+
+          <rect x="630" y="34" width="176" height="98" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <text x="646" y="58" font-size="10.5" fill="#2E6DA4">04 平台</text>
+          <text x="646" y="82" font-size="13" font-weight="700" fill="#1F3864">资源下发</text>
+          <text x="646" y="104" font-size="11" fill="#3D4C63">NS / 库 / 配置 / 域名</text>
+          <text x="646" y="120" font-size="11" fill="#3D4C63">/ 管理员账号就绪</text>
+
+          <polygon points="812,83 824,77 824,89" fill="#7A8699"/>
+
+          <rect x="830" y="34" width="140" height="98" fill="#EEF3F9" stroke="#2E6DA4"/>
+          <text x="846" y="58" font-size="10.5" fill="#2E6DA4">05 租户</text>
+          <text x="846" y="82" font-size="13" font-weight="700" fill="#1F3864">运行与对账</text>
+          <text x="846" y="104" font-size="11" fill="#3D4C63">健康检查通过</text>
+          <text x="846" y="120" font-size="11" fill="#3D4C63">期望态 = 实际态</text>
+
+          <text x="30" y="164" font-size="11.5" fill="#3D4C63">开通时长目标　L0 &lt; 5 min　·　L1 ≤ 10 min　·　L2 0.5–2 个工作日　·　L3 1–4 周（含安全加固）</text>
+          <text x="30" y="190" font-size="11.5" fill="#7A8699">状态机另一支：运行 → 冻结（欠费 / 违规 / 安全事件）→ 解除或转注销；注销 → 数据处置（≥ 30 天冷静期）→ 已注销</text>
+          <text x="30" y="216" font-size="11.5" fill="#7A8699">变更走同一入口：扩容、加子系统、落档变更（如 L1→L2）都须重算配额并重新签认</text>
+        </svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 4</span>租户开通流水线与状态机。落档与配额必须联动——隔离升级若没有对应资源支撑，等于只改了标签。</figcaption>
+    </figure>
+
+    <h3>3.2 登录与身份联邦：只做联邦，不建第二套</h3>
+    <p class="lead">集团 4A 是唯一身份权威。平台做 SP，只验签、不发号：不存密码、不发凭证、不做组织建模，否则又会多一份要维护的主数据。</p>
+
+    <figure>
+      <div class="fig-frame">
+        <svg viewBox="0 0 1000 254" role="img" aria-label="统一身份联邦登录时序与同步机制示意图">
+          <text x="0" y="16" font-size="11.5" fill="#7A8699">登录时：一次重定向，三次握手，令牌里只放租户标识与角色码</text>
+
+          <rect x="0" y="30" width="190" height="72" fill="#FFFFFF" stroke="#7A8699"/>
+          <text x="95" y="60" font-size="13" font-weight="700" fill="#3D4C63" text-anchor="middle">用户 / 浏览器</text>
+          <text x="95" y="82" font-size="11" fill="#7A8699" text-anchor="middle">不持有平台账号</text>
+
+          <line x1="190" y1="66" x2="222" y2="66" stroke="#7A8699" stroke-width="1.5"/>
+          <polygon points="232,66 220,60 220,72" fill="#7A8699"/>
+          <text x="211" y="54" font-size="10.5" fill="#7A8699" text-anchor="middle">①</text>
+
+          <rect x="232" y="30" width="214" height="72" fill="#1F3864"/>
+          <text x="339" y="60" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">集团 4A（IdP）</text>
+          <text x="339" y="82" font-size="11" fill="#C9D4E4" text-anchor="middle">唯一身份权威</text>
+
+          <line x1="446" y1="66" x2="478" y2="66" stroke="#7A8699" stroke-width="1.5"/>
+          <polygon points="488,66 476,60 476,72" fill="#7A8699"/>
+          <text x="467" y="54" font-size="10.5" fill="#7A8699" text-anchor="middle">②</text>
+
+          <rect x="488" y="30" width="212" height="72" fill="#2E6DA4"/>
+          <text x="594" y="60" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">平台网关 · SP</text>
+          <text x="594" y="82" font-size="11" fill="#C9D4E4" text-anchor="middle">只验签，不发号</text>
+
+          <line x1="700" y1="66" x2="732" y2="66" stroke="#7A8699" stroke-width="1.5"/>
+          <polygon points="742,66 730,60 730,72" fill="#7A8699"/>
+          <text x="721" y="54" font-size="10.5" fill="#7A8699" text-anchor="middle">③</text>
+
+          <rect x="742" y="30" width="258" height="72" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.5"/>
+          <text x="871" y="60" font-size="13" font-weight="700" fill="#1F3864" text-anchor="middle">租户上下文 + 业务服务</text>
+          <text x="871" y="82" font-size="11" fill="#7A8699" text-anchor="middle">短时令牌内带激活 tenant_id</text>
+
+          <rect x="0" y="120" width="1000" height="26" fill="#EEF3F9"/>
+          <text x="12" y="138" font-size="11" fill="#2E6DA4">① 浏览器重定向 → ② OIDC / SAML2 断言（CAS 保留为存量兼容层）→ ③ 断言换平台短时令牌；网关每次校验，切换租户重签令牌</text>
+
+          <text x="0" y="170" font-size="11.5" fill="#7A8699">同步时：组织与人员不再全量同步</text>
+          <rect x="0" y="180" width="1000" height="50" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <line x1="334" y1="180" x2="334" y2="230" stroke="#D9DEE7"/>
+          <line x1="667" y1="180" x2="667" y2="230" stroke="#D9DEE7"/>
+          <text x="167" y="202" font-size="11.5" font-weight="700" fill="#3D4C63" text-anchor="middle">按可见范围同步</text>
+          <text x="167" y="220" font-size="10.5" fill="#7A8699" text-anchor="middle">只拉本租户可见的组织与人员</text>
+          <text x="500" y="202" font-size="11.5" font-weight="700" fill="#3D4C63" text-anchor="middle">增量对齐</text>
+          <text x="500" y="220" font-size="10.5" fill="#7A8699" text-anchor="middle">无增量接口则全量快照 + 差异比对</text>
+          <text x="833" y="202" font-size="11.5" font-weight="700" fill="#3D4C63" text-anchor="middle">冲突仲裁</text>
+          <text x="833" y="220" font-size="10.5" fill="#7A8699" text-anchor="middle">平台侧字段只读，一律以 4A 为准</text>
+        </svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 5</span>身份联邦登录链路与组织同步机制。外部账号（供应商、第三方运维）不进 4A，另立账号域：强制 MFA、有效期 ≤ 90 天、到期自动禁用。</figcaption>
+    </figure>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="no">关键约定</div>
+        <h4>sub 是唯一主键</h4>
+        <p>令牌的 <code>sub</code> 映射为平台 <code>external_id</code>，禁用 email 作主键；<code>iss + sub</code> 组合唯一。租户、角色等以自定义 claim 承载。</p>
+      </div>
+      <div class="card">
+        <div class="no">关键约定</div>
+        <h4>一人多租户靠“激活租户”</h4>
+        <p>集团专家跨厂支持时，一个 4A 账号对应多条租户成员关系；登录后先选租户，令牌内携带“当前激活 tenant_id”，审计记“用户 + 激活租户”二元组。</p>
+      </div>
+    </div>
+
+    <h3>3.3 配额强制执行：三层缺一，必然被绕过</h3>
+    <p class="lead">配额不是一张表，是三个执行点各自算得出来、各自拦得住。<span class="hl">API 调用量、Token、并发</span>这三项在 K8s 层完全看不见，只能靠网关与模型网关——所以网关是 P0 的第一个里程碑。</p>
+
+    <figure>
+      <div class="fig-frame">
+        <svg viewBox="0 0 1000 286" role="img" aria-label="配额三层强制执行点与计量流水示意图">
+          <rect x="0" y="38" width="170" height="146" fill="#F2F5F9" stroke="#D9DEE7"/>
+          <text x="16" y="66" font-size="12" font-weight="700" fill="#3D4C63">申请 / 变更入口</text>
+          <text x="16" y="88" font-size="11" fill="#7A8699">服务台</text>
+          <text x="16" y="112" font-size="11" fill="#3D4C63">配额模板 + 倍数</text>
+          <text x="16" y="132" font-size="11" fill="#3D4C63">超上限走突破审批</text>
+          <text x="16" y="152" font-size="11" fill="#7A8699">双人复核 · ≤ 30 天</text>
+          <text x="16" y="172" font-size="11" fill="#7A8699">到期自动回落</text>
+
+          <line x1="170" y1="111" x2="192" y2="111" stroke="#7A8699" stroke-width="1.5"/>
+          <polygon points="202,111 190,105 190,117" fill="#7A8699"/>
+
+          <rect x="210" y="38" width="440" height="46" fill="#FFFFFF" stroke="#D9DEE7"/>
+          <rect x="210" y="38" width="4" height="46" fill="#7A8699"/>
+          <text x="228" y="58" font-size="12" font-weight="700" fill="#3D4C63">① K8s 层 · 硬</text>
+          <text x="228" y="76" font-size="10.5" fill="#7A8699">ResourceQuota / LimitRange ｜ 秒级生效 ｜ 覆盖 Q-01 ~ Q-06</text>
+
+          <rect x="210" y="92" width="440" height="46" fill="#FFFFFF" stroke="#C9D8E8"/>
+          <rect x="210" y="92" width="4" height="46" fill="#2E6DA4"/>
+          <text x="228" y="112" font-size="12" font-weight="700" fill="#1F3864">② 平台准入 · 准硬</text>
+          <text x="228" y="130" font-size="10.5" fill="#7A8699">开通 / 变更时校验，写入前拒绝 ｜ 覆盖 Q-04、Q-06、Q-12 ~ Q-15</text>
+
+          <rect x="210" y="146" width="440" height="46" fill="#EEF3F9" stroke="#2E6DA4" stroke-width="1.5"/>
+          <rect x="210" y="146" width="4" height="46" fill="#1F3864"/>
+          <text x="228" y="166" font-size="12" font-weight="700" fill="#1F3864">③ 网关 · 软</text>
+          <text x="228" y="184" font-size="10.5" fill="#2E6DA4">限流 + 计数 ｜ 覆盖 Q-07 ~ Q-09 ｜ 唯一可计量点</text>
+
+          <line x1="650" y1="111" x2="672" y2="111" stroke="#7A8699" stroke-width="1.5"/>
+          <polygon points="682,111 670,105 670,117" fill="#7A8699"/>
+
+          <rect x="690" y="38" width="310" height="154" fill="#FFFFFF" stroke="#D9DEE7"/>
+          <text x="706" y="62" font-size="12" font-weight="700" fill="#3D4C63">计量流水线</text>
+          <rect x="706" y="74" width="278" height="24" fill="#F2F5F9"/>
+          <text x="716" y="90" font-size="10.5" fill="#3D4C63">采样（小时）→ 聚合（日）</text>
+          <rect x="706" y="104" width="278" height="24" fill="#F2F5F9"/>
+          <text x="716" y="120" font-size="10.5" fill="#3D4C63">比对（配额 vs 实际）</text>
+          <rect x="706" y="134" width="278" height="24" fill="#F2F5F9"/>
+          <text x="716" y="150" font-size="10.5" fill="#3D4C63">告警 70% / 90% / 100%</text>
+          <rect x="706" y="164" width="278" height="24" fill="#FEF6F4"/>
+          <text x="716" y="180" font-size="10.5" fill="#B3261E">100% 拒绝新申请，存量不中断</text>
+
+          <rect x="0" y="204" width="1000" height="40" fill="#F2F5F9"/>
+          <rect x="0" y="204" width="3" height="40" fill="#B3261E"/>
+          <text x="18" y="229" font-size="11.5" fill="#B3261E">绕过任一层，配额必然被绕过；Q-07 ~ Q-09 三项在 K8s 层完全不可见，网关不改，配额、计量、跨租户留痕三件事同时落空。</text>
+          <text x="0" y="268" font-size="11" fill="#7A8699">配套规则：70% 提醒、90% 预警、100% 拒绝新申请但存量不中断；临时提升 ≤ 30 天；连续 90 天用量 &lt; 申请量 20% 触发回收建议（不自动回收）。</text>
+        </svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 6</span>配额三层执行点与计量流水。三层口径一致、执行时机不同：K8s 管资源，准入管对象，网关管调用——越往右越“软”，越往右越能看见真实用量。</figcaption>
+    </figure>
+
+    <div class="intent">
+      <b>设计意图</b>
+      <span>100% 直接掐断会造成生产事故，所以阈值分三档；配额必须配“分档 + 倍数 + 审批”三件套——只给默认值人人都来突破，只给上限小租户会被大配额浪费。</span>
+    </div>
+  </section>
+
+  <!-- ============ 04 方案特点 ============ -->
+  <section class="sec" id="feature">
+    <div class="sec-head">
+      <div class="sec-no">04</div>
+      <div>
+        <h2>方案特点</h2>
+        <p>五条可检验的取舍，而不是五个形容词。</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="no">特点 01</div>
+        <h4>不做一刀切，八成停在 L1</h4>
+        <p>把“能不能上 L2”变成要论证的例外，而不是默认选项。约 80% 的二级租户落 L1，资源当量降到全量 L2 的 45%–55%；L3 目标 ≤ 5 个集群，超出即按失控处理。</p>
+        <div class="chips"><span class="chip blue">默认档 L1</span><span class="chip">例外要论证</span></div>
+      </div>
+      <div class="card">
+        <div class="no">特点 02</div>
+        <h4>只做联邦，不建第二套身份</h4>
+        <p>4A 是唯一权威，平台侧不建主身份库、不做组织建模。省下的不是开发量，而是“两份人员数据长期对不齐”的治理成本。</p>
+        <div class="chips"><span class="chip blue">连接而非替换</span><span class="chip">责任不转移</span></div>
+      </div>
+      <div class="card">
+        <div class="no">特点 03</div>
+        <h4>配额靠三层执行点，不靠一张表</h4>
+        <p>K8s 硬、准入准硬、网关软；调用量、Token、并发只能靠网关计量。这是把“配额写在制度里”变成“配额跑在系统里”的唯一办法。</p>
+        <div class="chips"><span class="chip hot">网关 = P0 第一里程碑</span></div>
+      </div>
+      <div class="card">
+        <div class="no">特点 04</div>
+        <h4>差异化改造：必改 5 / 轻改 3 / 不动 2</h4>
+        <p>改造量集中在控制面五个组件，业务应用侧基本零改动。大数据与大模型只接计量，不重构内核——重构风险大于收益。</p>
+        <div class="chips"><span class="chip">改造量可控</span><span class="chip">分期能落地</span></div>
+      </div>
+      <div class="card">
+        <div class="no">特点 05</div>
+        <h4>测试不砍，约占 24%</h4>
+        <p>隔离有效性、越权拦截率、配额生效这三个指标只能测出来，不能靠看代码看出来，所以测试投入单列、不与其他开发项合并。</p>
+        <div class="chips"><span class="chip hot">20 组越权用例</span><span class="chip">六步验收</span></div>
+      </div>
+      <div class="card">
+        <div class="no">特点 06</div>
+        <h4>区间先宽后窄，把不确定性摆到桌上</h4>
+        <p>P0 ±50%、P1 ±40%、P2 ±30%。一期不确定的是边界，不是人力；边界一锁，估算就该收敛。</p>
+        <div class="chips"><span class="chip">≈ 109.5 人月</span><span class="chip">43.5 / 34.0 / 32.0</span></div>
+      </div>
+    </div>
+
+    <h3>四条关键取舍</h3>
+    <p class="lead">方案里每个“选这个”，都对应一个“不选那个”和一份要付的代价。这些取舍已录入架构决策台账，按季度复核。</p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th style="width:22%">决策</th><th style="width:24%">不选的备选</th><th style="width:28%">理由</th><th>代价</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="k hd" data-label="决策">软硬多租户混合</td><td data-label="不选的备选">全软隔离 / 全硬隔离</td><td data-label="理由">全硬成本是 L1 的 5–8 倍；全软无法满足外部开发商与重要数据供给方</td><td data-label="代价">维护两套技术栈与两套运维流程</td></tr>
+        <tr><td class="k hd" data-label="决策">单集群多命名空间为主</td><td data-label="不选的备选">每租户一个集群</td><td data-label="理由">900 个租户不可能每户一集群；L1/L2 在单集群内可通过节点池强化</td><td data-label="代价">共享 API Server，须 APF 与准入护栏</td></tr>
+        <tr><td class="k hd" data-label="决策">身份以 4A 为权威</td><td data-label="不选的备选">平台自建 IdP / 商业 IAM 为主</td><td data-label="理由">身份权威源唯一是集团化 IAM 主流取向；自建会造成双份人员数据</td><td data-label="代价">强依赖 4A 接口排期，是最大外部风险</td></tr>
+        <tr><td class="k hd" data-label="决策">计量复用既有监控</td><td data-label="不选的备选">新建统一计量平台</td><td data-label="理由">客户已有 Prometheus + Grafana 与低代码埋点，重复投资会引发抵触</td><td data-label="代价">标签体系需补齐，历史数据无法回溯</td></tr>
+      </tbody>
+    </table>
+
+    <h3>还缺一块：实测证据</h3>
+    <p class="lead">方案里的当量、时长、拦截率目前都是经验值或目标值。三个最不确定项要带区间提交，等原型环境跑出来再回填。</p>
+
+    <figure>
+      <div class="fig-frame">
+        <div class="ph">
+          <svg class="ph-ico" width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+            <rect x="6" y="11" width="40" height="30" fill="none" stroke="#B7C2D2" stroke-width="1.6"/>
+            <circle cx="17" cy="21" r="3.2" fill="none" stroke="#B7C2D2" stroke-width="1.6"/>
+            <path d="M10 36 L21 26 L27 32 L34 25 L42 32" fill="none" stroke="#B7C2D2" stroke-width="1.6"/>
+          </svg>
+          <b>图片占位 · 原型环境实测数据</b>
+          <span>建议替换为 S2 场景的三组实测截图：20 组越权用例的执行记录、三层配额命中与限流曲线、L1 租户开通耗时分布。建议尺寸 1600×900，截图保留浏览器或监控面板外框，便于读者判断数据来源。</span>
+        </div>
+      </div>
+      <figcaption><span class="no">图 7</span>待补证据位。此处的结论在实测前只能标注为“目标值”，不宜作为承诺对外表述。</figcaption>
+    </figure>
+
+    <div class="intent">
+      <b>设计意图</b>
+      <span>把不确定性写在明面上，比在评审时被逐条追问省时间。三个区间（身份 ±50%、子系统适配 ±40%、隔离 ±30%）不是保守估计，是真实风险。</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>依据《电力监控系统安全防护规定》（2024 年第 27 号令，2025-01-01 施行）；分区表述统一为生产控制区（安全Ⅰ/Ⅱ区）— 安全接入区 — 管理信息区（安全Ⅲ/Ⅳ区）。人月为经验估算，按 8 人 × 月口径折算，不含客户侧配合人力；资源当量为相对值，仅用于横向比较。</p>
+    <div class="mark">
+      集团级多租户技术平台架构设计方案 v0.1<br>
+      国电南京自动化股份有限公司 · 技术平台组
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

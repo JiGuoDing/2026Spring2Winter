@@ -95,6 +95,13 @@ def is_valid_block_id(s: str) -> bool:
     return bool(BLOCK_ID_RE.fullmatch(s))
 
 
+CLUSTER_ID_RE = re.compile(r"cls_[a-z0-9_]+")
+
+
+def is_valid_cluster_id(s: str) -> bool:
+    return bool(CLUSTER_ID_RE.fullmatch(s))
+
+
 def doc_type_of(doc_id: str) -> str:
     """由 ID 前缀反推文档类型，供生成器与校验器共用。"""
     if doc_id.startswith("fld_t"):

@@ -8,9 +8,19 @@
   同一 (params, v0 快照, docs v1) 下重跑 ``tasks.jsonl`` 字节一致。
 * 数值层：``truth.value`` 来自 ``db/executor.py`` 在 v0 上的真实执行结果。
   标量题存数字，表格题存行列表；每题 SQL 自带行数上限（≤20 行），不做截断。
+  gold_sql / truth.value / expected_columns 与 v0.1.0 保持一致，只重建主张层与簇。
 * 口径层：``metric_refs`` 指向 ``knowledge/docs.jsonl`` 中真实存在的 ``metric_XXX``，
   并在证据里引用其定义块 / 计算式块 / 口径边界块。
-* 主张层：每题 1–3 条中文事实表述，每条挂 1–2 个证据块（doc_id + chunk_id + version=1）。
+* 主张层：按 ``params.tasks.claims_per_task`` 的分层配额给每题分配 1–5 条主张
+  （难度层内分层抽样，保证每类题量都有 1..5 条主张的样本）。每条主张对应一个
+  不同侧面（答案值 / 规模 / 结构占比 / 覆盖面 / 口径边界等），每条挂 1–2 个
+  真实证据块；``truth.evidence`` 严格等于该题全部主张证据的并集。
+  题干答案值不可从结果集直接读出的侧面（如记录数、去重客户数、全期占比）由
+  本脚本在 v0 上执行**只读探查 SQL**得到，探查 SQL 不进入 ``gold_sql``。
+* 语义簇：200 题按 (domain, 表族) 分组、组内再按主指标排序后切成 40 个 3–6 题的
+  簇，簇名 ``cls_{domain}_{topic}``；同簇题目除共享所属表的白皮书外，还共同引用
+  该数据域《…关键指标》白皮书的「计算与对账」块，作为簇内反馈借用的公共证据。
+  分簇只依赖参数顺序与确定性排序，重跑一致，不含随机。
 * 权限：取题目涉及表与指标的规范密级上限（public < staff < restricted）；
   主题（domain）取主表所属数据域，写入 MANIFEST。
 
@@ -27,6 +37,7 @@ import re
 import sys
 from collections import Counter, OrderedDict
 from dataclasses import dataclass, field
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 
@@ -45,7 +56,26 @@ PERM_ORDER = ("public", "staff", "restricted")
 
 PARAMS = io.read_json(ROOT / "config" / "params.json")
 TASK_PARAMS = PARAMS["tasks"]
+CLUSTER_PARAMS = PARAMS["clusters"]
 TABLES = io.read_json(ROOT / "contracts" / "tables.json")["tables"]
+
+# 主张数配额：按 params.tasks.claims_per_task 换算成 200 题的整数名额，
+# 再在难度层内按同一比例分摊（单表 9/12/18/12/9，join 10/14/21/14/11，
+# 嵌套 11/14/21/14/10），保证每种主张数在每个难度层都出现。
+CLAIM_QUOTA = {
+    "single_table": {1: 9, 2: 12, 3: 18, 4: 12, 5: 9},
+    "join": {1: 10, 2: 14, 3: 21, 4: 14, 5: 11},
+    "nested_agg": {1: 11, 2: 14, 3: 21, 4: 14, 5: 10},
+}
+CLAIM_COUNT_VALUES = (1, 2, 3, 4, 5)
+
+# 域级白皮书：wp_181..wp_200 为五个数据域各四篇（总览 / 关键指标 / 关联陷阱 / 权限与合规），
+# 由 knowledge 层的标题首句识别，不手写文档编号。
+DOMAIN_ZH = {"sales": "销售", "supply": "供应链", "finance": "财务",
+             "ops": "运营", "meta": "元数据"}
+DOMAIN_ANGLE_KEYS = (("域总览", "overview"), ("关键指标", "metrics"),
+                     ("关联陷阱", "joins"), ("权限与合规", "permission"))
+
 
 # ---------------------------------------------------------------- 表与字段目录
 TABLE_NAMES = [t["name"] for t in TABLES]
@@ -186,6 +216,28 @@ for _idx, _tbl in enumerate(TABLES, start=1):
 for _name in TABLE_NAMES:
     assert set(WP_SLOTS.get(_name, {})) == {"usage", "join", "trap"}, f"{_name} 白皮书分档不全"
 
+# 域级白皮书索引：{domain: {overview/metrics/joins/permission: doc_id}}。
+DOMAIN_WP: dict[str, dict[str, str]] = {}
+for _doc, _row in sorted(DOCS.items()):
+    if not _doc.startswith("wp_") or int(_doc[3:]) < 181:
+        continue
+    _head = _row["chunks"][0]["text"]
+    _angle = next((key for marker, key in DOMAIN_ANGLE_KEYS if marker in _head), None)
+    assert _angle, f"域级白皮书 {_doc} 无法识别角度"
+    DOMAIN_WP.setdefault(_row["domain"], {})[_angle] = _doc
+for _dom in DOMAIN_ZH:
+    assert set(DOMAIN_WP.get(_dom, {})) == {"overview", "metrics", "joins", "permission"}, \
+        f"{_dom} 域级白皮书不齐：{sorted(DOMAIN_WP.get(_dom, {}))}"
+assert set(DOMAIN_WP) == set(DOMAIN_ZH), f"域级白皮书出现未知域：{sorted(DOMAIN_WP)}"
+
+# 域口径块（《关键指标》p02「计算与对账」）：同域题目共同引用的公共证据。
+DOMAIN_REF: dict[str, tuple[str, int]] = {
+    dom: (DOMAIN_WP[dom]["metrics"], 2) for dom in DOMAIN_ZH
+}
+for _dom, (_doc, _p) in DOMAIN_REF.items():
+    assert f"{_doc}#p{_p:02d}" in DOC_CHUNKS[_doc], f"{_dom} 域口径块不存在"
+
+
 # 指标卡：(表, 字段) -> [metric_id]；同时解析指标名与默认窗口
 METRIC_BY_TF: dict[tuple[str, str], list[str]] = {}
 METRIC_META: dict[str, dict] = {}
@@ -287,6 +339,135 @@ def canonical_perm(table: str) -> str:
 TABLE_PERM = {n: canonical_perm(n) for n in TABLE_NAMES}
 TABLE_DOMAIN = {n: DOC_DOMAIN[WP_SLOTS[n]["usage"]] for n in TABLE_NAMES}
 
+# ---------------------------------------------------------------- 语义簇
+# 分簇依据：(domain, 表族)；表族按业务过程划分，簇内再按主指标、表、周期、
+# 题族排序后均分成 3–6 题的簇。分簇过程不含随机，重跑一致。
+DOMAIN_FAMILIES: dict[str, tuple[tuple[str, tuple[str, ...]], ...]] = {
+    "sales": (
+        ("orders", ("fact_orders", "fact_order_item", "fact_sales_daily",
+                    "agg_daily_sales", "agg_product_rank", "agg_region_share")),
+        ("promotion", ("fact_promotion_apply", "fact_campaign_touch", "fact_clicks",
+                       "fact_sessions", "fact_leads", "agg_funnel")),
+        ("subscription", ("fact_subscriptions", "fact_renewals", "fact_churn",
+                          "agg_customer_ltv", "agg_cohort_retention")),
+        ("returns", ("fact_returns",)),
+        ("contract", ("fact_contracts", "fact_quotes", "fact_price_change")),
+    ),
+    "supply": (
+        ("shipment", ("fact_shipments", "fact_deliveries")),
+        ("procurement", ("fact_supplier_orders", "fact_quality_checks")),
+        ("inventory", ("fact_inventory", "fact_stock_move", "agg_inventory_turnover")),
+    ),
+    "finance": (
+        ("invoice", ("fact_invoices", "fact_payments")),
+        ("cost", ("fact_costs", "agg_cost_breakdown", "fact_forecast",
+                  "agg_forecast_error")),
+        ("target", ("fact_targets", "fact_budget")),
+        ("collection", ("fact_collections", "fact_refunds")),
+    ),
+    "ops": (
+        ("usage", ("fact_usage",)),
+        ("sla", ("fact_sla_events", "agg_sla_summary")),
+        ("ticket", ("fact_tickets",)),
+    ),
+    "meta": (
+        ("audit", ("log_query_audit", "log_etl_run", "log_access",
+                   "log_metric_change", "log_schema_change", "log_backfill")),
+    ),
+}
+DOMAIN_ORDER = tuple(DOMAIN_FAMILIES)          # sales, supply, finance, ops, meta
+TABLE_FAMILY: dict[str, str] = {}
+FAMILY_TABLES: dict[tuple[str, str], tuple[str, ...]] = {}
+for _dom, _fams in DOMAIN_FAMILIES.items():
+    assert _dom in DOMAIN_ZH, f"未知数据域 {_dom}"
+    for _fam, _tbs in _fams:
+        assert (_dom, _fam) not in FAMILY_TABLES
+        FAMILY_TABLES[(_dom, _fam)] = tuple(_tbs)
+        for _tb in _tbs:
+            assert _tb in TABLE_NAMES, f"表族 {_fam} 引用了不存在的表 {_tb}"
+            assert _tb not in TABLE_FAMILY, f"表 {_tb} 被重复归族"
+            assert TABLE_KIND[_tb] in ("fact", "agg", "log"), f"表族不应包含维表 {_tb}"
+            assert TABLE_DOMAIN[_tb] == _dom, f"{_tb} 域为 {TABLE_DOMAIN[_tb]}，与族 {_dom} 不符"
+            TABLE_FAMILY[_tb] = _fam
+
+# 主指标排序：金额类 → 数量类 → 汇总指标 → 日志耗时/载荷 → 计数类
+MEASURE_ORDER = ("amount", "gross_amount", "net_amount", "discount_amount", "tax_amount",
+                 "cost_amount", "unit_price", "quantity", "metric_value", "metric_ratio",
+                 "metric_delta", "duration_ms", "payload_size")
+COUNT_MEASURE_RANK = len(MEASURE_ORDER)
+
+
+def _measure_rank(spec: "Spec") -> int:
+    return (MEASURE_ORDER.index(spec.measure) if spec.measure in MEASURE_ORDER
+            else COUNT_MEASURE_RANK)
+
+
+def _family_sizes(n: int) -> list[int]:
+    """把 n 道题均分成每簇 3–6 题（k 取最少簇数，余数摊到前面的簇）。"""
+    lo, hi = CLUSTER_PARAMS["min_size"], CLUSTER_PARAMS["max_size"]
+    if n <= hi:
+        assert n >= lo, f"表族只有 {n} 道题，不足最小簇规模 {lo}"
+        return [n]
+    k = -(-n // hi)
+    base, extra = divmod(n, k)
+    sizes = [base + 1] * extra + [base] * (k - extra)
+    assert sizes[0] <= hi and sizes[-1] >= lo, f"{n} 题无法均分为 3–6 题簇：{sizes}"
+    return sizes
+
+
+def assign_clusters(specs: list["Spec"]) -> tuple[dict[int, str], list[dict]]:
+    """给每道题分配 cluster_id，返回 ({seq: cluster_id}, 簇元数据列表)。"""
+    grouped: dict[tuple[str, str], list[tuple[int, "Spec"]]] = {}
+    for seq, spec in enumerate(specs, start=1):
+        primary = spec.tables[0]
+        family = TABLE_FAMILY.get(primary)
+        assert family, f"{spec.family} 第 {seq} 题主表 {primary} 未归入任何表族"
+        grouped.setdefault((spec.domain, family), []).append((seq, spec))
+
+    seq_to_cluster: dict[int, str] = {}
+    clusters: list[dict] = []
+    for dom in DOMAIN_ORDER:
+        for family, tables in DOMAIN_FAMILIES[dom]:
+            items = grouped.get((dom, family), [])
+            if not items:
+                continue
+            table_pos = {tb: i for i, tb in enumerate(tables)}
+            items.sort(key=lambda it: (
+                _measure_rank(it[1]),
+                table_pos[it[1].tables[0]],
+                PERIODS.index(it[1].period),
+                it[1].family,
+                it[0],
+            ))
+            sizes = _family_sizes(len(items))
+            cursor = 0
+            for idx, size in enumerate(sizes, start=1):
+                chunk = items[cursor:cursor + size]
+                cursor += size
+                cluster_id = f"cls_{dom}_{family}" if idx == 1 else f"cls_{dom}_{family}_{idx}"
+                assert cluster_id not in {c["cluster_id"] for c in clusters}, cluster_id
+                for seq, _spec in chunk:
+                    assert seq not in seq_to_cluster, f"q{seq:03d} 被分到多个簇"
+                    seq_to_cluster[seq] = cluster_id
+                clusters.append({
+                    "cluster_id": cluster_id,
+                    "domain": dom,
+                    "family": family,
+                    "size": len(chunk),
+                    "task_ids": [f"q{seq:03d}" for seq, _ in chunk],
+                    "primary_tables": sorted({_spec.tables[0] for _, _spec in chunk}),
+                    "measures": sorted({_spec.measure for _, _spec in chunk}),
+                    "difficulties": dict(sorted(Counter(
+                        _spec.difficulty for _, _spec in chunk).items())),
+                    "claim_counts": sorted({_spec.extra["claim_count"] for _, _spec in chunk})
+                    if chunk and "claim_count" in chunk[0][1].extra else [],
+                })
+    want = CLUSTER_PARAMS["count"]
+    assert len(clusters) == want, f"簇数 {len(clusters)} != params.clusters.count {want}"
+    assert len(seq_to_cluster) == len(specs), f"分簇覆盖 {len(seq_to_cluster)}/{len(specs)} 题"
+    return seq_to_cluster, clusters
+
+
 DIM_SPECS = {
     "dim_customer": {"alias": "c", "key": "customer_key", "pk": "customer_id",
                      "zh": "客户维", "attrs": {
@@ -326,7 +507,11 @@ def make_refs(table: str, field_name: str, metric: str | None,
         "wp_recon": (WP_SLOTS[table]["trap"], 3),
         "field_def": (field_doc(table, field_name), 1),
         "field_trap": (field_doc(table, field_name), 2),
+        # 客户计数类主张用客户维主键字段卡作证据（维表字段卡为公开级，避免无谓抬升题目密级）
+        "customer_field": (field_doc("dim_customer", "customer_id"), 1)
+        if "customer_key" in TABLE_FIELDS[table] else None,
     }
+    refs = {k: v for k, v in refs.items() if v}
     if metric:
         refs["metric_def"] = (metric, 1)
         refs["metric_calc"] = (metric, 2)
@@ -449,7 +634,61 @@ def _to_evidence(refs) -> list[dict]:
     return out
 
 
-def build_one(seq: int, spec: Spec) -> tuple[dict, dict, dict]:
+# ---------------------------------------------------------------- 主张构造工具
+def _dref(domain: str) -> tuple[str, int]:
+    """该数据域的公共口径块（《…关键指标》p02「计算与对账」）。"""
+    return DOMAIN_REF[domain]
+
+
+def _share(num, den, decimals: int = 2) -> str:
+    """占比写成百分比；分母为 0 时按 0 处理（题面区间内实际不会出现）。"""
+    den = float(den)
+    val = 0.0 if den == 0 else float(num) / den
+    return f"{val * 100:.{decimals}f}%"
+
+
+def _rel_diff(value, base) -> str:
+    """相对差（value 相对 base），写成百分比。"""
+    base = float(base)
+    return "0.00%" if base == 0 else f"{(float(value) - base) / base * 100:+.2f}%"
+
+
+def _period_days(period: Period) -> int:
+    def _d(key: int):
+        return date(key // 10000, key % 10000 // 100, key % 100)
+
+    return (_d(period.end) - _d(period.start)).days + 1
+
+
+@lru_cache(maxsize=None)
+def probe(sql: str):
+    """执行一条只读探查 SQL（不进入 gold_sql），返回首行首列；空结果返回 None。"""
+    out = executor.execute(SNAPSHOT, sql)
+    if out["error"]:
+        raise RuntimeError(f"探查 SQL 失败：{out['error']}\n{sql}")
+    return out["rows"][0][0] if out["rows"] else None
+
+
+def probe_row(sql: str) -> list:
+    out = executor.execute(SNAPSHOT, sql)
+    if out["error"]:
+        raise RuntimeError(f"探查 SQL 失败：{out['error']}\n{sql}")
+    return list(out["rows"][0]) if out["rows"] else []
+
+
+FULL_PERIOD = PERIODS[-1]  # 2024-01-01..2024-05-14，覆盖 v0 快照全部业务日期
+
+
+def scope_where(fact: str, period: Period, conds, joins: str = "",
+                extra: str = "") -> str:
+    """与题目同口径的 WHERE（仅用于探查，不进入 gold_sql）。"""
+    parts = [where_fact("f", period, conds)]
+    if extra:
+        parts.append(extra)
+    return f"FROM {fact} f\n{joins}WHERE " + " AND ".join(parts)
+
+
+def build_one(seq: int, spec: Spec, claim_count: int, cluster_id: str) -> tuple[dict, dict, dict]:
     out = executor.execute(SNAPSHOT, spec.sql)
     if out["error"]:
         raise RuntimeError(f"{spec.family} 第 {seq} 题 SQL 执行失败：{out['error']}\n{spec.sql}")
@@ -463,25 +702,37 @@ def build_one(seq: int, spec: Spec) -> tuple[dict, dict, dict]:
 
     value, shape = _normalize(rows)
     ctx = Context(spec, columns, rows)
-    claims = spec.claims(ctx)
-    if not 1 <= len(claims) <= 3:
-        raise RuntimeError(f"{spec.family} 第 {seq} 题 claim 数 {len(claims)} 不在 1—3 之间")
+    claims = spec.claims(ctx, claim_count)
+    if len(claims) != claim_count:
+        raise RuntimeError(f"{spec.family} 第 {seq} 题主张数 {len(claims)} != 配额 {claim_count}")
+    if not 1 <= len(claims) <= 5:
+        raise RuntimeError(f"{spec.family} 第 {seq} 题 claim 数 {len(claims)} 不在 1—5 之间")
+    texts = [c["text"] for c in claims]
+    if len(set(texts)) != len(texts):
+        raise RuntimeError(f"{spec.family} 第 {seq} 题主张文本重复：{texts}")
     for c in claims:
         if not 1 <= len(c["refs"]) <= 2:
             raise RuntimeError(f"{spec.family} 第 {seq} 题 claim 证据数超限：{c['refs']}")
+        assert c["text"].strip(), f"{spec.family} 第 {seq} 题存在空主张"
 
     metric_refs = list(spec.metric_refs)
-    base = [spec.refs["wp_usage"], spec.refs["field_def"]]
-    if metric_refs:
-        base.append(spec.refs["metric_def"])
-    refs: list[tuple[str, int]] = list(base)
+    # 证据层 = 全部主张证据的并集（不再额外挂 base 证据，保证可逐条回溯）
+    refs: list[tuple[str, int]] = []
     for c in claims:
         refs.extend(c["refs"])
     evidence = _to_evidence(refs)
+    if not evidence:
+        raise RuntimeError(f"{spec.family} 第 {seq} 题证据层为空")
 
-    # 权限：题目涉及的表、指标与所引证据卡的密级上限
+    # 权限：题目访问基线的密级上限 = 涉及表 + 声明指标 + 基线证据（表使用说明、度量字段卡、
+    # 指标定义卡）+ 实际引用证据。基线证据即使未逐条写进主张，也是回答该题必须读到的对象，
+    # 因此参与密级判定；与 v0.1.0 相比权限分布保持不变。
+    access_refs = [spec.refs["wp_usage"], spec.refs["field_def"]]
+    if metric_refs:
+        access_refs.append(spec.refs["metric_def"])
     perms = {TABLE_PERM[t] for t in spec.tables}
     perms |= {DOC_PERM[m] for m in metric_refs}
+    perms |= {DOC_PERM[doc] for doc, _no in access_refs}
     perms |= {DOC_PERM[e["doc_id"]] for e in evidence}
     permission = max(perms, key=PERM_ORDER.index)
     for doc in [e["doc_id"] for e in evidence]:
@@ -493,6 +744,7 @@ def build_one(seq: int, spec: Spec) -> tuple[dict, dict, dict]:
 
     task = OrderedDict([
         ("task_id", ids.task_id(seq)),
+        ("cluster_id", cluster_id),
         ("question", tidy(spec.question)),
         ("difficulty", spec.difficulty),
         ("gold_sql", spec.sql.strip()),
@@ -519,6 +771,9 @@ def build_one(seq: int, spec: Spec) -> tuple[dict, dict, dict]:
     meta = {
         "family": spec.family,
         "difficulty": spec.difficulty,
+        "cluster_id": cluster_id,
+        "primary_table": spec.tables[0],
+        "claim_count": claim_count,
         "tables": list(spec.tables),
         "domain": spec.domain,
         "permission": permission,
@@ -678,16 +933,49 @@ def fam_a(i: int) -> Spec:
     question = (f"{period.range_zh()} 期间（{period.zh}），{NAME_ZH[fact]}的"
                 f"{info['zh']}{word}是多少？统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
+    agg_verb = "SUM" if info["agg"] == "sum" else "AVG"
 
-    def claims(ctx):
+    def claims(ctx, n):
         v = ctx.cell(0, alias)
-        return [
+        out = [
             _claim(f"{period.range_zh()} 期间，{NAME_ZH[fact]}的{info['zh']}{word}为 "
-                   f"{fmt_value(v, dec, kind, unit)}（{caliber}）。",
-                   refs["metric_calc"], refs["wp_grain"]),
-            _claim(f"口径说明：按业务发生日期归属，{caliber}，区间外的行不计入。",
-                   refs["wp_caliber"], refs["metric_bound"]),
+                   f"{fmt_value(v, dec, kind, unit)}（{caliber}；按{dom_zh}域指标口径与"
+                   f"{'指标卡计算式' if metric else '字段定义'}汇总）。",
+                   refs["metric_calc"] if metric else refs["field_def"], domain_ref),
         ]
+        if n >= 2:
+            cnt = int(probe(f"SELECT COUNT(*) AS n {scope_where(fact, period, conds)}"))
+            out.append(_claim(
+                f"同口径明细共 {_int(cnt)} 笔记录，{info['zh']}{word}由这 {_int(cnt)} 笔"
+                f"按 {agg_verb} 聚合得到。", refs["wp_rows"], refs["field_def"]))
+        if n >= 3:
+            full = probe(f"SELECT ROUND({func}(f.{field_name}), {info['decimals']}) AS m "
+                         f"{scope_where(fact, FULL_PERIOD, conds)}")
+            if info["agg"] == "sum" and full:
+                text = (f"该区间{info['zh']}合计相当于 2024-01-01 至 2024-05-14 同口径"
+                        f"全期合计（{fmt_value(full, dec, kind, unit)}）的 {_share(v, full)}。")
+            elif full:
+                text = (f"全期（2024-01-01 至 2024-05-14）同口径平均为 "
+                        f"{fmt_value(full, dec, kind, unit)}，本区间平均与之相差 "
+                        f"{_rel_diff(v, full)}。")
+            else:
+                text = (f"统计区间共 {_period_days(period)} 天，区间内按业务日期逐日归属后"
+                        f"再聚合，不做跨天累计。")
+            out.append(_claim(text, refs["metric_bound"], refs["wp_recon"]))
+        if n >= 4:
+            cnt_c = int(probe(f"SELECT COUNT(DISTINCT f.customer_key) AS c "
+                              f"{scope_where(fact, period, conds)}"))
+            out.append(_claim(
+                f"该区间涉及 {_int(cnt_c)} 个不同客户（按 customer_key 对应客户维主键去重），"
+                f"客户粒度与明细行粒度不同。", refs["customer_field"], refs["wp_rows"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：按业务发生日期归属，{caliber}，区间外的行不计入；"
+                f"{'金额' if kind == 'money' else '数量'}保留 {dec} 位小数。",
+                refs["wp_caliber"], refs["metric_bound"]))
+        return out[:n]
 
     return _spec("A", "single_table", question, sql, [fact], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -722,15 +1010,51 @@ def fam_b(i: int) -> Spec:
         question = (f"{period.range_zh()} 期间（{period.zh}），{NAME_ZH[fact]}有业务发生的"
                     f"业务日期共有多少天（按业务日期去重，{caliber}）？")
 
-    def claims(ctx):
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
+    unit_zh = "天" if mode == 2 else "笔"
+    days = _period_days(period)
+    value_ref = {0: refs["wp_rows"], 1: refs["customer_field"], 2: refs["wp_grain"]}[mode]
+
+    def claims(ctx, n):
         v = ctx.cell(0, alias)
-        return [
-            _claim(f"{period.range_zh()} 期间，{NAME_ZH[fact]}的{what}为 {_int(v)}"
-                   f"{' 天' if mode == 2 else ' 笔'}（{caliber}）。",
-                   refs["wp_rows"], refs["wp_grain"]),
-            _claim(f"口径说明：按业务发生日期与主键去重后统计，{caliber}。",
-                   refs["wp_usage"], refs["field_def"]),
+        out = [
+            _claim(f"{period.range_zh()} 期间，{NAME_ZH[fact]}的{what}为 {_int(v)} {unit_zh}"
+                   f"（{caliber}；按{dom_zh}域口径统计）。", value_ref, domain_ref),
         ]
+        if n >= 2:
+            if mode == 2:
+                text = (f"统计区间共 {days} 天，有业务发生的日期占 {_share(v, days)}，"
+                        f"其余日期无有效记录。")
+                refs2 = (refs["wp_rows"], refs["field_def"])
+            else:
+                text = (f"统计区间共 {days} 天，折合日均 {int(v) / days:.2f} 笔/天；"
+                        f"计数按业务日期逐日归属后汇总。")
+                refs2 = (refs["wp_caliber"], refs["field_def"])
+            out.append(_claim(text, *refs2))
+        if n >= 3:
+            full = int(probe(f"SELECT COUNT(*) AS n FROM {fact} f "
+                             f"WHERE {where_fact('f', FULL_PERIOD, conds)}"))
+            out.append(_claim(
+                f"2024-01-01 至 2024-05-14 同口径全期为 {_int(full)} {unit_zh}，"
+                f"本区间占其 {_share(v, full)}。", refs["wp_trap"], refs["wp_recon"]))
+        if n >= 4:
+            if mode == 1:
+                aux_col, aux_what, aux_unit = "date_key", "有业务的业务日期", "天"
+                aux_refs = (refs["wp_rows"], refs["wp_grain"])
+            else:
+                aux_col, aux_what, aux_unit = "customer_key", "涉及的客户", "个"
+                aux_refs = (refs["customer_field"], refs["wp_rows"])
+            aux_cnt = int(probe(f"SELECT COUNT(DISTINCT f.{aux_col}) AS c "
+                                f"FROM {fact} f WHERE {where}"))
+            out.append(_claim(
+                f"同一区间内{aux_what}共 {_int(aux_cnt)} {aux_unit}"
+                f"（按 {aux_col} 对应主键去重），与{what}使用的是同一份口径过滤。", *aux_refs))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：按业务发生日期与主键去重后统计，{caliber}；"
+                f"区间外的记录不参与计数。", refs["wp_caliber"], refs["wp_usage"]))
+        return out[:n]
 
     return _spec("B", "single_table", question, sql, [fact], period, refs, [],
                  claims, measure=pk, measure_zh=what, decimals=0, kind="count",
@@ -768,20 +1092,41 @@ def fam_c(i: int) -> Spec:
     question = (f"{period.range_zh()} 期间（{period.zh}），按{attr_zh}分组统计{NAME_ZH[fact]}的"
                 f"{info['zh']}合计与记录数，并按{info['zh']}从高到低排列。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         top, low = ctx.rows[0], ctx.rows[-1]
         total = sum(ctx.col(alias))
         total_cnt = sum(ctx.col("row_count"))
-        return [
+        top_v = top[ctx.pos[alias]]
+        low_v = low[ctx.pos[alias]]
+        out = [
             _claim(f"{period.range_zh()} 期间，按{attr_zh}分组后 {top[0]} 的{info['zh']}"
-                   f"最高，为 {fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}）。",
-                   refs["wp_grain"], refs["metric_calc"]),
-            _claim(f"参与汇总的 {ctx.n} 个{attr_zh}分组合计{info['zh']} "
-                   f"{fmt_value(total, dec, kind, unit)}，记录 {_int(total_cnt)} 笔；"
-                   f"{low[0]} 最低，为 {fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
-                   refs["wp_recon"], refs["field_trap"]),
+                   f"最高，为 {fmt_value(top_v, dec, kind, unit)}（{caliber}；"
+                   f"按{dom_zh}域指标口径分组汇总）。", refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"参与汇总的 {ctx.n} 个{attr_zh}分组合计{info['zh']} "
+                f"{fmt_value(total, dec, kind, unit)}，记录 {_int(total_cnt)} 笔。",
+                refs["wp_recon"], refs["field_trap"]))
+        if n >= 3:
+            out.append(_claim(
+                f"最低分组为 {low[0]}，{info['zh']} {fmt_value(low_v, dec, kind, unit)}；"
+                f"最高与最低相差 {fmt_value(float(top_v) - float(low_v), dec, kind, unit)}。",
+                refs["metric_calc"], refs["wp_caliber"]))
+        if n >= 4:
+            out.append(_claim(
+                f"最高分组 {top[0]} 占全部{info['zh']}的 {_share(top_v, total)}，"
+                f"其余 {max(ctx.n - 1, 0)} 个分组分摊剩余部分。",
+                refs["metric_bound"], refs["wp_rows"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：按{attr_zh}分组后对{info['zh']}做 SUM 汇总，{caliber}；"
+                f"不把行级取值直接相加之外的统计量混入。",
+                refs["wp_caliber"], refs["wp_usage"]))
+        return out[:n]
 
     return _spec("C", "single_table", question, sql, [fact], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -802,18 +1147,51 @@ def fam_d(i: int) -> Spec:
     sql = (f"SELECT ROUND(SUM(f.{num}) / NULLIF(SUM(f.{den}), 0), 4) AS {alias}\n"
            f"FROM {fact} f\nWHERE {where_fact('f', period, conds)}")
     refs = make_refs(fact, num, metric)
+    refs["num_field"] = (field_doc(fact, num), 1)
+    refs["den_field"] = (field_doc(fact, den), 1)
+    for _key in ("num_field", "den_field"):
+        _doc, _no = refs[_key]
+        assert f"{_doc}#p{_no:02d}" in DOC_CHUNKS[_doc], f"证据块不存在：{_doc}#p{_no:02d}"
     caliber = caliber_zh(zhs)
     question = (f"{period.range_zh()} 期间（{period.zh}），{NAME_ZH[fact]}的{num_zh}占"
                 f"{den_zh}的比率是多少？比率保留 4 位小数，统计口径：{caliber}。")
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
+    num_dec = MEASURE_FIELDS[num][1]
+    den_dec = MEASURE_FIELDS[den][1]
 
-    def claims(ctx):
+    def pair_sums(period_) -> list:
+        return probe_row(
+            f"SELECT ROUND(SUM(f.{num}), {num_dec}) AS num_sum, "
+            f"ROUND(SUM(f.{den}), {den_dec}) AS den_sum "
+            f"{scope_where(fact, period_, conds)}")
+
+    def claims(ctx, n):
         v = ctx.cell(0, alias)
-        return [
+        out = [
             _claim(f"{period.range_zh()} 期间，{NAME_ZH[fact]}的{num_zh}占{den_zh}的比率为 "
-                   f"{_num(v, 4)}（{caliber}）。", refs["metric_bound"], refs["metric_calc"]),
-            _claim(f"口径说明：分子分母分别按{caliber}汇总后再相除，不对行级比率取平均。",
-                   refs["wp_grain"], refs["field_trap"]),
+                   f"{_num(v, 4)}（{caliber}；按{dom_zh}域口径回到分子分母重算）。",
+                   refs["metric_bound"], domain_ref),
         ]
+        nums = pair_sums(period)
+        if n >= 2 and nums:
+            out.append(_claim(
+                f"分子{num_zh}在区间内合计 {_num(nums[0], num_dec)} 元。",
+                refs["metric_calc"], refs["num_field"]))
+        if n >= 3 and nums:
+            out.append(_claim(
+                f"分母{den_zh}在区间内合计 {_num(nums[1], den_dec)} 元，比率正是由这两个"
+                f"汇总值相除得到。", refs["den_field"], refs["wp_grain"]))
+        if n >= 4:
+            cnt = int(probe(f"SELECT COUNT(*) AS n {scope_where(fact, period, conds)}"))
+            out.append(_claim(
+                f"同口径明细共 {_int(cnt)} 笔参与计算，分子分母由同一批行分别汇总。",
+                refs["wp_rows"], refs["wp_usage"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：分子分母分别按{caliber}汇总后再相除，不对行级比率取平均；"
+                f"比率保留 4 位小数。", refs["wp_caliber"], refs["metric_calc"]))
+        return out[:n]
 
     return _spec("D", "single_table", question, sql, [fact], period, refs,
                  [metric] if metric else [], claims, measure=num, measure_zh=num_zh,
@@ -837,19 +1215,33 @@ def fam_e(i: int) -> Spec:
     question = (f"{period.range_zh()} 期间（{period.zh}），{NAME_ZH[fact]}的{info['zh']}"
                 f"平均值、最大值与最小值分别是多少？统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         avg, mx, mn = ctx.cell(0, a_avg), ctx.cell(0, a_max), ctx.cell(0, a_min)
-        return [
+        out = [
             _claim(f"{period.range_zh()} 期间，{NAME_ZH[fact]}的{info['zh']}平均值为 "
-                   f"{fmt_value(avg, dec, kind, unit)}，最大值 "
-                   f"{fmt_value(mx, dec, kind, unit)}，最小值 "
-                   f"{fmt_value(mn, dec, kind, unit)}（{caliber}）。",
-                   refs["metric_def"], refs["field_def"]),
-            _claim(f"最大值与最小值相差 "
-                   f"{fmt_value(float(mx) - float(mn), dec, kind, unit)}，"
-                   f"分布跨度按同一口径计算。", refs["wp_grain"], refs["metric_bound"]),
+                   f"{fmt_value(avg, dec, kind, unit)}（{caliber}；按{dom_zh}域口径做描述统计）。",
+                   refs["metric_def"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"同一区间内的最大值为 {fmt_value(mx, dec, kind, unit)}，取自行级明细。",
+                refs["field_def"], refs["metric_calc"]))
+        if n >= 3:
+            out.append(_claim(
+                f"同一区间内的最小值为 {fmt_value(mn, dec, kind, unit)}。",
+                refs["wp_grain"], refs["metric_bound"]))
+        if n >= 4:
+            out.append(_claim(
+                f"最大值与最小值相差 {fmt_value(float(mx) - float(mn), dec, kind, unit)}，"
+                f"分布跨度按同一口径与同一批行计算。", refs["metric_bound"], refs["wp_recon"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：平均值、最大值、最小值都由{caliber}下的同一批明细行直接计算，"
+                f"未做任何平滑或截尾。", refs["wp_caliber"], refs["field_trap"]))
+        return out[:n]
 
     return _spec("E", "single_table", question, sql, [fact], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -885,15 +1277,38 @@ def fam_f(i: int) -> Spec:
         question = (f"{period.range_zh()} 期间（{period.zh}），{zh}的「{label}」按样本量加权"
                     f"后的取值是多少？加权口径为 SUM(比率×样本量)/SUM(样本量)，保留 4 位小数。")
         caliber = "按汇总行样本量加权"
+        dom_zh = DOMAIN_ZH[TABLE_DOMAIN[table]]
+        domain_ref = DOMAIN_REF[TABLE_DOMAIN[table]]
 
-        def claims(ctx):
+        def claims(ctx, n):
             v = ctx.cell(0, alias)
-            return [
-                _claim(f"{period.range_zh()} 期间，{zh}的「{label}」加权比率为 {_num(v, 4)}。",
-                       refs["metric_calc"], refs["metric_def"]),
-                _claim("口径说明：分子分母分别汇总后再相除，不对行级比率直接取平均。",
-                       refs["metric_bound"], refs["wp_grain"]),
+            out = [
+                _claim(f"{period.range_zh()} 期间，{zh}的「{label}」加权比率为 {_num(v, 4)}"
+                       f"（按{dom_zh}域口径回到分子分母重算）。",
+                       refs["metric_calc"], domain_ref),
             ]
+            stats = probe_row(
+                f"SELECT ROUND(SUM(a.sample_size), 2) AS s, COUNT(*) AS n, "
+                f"ROUND(MAX(a.metric_ratio) - MIN(a.metric_ratio), 4) AS spread "
+                f"FROM {table} a WHERE {where}")
+            if n >= 2 and stats:
+                out.append(_claim(
+                    f"参与加权的样本量合计为 {_num(stats[0], 2)}，权重来自汇总行自带的"
+                    f" sample_size 字段。", refs["metric_def"], refs["field_def"]))
+            if n >= 3 and stats:
+                out.append(_claim(
+                    f"该区间共有 {_int(stats[1])} 个汇总行参与加权，按 date_key 裁剪后聚合。",
+                    refs["wp_grain"], refs["wp_rows"]))
+            if n >= 4 and stats:
+                out.append(_claim(
+                    f"同期各汇总行「{label}」的极差为 {_num(stats[2], 4)}（最大值减最小值），"
+                    f"行间离散度不等于加权结果本身。", refs["metric_bound"], refs["wp_recon"]))
+            if n >= 5:
+                out.append(_claim(
+                    "口径说明：加权口径为 SUM(比率×样本量)/SUM(样本量)，"
+                    "分子分母分别汇总后再相除，不对行级比率取平均。",
+                    refs["metric_calc"], refs["wp_caliber"]))
+            return out[:n]
 
         return _spec("F", "single_table", question, sql, [table], period, refs, [metric],
                      claims, measure="metric_ratio", measure_zh="指标比率",
@@ -911,18 +1326,35 @@ def fam_f(i: int) -> Spec:
                     f"样本量合计与汇总行数分别是多少？")
         caliber = "按汇总行直接相加，不跨版本混算"
         dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+        dom_zh = DOMAIN_ZH[TABLE_DOMAIN[table]]
+        domain_ref = DOMAIN_REF[TABLE_DOMAIN[table]]
 
-        def claims(ctx):
+        def claims(ctx, n):
             total = ctx.cell(0, alias)
             sample = ctx.cell(0, "sample_size_total")
             cnt = ctx.cell(0, "row_count")
-            return [
+            out = [
                 _claim(f"{period.range_zh()} 期间，{zh}的「{label}」{word}为 "
-                       f"{fmt_value(total, dec, kind, unit)}，覆盖 {_int(cnt)} 个汇总行。",
-                       refs["metric_def"], refs["metric_calc"]),
-                _claim(f"对应样本量合计 {_num(sample, 2)}，样本量不足 30 行时只标注不对外发布。",
-                       refs["metric_bound"], refs["wp_rows"]),
+                       f"{fmt_value(total, dec, kind, unit)}（按{dom_zh}域指标口径汇总）。",
+                       refs["metric_def"], domain_ref),
             ]
+            if n >= 2:
+                out.append(_claim(
+                    f"对应样本量合计 {_num(sample, 2)}，覆盖 {_int(cnt)} 个汇总行。",
+                    refs["metric_calc"], refs["field_def"]))
+            if n >= 3:
+                out.append(_claim(
+                    f"该区间共 {_int(cnt)} 个汇总行参与计算，行数按 date_key 裁剪后计数。",
+                    refs["wp_grain"], refs["wp_rows"]))
+            if n >= 4:
+                out.append(_claim(
+                    f"口径说明：{caliber}；{word}由区间内全部汇总行直接汇总得到。",
+                    refs["metric_bound"], refs["wp_caliber"]))
+            if n >= 5:
+                out.append(_claim(
+                    "指标卡口径：样本量不足 30 行时只标注、不对外发布；跨版本不可直接相减。",
+                    refs["metric_bound"], refs["metric_def"]))
+            return out[:n]
 
         return _spec("F", "single_table", question, sql, [table], period, refs, [metric],
                      claims, measure="metric_value", measure_zh=info["zh"], decimals=dec,
@@ -935,15 +1367,37 @@ def fam_f(i: int) -> Spec:
         question = (f"{period.range_zh()} 期间（{period.zh}），{zh}的「{label}」在汇总行之间的"
                     f"极差（最大值减最小值）是多少？保留 4 位小数。")
         caliber = "极差按汇总行取最大最小，不做跨版本相减"
+        dom_zh = DOMAIN_ZH[TABLE_DOMAIN[table]]
+        domain_ref = DOMAIN_REF[TABLE_DOMAIN[table]]
 
-        def claims(ctx):
+        def claims(ctx, n):
             v = ctx.cell(0, alias)
-            return [
-                _claim(f"{period.range_zh()} 期间，{zh}的「{label}」极差为 {_num(v, 4)}。",
-                       refs["metric_def"], refs["metric_bound"]),
-                _claim("口径说明：比率不可跨周期直接相减，本结果只比较同期汇总行。",
-                       refs["metric_calc"], refs["wp_grain"]),
+            out = [
+                _claim(f"{period.range_zh()} 期间，{zh}的「{label}」在汇总行之间的极差为 "
+                       f"{_num(v, 4)}（最大值减最小值；按{dom_zh}域口径同期比较）。",
+                       refs["metric_def"], domain_ref),
             ]
+            stats = probe_row(
+                f"SELECT ROUND(MAX(a.metric_ratio), 4) AS mx, "
+                f"ROUND(MIN(a.metric_ratio), 4) AS mn, COUNT(*) AS n "
+                f"FROM {table} a WHERE {where}")
+            if n >= 2 and stats:
+                out.append(_claim(
+                    f"同期「{label}」的最大值为 {_num(stats[0], 4)}，取自分组汇总行。",
+                    refs["metric_bound"], refs["field_def"]))
+            if n >= 3 and stats:
+                out.append(_claim(
+                    f"同期「{label}」的最小值为 {_num(stats[1], 4)}，与最大值相差即上述极差。",
+                    refs["metric_bound"], refs["wp_recon"]))
+            if n >= 4 and stats:
+                out.append(_claim(
+                    f"该区间共有 {_int(stats[2])} 个汇总行参与比较，极差只反映同期行间差异。",
+                    refs["wp_rows"], refs["wp_grain"]))
+            if n >= 5:
+                out.append(_claim(
+                    "口径说明：比率不可跨周期直接相减，本结果只比较同 period 内的汇总行，"
+                    "不做版本间拼接。", refs["metric_calc"], refs["wp_caliber"]))
+            return out[:n]
 
         return _spec("F", "single_table", question, sql, [table], period, refs, [metric],
                      claims, measure="metric_ratio", measure_zh="指标比率",
@@ -963,16 +1417,38 @@ def fam_f(i: int) -> Spec:
                 f"「{label}」{word}与汇总行数，并按{word}从高到低排列。")
     caliber = "按 is_partial 标记分组"
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[table]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[table]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         top = ctx.rows[0]
-        return [
+        low = ctx.rows[-1]
+        out = [
             _claim(f"{period.range_zh()} 期间，{zh}中 is_partial={top[0]} 的分组「{label}」"
-                   f"{word}最高，为 {fmt_value(top[ctx.pos[alias]], dec, kind, unit)}。",
-                   refs["metric_def"], refs["wp_rows"]),
-            _claim(f"共 {ctx.n} 个分组，部分周期行只标注、不参与同比。",
-                   refs["metric_bound"], refs["wp_grain"]),
+                   f"{word}最高，为 {fmt_value(top[ctx.pos[alias]], dec, kind, unit)}"
+                   f"（按{dom_zh}域口径汇总）。", refs["metric_def"], domain_ref),
         ]
+        if n >= 2:
+            rows_zh = "、".join(f"is_partial={r[0]} 有 {_int(r[ctx.pos['row_count']])} 行"
+                               for r in ctx.rows)
+            out.append(_claim(f"该区间共 {ctx.n} 个 is_partial 分组：{rows_zh}。",
+                              refs["wp_rows"], refs["field_def"]))
+        if n >= 3:
+            out.append(_claim(
+                f"另一分组 is_partial={low[0]} 的「{label}」{word}为 "
+                f"{fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["metric_calc"], refs["metric_bound"]))
+        if n >= 4:
+            diff = float(top[ctx.pos[alias]]) - float(low[ctx.pos[alias]])
+            out.append(_claim(
+                f"两个分组之间的「{label}」{word}相差 "
+                f"{fmt_value(diff, dec, kind, unit)}，部分周期行不可与完整周期行混比。",
+                refs["wp_grain"], refs["field_trap"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：{caliber}；部分周期行只标注、不与完整周期行同比，"
+                f"跨版本不可直接相减。", refs["wp_caliber"], refs["metric_bound"]))
+        return out[:n]
 
     return _spec("F", "single_table", question, sql, [table], period, refs, [metric],
                  claims, measure="metric_value", measure_zh=info["zh"], decimals=dec,
@@ -1009,19 +1485,47 @@ def fam_g(i: int) -> Spec:
                     f"载荷大小合计，并按调用次数从高到低排列。")
     caliber = "按日志日期分区统计"
     dec, kind, unit = info[1], info[2], info[4]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[table]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[table]]
+    agg_word = "平均值" if info[3] == "avg" else "合计"
 
-    def claims(ctx):
+    def claims(ctx, n):
         top = ctx.rows[0]
         total_cnt = sum(ctx.col("row_count"))
-        return [
+        out = [
             _claim(f"{period.range_zh()} 期间，{zh}中 {top[0]} 的调用次数最多，为 "
-                   f"{_int(top[ctx.pos['row_count']])} 次，对应"
-                   f"{info[0]}{'平均值' if info[3] == 'avg' else '合计'} "
-                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}。",
-                   refs["wp_rows"], refs["wp_usage"]),
-            _claim(f"该区间共 {ctx.n} 个{attr_zh}分组、{_int(total_cnt)} 次调用。",
-                   refs["wp_grain"], refs["field_def"]),
+                   f"{_int(top[ctx.pos['row_count']])} 次，对应{info[0]}{agg_word} "
+                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}"
+                   f"（按{dom_zh}域日志口径统计）。", refs["wp_rows"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"该区间共 {_int(total_cnt)} 次调用，覆盖 {ctx.n} 个{attr_zh}分组。",
+                refs["wp_usage"], refs["field_def"]))
+        if n >= 3:
+            out.append(_claim(
+                f"{attr_zh}分组共 {ctx.n} 个，调用次数最多的分组占比为 "
+                f"{_share(top[ctx.pos['row_count']], total_cnt)}。",
+                refs["field_def"], refs["wp_grain"]))
+        if n >= 4:
+            if info[3] == "avg":
+                weighted = sum(float(r[ctx.pos["row_count"]]) * float(r[ctx.pos[alias]])
+                               for r in ctx.rows) / max(total_cnt, 1)
+                out.append(_claim(
+                    f"按调用次数加权后，全区间{info[0]}的平均值为 "
+                    f"{fmt_value(weighted, dec, kind, unit)}，与各分组算术平均不同。",
+                    refs["wp_recon"], refs["wp_usage"]))
+            else:
+                total_payload = sum(ctx.col(alias))
+                out.append(_claim(
+                    f"各分组{info[0]}合计 {fmt_value(total_payload, dec, kind, unit)}。",
+                    refs["wp_recon"], refs["wp_usage"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：{caliber}，按 date_key 分区裁剪，{caliber}；"
+                f"日志表为受限数据，结果只保留聚合值。",
+                refs["wp_caliber"], refs["wp_usage"]))
+        return out[:n]
 
     return _spec("G", "single_table", question, sql, [table], period, refs, [],
                  claims, measure=measure, measure_zh=info[0], decimals=dec,
@@ -1057,19 +1561,38 @@ def fam_h(i: int) -> Spec:
                 f"统计{NAME_ZH[fact]}的{info['zh']}合计与记录数，并按{info['zh']}从高到低排列。"
                 f"统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         top, low = ctx.rows[0], ctx.rows[-1]
         total = sum(ctx.col(alias))
-        return [
+        total_cnt = sum(ctx.col("row_count"))
+        top_v = top[ctx.pos[alias]]
+        out = [
             _claim(f"{period.range_zh()} 期间，按{a_zh}分组后 {top[0]} 的{info['zh']}最高，为 "
-                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}）。",
-                   refs["wp_join"], refs[f"{dim}_field"]),
-            _claim(f"{ctx.n} 个{a_zh}分组合计{info['zh']} "
-                   f"{fmt_value(total, dec, kind, unit)}，其中 {low[0]} 最低，为 "
-                   f"{fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
-                   refs["wp_grain"], refs["metric_calc"]),
+                   f"{fmt_value(top_v, dec, kind, unit)}（{caliber}；按{dom_zh}域指标口径"
+                   f"关联{NAME_ZH[dim]}后分组）。", refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"{ctx.n} 个{a_zh}分组合计{info['zh']} {fmt_value(total, dec, kind, unit)}，"
+                f"对应明细 {_int(total_cnt)} 笔。", refs["wp_grain"], refs["field_trap"]))
+        if n >= 3:
+            out.append(_claim(
+                f"最低分组为 {low[0]}，{info['zh']}为 "
+                f"{fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["wp_join"], refs[f"{dim}_field"]))
+        if n >= 4:
+            out.append(_claim(
+                f"最高分组 {top[0]} 占全部{info['zh']}的 {_share(top_v, total)}，"
+                f"分组占比之和为 1。", refs["metric_bound"], refs["wp_join"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：以{NAME_ZH[dim]}主键与事实表外键关联后分组，"
+                f"{a_zh}取自维表属性；一对一关联未放大明细行数。",
+                refs[f"{dim}_keys"], refs["wp_join_risk"]))
+        return out[:n]
 
     return _spec("H", "join", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -1118,18 +1641,37 @@ def fam_i(i: int) -> Spec:
                 f"按月份与{a_zh}统计{NAME_ZH[fact]}的{info['zh']}合计，"
                 f"先按月份、再按{info['zh']}降序排列。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
-        top = ctx.rows[0]
+    def claims(ctx, n):
+        top, low = ctx.rows[0], ctx.rows[-1]
         months = sorted({r[ctx.pos["month_label"]] for r in ctx.rows})
-        return [
+        total = sum(ctx.col(alias))
+        out = [
             _claim(f"{months[0]} 至 {months[-1]} 共 {len(months)} 个月份中，"
-                   f"{top[ctx.pos['month_label']]} 的 {top[ctx.pos[attr]]} 分组{info['zh']}最高，为 "
-                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}）。",
-                   refs["dim_date_join"], refs["wp_join"]),
-            _claim(f"结果覆盖 {ctx.n} 个「月份×{a_zh}」组合，月份取自{NAME_ZH['dim_date']}的日期属性。",
-                   refs["wp_grain"], refs["metric_calc"]),
+                   f"{top[ctx.pos['month_label']]} 的 {top[ctx.pos[attr]]} 分组{info['zh']}最高，"
+                   f"为 {fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}；"
+                   f"按{dom_zh}域指标口径关联日期维后汇总）。", refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"结果覆盖 {ctx.n} 个「月份×{a_zh}」组合，月份取自{NAME_ZH['dim_date']}的"
+                f" name 属性前 7 位。", refs["dim_date_join"], refs[f"{dim}_field"]))
+        if n >= 3:
+            out.append(_claim(
+                f"全部组合的{info['zh']}合计为 {fmt_value(total, dec, kind, unit)}，"
+                f"与不分月的同口径汇总一致。", refs["metric_bound"], refs["field_def"]))
+        if n >= 4:
+            out.append(_claim(
+                f"最低组合为 {low[ctx.pos['month_label']]} 的 {low[ctx.pos[attr]]}，"
+                f"{info['zh']} {fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["wp_recon"], refs["field_trap"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：月份由{NAME_ZH['dim_date']}的日期名截取，{caliber}；"
+                f"月份与{a_zh}双维分组后不再回写明细。", refs["wp_caliber"], refs["wp_join"]))
+        return out[:n]
 
     return _spec("I", "join", question, sql, [fact, "dim_date", dim], period, refs,
                  [metric], claims, measure=field_name, measure_zh=info["zh"],
@@ -1164,16 +1706,45 @@ def fam_j(i: int) -> Spec:
                 f"{NAME_ZH[dim]}对应的{NAME_ZH[fact]}，其{info['zh']}合计是多少？"
                 f"统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
+    join_sql = dim_join_clauses([dim])
+    filter_sql = f"{s['alias']}.{attr} = '{value}'"
 
-    def claims(ctx):
+    def scope(period_) -> str:
+        return scope_where(fact, period_, conds, joins=join_sql + "\n", extra=filter_sql)
+
+    def claims(ctx, n):
         v = ctx.cell(0, alias)
-        return [
+        out = [
             _claim(f"{period.range_zh()} 期间，{a_zh}为 {value} 的{NAME_ZH[dim]}对应"
                    f"{NAME_ZH[fact]}{info['zh']}合计为 {fmt_value(v, dec, kind, unit)}"
-                   f"（{caliber}）。", refs["wp_join"], refs["metric_calc"]),
-            _claim(f"口径说明：以{NAME_ZH[dim]}主键与事实表外键一对一关联后过滤 {a_zh}，未放大行数。",
-                   refs[f"{dim}_keys"], refs["wp_join_risk"]),
+                   f"（{caliber}；按{dom_zh}域指标口径关联维表后过滤）。",
+                   refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            cnt = int(probe(f"SELECT COUNT(*) AS n {scope(period)}"))
+            out.append(_claim(
+                f"同口径明细共 {_int(cnt)} 笔记录，均能一对一关联到{a_zh}为 {value} 的"
+                f"{NAME_ZH[dim]}。", refs["wp_grain"], refs["field_def"]))
+        if n >= 3:
+            full = probe(f"SELECT ROUND(SUM(f.{field_name}), {dec}) AS m {scope(FULL_PERIOD)}")
+            if full:
+                out.append(_claim(
+                    f"该结果相当于 2024-01-01 至 2024-05-14 同口径全期合计"
+                    f"（{fmt_value(full, dec, kind, unit)}）的 {_share(v, full)}。",
+                    refs["metric_bound"], refs["wp_recon"]))
+        if n >= 4:
+            customers = int(probe(f"SELECT COUNT(DISTINCT f.customer_key) AS c {scope(period)}"))
+            out.append(_claim(
+                f"这些记录来自 {_int(customers)} 个不同客户"
+                f"（按 customer_key 对应客户维主键去重）。",
+                refs["customer_field"], refs["wp_usage"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：以{NAME_ZH[dim]}主键与事实表外键一对一关联后过滤 {a_zh}，"
+                f"{caliber}，未放大明细行数。", refs[f"{dim}_keys"], refs[f"{dim}_field"]))
+        return out[:n]
 
     return _spec("J", "join", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -1209,18 +1780,38 @@ def fam_k(i: int) -> Spec:
     question = (f"{period.range_zh()} 期间（{period.zh}），关联{NAME_ZH['dim_date']}后按月统计"
                 f"{NAME_ZH[table]}的「{label}」{word}与样本量合计，并按月份排序。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[table]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[table]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         rows = ctx.rows
         peak = max(rows, key=lambda r: r[ctx.pos[alias]])
-        return [
+        low = min(rows, key=lambda r: r[ctx.pos[alias]])
+        sample_total = sum(ctx.col("sample_size_total"))
+        out = [
             _claim(f"{period.range_zh()} 期间共有 {ctx.n} 个月份有汇总行，"
                    f"{peak[0]} 的「{label}」{word}最高，为 "
-                   f"{fmt_value(peak[ctx.pos[alias]], dec, kind, unit)}。",
-                   refs["dim_date_join"], refs["metric_def"]),
-            _claim(f"各月横向比较前已固定版本标签，共 {_int(ctx.n)} 个汇总月份。",
-                   refs["metric_calc"], refs["wp_rows"]),
+                   f"{fmt_value(peak[ctx.pos[alias]], dec, kind, unit)}"
+                   f"（按{dom_zh}域指标口径按月归属）。", refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"结果覆盖 {_int(ctx.n)} 个月份汇总行，月份由{NAME_ZH['dim_date']}的日期属性"
+                f"与汇总表 date_key 关联得到。", refs["dim_date_join"], refs["field_def"]))
+        if n >= 3:
+            out.append(_claim(
+                f"各月样本量合计为 {_num(sample_total, 2)}，样本量不足 30 行时只标注、"
+                f"不对外发布。", refs["metric_def"], refs["wp_rows"]))
+        if n >= 4:
+            out.append(_claim(
+                f"最低月份为 {low[0]}，「{label}」{word}为 "
+                f"{fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["metric_bound"], refs["wp_recon"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：{caliber}；各月横向比较前已固定版本标签，"
+                f"部分周期行不参与同比。", refs["wp_caliber"], refs["wp_grain"]))
+        return out[:n]
 
     return _spec("K", "join", question, sql, [table, "dim_date"], period, refs,
                  [metric], claims, measure="metric_value", measure_zh=info["zh"],
@@ -1253,18 +1844,39 @@ def fam_m(i: int) -> Spec:
                 f"同时给出{NAME_ZH[fact]}的记录数、{info['zh']}合计与平均数量，"
                 f"并按{info['zh']}降序排列。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
-        top = ctx.rows[0]
+    def claims(ctx, n):
+        top, low = ctx.rows[0], ctx.rows[-1]
         total_cnt = sum(ctx.col("row_count"))
-        return [
+        weighted_qty = (sum(float(r[ctx.pos["row_count"]]) * float(r[ctx.pos["quantity_avg"]])
+                            for r in ctx.rows) / max(total_cnt, 1))
+        out = [
             _claim(f"{period.range_zh()} 期间，{top[0]} 分组的{info['zh']}最高，为 "
-                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}，"
-                   f"平均数量 {_num(top[ctx.pos['quantity_avg']], 2)}（{caliber}）。",
-                   refs["wp_join"], refs["metric_calc"]),
-            _claim(f"{ctx.n} 个{a_zh}分组共 {_int(total_cnt)} 条记录，"
-                   f"分组均值由同一批明细行计算。", refs["wp_grain"], refs["field_trap"]),
+                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}；"
+                   f"按{dom_zh}域指标口径关联{NAME_ZH[dim]}后分组）。",
+                   refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"{ctx.n} 个{a_zh}分组共 {_int(total_cnt)} 条记录，"
+                f"分组记录数由同一批明细行计数得到。", refs["wp_grain"], refs["field_def"]))
+        if n >= 3:
+            out.append(_claim(
+                f"按记录数加权的全区间平均数量为 {_num(weighted_qty, 2)}，"
+                f"与各分组平均数量的算术平均不同。", refs["field_trap"], refs["metric_calc"]))
+        if n >= 4:
+            out.append(_claim(
+                f"最低分组为 {low[0]}，{info['zh']}为 "
+                f"{fmt_value(low[ctx.pos[alias]], dec, kind, unit)}，平均数量 "
+                f"{_num(low[ctx.pos['quantity_avg']], 2)}。",
+                refs["wp_join"], refs[f"{dim}_field"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：{a_zh}取自{NAME_ZH[dim]}，与事实表按主键一对一关联后分组，"
+                f"平均数量按行级 quantity 求均值。", refs[f"{dim}_keys"], refs[f"{dim}_field"]))
+        return out[:n]
 
     return _spec("M", "join", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -1295,16 +1907,51 @@ def fam_n(i: int) -> Spec:
                 f"对应{NAME_ZH[fact]}的{info['zh']}，占全部{info['zh']}的比例是多少？"
                 f"比例保留 4 位小数，统计口径：{caliber}。")
 
-    def claims(ctx):
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
+    join_sql = dim_join_clauses([dim])
+    num_expr = f"SUM(CASE WHEN {s['alias']}.{attr} = '{value}' THEN f.{field_name} ELSE 0 END)"
+    den_expr = f"SUM(f.{field_name})"
+    part_dec = MEASURE_FIELDS[field_name][1]
+    part_kind, part_unit = info["kind"], info["unit"]
+
+    def sums(period_) -> list:
+        return probe_row(
+            f"SELECT ROUND({num_expr}, {part_dec}) AS num_sum, "
+            f"ROUND({den_expr}, {part_dec}) AS den_sum "
+            f"{scope_where(fact, period_, conds, joins=join_sql + chr(10))}")
+
+    def claims(ctx, n):
         v = ctx.cell(0, alias)
-        return [
+        out = [
             _claim(f"{period.range_zh()} 期间，{a_zh}为 {value} 的{NAME_ZH[dim]}对应"
-                   f"{NAME_ZH[fact]}的{info['zh']}占全部{info['zh']}的比例为 "
-                   f"{_num(v, 4)}（{caliber}）。",
-                   refs["wp_join"], refs["metric_calc"]),
-            _claim("口径说明：分子为条件金额、分母为同口径全部金额，两者在同一过滤条件下汇总。",
-                   refs["metric_bound"], refs["wp_grain"]),
+                   f"{NAME_ZH[fact]}的{info['zh']}占全部{info['zh']}的比例为 {_num(v, 4)}"
+                   f"（{caliber}；按{dom_zh}域口径回到分子分母重算）。",
+                   refs["metric_bound"], domain_ref),
         ]
+        parts = sums(period)
+        if n >= 2 and parts:
+            out.append(_claim(
+                f"分子（{a_zh}为 {value} 的条件{info['zh']}）在区间内合计 "
+                f"{fmt_value(parts[0], part_dec, part_kind, part_unit)}。",
+                refs["metric_calc"], refs["field_def"]))
+        if n >= 3 and parts:
+            out.append(_claim(
+                f"分母（同口径全部{info['zh']}）在区间内合计 "
+                f"{fmt_value(parts[1], part_dec, part_kind, part_unit)}，"
+                f"比例正是分子除以分母。", refs["wp_grain"], refs["field_def"]))
+        if n >= 4:
+            cnt = int(probe(f"SELECT COUNT(*) AS n "
+                            f"{scope_where(fact, period, conds, joins=join_sql + chr(10))}"))
+            out.append(_claim(
+                f"同口径明细共 {_int(cnt)} 笔参与计算，分子分母在同一批关联行上汇总。",
+                refs["wp_rows"], refs["wp_usage"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：分子为条件{info['zh']}、分母为同口径全部{info['zh']}，"
+                f"两者在同一过滤与关联条件下汇总，比例保留 4 位小数。",
+                refs["wp_caliber"], refs["wp_join"]))
+        return out[:n]
 
     return _spec("N", "join", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=4,
@@ -1347,19 +1994,38 @@ def fam_o(i: int) -> Spec:
                 f"{NAME_ZH[fact]}的{info['zh']}，用窗口函数取{info['zh']}最高的前 {topn} 个"
                 f"{a_zh}并给出名次。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
-        first = ctx.rows[0]
-        return [
+    def claims(ctx, n):
+        first, last = ctx.rows[0], ctx.rows[-1]
+        out = [
             _claim(f"{period.range_zh()} 期间{info['zh']}排名第一的{a_zh}为 {first[0]}，"
                    f"{info['zh']} {fmt_value(first[ctx.pos[alias]], dec, kind, unit)}"
-                   f"（{caliber}）。",
-                   refs["metric_calc"], refs["wp_join"]),
-            _claim(f"前 {ctx.n} 名的{info['zh']}区间为 "
-                   f"{fmt_value(ctx.rows[-1][ctx.pos[alias]], dec, kind, unit)} 至 "
-                   f"{fmt_value(first[ctx.pos[alias]], dec, kind, unit)}，名次由窗口函数生成。",
-                   refs["wp_grain"], refs["metric_bound"]),
+                   f"（{caliber}；按{dom_zh}域指标口径关联{NAME_ZH[dim]}后汇总）。",
+                   refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            top_sum = sum(ctx.col(alias))
+            out.append(_claim(
+                f"前 {ctx.n} 名{a_zh}的{info['zh']}合计为 "
+                f"{fmt_value(top_sum, dec, kind, unit)}。", refs["wp_grain"], refs[f"{dim}_field"]))
+        if n >= 3:
+            out.append(_claim(
+                f"第 {ctx.n} 名的{a_zh}为 {last[0]}，{info['zh']} "
+                f"{fmt_value(last[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["metric_bound"], refs["field_def"]))
+        if n >= 4:
+            gap = float(first[ctx.pos[alias]]) - float(last[ctx.pos[alias]])
+            out.append(_claim(
+                f"第一名与第 {ctx.n} 名的{info['zh']}相差 "
+                f"{fmt_value(gap, dec, kind, unit)}，名次由 ROW_NUMBER 按汇总值降序生成。",
+                refs["wp_grain"], refs["wp_recon"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：先按{a_zh}汇总再排序取前 {ctx.n} 名，{caliber}；"
+                f"名次只反映本区间内的相对高低。", refs["wp_caliber"], refs["wp_join"]))
+        return out[:n]
 
     return _spec("O", "nested_agg", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -1400,19 +2066,38 @@ def fam_p(i: int) -> Spec:
                 f"{NAME_ZH[dim]}，按月统计各{a_zh}的{info['zh']}合计并用窗口函数排名，"
                 f"只保留每月{info['zh']}最高的{a_zh}。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         first, last = ctx.rows[0], ctx.rows[-1]
-        return [
+        values = ctx.col(alias)
+        out = [
             _claim(f"{period.range_zh()} 期间共 {ctx.n} 个月份有排名结果，"
-                   f"{first[ctx.pos['month_label']]} 的第一名为 "
-                   f"{first[ctx.pos[attr]]}，{info['zh']} "
-                   f"{fmt_value(first[ctx.pos[alias]], dec, kind, unit)}（{caliber}）。",
-                   refs["dim_date_join"], refs["metric_calc"]),
-            _claim(f"{last[ctx.pos['month_label']]} 的第一名为 {last[ctx.pos[attr]]}，"
-                   f"{info['zh']} {fmt_value(last[ctx.pos[alias]], dec, kind, unit)}。",
-                   refs["wp_grain"], refs["wp_join"]),
+                   f"{first[ctx.pos['month_label']]} 的第一名为 {first[ctx.pos[attr]]}，"
+                   f"{info['zh']} {fmt_value(first[ctx.pos[alias]], dec, kind, unit)}"
+                   f"（{caliber}；按{dom_zh}域指标口径分月排名）。", refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"末月 {last[ctx.pos['month_label']]} 的第一名为 {last[ctx.pos[attr]]}，"
+                f"{info['zh']} {fmt_value(last[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["wp_grain"], refs[f"{dim}_field"]))
+        if n >= 3:
+            out.append(_claim(
+                f"排名覆盖 {_int(ctx.n)} 个月份，每月各取 {info['zh']}最高的一组，"
+                f"月份由{NAME_ZH['dim_date']}的日期属性提供。",
+                refs["dim_date_join"], refs["field_def"]))
+        if n >= 4:
+            out.append(_claim(
+                f"各月第一名的{info['zh']}介于 {fmt_value(min(values), dec, kind, unit)} 与 "
+                f"{fmt_value(max(values), dec, kind, unit)} 之间。",
+                refs["metric_bound"], refs["wp_recon"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：RANK() 按 month_label 分区、按{info['zh']}降序编号，"
+                f"每月只保留第 1 名，{caliber}。", refs["wp_caliber"], refs["wp_join"]))
+        return out[:n]
 
     return _spec("P", "nested_agg", question, sql, [fact, "dim_date", dim], period,
                  refs, [metric], claims, measure=field_name, measure_zh=info["zh"],
@@ -1451,17 +2136,37 @@ def fam_q(i: int) -> Spec:
                 f"{NAME_ZH[fact]}的{info['zh']}合计，并用窗口函数给出相邻月份的环比增减额。"
                 f"统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         top = max(ctx.rows, key=lambda r: abs(r[ctx.pos["mom_diff"]]))
-        return [
+        out = [
             _claim(f"环比增减额绝对值最大出现在 {top[ctx.pos['month_label']]}，"
                    f"较上月变动 {fmt_value(top[ctx.pos['mom_diff']], dec, kind, unit)}"
-                   f"（{caliber}）。", refs["metric_calc"], refs["wp_grain"]),
-            _claim(f"序列覆盖 {ctx.n + 1} 个月份，首个可比的月份为 "
-                   f"{ctx.rows[0][ctx.pos['month_label']]}。",
-                   refs["dim_date_join"], refs["metric_bound"]),
+                   f"（{caliber}；按{dom_zh}域指标口径按月计算）。",
+                   refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"序列覆盖 {ctx.n + 1} 个月份，其中 {ctx.n} 个可计算环比；"
+                f"月份由{NAME_ZH['dim_date']}的日期属性提供。",
+                refs["dim_date_join"], refs["field_def"]))
+        if n >= 3:
+            out.append(_claim(
+                f"首个可比月份为 {ctx.rows[0][ctx.pos['month_label']]}，"
+                f"其前一月作为环比基期只参与计算、不出现在结果中。",
+                refs["wp_grain"], refs["metric_bound"]))
+        if n >= 4:
+            cumulative = sum(ctx.col("mom_diff"))
+            out.append(_claim(
+                f"序列首月到末月的累计变动为 {fmt_value(cumulative, dec, kind, unit)}，"
+                f"等于各月环比增减额之和。", refs["wp_recon"], refs["metric_calc"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：{caliber}；环比用 LAG 取上一月同口径汇总值，"
+                f"首月无基期不参与比较。", refs["wp_caliber"], refs["field_trap"]))
+        return out[:n]
 
     return _spec("Q", "nested_agg", question, sql, [fact, "dim_date"], period, refs,
                  [metric], claims, measure=field_name, measure_zh=info["zh"],
@@ -1494,16 +2199,34 @@ def fam_r(i: int) -> Spec:
                 f"高于同一门店平均水平（同区间口径）的业务单号与{info['zh']}，"
                 f"按{info['zh']}降序最多返回 {ROW_CAP} 条。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
-        top = ctx.rows[0]
-        return [
+    def claims(ctx, n):
+        top, low = ctx.rows[0], ctx.rows[-1]
+        out = [
             _claim(f"符合「高于同门店平均」条件的记录中，{top[0]} 的{info['zh']}最高，为 "
-                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}）。",
-                   refs["metric_calc"], refs["wp_join"]),
-            _claim(f"本次返回 {ctx.n} 条记录，比较基准为同门店同区间的平均{info['zh']}。",
-                   refs["wp_grain"], refs["dim_store_field"]),
+                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}；"
+                   f"按{dom_zh}域指标口径同门店比较）。", refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"本次共返回 {_int(ctx.n)} 条高于基准的明细记录，按{info['zh']}降序排列。",
+                refs["wp_rows"], refs["field_def"]))
+        if n >= 3:
+            out.append(_claim(
+                f"返回记录中{info['zh']}最低的一条为 {low[0]}，"
+                f"{info['zh']} {fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["wp_join"], refs["metric_bound"]))
+        if n >= 4:
+            out.append(_claim(
+                f"比较基准是同一门店、同一区间内的行级平均{info['zh']}，"
+                f"逐行判断是否严格高于该基准。", refs["dim_store_field"], refs["wp_join_risk"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：{caliber}；子查询按门店分区计算平均值，只返回高于平均的明细行。",
+                refs["wp_caliber"], refs["wp_usage"]))
+        return out[:n]
 
     return _spec("R", "nested_agg", question, sql, [fact, "dim_store"], period, refs,
                  [metric], claims, measure=field_name, measure_zh=info["zh"],
@@ -1537,16 +2260,46 @@ def fam_s(i: int) -> Spec:
                 f"{NAME_ZH[dim]}的{NAME_ZH[fact]}记录，其{info['zh']}合计是多少？"
                 f"用 EXISTS 半连接实现，统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
+    exists_sql = (f"EXISTS (SELECT 1 FROM {dim} {s['alias']} "
+                  f"WHERE {s['alias']}.{s['pk']} = f.{s['key']} "
+                  f"AND {s['alias']}.{attr} = '{value}')")
 
-    def claims(ctx):
+    def scope(period_) -> str:
+        return scope_where(fact, period_, conds, extra=exists_sql)
+
+    def claims(ctx, n):
         v = ctx.cell(0, alias)
-        return [
+        out = [
             _claim(f"{period.range_zh()} 期间，存在{a_zh}为 {value} 的{NAME_ZH[dim]}时，"
                    f"{NAME_ZH[fact]}{info['zh']}合计为 {fmt_value(v, dec, kind, unit)}"
-                   f"（{caliber}）。", refs["wp_join"], refs["metric_calc"]),
-            _claim(f"口径说明：半连接只做存在性判断，不放大明细行数，{info['zh']}仍按明细聚合。",
-                   refs[f"{dim}_keys"], refs["wp_join_risk"]),
+                   f"（{caliber}；按{dom_zh}域指标口径做半连接过滤）。",
+                   refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            cnt = int(probe(f"SELECT COUNT(*) AS n {scope(period)}"))
+            out.append(_claim(
+                f"满足存在性条件的明细共 {_int(cnt)} 笔，半连接只做存在性判断。",
+                refs["wp_grain"], refs["field_def"]))
+        if n >= 3:
+            full = probe(f"SELECT ROUND(SUM(f.{field_name}), {dec}) AS m {scope(FULL_PERIOD)}")
+            if full:
+                out.append(_claim(
+                    f"该结果相当于 2024-01-01 至 2024-05-14 同口径全期合计"
+                    f"（{fmt_value(full, dec, kind, unit)}）的 {_share(v, full)}。",
+                    refs["metric_bound"], refs["wp_recon"]))
+        if n >= 4:
+            customers = int(probe(f"SELECT COUNT(DISTINCT f.customer_key) AS c {scope(period)}"))
+            out.append(_claim(
+                f"这些记录来自 {_int(customers)} 个不同客户"
+                f"（按 customer_key 对应客户维主键去重）。",
+                refs["customer_field"], refs["wp_usage"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：半连接只做存在性判断、不放大明细行数，{info['zh']}仍按明细聚合；"
+                f"{caliber}。", refs[f"{dim}_keys"], refs[f"{dim}_field"]))
+        return out[:n]
 
     return _spec("S", "nested_agg", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -1585,17 +2338,37 @@ def fam_t(i: int) -> Spec:
                 f"{NAME_ZH[fact]}的{info['zh']}，只保留高于全部{a_zh}平均水平的组，"
                 f"并按{info['zh']}降序排列。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
-        top = ctx.rows[0]
-        return [
+    def claims(ctx, n):
+        top, low = ctx.rows[0], ctx.rows[-1]
+        values = ctx.col(alias)
+        out = [
             _claim(f"{period.range_zh()} 期间高于平均水平的{a_zh}共 {ctx.n} 个，"
                    f"其中 {top[0]} 最高，{info['zh']}为 "
-                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}）。",
-                   refs["metric_calc"], refs["wp_grain"]),
-            _claim(f"过滤条件是组汇总值大于全部{a_zh}的组均值，而非行级均值。",
-                   refs["wp_trap"], refs["metric_bound"]),
+                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}（{caliber}；"
+                   f"按{dom_zh}域指标口径分组后过滤）。", refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"返回的组中最低为 {low[0]}，{info['zh']} "
+                f"{fmt_value(low[ctx.pos[alias]], dec, kind, unit)}。",
+                refs["wp_grain"], refs["field_trap"]))
+        if n >= 3:
+            out.append(_claim(
+                f"过滤条件是组汇总值大于全部{a_zh}的组均值，而非行级均值；"
+                f"故入榜组的{info['zh']}都高于基准。", refs["wp_trap"], refs["wp_usage"]))
+        if n >= 4:
+            out.append(_claim(
+                f"入榜组的{info['zh']}介于 {fmt_value(min(values), dec, kind, unit)}"
+                f"与 {fmt_value(max(values), dec, kind, unit)} 之间。",
+                refs["wp_recon"], refs["field_trap"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：先按{a_zh}汇总{info['zh']}，再用标量子查询与该组均值比较，"
+                f"{caliber}。", refs["wp_caliber"], refs[f"{dim}_field"]))
+        return out[:n]
 
     return _spec("T", "nested_agg", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -1626,19 +2399,38 @@ def fam_u(i: int) -> Spec:
                 f"{info['zh']}，再给出有业务的客户数、户均{info['zh']}与最高{info['zh']}。"
                 f"统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
+    def claims(ctx, n):
         cnt = ctx.cell(0, "customer_cnt")
         avg = ctx.cell(0, f"avg_{inner}")
         mx = ctx.cell(0, f"max_{inner}")
-        return [
-            _claim(f"{period.range_zh()} 期间有业务的客户共 {_int(cnt)} 个，"
-                   f"户均{info['zh']} {fmt_value(avg, dec, kind, unit)}，"
-                   f"最高 {fmt_value(mx, dec, kind, unit)}（{caliber}）。",
-                   refs["metric_calc"], refs["wp_grain"]),
-            _claim("口径说明：先聚合到客户粒度再取均值，避免用明细行直接求平均。",
-                   refs["wp_trap"], refs["dim_customer_field"]),
+        out = [
+            _claim(f"{period.range_zh()} 期间有业务的客户共 {_int(cnt)} 个"
+                   f"（按 customer_key 去重；客户粒度汇总后计数，口径与指标卡计算式一致）。",
+                   refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            out.append(_claim(
+                f"户均{info['zh']}为 {fmt_value(avg, dec, kind, unit)}，"
+                f"由客户粒度汇总值再取平均得到。", refs["wp_grain"], refs["field_trap"]))
+        if n >= 3:
+            out.append(_claim(
+                f"单客户最高{info['zh']}为 {fmt_value(mx, dec, kind, unit)}。",
+                refs["metric_bound"], refs["wp_recon"]))
+        if n >= 4:
+            gap = float(mx) - float(avg)
+            out.append(_claim(
+                f"最高客户{info['zh']}比户均高 {fmt_value(gap, dec, kind, unit)}，"
+                f"相当于户均水平的 {_num(float(mx) / float(avg), 2) if float(avg) else 'n/a'} 倍。",
+                refs["wp_usage"], refs["metric_calc"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：先按客户汇总{NAME_ZH[fact]}的{info['zh']}，再对客户粒度取"
+                f"均值与最大值，避免用明细行直接求平均；{caliber}。",
+                refs["wp_caliber"], refs["dim_customer_field"]))
+        return out[:n]
 
     return _spec("U", "nested_agg", question, sql, [fact, "dim_customer"], period,
                  refs, [metric], claims, measure=field_name, measure_zh=info["zh"],
@@ -1676,17 +2468,37 @@ def fam_v(i: int) -> Spec:
                 f"{NAME_ZH[fact]}的{info['zh']}，并给出各组占全部{info['zh']}的比例"
                 f"（保留 4 位小数），按比例降序排列。统计口径：{caliber}。")
     dec, kind, unit = info["decimals"], info["kind"], info["unit"]
+    dom_zh = DOMAIN_ZH[TABLE_DOMAIN[fact]]
+    domain_ref = DOMAIN_REF[TABLE_DOMAIN[fact]]
 
-    def claims(ctx):
-        top = ctx.rows[0]
-        return [
+    def claims(ctx, n):
+        top, low = ctx.rows[0], ctx.rows[-1]
+        out = [
             _claim(f"{period.range_zh()} 期间占比最高的{a_zh}是 {top[0]}，"
-                   f"占 {_num(top[ctx.pos['share_ratio']], 4)}，"
-                   f"对应{info['zh']} {fmt_value(top[ctx.pos[alias]], dec, kind, unit)}"
-                   f"（{caliber}）。", refs["metric_calc"], refs["wp_join"]),
-            _claim(f"{ctx.n} 个分组的占比合计为 1，分母取同口径分组汇总之和。",
-                   refs["metric_bound"], refs["wp_grain"]),
+                   f"占 {_num(top[ctx.pos['share_ratio']], 4)}，对应{info['zh']} "
+                   f"{fmt_value(top[ctx.pos[alias]], dec, kind, unit)}"
+                   f"（{caliber}；按{dom_zh}域指标口径分组后求占比）。",
+                   refs["metric_calc"], domain_ref),
         ]
+        if n >= 2:
+            total = sum(ctx.col(alias))
+            out.append(_claim(
+                f"参与占比计算的 {ctx.n} 个分组，其{info['zh']}合计为 "
+                f"{fmt_value(total, dec, kind, unit)}，即占比计算的分母。",
+                refs["wp_join"], refs["field_def"]))
+        if n >= 3:
+            out.append(_claim(
+                f"本次共 {ctx.n} 个{a_zh}分组参与占比计算，分组由维表属性产生。",
+                refs["wp_rows"], refs["wp_usage"]))
+        if n >= 4:
+            out.append(_claim(
+                f"占比最低的分组为 {low[0]}，份额 "
+                f"{_num(low[ctx.pos['share_ratio']], 4)}。", refs["metric_bound"], refs["wp_recon"]))
+        if n >= 5:
+            out.append(_claim(
+                f"口径说明：{ctx.n} 个分组的占比合计为 1，分母取同口径分组汇总之和，"
+                f"{caliber}。", refs["wp_caliber"], refs[f"{dim}_field"]))
+        return out[:n]
 
     return _spec("V", "nested_agg", question, sql, [fact, dim], period, refs, [metric],
                  claims, measure=field_name, measure_zh=info["zh"], decimals=dec,
@@ -1726,7 +2538,33 @@ def nested_specs() -> list[Spec]:
     return specs
 
 
-def generate() -> tuple[list[dict], list[dict], list[dict], list[Spec]]:
+def assign_claim_counts(specs: list[Spec]) -> list[int]:
+    """在难度层内按 CLAIM_QUOTA 给每题分配主张数，保证各难度层覆盖 1–5 条。
+
+    名额来自 ``params.tasks.claims_per_task`` 的整数换算，层内用固定种子洗牌后
+    按题序分配：整体分布恰好等于 params 的目标比例，且每种主张数在每个难度层
+    都出现，便于 C3 按主张数分层。
+    """
+    counts = [0] * len(specs)
+    for difficulty in ("single_table", "join", "nested_agg"):
+        idxs = [i for i, spec in enumerate(specs) if spec.difficulty == difficulty]
+        quota = CLAIM_QUOTA[difficulty]
+        pool = [n for n in CLAIM_COUNT_VALUES for _ in range(quota[n])]
+        assert len(pool) == len(idxs), \
+            f"{difficulty} 主张名额 {len(pool)} 与题目数 {len(idxs)} 不符"
+        shuffled = seeds.shuffle(pool, "tasks", f"claim-counts-{difficulty}")
+        for i, n in zip(idxs, shuffled):
+            counts[i] = n
+    totals = Counter(counts)
+    want = {int(k): round(float(v) * len(specs)) for k, v in
+            TASK_PARAMS["claims_per_task"].items()}
+    assert {k: totals.get(k, 0) for k in CLAIM_COUNT_VALUES} == want, \
+        f"主张数分布 {dict(totals)} 与 params 换算 {want} 不符"
+    assert len(set(counts)) == 5, f"主张数只有 {sorted(set(counts))} 种，退化"
+    return counts
+
+
+def generate() -> tuple[list[dict], list[dict], list[dict], list[Spec], list[dict]]:
     specs = single_table_specs() + join_specs() + nested_specs()
     want = {"single_table": TASK_PARAMS["single_table"], "join": TASK_PARAMS["join"],
             "nested_agg": TASK_PARAMS["nested_agg"]}
@@ -1734,13 +2572,19 @@ def generate() -> tuple[list[dict], list[dict], list[dict], list[Spec]]:
     got = Counter(s.difficulty for s in specs)
     assert {k: got.get(k, 0) for k in want} == want, f"难度配比不符：{dict(got)}"
 
+    claim_counts = assign_claim_counts(specs)
+    for spec, n in zip(specs, claim_counts):
+        spec.extra["claim_count"] = n
+    cluster_map, clusters = assign_clusters(specs)
+
     tasks, golds, metas = [], [], []
     for seq, spec in enumerate(specs, start=1):
-        task, gold, meta = build_one(seq, spec)
+        task, gold, meta = build_one(seq, spec, spec.extra["claim_count"], cluster_map[seq])
         tasks.append(task)
         golds.append(gold)
         metas.append(meta)
-    return tasks, golds, metas, specs
+    assert [m["claim_count"] for m in metas] == claim_counts, "主张数与配额不一致"
+    return tasks, golds, metas, specs, clusters
 
 
 def _file_entry(path: Path) -> dict:
@@ -1748,7 +2592,7 @@ def _file_entry(path: Path) -> dict:
     return {"rows": text_rows, "sha256": io.sha256_file(path)}
 
 
-def write_manifest(out: Path, tasks, golds, metas, specs) -> dict:
+def write_manifest(out: Path, tasks, golds, metas, specs, clusters) -> dict:
     files = {
         "tasks.jsonl": _file_entry(out / "tasks.jsonl"),
         "gold_results.jsonl": _file_entry(out / "gold_results.jsonl"),
@@ -1770,6 +2614,34 @@ def write_manifest(out: Path, tasks, golds, metas, specs) -> dict:
     agg_join_pairs = sorted({(d, f) for m in joins for d in m["dim_tables"]
                              for f in m["tables"] if TABLE_KIND[f] == "agg"})
 
+    task_by_id = {t["task_id"]: t for t in tasks}
+    cluster_table = []
+    for cluster in clusters:
+        members = [task_by_id[tid] for tid in cluster["task_ids"]]
+        shared = None
+        for task in members:
+            docs = {e["doc_id"] for e in task["truth"]["evidence"]}
+            shared = docs if shared is None else (shared & docs)
+        cluster_table.append({
+            "cluster_id": cluster["cluster_id"],
+            "domain": cluster["domain"],
+            "family": cluster["family"],
+            "size": cluster["size"],
+            "task_ids": cluster["task_ids"],
+            "primary_tables": cluster["primary_tables"],
+            "measures": cluster["measures"],
+            "difficulties": cluster["difficulties"],
+            "claim_counts": cluster["claim_counts"],
+            "shared_docs": sorted(shared or []),
+        })
+
+    claim_dist = dict(sorted(Counter(m["claim_count"] for m in metas).items()))
+    claims_by_difficulty = {}
+    for difficulty in ("single_table", "join", "nested_agg"):
+        sub = Counter(m["claim_count"] for m in metas if m["difficulty"] == difficulty)
+        claims_by_difficulty[difficulty] = {str(k): sub.get(k, 0)
+                                            for k in CLAIM_COUNT_VALUES}
+
     stats = {
         "task_total": len(tasks),
         "difficulty": dict(sorted(Counter(t["difficulty"] for t in tasks).items())),
@@ -1778,6 +2650,22 @@ def write_manifest(out: Path, tasks, golds, metas, specs) -> dict:
         "answer_shape": dict(sorted(Counter(t["answer_shape"] for t in tasks).items())),
         "snapshot": dict(sorted(Counter(t["snapshot"] for t in tasks).items())),
         "family": dist("family"),
+        "claims": {
+            "per_task": {str(k): v for k, v in claim_dist.items()},
+            "per_task_ratio": {str(k): round(v / len(tasks), 4) for k, v in claim_dist.items()},
+            "by_difficulty": claims_by_difficulty,
+            "total": sum(claim_dist[k] * k for k in claim_dist),
+            "target": TASK_PARAMS["claims_per_task"],
+        },
+        "clusters": {
+            "count": len(clusters),
+            "min_size": min(c["size"] for c in clusters),
+            "max_size": max(c["size"] for c in clusters),
+            "size_distribution": dict(sorted(Counter(c["size"] for c in clusters).items())),
+            "with_multiple_shared_docs": sum(
+                1 for c in cluster_table if len(c["shared_docs"]) > 1),
+            "table": cluster_table,
+        },
         "coverage": {
             "single_table_fact_tables": len(single_facts),
             "single_table_fact_table_names": single_facts,
@@ -1807,6 +2695,7 @@ def write_manifest(out: Path, tasks, golds, metas, specs) -> dict:
         },
         "generated_from": {
             "params_tasks": TASK_PARAMS,
+            "params_clusters": CLUSTER_PARAMS,
             "tables": len(TABLES),
             "docs_version": EVIDENCE_VERSION,
             "snapshot": SNAPSHOT,
@@ -1827,10 +2716,10 @@ def main(argv=None) -> int:
     out = Path(args.out) if args.out else TASKS_DIR
     out.mkdir(parents=True, exist_ok=True)
 
-    tasks, golds, metas, specs = generate()
+    tasks, golds, metas, specs, clusters = generate()
     n_task = io.write_jsonl(out / "tasks.jsonl", tasks)
     n_gold = io.write_jsonl(out / "gold_results.jsonl", golds)
-    manifest = write_manifest(out, tasks, golds, metas, specs)
+    manifest = write_manifest(out, tasks, golds, metas, specs, clusters)
     digest = manifest["tasks.jsonl"]["sha256"]
 
     if not args.quiet:
@@ -1839,6 +2728,10 @@ def main(argv=None) -> int:
         print(f"难度分布 {st['difficulty']}")
         print(f"主题分布 {st['domain']}")
         print(f"权限分布 {st['permission']}")
+        print(f"主张数分布 {st['claims']['per_task']}（合计 {st['claims']['total']} 条）")
+        cl = st["clusters"]
+        print(f"语义簇 {cl['count']} 个，规模分布 {cl['size_distribution']}，"
+              f"簇内共享证据（>1 份）{cl['with_multiple_shared_docs']} 个")
         print(f"答案形态 {st['answer_shape']}｜fingerprint {digest[:16]}")
         cov = st["coverage"]
         print(f"覆盖：单表事实表 {cov['single_table_fact_tables']} 张；"

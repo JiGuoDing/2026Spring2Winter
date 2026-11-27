@@ -1,2 +1,7 @@
 /tmp/ars-dsh-inspect/
 /tmp/skill-src/
+
+# 本机凭据，永不入库
+dataset/.env
+dataset/.env.*
+!dataset/.env.example

@@ -1,0 +1,77 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>04 下一步</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>三条线同时启动，第 5 周进 P0</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>客户、平台、联合三条线并行推进，任何一条掉队，P0 都会整体后移。</Text>
+
+        <svg width={1160} height={400} viewBox='0 0 1100 379'>
+            <rect x='180' y='0' width='225' height='44' fill='#1F3864' />
+            <text x='292' y='28' fontSize='15' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>本周</text>
+            <rect x='405' y='0' width='225' height='44' fill='#2E6DA4' />
+            <text x='517' y='28' fontSize='15' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>2 周内</text>
+            <rect x='630' y='0' width='225' height='44' fill='#3D4C63' />
+            <text x='742' y='28' fontSize='15' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>4 周内</text>
+            <rect x='855' y='0' width='245' height='44' fill='#7A8699' />
+            <text x='977' y='28' fontSize='15' fontWeight='bold' fill='#FFFFFF' textAnchor='middle' fontFamily='Microsoft YaHei'>第 5 周</text>
+
+            <rect x='0' y='52' width='180' height='96' fill='#F2F5F9' />
+            <text x='20' y='96' fontSize='16' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>客户侧</text>
+            <text x='20' y='122' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>决策与材料</text>
+            <rect x='180' y='52' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='196' y='96' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>回 5 项材料</text>
+            <text x='196' y='118' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>T01 T09 T10 T12 T20</text>
+            <rect x='405' y='52' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='421' y='96' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>确认三期边界</text>
+            <text x='421' y='118' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>与部署形态</text>
+            <rect x='630' y='52' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='646' y='96' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>参加验收演练</text>
+            <text x='646' y='118' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>确认两条门槛</text>
+            <rect x='855' y='52' width='245' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='871' y='96' fontSize='14' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>立项与预算决策</text>
+            <text x='871' y='118' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>按复算后的人月</text>
+
+            <rect x='0' y='156' width='180' height='96' fill='#F2F5F9' />
+            <text x='20' y='200' fontSize='16' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>平台侧</text>
+            <text x='20' y='226' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>设计与原型</text>
+            <rect x='180' y='156' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='196' y='200' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>打分台账定稿</text>
+            <text x='196' y='222' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>判据与红线固化</text>
+            <rect x='405' y='156' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='421' y='200' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>原型环境就绪</text>
+            <text x='421' y='222' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>S2 租户搭起来</text>
+            <rect x='630' y='156' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='646' y='200' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>越权 · 配额 · 注入</text>
+            <text x='646' y='222' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>三类实测跑完</text>
+            <rect x='855' y='156' width='245' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='871' y='200' fontSize='14' fontWeight='bold' fill='#B3261E' fontFamily='Microsoft YaHei'>P0 开工，网关先行</text>
+            <text x='871' y='222' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>第一个里程碑</text>
+
+            <rect x='0' y='260' width='180' height='96' fill='#F2F5F9' />
+            <text x='20' y='304' fontSize='16' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>联合</text>
+            <text x='20' y='330' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>回填与拍板</text>
+            <rect x='180' y='260' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='196' y='304' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>对齐口径</text>
+            <text x='196' y='326' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>定 5 项材料责任人</text>
+            <rect x='405' y='260' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='421' y='304' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>锁定分期边界</text>
+            <text x='421' y='326' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>回填估算区间</text>
+            <rect x='630' y='260' width='225' height='96' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='646' y='304' fontSize='14' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>实测回填台账</text>
+            <text x='646' y='326' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>复算人月与区间</text>
+            <rect x='855' y='260' width='245' height='96' fill='#F2F5F9' stroke='#2E6DA4' strokeWidth='1.5' />
+            <text x='871' y='304' fontSize='14' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>转入 P0 交付节奏</text>
+            <text x='871' y='326' fontSize='12' fill='#7A8699' fontFamily='Microsoft YaHei'>按里程碑验收</text>
+        </svg>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>本周只需要一次交付：把五项材料给到；其余节奏由我们按图推进，每两周同步一次。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>时间以客户确认五项材料之日起算</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>20 / 20</Text>
+        </Box>
+    </Box>
+</Slide>

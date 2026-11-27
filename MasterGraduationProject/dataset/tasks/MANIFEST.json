@@ -1,23 +1,1467 @@
 {
   "build.py": {
-    "rows": 1852,
-    "sha256": "77f40fd5b1455a4a184a38aad4022848f73d9522c27130bc29dcaa23be62009d"
+    "rows": 2745,
+    "sha256": "511576123f0f0cd706abea90ac0a484da74f63c4c8eab33ace2eb06efe78cbbb"
   },
   "gold_results.jsonl": {
     "rows": 200,
-    "sha256": "d5800758d9971b5d1f8ccc0fd06152a5a45c395a4d8cb2d7e97165af29961b1f"
+    "sha256": "d698471b0128e7241a22d4de99ebc837082294e148aa7e005ef93ebd3a42f725"
   },
   "selfcheck.py": {
-    "rows": 355,
-    "sha256": "ed2054b24b31d91b2d98f7da89510e65a4bf68ea0045c5e7ae818057335ff49d"
+    "rows": 511,
+    "sha256": "5f6a22d471481454ff16a60c79d37d916034f34f28ee48a19bab5a5a90b47d89"
   },
   "stats": {
     "answer_shape": {
       "scalar": 64,
       "table": 136
     },
+    "claims": {
+      "by_difficulty": {
+        "join": {
+          "1": 10,
+          "2": 14,
+          "3": 21,
+          "4": 14,
+          "5": 11
+        },
+        "nested_agg": {
+          "1": 11,
+          "2": 14,
+          "3": 21,
+          "4": 14,
+          "5": 10
+        },
+        "single_table": {
+          "1": 9,
+          "2": 12,
+          "3": 18,
+          "4": 12,
+          "5": 9
+        }
+      },
+      "per_task": {
+        "1": 30,
+        "2": 40,
+        "3": 60,
+        "4": 40,
+        "5": 30
+      },
+      "per_task_ratio": {
+        "1": 0.15,
+        "2": 0.2,
+        "3": 0.3,
+        "4": 0.2,
+        "5": 0.15
+      },
+      "target": {
+        "1": 0.15,
+        "2": 0.2,
+        "3": 0.3,
+        "4": 0.2,
+        "5": 0.15
+      },
+      "total": 600
+    },
+    "clusters": {
+      "count": 40,
+      "max_size": 6,
+      "min_size": 4,
+      "size_distribution": {
+        "4": 9,
+        "5": 22,
+        "6": 9
+      },
+      "table": [
+        {
+          "claim_counts": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_sales_orders",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 4,
+            "single_table": 1
+          },
+          "domain": "sales",
+          "family": "orders",
+          "measures": [
+            "amount",
+            "gross_amount",
+            "net_amount"
+          ],
+          "primary_tables": [
+            "fact_order_item",
+            "fact_orders",
+            "fact_sales_daily"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q150",
+            "q156",
+            "q168",
+            "q042",
+            "q093",
+            "q174"
+          ]
+        },
+        {
+          "claim_counts": [
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_sales_orders_2",
+          "difficulties": {
+            "join": 3,
+            "nested_agg": 2,
+            "single_table": 1
+          },
+          "domain": "sales",
+          "family": "orders",
+          "measures": [
+            "discount_amount",
+            "metric_value",
+            "net_amount",
+            "quantity"
+          ],
+          "primary_tables": [
+            "agg_daily_sales",
+            "fact_orders",
+            "fact_sales_daily"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q193",
+            "q155",
+            "q091",
+            "q041",
+            "q121",
+            "q112"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            4
+          ],
+          "cluster_id": "cls_sales_orders_3",
+          "difficulties": {
+            "join": 1,
+            "single_table": 4
+          },
+          "domain": "sales",
+          "family": "orders",
+          "measures": [
+            "metric_ratio",
+            "metric_value",
+            "orders_id"
+          ],
+          "primary_tables": [
+            "agg_daily_sales",
+            "agg_product_rank",
+            "agg_region_share",
+            "fact_orders"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q109",
+            "q052",
+            "q054",
+            "q050",
+            "q026"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_sales_promotion",
+          "difficulties": {
+            "join": 4,
+            "nested_agg": 1,
+            "single_table": 1
+          },
+          "domain": "sales",
+          "family": "promotion",
+          "measures": [
+            "amount",
+            "discount_amount",
+            "gross_amount"
+          ],
+          "primary_tables": [
+            "fact_clicks",
+            "fact_promotion_apply",
+            "fact_sessions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q177",
+            "q018",
+            "q128",
+            "q061",
+            "q064",
+            "q098"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_sales_promotion_2",
+          "difficulties": {
+            "join": 3,
+            "nested_agg": 1,
+            "single_table": 1
+          },
+          "domain": "sales",
+          "family": "promotion",
+          "measures": [
+            "cost_amount",
+            "discount_amount",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_clicks",
+            "fact_promotion_apply",
+            "fact_sessions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q088",
+            "q147",
+            "q089",
+            "q062",
+            "q001"
+          ]
+        },
+        {
+          "claim_counts": [
+            3
+          ],
+          "cluster_id": "cls_sales_promotion_3",
+          "difficulties": {
+            "join": 2,
+            "nested_agg": 2,
+            "single_table": 1
+          },
+          "domain": "sales",
+          "family": "promotion",
+          "measures": [
+            "cost_amount"
+          ],
+          "primary_tables": [
+            "fact_clicks",
+            "fact_promotion_apply"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q131",
+            "q103",
+            "q063",
+            "q015",
+            "q198"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3
+          ],
+          "cluster_id": "cls_sales_promotion_4",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 4
+          },
+          "domain": "sales",
+          "family": "promotion",
+          "measures": [
+            "cost_amount",
+            "quantity"
+          ],
+          "primary_tables": [
+            "fact_campaign_touch",
+            "fact_clicks",
+            "fact_sessions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q184",
+            "q123",
+            "q176",
+            "q138",
+            "q167"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3
+          ],
+          "cluster_id": "cls_sales_promotion_5",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 1,
+            "single_table": 3
+          },
+          "domain": "sales",
+          "family": "promotion",
+          "measures": [
+            "clicks_id",
+            "metric_ratio",
+            "quantity",
+            "sessions_id"
+          ],
+          "primary_tables": [
+            "agg_funnel",
+            "fact_clicks",
+            "fact_leads",
+            "fact_sessions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q148",
+            "q094",
+            "q048",
+            "q023",
+            "q024"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_sales_subscription",
+          "difficulties": {
+            "nested_agg": 4,
+            "single_table": 2
+          },
+          "domain": "sales",
+          "family": "subscription",
+          "measures": [
+            "gross_amount"
+          ],
+          "primary_tables": [
+            "fact_renewals",
+            "fact_subscriptions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q004",
+            "q151",
+            "q017",
+            "q139",
+            "q173",
+            "q192"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_sales_subscription_2",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 3,
+            "single_table": 2
+          },
+          "domain": "sales",
+          "family": "subscription",
+          "measures": [
+            "discount_amount",
+            "gross_amount",
+            "net_amount"
+          ],
+          "primary_tables": [
+            "fact_churn",
+            "fact_renewals",
+            "fact_subscriptions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q009",
+            "q105",
+            "q135",
+            "q185",
+            "q181",
+            "q037"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_sales_subscription_3",
+          "difficulties": {
+            "join": 3,
+            "nested_agg": 2
+          },
+          "domain": "sales",
+          "family": "subscription",
+          "measures": [
+            "cost_amount",
+            "discount_amount"
+          ],
+          "primary_tables": [
+            "fact_churn",
+            "fact_subscriptions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q086",
+            "q074",
+            "q076",
+            "q160",
+            "q145"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            4
+          ],
+          "cluster_id": "cls_sales_subscription_4",
+          "difficulties": {
+            "join": 3,
+            "single_table": 2
+          },
+          "domain": "sales",
+          "family": "subscription",
+          "measures": [
+            "quantity"
+          ],
+          "primary_tables": [
+            "fact_renewals",
+            "fact_subscriptions"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q073",
+            "q075",
+            "q047",
+            "q030",
+            "q120"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_sales_subscription_5",
+          "difficulties": {
+            "join": 2,
+            "single_table": 3
+          },
+          "domain": "sales",
+          "family": "subscription",
+          "measures": [
+            "churn_id",
+            "metric_value"
+          ],
+          "primary_tables": [
+            "agg_cohort_retention",
+            "agg_customer_ltv",
+            "fact_churn"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q108",
+            "q051",
+            "q049",
+            "q107",
+            "q021"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "cluster_id": "cls_sales_returns",
+          "difficulties": {
+            "join": 4,
+            "nested_agg": 1
+          },
+          "domain": "sales",
+          "family": "returns",
+          "measures": [
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_returns"
+          ],
+          "shared_docs": [
+            "metric_052",
+            "wp_182"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q082",
+            "q161",
+            "q081",
+            "q084",
+            "q083"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            4,
+            5
+          ],
+          "cluster_id": "cls_sales_returns_2",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 1,
+            "single_table": 2
+          },
+          "domain": "sales",
+          "family": "returns",
+          "measures": [
+            "cost_amount",
+            "returns_id",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_returns"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q144",
+            "q085",
+            "q006",
+            "q020"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3
+          ],
+          "cluster_id": "cls_sales_contract",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 2,
+            "single_table": 3
+          },
+          "domain": "sales",
+          "family": "contract",
+          "measures": [
+            "cost_amount",
+            "discount_amount",
+            "gross_amount",
+            "quantity",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_contracts",
+            "fact_price_change",
+            "fact_quotes"
+          ],
+          "shared_docs": [
+            "wp_182"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q102",
+            "q010",
+            "q033",
+            "q044",
+            "q158",
+            "q163"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            3,
+            4
+          ],
+          "cluster_id": "cls_supply_shipment",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 3,
+            "single_table": 1
+          },
+          "domain": "supply",
+          "family": "shipment",
+          "measures": [
+            "gross_amount",
+            "net_amount",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_deliveries",
+            "fact_shipments"
+          ],
+          "shared_docs": [
+            "wp_186"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q149",
+            "q046",
+            "q136",
+            "q182",
+            "q118"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            5
+          ],
+          "cluster_id": "cls_supply_shipment_2",
+          "difficulties": {
+            "join": 2,
+            "nested_agg": 1,
+            "single_table": 1
+          },
+          "domain": "supply",
+          "family": "shipment",
+          "measures": [
+            "cost_amount",
+            "quantity",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_deliveries",
+            "fact_shipments"
+          ],
+          "shared_docs": [
+            "wp_186"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q011",
+            "q141",
+            "q090",
+            "q097"
+          ]
+        },
+        {
+          "claim_counts": [
+            4,
+            5
+          ],
+          "cluster_id": "cls_supply_shipment_3",
+          "difficulties": {
+            "nested_agg": 3,
+            "single_table": 1
+          },
+          "domain": "supply",
+          "family": "shipment",
+          "measures": [
+            "deliveries_id",
+            "quantity"
+          ],
+          "primary_tables": [
+            "fact_deliveries",
+            "fact_shipments"
+          ],
+          "shared_docs": [
+            "wp_186"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q171",
+            "q190",
+            "q197",
+            "q025"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_supply_procurement",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 2,
+            "single_table": 2
+          },
+          "domain": "supply",
+          "family": "procurement",
+          "measures": [
+            "amount",
+            "gross_amount",
+            "net_amount"
+          ],
+          "primary_tables": [
+            "fact_quality_checks",
+            "fact_supplier_orders"
+          ],
+          "shared_docs": [
+            "wp_186"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q014",
+            "q170",
+            "q117",
+            "q162",
+            "q008"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            5
+          ],
+          "cluster_id": "cls_supply_procurement_2",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 2,
+            "single_table": 2
+          },
+          "domain": "supply",
+          "family": "procurement",
+          "measures": [
+            "net_amount",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_supplier_orders"
+          ],
+          "shared_docs": [
+            "wp_186"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q038",
+            "q126",
+            "q035",
+            "q189",
+            "q152"
+          ]
+        },
+        {
+          "claim_counts": [
+            3,
+            5
+          ],
+          "cluster_id": "cls_supply_procurement_3",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 3
+          },
+          "domain": "supply",
+          "family": "procurement",
+          "measures": [
+            "cost_amount",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_quality_checks"
+          ],
+          "shared_docs": [
+            "wp_121",
+            "wp_186"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q165",
+            "q191",
+            "q119",
+            "q172"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_supply_inventory",
+          "difficulties": {
+            "join": 2,
+            "nested_agg": 1,
+            "single_table": 2
+          },
+          "domain": "supply",
+          "family": "inventory",
+          "measures": [
+            "amount",
+            "gross_amount",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_inventory",
+            "fact_stock_move"
+          ],
+          "shared_docs": [
+            "wp_186"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q166",
+            "q092",
+            "q101",
+            "q032",
+            "q040"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            4,
+            5
+          ],
+          "cluster_id": "cls_supply_inventory_2",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 1,
+            "single_table": 2
+          },
+          "domain": "supply",
+          "family": "inventory",
+          "measures": [
+            "cost_amount",
+            "metric_value",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "agg_inventory_turnover",
+            "fact_stock_move"
+          ],
+          "shared_docs": [
+            "wp_186"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q154",
+            "q016",
+            "q053",
+            "q111"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            5
+          ],
+          "cluster_id": "cls_finance_invoice",
+          "difficulties": {
+            "join": 3,
+            "nested_agg": 2
+          },
+          "domain": "finance",
+          "family": "invoice",
+          "measures": [
+            "amount",
+            "discount_amount"
+          ],
+          "primary_tables": [
+            "fact_invoices"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q143",
+            "q070",
+            "q125",
+            "q132",
+            "q072"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_finance_invoice_2",
+          "difficulties": {
+            "join": 2,
+            "nested_agg": 2,
+            "single_table": 1
+          },
+          "domain": "finance",
+          "family": "invoice",
+          "measures": [
+            "discount_amount",
+            "quantity",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_invoices",
+            "fact_payments"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q178",
+            "q124",
+            "q069",
+            "q195",
+            "q003"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            5
+          ],
+          "cluster_id": "cls_finance_invoice_3",
+          "difficulties": {
+            "join": 2,
+            "single_table": 2
+          },
+          "domain": "finance",
+          "family": "invoice",
+          "measures": [
+            "invoices_id",
+            "quantity"
+          ],
+          "primary_tables": [
+            "fact_invoices"
+          ],
+          "shared_docs": [
+            "wp_043",
+            "wp_190"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q095",
+            "q034",
+            "q071",
+            "q019"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_finance_cost",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 2,
+            "single_table": 2
+          },
+          "domain": "finance",
+          "family": "cost",
+          "measures": [
+            "amount",
+            "gross_amount",
+            "net_amount"
+          ],
+          "primary_tables": [
+            "fact_costs",
+            "fact_forecast"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q031",
+            "q179",
+            "q005",
+            "q078",
+            "q169"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_finance_cost_2",
+          "difficulties": {
+            "join": 2,
+            "nested_agg": 2,
+            "single_table": 1
+          },
+          "domain": "finance",
+          "family": "cost",
+          "measures": [
+            "net_amount",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_costs"
+          ],
+          "shared_docs": [
+            "wp_124",
+            "wp_190"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q188",
+            "q045",
+            "q080",
+            "q133",
+            "q077"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_finance_cost_3",
+          "difficulties": {
+            "join": 5
+          },
+          "domain": "finance",
+          "family": "cost",
+          "measures": [
+            "metric_value",
+            "quantity",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "agg_cost_breakdown",
+            "agg_forecast_error",
+            "fact_costs"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q079",
+            "q116",
+            "q104",
+            "q110",
+            "q114"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3
+          ],
+          "cluster_id": "cls_finance_target",
+          "difficulties": {
+            "join": 3,
+            "nested_agg": 2,
+            "single_table": 1
+          },
+          "domain": "finance",
+          "family": "target",
+          "measures": [
+            "gross_amount",
+            "net_amount"
+          ],
+          "primary_tables": [
+            "fact_budget",
+            "fact_targets"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q065",
+            "q130",
+            "q157",
+            "q027",
+            "q068",
+            "q187"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_finance_target_2",
+          "difficulties": {
+            "join": 3,
+            "nested_agg": 1,
+            "single_table": 2
+          },
+          "domain": "finance",
+          "family": "target",
+          "measures": [
+            "cost_amount",
+            "discount_amount",
+            "quantity"
+          ],
+          "primary_tables": [
+            "fact_budget",
+            "fact_targets"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q115",
+            "q067",
+            "q043",
+            "q066",
+            "q159",
+            "q002"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            3,
+            5
+          ],
+          "cluster_id": "cls_finance_collection",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 3,
+            "single_table": 1
+          },
+          "domain": "finance",
+          "family": "collection",
+          "measures": [
+            "amount",
+            "discount_amount",
+            "gross_amount"
+          ],
+          "primary_tables": [
+            "fact_collections",
+            "fact_refunds"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q196",
+            "q007",
+            "q180",
+            "q096",
+            "q140"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_finance_collection_2",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 3,
+            "single_table": 1
+          },
+          "domain": "finance",
+          "family": "collection",
+          "measures": [
+            "cost_amount",
+            "discount_amount",
+            "quantity"
+          ],
+          "primary_tables": [
+            "fact_collections",
+            "fact_refunds"
+          ],
+          "shared_docs": [
+            "wp_190"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q099",
+            "q028",
+            "q134",
+            "q186",
+            "q199"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "cluster_id": "cls_ops_usage",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 2,
+            "single_table": 1
+          },
+          "domain": "ops",
+          "family": "usage",
+          "measures": [
+            "discount_amount",
+            "gross_amount",
+            "net_amount",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_usage"
+          ],
+          "shared_docs": [
+            "wp_194"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q029",
+            "q164",
+            "q146",
+            "q087"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3
+          ],
+          "cluster_id": "cls_ops_usage_2",
+          "difficulties": {
+            "nested_agg": 1,
+            "single_table": 3
+          },
+          "domain": "ops",
+          "family": "usage",
+          "measures": [
+            "cost_amount",
+            "usage_id"
+          ],
+          "primary_tables": [
+            "fact_usage"
+          ],
+          "shared_docs": [
+            "wp_194"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q012",
+            "q039",
+            "q153",
+            "q022"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            3,
+            5
+          ],
+          "cluster_id": "cls_ops_sla",
+          "difficulties": {
+            "join": 1,
+            "nested_agg": 4
+          },
+          "domain": "ops",
+          "family": "sla",
+          "measures": [
+            "discount_amount",
+            "net_amount"
+          ],
+          "primary_tables": [
+            "fact_sla_events"
+          ],
+          "shared_docs": [
+            "wp_194"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q129",
+            "q142",
+            "q175",
+            "q194",
+            "q200"
+          ]
+        },
+        {
+          "claim_counts": [
+            2,
+            4,
+            5
+          ],
+          "cluster_id": "cls_ops_sla_2",
+          "difficulties": {
+            "join": 3,
+            "single_table": 1
+          },
+          "domain": "ops",
+          "family": "sla",
+          "measures": [
+            "metric_value",
+            "quantity",
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "agg_sla_summary",
+            "fact_sla_events"
+          ],
+          "shared_docs": [
+            "wp_194"
+          ],
+          "size": 4,
+          "task_ids": [
+            "q122",
+            "q100",
+            "q113",
+            "q055"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_ops_ticket",
+          "difficulties": {
+            "join": 2,
+            "nested_agg": 2,
+            "single_table": 2
+          },
+          "domain": "ops",
+          "family": "ticket",
+          "measures": [
+            "tax_amount"
+          ],
+          "primary_tables": [
+            "fact_tickets"
+          ],
+          "shared_docs": [
+            "metric_028",
+            "wp_194"
+          ],
+          "size": 6,
+          "task_ids": [
+            "q013",
+            "q127",
+            "q183",
+            "q137",
+            "q036",
+            "q106"
+          ]
+        },
+        {
+          "claim_counts": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "cluster_id": "cls_meta_audit",
+          "difficulties": {
+            "single_table": 5
+          },
+          "domain": "meta",
+          "family": "audit",
+          "measures": [
+            "duration_ms",
+            "payload_size"
+          ],
+          "primary_tables": [
+            "log_backfill",
+            "log_etl_run",
+            "log_metric_change",
+            "log_query_audit",
+            "log_schema_change"
+          ],
+          "shared_docs": [
+            "wp_198"
+          ],
+          "size": 5,
+          "task_ids": [
+            "q056",
+            "q058",
+            "q060",
+            "q057",
+            "q059"
+          ]
+        }
+      ],
+      "with_multiple_shared_docs": 5
+    },
     "coverage": {
-      "evidence_docs": 320,
+      "evidence_docs": 306,
       "join_dim_agg_pairs": 8,
       "join_dim_fact_pair_samples": [
         "dim_channel+fact_budget",
@@ -110,7 +1554,19 @@
     },
     "generated_from": {
       "docs_version": 1,
+      "params_clusters": {
+        "count": 40,
+        "max_size": 6,
+        "min_size": 3
+      },
       "params_tasks": {
+        "claims_per_task": {
+          "1": 0.15,
+          "2": 0.2,
+          "3": 0.3,
+          "4": 0.2,
+          "5": 0.15
+        },
         "join": 70,
         "nested_agg": 70,
         "single_table": 60,
@@ -130,14 +1586,14 @@
     },
     "task_total": 200,
     "truth_layers": {
-      "claims": 400,
-      "evidence": 1339,
+      "claims": 600,
+      "evidence": 1138,
       "value": 200,
       "version": 1
     }
   },
   "tasks.jsonl": {
     "rows": 200,
-    "sha256": "34293dc00176aa96f61fc225558e3182336023582f3623bb450e503491ec8b68"
+    "sha256": "591280a332f36c9f4f48245c202e5f1bfff9033102e7fa88dfc9ed5868bb0bf3"
   }
 }

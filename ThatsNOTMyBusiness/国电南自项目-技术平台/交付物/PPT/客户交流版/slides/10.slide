@@ -1,0 +1,79 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 14 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 凭什么这么定</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>四维打分定档，五条一票否决</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 40, marginTop: 8 }}>
+            <Box style={{ width: 620, flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 16, color: '#3D4C63' }}>四个维度各打 1–5 分，总分 T = B + D + R + S（4–20）</Text>
+                <Table
+                    style={{ width: '100%', height: 320 }}
+                    defaultTextStyle={{ fontSize: 15, textAlign: 'left', color: '#3D4C63' }}
+                    defaultCellStyle={{ border: { bottom: { width: 1, color: '#D9DEE7' } }, padding: 10 }}
+                    cells={[
+                        [
+                            { text: '维度', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                            { text: '1 分', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                            { text: '3 分', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                            { text: '5 分', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                        ],
+                        [{ text: 'B 业务类型', textStyle: { bold: true, color: '#1F3864' } }, '协同办公、门户展示', '生产实时数据汇聚（只读）', '含控制指令下发'],
+                        [{ text: 'D 数据敏感度', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }, { text: '可公开', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '企业敏感：财务、人事', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '国家核心数据、涉密', cellStyle: { background: { color: '#FAFBFC' } } }],
+                        [{ text: 'R 监管要求', textStyle: { bold: true, color: '#1F3864' } }, '无特定要求', '等保 2.0 三级', '涉密、分保或专项审查'],
+                        [{ text: 'S SLA 等级', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }, { text: '99.5%', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '99.95%', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '生产连续不可中断', cellStyle: { background: { color: '#FAFBFC' } } }],
+                    ]}
+                />
+                <Box style={{ flexDirection: 'row', gap: 6 }}>
+                    <Box style={{ flex: 1, padding: 16, background: '#D9DEE7' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#3D4C63' }}>L0</Text>
+                        <Text style={{ fontSize: 14, color: '#3D4C63' }}>T ≤ 6</Text>
+                    </Box>
+                    <Box style={{ flex: 1, padding: 16, background: '#1F3864' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>L1</Text>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>7–9</Text>
+                    </Box>
+                    <Box style={{ flex: 1, padding: 16, background: '#2E6DA4' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>L2</Text>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>10–13</Text>
+                    </Box>
+                    <Box style={{ flex: 1, padding: 16, background: '#142645' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>L3</Text>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>T ≥ 14</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 16, color: '#3D4C63' }}>一票否决优先于总分，硬编码进准入校验，不交人工判定</Text>
+                <Box style={{ flexDirection: 'column', gap: 18 }}>
+                    <Box style={{ flexDirection: 'row', gap: 12, borderLeft: '3px solid #B3261E', paddingLeft: 14 }}>
+                        <Text style={{ fontSize: 16, color: '#B3261E', fontWeight: 'bold', width: 96 }}>B = 5</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>不得进入平台，须独立建设并单独过安全防护测评</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, borderLeft: '3px solid #B3261E', paddingLeft: 14 }}>
+                        <Text style={{ fontSize: 16, color: '#B3261E', fontWeight: 'bold', width: 96 }}>R=5 或 D=5</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>至少 L3</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, borderLeft: '3px solid #B3261E', paddingLeft: 14 }}>
+                        <Text style={{ fontSize: 16, color: '#B3261E', fontWeight: 'bold', width: 96 }}>R = 4</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>至少 L2，入平台前须过安全接入方案评审</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, borderLeft: '3px solid #B3261E', paddingLeft: 14 }}>
+                        <Text style={{ fontSize: 16, color: '#B3261E', fontWeight: 'bold', width: 96 }}>S≥4 且 B≥3</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>至少 L2</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, borderLeft: '3px solid #B3261E', paddingLeft: 14 }}>
+                        <Text style={{ fontSize: 16, color: '#B3261E', fontWeight: 'bold', width: 96 }}>外部主体</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>开发商、集成商一律至少 L3，与打分无关</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#7A8699', lineHeight: 1.6 }}>降档只能经集团书面批准、最多一档，并补独立审计流、独立限流、季度复核三项补偿。</Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>10 / 20</Text>
+    </Box>
+</Slide>

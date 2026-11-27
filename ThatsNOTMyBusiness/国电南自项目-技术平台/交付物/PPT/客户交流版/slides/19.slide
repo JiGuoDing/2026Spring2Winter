@@ -1,0 +1,37 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 14 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>04 下一步</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>本周请回复这 5 件事</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>都不需要客户再写方案，只需把手上已有的材料拿出来。缺任何一项，P0 都开不了工。</Text>
+
+        <Table
+            style={{ width: '100%', height: 330, marginTop: 8 }}
+            defaultTextStyle={{ fontSize: 15, textAlign: 'left', color: '#3D4C63' }}
+            defaultCellStyle={{ border: { bottom: { width: 1, color: '#D9DEE7' } }, padding: 12 }}
+            cells={[
+                [
+                    { text: '编号', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#3D4C63' } } },
+                    { text: '需要客户提供', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                    { text: '用在哪', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                    { text: '缺了会卡住什么', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#B3261E' } } },
+                ],
+                [{ text: 'T01', textStyle: { bold: true, color: '#1F3864' } }, '4A 的 OIDC / SAML2 端点与属性映射规范', '身份联邦，P0 第一个开工项', '统一登录接不进来，P0 停摆'],
+                [{ text: 'T09', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }, { text: '二级租户清单：单位、板块、敏感等级', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '打分定档与成本测算', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '落不了档，预算出不来', cellStyle: { background: { color: '#FAFBFC' } } }],
+                [{ text: 'T10', textStyle: { bold: true, color: '#1F3864' } }, '各应用现状：是否供主数据、是否接实时数据', 'B 与 D 两项打分的唯一依据', '判据失效，只能凭经验拍'],
+                [{ text: 'T12', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } }, { text: '现有等保测评结论与整改项', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '判断补偿控制能否复用', cellStyle: { background: { color: '#FAFBFC' } } }, { text: '安全方案与测评口径打架', cellStyle: { background: { color: '#FAFBFC' } } }],
+                [{ text: 'T20', textStyle: { bold: true, color: '#1F3864' } }, '预算区间与部署形态（集团云 / 本地）', 'L3 上限与三期排期', '分期边界锁不住'],
+            ]}
+        />
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>这五项是把方案从“判断”变成“可执行”的最小输入集，其余材料可以边做边补。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>编号沿用方案附录的待确认事项清单，便于逐条对账</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>19 / 20</Text>
+        </Box>
+    </Box>
+</Slide>

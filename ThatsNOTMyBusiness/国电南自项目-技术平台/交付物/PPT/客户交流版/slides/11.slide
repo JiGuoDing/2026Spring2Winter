@@ -1,0 +1,50 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 14 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 凭什么这么定</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>多供一份主数据，就从 L1 升到 L2</Text>
+
+        <svg width={1160} height={454.99} viewBox='0 0 1160 454.99'>
+            <rect x='0' y='0' width='450' height='417.85' fill='#FFFFFF' stroke='#D9DEE7' strokeWidth='1' />
+            <text x='24' y='41.79' fontSize='18' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>C-1　某水电厂 · 检修管理应用</text>
+            <text x='24' y='69.64' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>不供主数据、不接生产控制区实时数据</text>
+
+            <rect x='24' y='97.5' width='92' height='88.21' fill='#F2F5F9' /><text x='36' y='125.36' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>B 业务</text><text x='36' y='164.82' fontSize='26' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>2</text>
+            <rect x='126' y='97.5' width='92' height='88.21' fill='#F2F5F9' /><text x='138' y='125.36' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>D 数据</text><text x='138' y='164.82' fontSize='26' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>2</text>
+            <rect x='228' y='97.5' width='92' height='88.21' fill='#F2F5F9' /><text x='240' y='125.36' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>R 监管</text><text x='240' y='164.82' fontSize='26' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>3</text>
+            <rect x='330' y='97.5' width='92' height='88.21' fill='#F2F5F9' /><text x='342' y='125.36' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>S SLA</text><text x='342' y='164.82' fontSize='26' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>2</text>
+
+            <text x='24' y='239.1' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>总分 T</text>
+            <text x='24' y='315.71' fontSize='64' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>9</text>
+            <rect x='110' y='271.6' width='96' height='46.43' fill='#1F3864' />
+            <text x='128' y='302.94' fontSize='18' fontWeight='bold' fill='#FFFFFF' fontFamily='Microsoft YaHei'>落 L1</text>
+            <text x='24' y='366.78' fontSize='14' fill='#3D4C63' fontFamily='Microsoft YaHei'>默认路径，本方案的原型验证场景（S2）</text>
+
+            <rect x='710' y='0' width='450' height='417.85' fill='#FFFFFF' stroke='#1F3864' strokeWidth='1.5' />
+            <text x='734' y='41.79' fontSize='18' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>C-2　同一应用 · 向集团供设备台账</text>
+            <text x='734' y='69.64' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>一旦成为“重要数据”提供方，D 从 2 抬到 4</text>
+
+            <rect x='734' y='97.5' width='92' height='88.21' fill='#F2F5F9' /><text x='746' y='125.36' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>B 业务</text><text x='746' y='164.82' fontSize='26' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>2</text>
+            <rect x='836' y='97.5' width='92' height='88.21' fill='#F6E7E5' /><text x='848' y='125.36' fontSize='13' fill='#B3261E' fontFamily='Microsoft YaHei'>D 数据</text><text x='848' y='164.82' fontSize='26' fontWeight='bold' fill='#B3261E' fontFamily='Microsoft YaHei'>4</text>
+            <rect x='938' y='97.5' width='92' height='88.21' fill='#F2F5F9' /><text x='950' y='125.36' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>R 监管</text><text x='950' y='164.82' fontSize='26' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>3</text>
+            <rect x='1040' y='97.5' width='96' height='88.21' fill='#F2F5F9' /><text x='1052' y='125.36' fontSize='13' fill='#7A8699' fontFamily='Microsoft YaHei'>S SLA</text><text x='1052' y='164.82' fontSize='26' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>2</text>
+
+            <text x='734' y='239.1' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>总分 T</text>
+            <text x='734' y='315.71' fontSize='64' fontWeight='bold' fill='#B3261E' fontFamily='Microsoft YaHei'>11</text>
+            <rect x='836' y='271.6' width='96' height='46.43' fill='#B3261E' />
+            <text x='854' y='302.94' fontSize='18' fontWeight='bold' fill='#FFFFFF' fontFamily='Microsoft YaHei'>落 L2</text>
+            <text x='734' y='366.78' fontSize='14' fill='#3D4C63' fontFamily='Microsoft YaHei'>需要独立数据库实例与独立入口，成本升到 2.5–3.0×</text>
+
+            <line x1='470' y1='174.11' x2='690' y2='174.11' stroke='#B3261E' strokeWidth='2' />
+            <polygon points='690,150 678,143 678,157' fill='#B3261E' />
+            <text x='580' y='157.86' fontSize='16' fontWeight='bold' fill='#B3261E' textAnchor='middle' fontFamily='Microsoft YaHei'>D 2 → 4</text>
+            <text x='580' y='204.28' fontSize='14' fill='#7A8699' textAnchor='middle' fontFamily='Microsoft YaHei'>只是多供一份台账</text>
+
+            <text x='0' y='445.71' fontSize='14' fill='#3D4C63' fontFamily='Microsoft YaHei'>升级触发点是“是否跨租户提供 / 接收数据”，不是数据量大小。另：C-5 外部开发商即使 9 分，也因主体条款强制 L3。</text>
+        </svg>
+    </Box>
+
+    <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>11 / 20</Text>
+    </Box>
+</Slide>

@@ -1,0 +1,6 @@
+=== boot pid=106920 ts=2026-11-26 22:14:07.197 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 客户交流版/客户交流版.pptx --dsl-file 客户交流版/slides/10.slide --page-index 9 ===
+[2026-11-26 22:14:07.196] [INFO ] [pid=106920] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:14:07.221] [INFO ] [pid=106920] [slide-version] fileId=sid_mwxm version=53 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\客户交流版\客户交流版.pptx
+=== boot pid=105880 ts=2026-11-26 22:14:10.165 cwd=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT argv=C:\Users\48520\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl 内部预演版/内部预演版.pptx --dsl-file 内部预演版/slides/08.slide --page-index 7 ===
+[2026-11-26 22:14:10.165] [INFO ] [pid=105880] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-26 22:14:10.189] [INFO ] [pid=105880] [slide-version] fileId=8598A7A7 version=13 filePath=Q:\workspace\2026Spring2Winter\ThatsNOTMyBusiness\国电南自项目-技术平台\交付物\PPT\内部预演版\内部预演版.pptx

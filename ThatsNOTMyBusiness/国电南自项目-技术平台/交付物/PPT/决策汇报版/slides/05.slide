@@ -1,0 +1,68 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 要多少钱</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>八成停在 L1，三期约 109.5 人月</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>成本由“落在哪一档”决定，而不由“租户多少”决定——这是本方案最省钱的一条设计。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 14, marginTop: 6 }}>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 18, background: '#1F3864' }}>
+                <Text style={{ fontSize: 38, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.1 }}>约 80%</Text>
+                <Text style={{ fontSize: 14, color: '#C9D4E4' }}>二级租户停在 L1</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 18, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 38, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.1 }}>45%–55%</Text>
+                <Text style={{ fontSize: 14, color: '#3D4C63' }}>资源当量（全量 L2 为 100%）</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 18, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 38, fontWeight: 'bold', color: '#B3261E', lineHeight: 1.1 }}>≤ 5</Text>
+                <Text style={{ fontSize: 14, color: '#3D4C63' }}>L3 独立集群上限</Text>
+            </Box>
+        </Box>
+
+        <svg width={1160} height={158} viewBox='0 0 1100 150'>
+            <text x='0' y='26' fontSize='17' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>P0 期</text>
+            <rect x='150' y='4' width='278' height='32' fill='#1F3864' />
+            <text x='164' y='26' fontSize='14' fontWeight='bold' fill='#FFFFFF' fontFamily='Microsoft YaHei'>43.5 人月</text>
+
+            <text x='0' y='78' fontSize='17' fontWeight='bold' fill='#2E6DA4' fontFamily='Microsoft YaHei'>P1 期</text>
+            <rect x='150' y='56' width='217' height='32' fill='#2E6DA4' />
+            <text x='164' y='78' fontSize='14' fontWeight='bold' fill='#FFFFFF' fontFamily='Microsoft YaHei'>34.0 人月</text>
+
+            <text x='0' y='130' fontSize='17' fontWeight='bold' fill='#3D4C63' fontFamily='Microsoft YaHei'>P2 期</text>
+            <rect x='150' y='108' width='205' height='32' fill='#3D4C63' />
+            <text x='164' y='130' fontSize='14' fontWeight='bold' fill='#FFFFFF' fontFamily='Microsoft YaHei'>32.0 人月</text>
+
+            <line x1='150' y1='148' x2='1090' y2='148' stroke='#D9DEE7' strokeWidth='1' />
+        </svg>
+
+        <Box style={{ flexDirection: 'row', gap: 10, marginTop: 2 }}>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 12, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 12, color: '#7A8699' }}>合计</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#1F3864' }}>109.5 人月</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 12, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 12, color: '#7A8699' }}>P0 团队规模</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#1F3864' }}>14.5 FTE</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 12, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 12, color: '#7A8699' }}>测试与验证</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#B3261E' }}>约 24%，不压缩</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 12, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 12, color: '#7A8699' }}>估算区间</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#3D4C63' }}>±50% / ±40% / ±30%</Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>省下的当量投到控制面开发、20 组越权用例与压测——不是省在质量上。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>人月为经验估算，按 8 人 × 月口径折算；不含客户侧配合人力</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>05 / 08</Text>
+        </Box>
+    </Box>
+</Slide>

@@ -1,0 +1,1613 @@
+{
+  "acts": [
+    {
+      "act_cost": 0.64,
+      "act_key": "act_join_t01_t09",
+      "downstream_tools": [
+        "act_join_t01_t14",
+        "act_join_t01_t17",
+        "act_join_t01_t22",
+        "act_join_t01_t33"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.36,
+      "act_key": "act_join_t01_t14",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t17",
+        "act_join_t01_t22",
+        "act_join_t01_t33"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.59,
+      "act_key": "act_join_t01_t17",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t14",
+        "act_join_t01_t22",
+        "act_join_t01_t33"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.69,
+      "act_key": "act_join_t01_t22",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t14",
+        "act_join_t01_t17",
+        "act_join_t01_t33"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.67,
+      "act_key": "act_join_t01_t33",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t14",
+        "act_join_t01_t17",
+        "act_join_t01_t22"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.74,
+      "act_key": "act_join_t01_t38",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t14",
+        "act_join_t01_t17",
+        "act_join_t01_t22"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.52,
+      "act_key": "act_join_t02_t15",
+      "downstream_tools": [
+        "act_join_t02_t18",
+        "act_join_t02_t23",
+        "act_join_t02_t34",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.63,
+      "act_key": "act_join_t02_t18",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t23",
+        "act_join_t02_t34",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.63,
+      "act_key": "act_join_t02_t23",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t18",
+        "act_join_t02_t34",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.63,
+      "act_key": "act_join_t02_t34",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t18",
+        "act_join_t02_t23",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.67,
+      "act_key": "act_join_t02_t39",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t18",
+        "act_join_t02_t23",
+        "act_join_t02_t34"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.48,
+      "act_key": "act_join_t03_t24",
+      "downstream_tools": [
+        "act_join_t03_t27",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t06_t19"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.46,
+      "act_key": "act_join_t03_t27",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t06_t19"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.48,
+      "act_key": "act_join_t03_t32",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t27",
+        "act_join_t03_t40",
+        "act_join_t06_t19"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.49,
+      "act_key": "act_join_t03_t40",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t27",
+        "act_join_t03_t32",
+        "act_join_t06_t19"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.76,
+      "act_key": "act_join_t04_t09",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t17",
+        "act_join_t01_t33",
+        "act_join_t04_t20"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.43,
+      "act_key": "act_join_t04_t20",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t17",
+        "act_join_t01_t33",
+        "act_join_t04_t09"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.66,
+      "act_key": "act_join_t04_t41",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t17",
+        "act_join_t01_t33",
+        "act_join_t04_t09"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.4,
+      "act_key": "act_join_t05_t18",
+      "downstream_tools": [
+        "act_join_t02_t18",
+        "act_join_t02_t34",
+        "act_join_t05_t34",
+        "act_join_t05_t42"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.49,
+      "act_key": "act_join_t05_t34",
+      "downstream_tools": [
+        "act_join_t02_t18",
+        "act_join_t02_t34",
+        "act_join_t05_t18",
+        "act_join_t05_t42"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.41,
+      "act_key": "act_join_t05_t42",
+      "downstream_tools": [
+        "act_join_t02_t18",
+        "act_join_t02_t34",
+        "act_join_t05_t18",
+        "act_join_t05_t34"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.44,
+      "act_key": "act_join_t06_t19",
+      "downstream_tools": [
+        "act_join_t01_t14",
+        "act_join_t01_t22",
+        "act_join_t01_t38",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.36,
+      "act_key": "act_join_t06_t22",
+      "downstream_tools": [
+        "act_join_t01_t14",
+        "act_join_t01_t22",
+        "act_join_t01_t38",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.56,
+      "act_key": "act_join_t06_t30",
+      "downstream_tools": [
+        "act_join_t01_t14",
+        "act_join_t01_t22",
+        "act_join_t01_t38",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.73,
+      "act_key": "act_join_t07_t12",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t23",
+        "act_join_t02_t39",
+        "act_join_t04_t20"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.51,
+      "act_key": "act_join_t07_t15",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t23",
+        "act_join_t02_t39",
+        "act_join_t04_t20"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.74,
+      "act_key": "act_join_t07_t36",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t23",
+        "act_join_t02_t39",
+        "act_join_t04_t20"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.45,
+      "act_key": "act_join_t08_t13",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t08_t16"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.45,
+      "act_key": "act_join_t08_t16",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t08_t13"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.57,
+      "act_key": "act_join_t08_t21",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t08_t13"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.46,
+      "act_key": "act_join_t08_t32",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t08_t13"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.54,
+      "act_key": "act_join_t08_t37",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t08_t13"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.66,
+      "act_key": "act_join_t09_t11",
+      "downstream_tools": [
+        "act_join_t08_t16",
+        "act_join_t16_t48",
+        "act_query_agg_customer_ltv",
+        "act_query_agg_daily_sales"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.39,
+      "act_key": "act_join_t12_t13",
+      "downstream_tools": [
+        "act_join_t08_t13",
+        "act_join_t13_t45",
+        "act_query_agg_monthly_gmv",
+        "act_query_agg_region_share"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.48,
+      "act_key": "act_join_t13_t45",
+      "downstream_tools": [
+        "act_query_agg_region_share"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.77,
+      "act_key": "act_join_t14_t39",
+      "downstream_tools": [
+        "act_join_t02_t39",
+        "act_join_t14_t46",
+        "act_query_agg_channel_mix",
+        "act_query_fact_collections"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.77,
+      "act_key": "act_join_t14_t46",
+      "downstream_tools": [
+        "act_join_t02_t39",
+        "act_join_t14_t39",
+        "act_query_agg_channel_mix",
+        "act_query_fact_collections"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.7,
+      "act_key": "act_join_t16_t48",
+      "downstream_tools": [
+        "act_query_agg_customer_ltv"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.7,
+      "act_key": "act_join_t17_t49",
+      "downstream_tools": [
+        "act_query_agg_cohort_retention"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.68,
+      "act_key": "act_join_t18_t50",
+      "downstream_tools": [
+        "act_query_agg_funnel"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.21,
+      "act_key": "act_query_agg_channel_mix",
+      "downstream_tools": [
+        "act_join_t14_t46"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.24,
+      "act_key": "act_query_agg_cohort_retention",
+      "downstream_tools": [
+        "act_join_t17_t49"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.16,
+      "act_key": "act_query_agg_cost_breakdown",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.25,
+      "act_key": "act_query_agg_customer_ltv",
+      "downstream_tools": [
+        "act_join_t16_t48"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.3,
+      "act_key": "act_query_agg_daily_sales",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.32,
+      "act_key": "act_query_agg_forecast_error",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.24,
+      "act_key": "act_query_agg_funnel",
+      "downstream_tools": [
+        "act_join_t18_t50"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.25,
+      "act_key": "act_query_agg_inventory_turnover",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.27,
+      "act_key": "act_query_agg_monthly_gmv",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.18,
+      "act_key": "act_query_agg_product_rank",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.21,
+      "act_key": "act_query_agg_region_share",
+      "downstream_tools": [
+        "act_join_t13_t45"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.32,
+      "act_key": "act_query_agg_sla_summary",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.04,
+      "act_key": "act_query_dim_channel",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t27",
+        "act_join_t03_t32",
+        "act_join_t03_t40"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.03,
+      "act_key": "act_query_dim_customer",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t17",
+        "act_join_t01_t33",
+        "act_join_t04_t09"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.03,
+      "act_key": "act_query_dim_date",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t01_t14",
+        "act_join_t01_t17",
+        "act_join_t01_t22"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.02,
+      "act_key": "act_query_dim_employee",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t23",
+        "act_join_t02_t39",
+        "act_join_t04_t20"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.05,
+      "act_key": "act_query_dim_product",
+      "downstream_tools": [
+        "act_join_t02_t18",
+        "act_join_t02_t34",
+        "act_join_t05_t18",
+        "act_join_t05_t34"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.05,
+      "act_key": "act_query_dim_promotion",
+      "downstream_tools": [
+        "act_join_t03_t24",
+        "act_join_t03_t32",
+        "act_join_t03_t40",
+        "act_join_t08_t13"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.03,
+      "act_key": "act_query_dim_region",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t02_t18",
+        "act_join_t02_t23",
+        "act_join_t02_t34"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.04,
+      "act_key": "act_query_dim_store",
+      "downstream_tools": [
+        "act_join_t01_t14",
+        "act_join_t01_t22",
+        "act_join_t01_t38",
+        "act_join_t02_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.09,
+      "act_key": "act_query_fact_budget",
+      "downstream_tools": [
+        "act_join_t07_t36"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.14,
+      "act_key": "act_query_fact_campaign_touch",
+      "downstream_tools": [
+        "act_join_t02_t23"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.22,
+      "act_key": "act_query_fact_churn",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.11,
+      "act_key": "act_query_fact_clicks",
+      "downstream_tools": [
+        "act_join_t03_t24"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.14,
+      "act_key": "act_query_fact_collections",
+      "downstream_tools": [
+        "act_join_t02_t39",
+        "act_join_t14_t39"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.18,
+      "act_key": "act_query_fact_contracts",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.18,
+      "act_key": "act_query_fact_costs",
+      "downstream_tools": [
+        "act_join_t05_t42"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.1,
+      "act_key": "act_query_fact_deliveries",
+      "downstream_tools": [
+        "act_join_t01_t17",
+        "act_join_t17_t49",
+        "act_query_agg_cohort_retention"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.19,
+      "act_key": "act_query_fact_engagement",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.14,
+      "act_key": "act_query_fact_forecast",
+      "downstream_tools": [
+        "act_join_t01_t38"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.21,
+      "act_key": "act_query_fact_inventory",
+      "downstream_tools": [
+        "act_join_t02_t18",
+        "act_join_t05_t18",
+        "act_join_t18_t50",
+        "act_query_agg_funnel"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.16,
+      "act_key": "act_query_fact_inventory_snapshot",
+      "downstream_tools": [
+        "act_join_t06_t19",
+        "act_query_agg_sla_summary"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.09,
+      "act_key": "act_query_fact_invoices",
+      "downstream_tools": [
+        "act_join_t02_t15",
+        "act_join_t07_t15",
+        "act_query_agg_product_rank"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.14,
+      "act_key": "act_query_fact_leads",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.2,
+      "act_key": "act_query_fact_order_item",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.19,
+      "act_key": "act_query_fact_orders",
+      "downstream_tools": [
+        "act_join_t01_t09",
+        "act_join_t04_t09",
+        "act_join_t08_t16",
+        "act_join_t09_t11"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.19,
+      "act_key": "act_query_fact_payments",
+      "downstream_tools": [
+        "act_join_t01_t14",
+        "act_join_t02_t39",
+        "act_join_t14_t39",
+        "act_join_t14_t46"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.09,
+      "act_key": "act_query_fact_price_change",
+      "downstream_tools": [
+        "act_join_t08_t21",
+        "act_query_agg_forecast_error"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.12,
+      "act_key": "act_query_fact_promotion_apply",
+      "downstream_tools": [
+        "act_join_t01_t22",
+        "act_join_t06_t22",
+        "act_query_agg_inventory_turnover"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.1,
+      "act_key": "act_query_fact_quality_checks",
+      "downstream_tools": [
+        "act_join_t04_t41"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.14,
+      "act_key": "act_query_fact_quotes",
+      "downstream_tools": [
+        "act_join_t03_t27"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.15,
+      "act_key": "act_query_fact_refunds",
+      "downstream_tools": [
+        "act_join_t08_t13",
+        "act_join_t12_t13",
+        "act_join_t13_t45",
+        "act_query_agg_region_share"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.2,
+      "act_key": "act_query_fact_renewals",
+      "downstream_tools": [
+        "act_join_t06_t30"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.21,
+      "act_key": "act_query_fact_returns",
+      "downstream_tools": [
+        "act_join_t07_t12",
+        "act_join_t08_t13",
+        "act_join_t12_t13",
+        "act_join_t13_t45"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.14,
+      "act_key": "act_query_fact_sales_daily",
+      "downstream_tools": [
+        "act_join_t09_t11",
+        "act_query_agg_daily_sales"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.18,
+      "act_key": "act_query_fact_sessions",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.18,
+      "act_key": "act_query_fact_shipments",
+      "downstream_tools": [
+        "act_join_t08_t16",
+        "act_join_t16_t48",
+        "act_query_agg_customer_ltv"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.17,
+      "act_key": "act_query_fact_sla_events",
+      "downstream_tools": [
+        "act_join_t01_t33"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.21,
+      "act_key": "act_query_fact_stock_move",
+      "downstream_tools": [
+        "act_join_t04_t20",
+        "act_query_agg_cost_breakdown"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.15,
+      "act_key": "act_query_fact_subscriptions",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.2,
+      "act_key": "act_query_fact_supplier_orders",
+      "downstream_tools": [
+        "act_join_t03_t40"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.15,
+      "act_key": "act_query_fact_targets",
+      "downstream_tools": [
+        "act_join_t08_t37"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.19,
+      "act_key": "act_query_fact_tickets",
+      "downstream_tools": [
+        "act_join_t03_t32",
+        "act_join_t08_t32"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.15,
+      "act_key": "act_query_fact_usage",
+      "downstream_tools": [
+        "act_join_t02_t34",
+        "act_join_t05_t34"
+      ],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.06,
+      "act_key": "act_query_log_access",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.07,
+      "act_key": "act_query_log_backfill",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.06,
+      "act_key": "act_query_log_etl_run",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.04,
+      "act_key": "act_query_log_metric_change",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.04,
+      "act_key": "act_query_log_query_audit",
+      "downstream_tools": [],
+      "readonly": true
+    },
+    {
+      "act_cost": 0.06,
+      "act_key": "act_query_log_schema_change",
+      "downstream_tools": [],
+      "readonly": true
+    }
+  ],
+  "plans": [
+    {
+      "completion_rate": 0.861,
+      "plan_cost": 1.08,
+      "plan_id": "plan_01",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表日期维（dim_date）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.853,
+      "plan_cost": 0.52,
+      "plan_id": "plan_02",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表区域维（dim_region）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.728,
+      "plan_cost": 0.5,
+      "plan_id": "plan_03",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表渠道维（dim_channel）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.873,
+      "plan_cost": 0.52,
+      "plan_id": "plan_04",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表客户维（dim_customer）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.897,
+      "plan_cost": 0.86,
+      "plan_id": "plan_05",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表商品维（dim_product）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.82,
+      "plan_cost": 0.69,
+      "plan_id": "plan_06",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表门店维（dim_store）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.868,
+      "plan_cost": 1.07,
+      "plan_id": "plan_07",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表员工维（dim_employee）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.813,
+      "plan_cost": 0.95,
+      "plan_id": "plan_08",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表促销活动维（dim_promotion）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.91,
+      "plan_cost": 1.2,
+      "plan_id": "plan_09",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_orders）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.804,
+      "plan_cost": 1.11,
+      "plan_id": "plan_10",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_order_item）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.877,
+      "plan_cost": 0.4,
+      "plan_id": "plan_11",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_sales_daily）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.752,
+      "plan_cost": 0.47,
+      "plan_id": "plan_12",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_returns）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.796,
+      "plan_cost": 0.82,
+      "plan_id": "plan_13",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_refunds）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.86,
+      "plan_cost": 0.66,
+      "plan_id": "plan_14",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_payments）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.862,
+      "plan_cost": 0.53,
+      "plan_id": "plan_15",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_invoices）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.836,
+      "plan_cost": 0.8,
+      "plan_id": "plan_16",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_shipments）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.936,
+      "plan_cost": 0.95,
+      "plan_id": "plan_17",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_deliveries）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.836,
+      "plan_cost": 0.88,
+      "plan_id": "plan_18",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_inventory）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.931,
+      "plan_cost": 0.92,
+      "plan_id": "plan_19",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_inventory_snapshot）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.834,
+      "plan_cost": 1.15,
+      "plan_id": "plan_20",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_stock_move）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.817,
+      "plan_cost": 1.1,
+      "plan_id": "plan_21",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_price_change）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.9,
+      "plan_cost": 0.98,
+      "plan_id": "plan_22",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_promotion_apply）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.893,
+      "plan_cost": 0.93,
+      "plan_id": "plan_23",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_campaign_touch）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.835,
+      "plan_cost": 0.33,
+      "plan_id": "plan_24",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_clicks）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.957,
+      "plan_cost": 0.49,
+      "plan_id": "plan_25",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_sessions）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.779,
+      "plan_cost": 0.7,
+      "plan_id": "plan_26",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_leads）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.846,
+      "plan_cost": 0.32,
+      "plan_id": "plan_27",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_quotes）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.829,
+      "plan_cost": 1.07,
+      "plan_id": "plan_28",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_contracts）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.831,
+      "plan_cost": 0.71,
+      "plan_id": "plan_29",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_subscriptions）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.978,
+      "plan_cost": 0.9,
+      "plan_id": "plan_30",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_renewals）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.728,
+      "plan_cost": 0.75,
+      "plan_id": "plan_31",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_churn）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.791,
+      "plan_cost": 0.79,
+      "plan_id": "plan_32",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_tickets）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.912,
+      "plan_cost": 1.17,
+      "plan_id": "plan_33",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_sla_events）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.708,
+      "plan_cost": 0.3,
+      "plan_id": "plan_34",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_usage）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.841,
+      "plan_cost": 0.89,
+      "plan_id": "plan_35",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_engagement）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.802,
+      "plan_cost": 0.6,
+      "plan_id": "plan_36",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_budget）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.711,
+      "plan_cost": 0.84,
+      "plan_id": "plan_37",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_targets）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.811,
+      "plan_cost": 0.6,
+      "plan_id": "plan_38",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_forecast）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.883,
+      "plan_cost": 0.42,
+      "plan_id": "plan_39",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_collections）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.942,
+      "plan_cost": 0.72,
+      "plan_id": "plan_40",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_supplier_orders）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.737,
+      "plan_cost": 0.63,
+      "plan_id": "plan_41",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_quality_checks）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.972,
+      "plan_cost": 0.49,
+      "plan_id": "plan_42",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（fact_costs）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.956,
+      "plan_cost": 0.76,
+      "plan_id": "plan_43",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_daily_sales）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.829,
+      "plan_cost": 0.38,
+      "plan_id": "plan_44",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_monthly_gmv）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.861,
+      "plan_cost": 0.62,
+      "plan_id": "plan_45",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_region_share）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.832,
+      "plan_cost": 0.76,
+      "plan_id": "plan_46",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_channel_mix）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.764,
+      "plan_cost": 0.9,
+      "plan_id": "plan_47",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_product_rank）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.952,
+      "plan_cost": 0.38,
+      "plan_id": "plan_48",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_customer_ltv）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.946,
+      "plan_cost": 0.99,
+      "plan_id": "plan_49",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_cohort_retention）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.808,
+      "plan_cost": 0.8,
+      "plan_id": "plan_50",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_funnel）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.853,
+      "plan_cost": 0.36,
+      "plan_id": "plan_51",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_sla_summary）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.921,
+      "plan_cost": 0.32,
+      "plan_id": "plan_52",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_cost_breakdown）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.862,
+      "plan_cost": 0.63,
+      "plan_id": "plan_53",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_forecast_error）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.713,
+      "plan_cost": 1.17,
+      "plan_id": "plan_54",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（agg_inventory_turnover）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.876,
+      "plan_cost": 0.47,
+      "plan_id": "plan_55",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（log_query_audit）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.931,
+      "plan_cost": 1.08,
+      "plan_id": "plan_56",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（log_etl_run）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.918,
+      "plan_cost": 0.38,
+      "plan_id": "plan_57",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（log_access）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.92,
+      "plan_cost": 0.79,
+      "plan_id": "plan_58",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（log_metric_change）与关联字段",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.736,
+      "plan_cost": 1.1,
+      "plan_id": "plan_59",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（log_schema_change）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "在快照上执行并校验行数",
+        "比对口径说明与结果差异",
+        "组织中文回答并附证据块"
+      ]
+    },
+    {
+      "completion_rate": 0.849,
+      "plan_cost": 0.68,
+      "plan_id": "plan_60",
+      "steps": [
+        "解析问题口径与统计范围",
+        "定位主表主表（log_backfill）与关联字段",
+        "生成只读 SQL 并做语法检查",
+        "组织中文回答并附证据块"
+      ]
+    }
+  ]
+}

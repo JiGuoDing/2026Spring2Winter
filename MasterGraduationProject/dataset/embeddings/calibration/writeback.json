@@ -1,0 +1,74 @@
+{
+  "branch_pairs": 30,
+  "costs_rows": [
+    {
+      "after": {
+        "measured": "backfill",
+        "mock": "",
+        "n": "300",
+        "value_ms": "49705.940"
+      },
+      "before": {
+        "measured": "",
+        "mock": "pending",
+        "value_ms": ""
+      },
+      "model": "local-small-7b",
+      "path": "partial_repair",
+      "stage": "rewrite"
+    },
+    {
+      "after": {
+        "measured": "backfill",
+        "mock": "",
+        "n": "300",
+        "value_ms": "98627.388"
+      },
+      "before": {
+        "measured": "",
+        "mock": "pending",
+        "value_ms": ""
+      },
+      "model": "local-small-7b",
+      "path": "full_regen",
+      "stage": "generate"
+    }
+  ],
+  "csv": "Q:\\workspace\\2026Spring2Winter\\MasterGraduationProject\\dataset\\events\\real_calibration_300.csv",
+  "inputs": {
+    "costs/path_costs.csv": "509221e096061260bec3b63d860e0fd19344928ccd1d13e57964a45bf1c58d5c",
+    "embeddings/query_embeddings.npz": "5a30251c694079056b1077a0f3c7a18ec9ff5f03ecff5a2f1821e54d7f37bcd0",
+    "events/calibration_sample.jsonl": "e2d155df1c810b1febb9900e27c71eb0b7d84b8729e81d16926d4eff07f5ca64",
+    "events/docs_versioned.jsonl": "0b2db62f0426e26a7604d1615bf0fc346eadb6fc8cf53e364f736d6b33012b2a",
+    "events/real_calibration_300.template.csv": "ce10ab09f205adfdc345d569cdbd98b8ca8af400b962c807ede4d5b7e72bb75a",
+    "events/request_stream.jsonl": "c746932ba60bf00b2b8f51a0da95bfad239b7508d03136620551b11f598efe3a",
+    "labels/branch_pairs.jsonl": "34bd279f285e1e89c94e7532b2ea0f2e08decdce3c3a85bb9a730226a56d8048",
+    "tasks/tasks.jsonl": "591280a332f36c9f4f48245c202e5f1bfff9033102e7fa88dfc9ed5868bb0bf3"
+  },
+  "manifests": [
+    "costs/MANIFEST.json",
+    "labels/MANIFEST.json",
+    "events/MANIFEST.json"
+  ],
+  "mape": [
+    {
+      "mape_pct": 5.9,
+      "measured_p50_ms": 1.095,
+      "modeled_p50_ms": 1.16,
+      "stage": "act"
+    },
+    {
+      "mape_pct": 76.93,
+      "measured_p50_ms": 6.161,
+      "modeled_p50_ms": 1.421,
+      "stage": "rag"
+    }
+  ],
+  "sha256": {
+    "costs/path_costs.csv": "509221e096061260bec3b63d860e0fd19344928ccd1d13e57964a45bf1c58d5c",
+    "embeddings/calibration/branch_pairs_measured.jsonl": "c2ecac46301f89514182901ed2dd593b711a7fca3f3ae387f60314e9598b9c23",
+    "embeddings/calibration/requests.jsonl": "e8f2e0cecaff530245a0609b981224706c2aed1736a7dfc35425e7bacde547bb",
+    "events/real_calibration_300.csv": "f42a1d57084a496ece34f0e1f138561f470dd3785139f066e46c962ebc3291a3",
+    "labels/branch_pairs.jsonl": "34bd279f285e1e89c94e7532b2ea0f2e08decdce3c3a85bb9a730226a56d8048"
+  }
+}

@@ -1,0 +1,75 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 凭什么这么定</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>不做一刀切：八成租户停在 L1</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>分级的价值不在“分”，在于把绝大多数租户按在最便宜的一档，把重投入留给真正要隔离的少数。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 14, marginTop: 8 }}>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4, padding: 22, background: '#1F3864' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.05 }}>80%</Text>
+                <Text style={{ fontSize: 15, color: '#C9D4E4' }}>二级租户落 L1</Text>
+                <Text style={{ fontSize: 13, color: '#8FA3BF' }}>Namespace + 配额 + 网络策略</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4, padding: 22, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.05 }}>45–55%</Text>
+                <Text style={{ fontSize: 15, color: '#3D4C63' }}>资源当量</Text>
+                <Text style={{ fontSize: 13, color: '#7A8699' }}>以“全部落 L2”为 100%</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4, padding: 22, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#B3261E', lineHeight: 1.05 }}>≤ 5</Text>
+                <Text style={{ fontSize: 15, color: '#3D4C63' }}>L3 独立集群上限</Text>
+                <Text style={{ fontSize: 13, color: '#7A8699' }}>超出即失控，须集团审批</Text>
+            </Box>
+        </Box>
+
+        <svg width={1160} height={132} viewBox='0 0 1100 125' style={{ marginTop: 4 }}>
+            <line x1='180' y1='4' x2='180' y2='100' stroke='#E8EDF4' strokeWidth='1' />
+            <line x1='385' y1='4' x2='385' y2='100' stroke='#E8EDF4' strokeWidth='1' />
+            <line x1='590' y1='4' x2='590' y2='100' stroke='#E8EDF4' strokeWidth='1' />
+            <line x1='795' y1='4' x2='795' y2='100' stroke='#E8EDF4' strokeWidth='1' />
+            <line x1='1000' y1='4' x2='1000' y2='100' stroke='#E8EDF4' strokeWidth='1' />
+            <text x='180' y='118' fontSize='12' fill='#9AA5B5' textAnchor='middle' fontFamily='Microsoft YaHei'>0</text>
+            <text x='385' y='118' fontSize='12' fill='#9AA5B5' textAnchor='middle' fontFamily='Microsoft YaHei'>25%</text>
+            <text x='590' y='118' fontSize='12' fill='#9AA5B5' textAnchor='middle' fontFamily='Microsoft YaHei'>50%</text>
+            <text x='795' y='118' fontSize='12' fill='#9AA5B5' textAnchor='middle' fontFamily='Microsoft YaHei'>75%</text>
+            <text x='1000' y='118' fontSize='12' fill='#9AA5B5' textAnchor='middle' fontFamily='Microsoft YaHei'>100%</text>
+
+            <text x='0' y='32' fontSize='14' fill='#7A8699' fontFamily='Microsoft YaHei'>一刀切：全部 L2</text>
+            <rect x='180' y='10' width='820' height='38' fill='#D9DEE7' />
+            <text x='196' y='34' fontSize='14' fill='#3D4C63' fontFamily='Microsoft YaHei'>100%　·　每户一套实例、一套节点池台账、一套运维值班</text>
+
+            <text x='0' y='88' fontSize='14' fontWeight='bold' fill='#1F3864' fontFamily='Microsoft YaHei'>本方案：分级落地</text>
+            <rect x='180' y='66' width='410' height='38' fill='#2E6DA4' />
+            <text x='196' y='90' fontSize='14' fontWeight='bold' fill='#FFFFFF' fontFamily='Microsoft YaHei'>45–55%</text>
+            <rect x='592' y='66' width='406' height='38' fill='#FFFFFF' stroke='#2E6DA4' strokeWidth='1' strokeDasharray='4 3' />
+            <text x='608' y='90' fontSize='14' fill='#2E6DA4' fontFamily='Microsoft YaHei'>省下的当量 → 投控制面与测试</text>
+        </svg>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'stretch', marginTop: 6 }}>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#7A8699', width: 130 }}>省下的去哪</Text>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 12, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#1F3864' }}>控制面开发</Text>
+                <Text style={{ fontSize: 12, color: '#7A8699' }}>网关、租户、身份</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 12, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#1F3864' }}>20 组越权用例</Text>
+                <Text style={{ fontSize: 12, color: '#7A8699' }}>每期重跑，不做一次性</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2, padding: 12, background: '#F2F5F9' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#1F3864' }}>压测与故障注入</Text>
+                <Text style={{ fontSize: 12, color: '#7A8699' }}>P0 起就建立基线</Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>把“能不能上 L2”变成要论证的例外，而不是默认选项——这是本方案最省钱的一条设计。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>当量为相对资源占用与人力投入的经验估算；比例来自存量租户画像推算，需以实测回填</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>09 / 12</Text>
+        </Box>
+    </Box>
+</Slide>

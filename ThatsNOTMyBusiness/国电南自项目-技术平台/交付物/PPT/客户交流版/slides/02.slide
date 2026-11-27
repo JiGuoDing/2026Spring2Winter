@@ -1,0 +1,52 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 20 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>摘要</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>一条红线、四档隔离、三期落地</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 56, marginTop: 20 }}>
+            <Box style={{ width: 400, flexDirection: 'column', gap: 28 }}>
+                <Text style={{ fontSize: 18, color: '#7A8699' }}>一句话架构</Text>
+                <Text style={{ fontSize: 24, color: '#1F3864', lineHeight: 1.7, fontWeight: 'bold' }}>以安全分区为第一约束，以信任等级定隔离强度，以控制面为改造重心。</Text>
+                <Text style={{ fontSize: 16, color: '#3D4C63', lineHeight: 1.8 }}>客户已有“配置驱动的租户创建”，缺的是把配置变成可复核治理的判据、执行点与边界。本方案补的正是这三样。</Text>
+            </Box>
+
+            <Box style={{ width: 1, background: '#D9DEE7' }} />
+
+            <Box style={{ flex: 1, flexDirection: 'column' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 16, paddingBottom: 30, borderBottom: '1px solid #D9DEE7' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864', width: 40 }}>01</Text>
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>红线：全部资源只落安全Ⅲ区</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>L3 独立集群也不跨区；生产控制区数据单向进入，不回写控制指令</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 16, paddingTop: 30, paddingBottom: 30, borderBottom: '1px solid #D9DEE7' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864', width: 40 }}>02</Text>
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>分档：L0–L3 四维打分定档</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>业务、数据、监管、SLA 各 1–5 分，T=4–20；另设 5 条一票否决</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 16, paddingTop: 30, paddingBottom: 30, borderBottom: '1px solid #D9DEE7' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864', width: 40 }}>03</Text>
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>成本：不做一刀切</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>L1 覆盖约 80% 的二级租户，资源当量是全 L2 方案的 45%–55%</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'baseline', gap: 16, paddingTop: 30 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F3864', width: 40 }}>04</Text>
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F3864' }}>落地：三期约 109.5 人月</Text>
+                        <Text style={{ fontSize: 16, color: '#3D4C63' }}>P0 43.5 / P1 34.0 / P2 32.0；测试占比约 24%，不砍测试</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>02 / 20</Text>
+    </Box>
+</Slide>

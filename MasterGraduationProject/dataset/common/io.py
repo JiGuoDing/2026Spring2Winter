@@ -51,3 +51,26 @@ def sha256_file(path: Path) -> str:
 
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+# ---- 句向量 ---------------------------------------------------------------
+def load_query_embeddings(path: Path | None = None):
+    """读取 dataset/embeddings/query_embeddings.npz。
+
+    返回 (query_texts, embeddings)。向量已 L2 归一化，行序与 query_texts 对齐。
+    未生成时抛 FileNotFoundError，调用方应显式处理而不是静默降级。
+    """
+    import numpy as np  # 局部导入，避免未用向量的脚本强依赖 numpy
+
+    p = Path(path) if path else (ROOT / "embeddings" / "query_embeddings.npz")
+    if not p.is_file():
+        raise FileNotFoundError(
+            f"{p} 不存在：句向量尚未生成，见 dataset/embeddings/STATUS.md 或 params.embedding")
+    z = np.load(p, allow_pickle=False)
+    return [str(t) for t in z["query_texts"]], z["embeddings"]
+
+
+def embedding_lookup(path: Path | None = None) -> dict[str, list[float]]:
+    """返回 question_text -> 向量 的字典，便于按请求文本直接查。"""
+    texts, mat = load_query_embeddings(path)
+    return {t: mat[i].tolist() for i, t in enumerate(texts)}

@@ -14,9 +14,11 @@ sys.path.insert(0, str(ROOT))
 
 from common import io  # noqa: E402
 
-DIRS = ["db", "knowledge", "tasks", "events", "costs", "labels"]
+DIRS = ["db", "knowledge", "tasks", "events", "costs", "labels", "embeddings"]
 SKIP_SUFFIX = {".pyc", ".sqlite-wal", ".sqlite-shm"}
 TEXT_SUFFIX = {".jsonl", ".json", ".csv", ".md", ".sql", ".py"}
+# 模型缓存体积大且可重新下载，不进清单
+SKIP_PARTS = {"__pycache__", "cache"}
 
 
 def count_lines(p: Path) -> int | None:
@@ -36,7 +38,7 @@ def main() -> int:
         if not base.is_dir():
             continue
         for p in sorted(base.rglob("*")):
-            if not p.is_file() or p.suffix in SKIP_SUFFIX or "__pycache__" in p.parts:
+            if not p.is_file() or p.suffix in SKIP_SUFFIX or SKIP_PARTS & set(p.parts):
                 continue
             rel = p.relative_to(ROOT).as_posix()
             out[rel] = {

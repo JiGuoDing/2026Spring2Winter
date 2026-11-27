@@ -356,8 +356,37 @@ def p3() -> None:
                   r["truth"].get("value_hash"))
         assert cov == len(rows), f"只有 {cov}/{len(rows)} 题有数值层真值"
 
+    def claims_distribution():
+        import collections
+        rows = list(io.read_jsonl(t / "tasks.jsonl"))
+        target = PARAMS["tasks"]["claims_per_task"]
+        cnt = collections.Counter(len(r["truth"]["claims"]) for r in rows)
+        total = sum(k * v for k, v in cnt.items())
+        assert 540 <= total <= 660, f"主张总数 {total}，应在 540–660"
+        for k, ratio in target.items():
+            got = cnt.get(int(k), 0) / len(rows)
+            assert abs(got - ratio) <= 0.08, f"{k} 条主张占比 {got:.2f}，目标 {ratio}"
+        assert len(cnt) >= 4, f"主张数只有 {sorted(cnt)} 种，退化"
+
+    def clusters():
+        import collections
+        rows = list(io.read_jsonl(t / "tasks.jsonl"))
+        by_cluster = collections.defaultdict(list)
+        for r in rows:
+            assert ids.is_valid_cluster_id(r["cluster_id"]), r["cluster_id"]
+            by_cluster[r["cluster_id"]].append(r)
+        assert 35 <= len(by_cluster) <= 50, f"簇数 {len(by_cluster)}"
+        for cid, items in by_cluster.items():
+            assert 3 <= len(items) <= 6, f"{cid} 有 {len(items)} 题"
+            common = None
+            for it in items:
+                docs = {e["doc_id"] for e in it["truth"]["evidence"]}
+                common = docs if common is None else (common & docs)
+            assert common, f"{cid} 内题目不共享任何证据文档"
+
     for name, fn in (("题目数与难度配比", counts), ("schema 合规", schema_ok),
-                     ("gold SQL 可执行", sql_runs), ("三层真值齐备", truth_layers)):
+                     ("gold SQL 可执行", sql_runs), ("三层真值齐备", truth_layers),
+                     ("主张数分布", claims_distribution), ("语义簇结构", clusters)):
         check(name, fn)
 
 
@@ -437,10 +466,127 @@ def p4() -> None:
         filled = sum(1 for ln in lines[1:] if ln.split(",")[3].strip() not in ("", "NA"))
         assert filled >= 0.9 * (len(lines) - 1), f"t_act_ms 实测仅 {filled} 行"
 
+    def referential():
+        pool = io.read_json(e / "act_plan_pool.json")
+        act_keys = {a["act_key"] for a in pool["acts"]}
+        plan_ids = {p["plan_id"] for p in pool["plans"]}
+        doc_ids, chunks_by_doc = set(), {}
+        for r in io.read_jsonl(e / "docs_versioned.jsonl"):
+            doc_ids.add(r["doc_id"])
+            chunks_by_doc.setdefault((r["doc_id"], r["version"]), set()).update(
+                c["chunk_id"] for c in r["chunks"])
+        bad_act, bad_plan, bad_doc = [], [], []
+        for r in io.read_jsonl(e / "request_stream.jsonl"):
+            if r["act_key"] and r["act_key"] not in act_keys:
+                bad_act.append(r["act_key"])
+            if r["plan_id"] and r["plan_id"] not in plan_ids:
+                bad_plan.append(r["plan_id"])
+            if not set(r["gold_doc_ids"]) <= doc_ids:
+                bad_doc.append(r["req_id"])
+        assert not bad_act, f"{len(bad_act)} 个 act_key 不在池中，例 {bad_act[:3]}"
+        assert not bad_plan, f"{len(bad_plan)} 个 plan_id 不在池中，例 {bad_plan[:3]}"
+        assert not bad_doc, f"{len(bad_doc)} 条请求引用不存在的文档"
+        bad_chunk = []
+        for u in io.read_jsonl(e / "update_events.jsonl"):
+            have = chunks_by_doc.get((u["doc_id"], u["old_ver"]), set())
+            if not have:
+                bad_chunk.append((u["event_id"], "doc_ver_missing"))
+            elif not set(u["changed_chunk_ids"]) <= have:
+                bad_chunk.append((u["event_id"], "chunk_missing"))
+        assert not bad_chunk, f"更新事件引用不实，例 {bad_chunk[:3]}"
+
+    def update_impact():
+        reqs = list(io.read_jsonl(e / "request_stream.jsonl"))
+        cited_docs = {d for r in reqs for d in r["gold_doc_ids"]}
+        claim_chunks = {s["chunk_id"] for r in reqs for s in r["gold_fact_spans"]}
+        zero, control, claim_hit = [], 0, 0
+        for u in io.read_jsonl(e / "update_events.jsonl"):
+            miss = u["doc_id"] not in cited_docs
+            if miss and u["change_type"] == "codebook_revision":
+                control += 1
+            elif miss:
+                zero.append(u["event_id"])
+            if set(u["changed_chunk_ids"]) & claim_chunks:
+                claim_hit += 1
+        assert not zero, f"{len(zero)} 条非负对照更新不影响任何请求: {zero[:5]}"
+        assert control <= PARAMS["updates"]["negative_control_max"], \
+            f"无关更新负对照 {control} 条，超上限"
+        assert claim_hit >= 22, f"主张级命中仅 {claim_hit} 条，低于下限 22"
+
+    def clock_semantics():
+        docs = {(d["doc_id"], d["version"]): d["updated_at"]
+                for d in io.read_jsonl(e / "docs_versioned.jsonl")}
+        delays = []
+        for u in io.read_jsonl(e / "update_events.jsonl"):
+            eff = docs.get((u["doc_id"], u["new_ver"]))
+            assert eff, f"{u['event_id']} 指向不存在的文档版本"
+            assert u["effective_at"] == eff, \
+                f"{u['event_id']} effective_at 与文档 updated_at 不一致"
+            calc = (_utc(u["timestamp"]) - _utc(u["effective_at"])).total_seconds()
+            assert calc >= 0, f"{u['event_id']} 通知早于生效"
+            assert abs(calc - u["notification_delay_s"]) <= 1, \
+                f"{u['event_id']} notification_delay_s 与时间差不符"
+            delays.append(calc)
+        assert max(delays) > 60, "通知延迟全为 0，双时间戳失去意义"
+
+    def local_repair_ratio():
+        reqs = list(io.read_jsonl(e / "request_stream.jsonl"))
+        ups = list(io.read_jsonl(e / "update_events.jsonl"))
+        local = major = 0
+        for u in ups:
+            ch = set(u["changed_chunk_ids"])
+            for r in reqs:
+                n = len(r["gold_fact_spans"])
+                if not n:
+                    continue
+                hit = sum(1 for s in r["gold_fact_spans"] if s["chunk_id"] in ch)
+                if not hit:
+                    continue
+                if hit / n < 0.5:
+                    local += 1
+                else:
+                    major += 1
+        total = local + major
+        assert total >= 200, f"受影响对仅 {total} 个，样本不足"
+        ratio = local / total
+        lo, hi = PARAMS["updates"]["local_repair_ratio_target"]
+        assert lo <= ratio <= hi, f"局部修复占比 {ratio:.2f} 不在 [{lo},{hi}]"
+
+    def act_plan_heterogeneity():
+        pool = io.read_json(e / "act_plan_pool.json")
+        dn = [len(a["downstream_tools"]) for a in pool["acts"]]
+        ratio = sum(1 for d in dn if d) / len(dn)
+        assert ratio >= PARAMS["act_plan"]["min_nonempty_ratio"], \
+            f"act 非空下游占比 {ratio:.2f} 低于目标"
+        buckets = {0: 0, 1: 0, 2: 0, 3: 0}
+        for d in dn:
+            buckets[min(d, 3)] += 1
+        assert all(v > 0 for v in buckets.values()), f"act 下游梯度不全: {buckets}"
+        bands = PARAMS["act_plan"]["plan_completion_by_steps"]
+        for p in pool["plans"]:
+            band = bands.get(str(len(p["steps"])))
+            if band:
+                assert band[0] <= p["completion_rate"] <= band[1], \
+                    f"{p['plan_id']} 完成率 {p['completion_rate']} 不在 {len(p['steps'])} 步区间"
+
+    def cluster_consistency():
+        tasks = {t["task_id"]: t["cluster_id"] for t in io.read_jsonl(ROOT / "tasks" / "tasks.jsonl")}
+        ctx = {c["req_id"]: c for c in io.read_jsonl(e / "request_context.jsonl")}
+        for r in io.read_jsonl(e / "request_stream.jsonl"):
+            cid = r["cluster_id"]
+            assert ids.is_valid_cluster_id(cid), cid
+            tid = ctx.get(r["req_id"], {}).get("task_id")
+            if tid and tid in tasks:
+                assert tasks[tid] == cid, f"{r['req_id']} 的簇与题目簇不一致"
+
     for name, fn in (("文件齐备", files), ("schema 合规", schemas), ("规模", stream_size),
                      ("五类更新齐备", update_classes), ("无未来快照泄漏", no_leak),
                      ("ID 合法", ids_valid), ("种子流与长流", streams),
-                     ("校准模板", calibration)):
+                     ("校准模板", calibration), ("引用完整性", referential),
+                     ("更新影响面", update_impact), ("双时间戳语义", clock_semantics),
+                     ("局部修复比例", local_repair_ratio),
+                     ("act/plan 异质性", act_plan_heterogeneity),
+                     ("簇一致性", cluster_consistency)):
         check(name, fn)
 
 
@@ -468,10 +614,33 @@ def p5() -> None:
         assert len(rows) == PARAMS["labels"]["safe_reuse"], f"标签数 {len(rows)}"
         for r in rows:
             assert "safe" in r and "negative_type" in r, "标签缺字段"
+            assert "safe_system" in r, "缺系统视角标签 safe_system"
+            assert "divergence_reason" in r, "缺 divergence_reason"
+            # 系统认为安全 ⇒ 事实必安全（批量升版即时通知，(F,T) 结构上不存在）
+            if r["safe_system"]:
+                assert r["safe"], f"{r['pair_id']} 系统视角安全但真值不安全"
+
+    def divergent_cases():
+        reqs = {r["req_id"]: r for r in io.read_jsonl(ROOT / "events" / "request_stream.jsonl")}
+        rows = list(io.read_jsonl(lb / "safe_reuse.jsonl"))
+        diff = [r for r in rows if r["safe"] != r["safe_system"]]
+        assert len(diff) >= 5, f"双视角分歧样本仅 {len(diff)} 条"
+        for r in diff:
+            assert r["safe"] and not r["safe_system"], \
+                f"{r['pair_id']} 分歧方向应为“系统保守误失效”(T,F)"
+            assert r["divergence_reason"], f"{r['pair_id']} 缺分歧原因"
+        hard = [r for r in rows if not r["safe"] and
+                r["negative_type"] in ("N1_entity_mismatch", "N4_time_window", "N6_reasoning_chain")]
+        same = sum(1 for r in hard
+                   if reqs[r["req_id"]]["cluster_id"] == reqs[r["cached_req_id"]]["cluster_id"])
+        assert hard and same / len(hard) >= 0.8, \
+            f"难负例同簇比例 {same}/{len(hard)}，低于 0.8，相似度过低易被区分"
 
     def pairs():
         rows = list(io.read_jsonl(lb / "branch_pairs.jsonl"))
         assert len(rows) == PARAMS["labels"]["branch_pairs"], f"配对数 {len(rows)}"
+        for r in rows:
+            assert "t_model_full_ms" in r and "t_model_cache_ms" in r, "配对缺模型耗时列"
 
     def review_csv():
         f = lb / "to_review.csv"
@@ -480,7 +649,8 @@ def p5() -> None:
         assert len(lines) - 1 >= PARAMS["labels"]["human_review"], \
             f"待复核 {len(lines) - 1} 行，应 ≥ {PARAMS['labels']['human_review']}"
 
-    for name, fn in (("成本表", cost_table), ("安全复用标签", label_table), ("分支配对", pairs),
+    for name, fn in (("成本表", cost_table), ("安全复用标签", label_table),
+                     ("双视角分歧样本", divergent_cases), ("分支配对", pairs),
                      ("待复核清单", review_csv)):
         check(name, fn)
 
@@ -490,15 +660,33 @@ def p6() -> None:
     print("[P6] 交付")
 
     def docs():
-        for f in ("DATASET_CARD.md", "PAPER_MAP.md", "MANIFEST.json"):
+        for f in ("DATASET_CARD.md", "PAPER_MAP.md", "MANIFEST.json", "HANDBOOK.md",
+                  "audit_v010_report.json"):
             assert (ROOT / f).is_file(), f"缺 {f}"
 
     def card_fields():
         txt = (ROOT / "DATASET_CARD.md").read_text(encoding="utf-8")
-        for key in ("构造", "measured", "许可", "局限"):
+        for key in ("构造", "measured", "许可", "局限", "双时间戳"):
             assert key in txt, f"数据集卡片缺「{key}」小节"
 
-    for name, fn in (("交付文档", docs), ("卡片要素", card_fields)):
+    def embeddings():
+        cfg = PARAMS["embedding"]
+        path = ROOT / cfg["path"]
+        if cfg.get("status") == "generated":
+            assert path.is_file(), f"状态为 generated 但缺 {cfg['path']}"
+            import numpy as np  # noqa: PLC0415
+            z = np.load(path, allow_pickle=False)
+            assert "query_texts" in z and "embeddings" in z, "npz 缺键"
+            n, dim = z["embeddings"].shape
+            assert n == len(z["query_texts"]), "向量行数与文本数不符"
+            assert dim == cfg["dim"], f"维度 {dim} != {cfg['dim']}"
+            norms = np.linalg.norm(z["embeddings"], axis=1)
+            assert np.allclose(norms, 1.0, atol=1e-3), "向量未 L2 归一化"
+        else:
+            assert (ROOT / "embeddings" / "STATUS.md").is_file(), \
+                "句向量未生成时必须提供 embeddings/STATUS.md 说明原因"
+
+    for name, fn in (("交付文档", docs), ("卡片要素", card_fields), ("句向量状态", embeddings)):
         check(name, fn)
 
 

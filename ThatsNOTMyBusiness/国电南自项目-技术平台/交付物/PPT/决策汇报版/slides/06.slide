@@ -1,0 +1,50 @@
+<Slide style={{ width: 1280, height: 720, padding: 60, background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box style={{ flexDirection: 'column', gap: 14 }}>
+        <Text style={{ fontSize: 14, color: '#7A8699' }}>03 要多少钱</Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F3864', lineHeight: 1.25 }}>三条风险，都不在技术里</Text>
+        <Text style={{ fontSize: 16, color: '#3D4C63' }}>真正可能拖住项目的是排期、数据与实测环境——每一条都已经指定了谁做、何时做。</Text>
+
+        <Table
+            style={{ width: '100%', height: 372, marginTop: 8 }}
+            defaultTextStyle={{ fontSize: 15, textAlign: 'left', color: '#3D4C63' }}
+            defaultCellStyle={{ border: { bottom: { width: 1, color: '#D9DEE7' } }, padding: 13 }}
+            cells={[
+                [
+                    { text: '#', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#3D4C63' } } },
+                    { text: '风险', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#1F3864' } } },
+                    { text: '影响', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#B3261E' } } },
+                    { text: '谁做、什么时候', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#2E6DA4' } } },
+                ],
+                [
+                    { text: 'R1', textStyle: { bold: true, color: '#1F3864' } },
+                    '4A 接口与排期未定：集团 4A 的改造节奏不在本项目控制范围内',
+                    { text: '身份联邦是 P0 第一个里程碑，4A 晚一周，P0 就晚一周', textStyle: { color: '#B3261E', bold: true } },
+                    '客户信息部牵头：本周给接口规格（T01），2 周内确认联调窗口',
+                ],
+                [
+                    { text: 'R2', textStyle: { bold: true, color: '#1F3864' }, cellStyle: { background: { color: '#FAFBFC' } } },
+                    { text: '数据面现状未核实：各应用是否供主数据、是否接实时数据，没有统一台账', cellStyle: { background: { color: '#FAFBFC' } } },
+                    { text: 'B 与 D 打分失真，档位与预算都会偏', textStyle: { color: '#B3261E', bold: true }, cellStyle: { background: { color: '#FAFBFC' } } },
+                    { text: '各板块填报 T10：4 周内回填，作为定档依据', cellStyle: { background: { color: '#FAFBFC' } } },
+                ],
+                [
+                    { text: 'R3', textStyle: { bold: true, color: '#1F3864' } },
+                    '信创环境零实测：现网还没有信创节点，性能只有厂商标称值',
+                    { text: '资源当量与开通时长可能上浮，估算区间先按 ±50% 留足', textStyle: { color: '#B3261E', bold: true } },
+                    '双方共建原型环境：4 周内出首轮实测，回填打分台账',
+                ],
+            ]}
+        />
+    </Box>
+
+    <Box style={{ flexDirection: 'column', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', background: '#1F3864', padding: 16, gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
+            <Text style={{ fontSize: 16, color: '#FFFFFF' }}>三条风险都有明确的对冲动作，前提是本周把材料给到、把联调窗口排上。</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>区间先宽后窄是刻意的：一期不确定的是边界，不是人力</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>06 / 08</Text>
+        </Box>
+    </Box>
+</Slide>
