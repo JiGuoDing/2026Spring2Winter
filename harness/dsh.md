@@ -1,6 +1,6 @@
 # DeepSeek Harness (DSH) Windows 本地配置迁移手册
 
-> 快照日期：2026-11-19（Asia/Shanghai）；上一版快照为 2026-11-11，逐项差异见第 14 节
+> 非模型配置快照日期：2026-11-27（Asia/Shanghai）；具体模型和 provider 内容保留为 2026-11-19 历史快照，不作为当前配置依据；差异见第 14 节
 > 源环境：Windows 10 专业版 22H2（19045）、DeepSeek Harness Desktop `0.2.2-rc.5`、内置 dsh CLI `0.2.2-rc.5`、profile `desktop`
 > 目标环境：另一台 Windows 电脑
 > 迁移范围：DSH profile（`desktop` / `web` / `acp`，bundle 层 + 用户 patch 层）、模型 provider 目录、插件 bundle、技能（应用自带 / bundle / 用户级）、AGENTS 规则、外观字号和必要依赖
@@ -18,19 +18,19 @@
 2. 在旧电脑运行"第 2 节"的导出命令，生成不含密钥的迁移资源包。
 3. 在新电脑运行"第 3 节"的恢复命令，复制共享技能、用户级技能与 AGENTS 规则。
 4. 按"第 4.3 节"把 `cordis.patch.yml` 的用户层逐条合并进去，不要直接覆盖应用刚生成的 profile。
-5. 在应用内 **设置 → 插件** 重装 9 个第三方 bundle（`dsh-ppt`、`dsh-hyperframes`、`genui`、`dsh-skin-market`、`dsh-codex-effort-slider`、`dsh-answer-me-with-html`、`dsh-context`、`agentero-dsh`、`dsh-better-sidebar`）。
-6. 在 **设置 → 模型** 里重新填写 provider 凭据（`OPENCODE_GO_API_KEY`；要用内网或第三方 provider 时再填 `K8S_15_API_KEY`、`MUZE_AI_API_KEY`），凭据只在新电脑上录入。
+5. 在应用内 **设置 → 插件** 重装 10 个第三方 bundle（`ds-bot`、`dsh-ppt`、`dsh-hyperframes`、`genui`、`dsh-skin-market`、`dsh-codex-effort-slider`、`dsh-answer-me-with-html`、`dsh-context`、`agentero-dsh`、`dsh-better-sidebar`）。
+6. 在 **设置 → 模型** 中按新电脑实际需要配置模型与凭据；本文原有具体 provider 配置属于历史快照，不应直接套用。
 7. 用 GUI 重新打开本地工作区；不要复制旧机器的 `storages\workspace.json` 或 `sessions`。旧机器的 `C:\workspace` 已迁到 `Q:\workspace`，盘符变化时按新路径重新添加。
 8. 运行"第 11 节"的验收命令。
 
 最小验收标准：
 
 - `dsh --version` 输出 `0.2.2-rc.5`（版本可不同，但要与桌面端一致）。
-- `%USERPROFILE%\.dsh\profiles\desktop\package.json` 的 `dsh.profile.bundles` 有 19 项：2 个核心 bundle、9 个第三方 bundle 和 8 个内置实验/可选 bundle。
-- `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch.yml` 生效：默认 provider 为 `opencode-go`，模型 `deepseek-v4.1-flash`，`reasoningEffort: high`。
+- `%USERPROFILE%\.dsh\profiles\desktop\package.json` 的 `dsh.profile.bundles` 有 20 项：2 个核心 bundle、10 个第三方 bundle 和 8 个内置实验/可选 bundle。
+- `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch.yml` 中需要的界面配置已按 `id` 合并；模型自行配置。
 - 新会话的技能目录里能看到 `genui`、`dsh-ppt`、`hyperframes`、`office` 系列、`dsh-doc`、`paper-spine` 系列。
-- 设置里的插件页显示 9 个第三方插件已启用且无加载错误。
-- 权限预设默认是 `workspace-write`（sandbox `workspace-write` + approval `ask`）；旧机器上的 `danger-full-access` / `never` 只属于旧会话，不会随 profile 迁移。
+- 设置里的插件页显示 10 个第三方插件已启用且无加载错误。
+- 源 profile 持久默认预设为 `danger-full-access` / `never`；迁移模板不复制该宽松默认值，新电脑自行选择。`never` 表示需要审批的操作直接拒绝，不是自动批准。
 - Web 界面的侧边栏（文件、Git、终端、文件预览）可用。
 
 ---
@@ -48,28 +48,28 @@
 | profile 目录 | `%USERPROFILE%\.dsh\profiles\desktop`（`DSH_PROFILE_DIR`） |
 | 其他 profile | `web`，只有 `cordis.patch.yml`，由 CLI 启动；`acp`（2026-11-19 新增），bundle 为 `dsh-base` + `dsh-acp-app`，供 ACP 客户端接入 |
 | 默认 shell | PowerShell（`pwsh`） |
-| 默认模型 provider | `opencode-go`，由 `@deepseek-ai/dsh-llm-pi-ai` 提供 |
-| 默认模型 | `deepseek-v4.1-flash`，`contextWindow` 1000000，`maxTokens` 384000，输入 text+image |
+| 默认模型 provider（2026-11-19 历史值） | `opencode-go`，由 `@deepseek-ai/dsh-llm-pi-ai` 提供 |
+| 默认模型（2026-11-19 历史值） | `deepseek-v4.1-flash`，`contextWindow` 1000000，`maxTokens` 384000，输入 text+image |
 | 推理等级 | `high`（上一版快照为 `max`） |
-| 追加 provider | `k8s-15`（OpenAI 兼容内网端点，模型 `qwen3.8-27b`）、`muze-ai`（OpenAI Responses 端点，模型 `gpt-6-luna` / `gpt-6.1-terra` / `gpt-6.2-sol` / `gpt-6.2-astra`） |
-| 凭据引用 | profile 里写 `apiKeyEnv`：`OPENCODE_GO_API_KEY`、`K8S_15_API_KEY`、`MUZE_AI_API_KEY`，真实密钥存于 `.credentials.yaml` 的 `refs` |
-| 已启用 bundle | 19 个（2 个核心 + 9 个第三方 + 8 个应用内置实验/可选包） |
+| 追加 provider（历史值） | `k8s-15`（OpenAI 兼容内网端点，模型 `qwen3.8-27b`）、`muze-ai`（OpenAI Responses 端点，模型 `gpt-6-luna` / `gpt-6.1-terra` / `gpt-6.2-sol` / `gpt-6.2-astra`） |
+| 凭据引用（历史值） | profile 里写 `apiKeyEnv`：`OPENCODE_GO_API_KEY`、`K8S_15_API_KEY`、`MUZE_AI_API_KEY`，真实密钥存于 `.credentials.yaml` 的 `refs`（仅作历史格式参考） |
+| profile bundle 清单 | 20 个（2 个核心 + 10 个第三方 + 8 个内置实验/可选包）；清单不单独证明所有行已成功加载 |
 | 内置未启用 bundle | 14 个（12 个可选包，其中 CUA 在 Windows 不可用；2 个仅目录可见） |
-| 应用自带 office 技能 | 4 个（`office` 路由 + `office-docx` / `office-pptx` / `office-xlsx`），随应用安装 |
+| 应用自带 office 技能 | 5 个（`office`、`office-docx`、`office-pptx`、`office-xlsx`、`office-tools`），以当前会话技能目录为准，来源未逐一核验 |
 | agent-preset 打包技能 | 1 个（`dsh-doc`） |
-| bundle 自带技能 | 24 个（`dsh-hyperframes` 21、`dsh-ppt` 1、`genui` 1、`dsh-answer-me-with-html` 1） |
+| bundle 自带技能 | 26 个（`dsh-hyperframes` 23、`dsh-ppt` 1、`genui` 1、`dsh-answer-me-with-html` 1）；另有 DS Bot 的技能，见第 6 节 |
 | 用户级技能目录 | `%USERPROFILE%\.dsh\skills`，11 个（`humanizer`、`i-have-adhd`、`manage-skills`、`paper-spine` 系列 6 个、`ppt-master`、`prompt-master`） |
 | 共享技能目录 | `%USERPROFILE%\.agents\skills`，1 个（`answer-me-with-html`） |
-| 工作区数量 | 3 个 |
-| 会话数量 | 52 个会话目录；`workspace.json` 记录其中 27 个的归属（只计数，不迁移） |
+| 工作区数量 | 3 个（2026-11-19 历史统计，本次未核验） |
+| 会话数量 | 2026-11-19 历史统计；本次未核验，不迁移会话 |
 | 界面语言 | `zh-CN` |
 | 界面字号 | 正文 15、代码 13、终端 14 |
 | 应用更新通道 | `nightly`，`https://download.deepseek.com/dsh-desk/feeds/win-x64/` |
 | 打包运行时 | Python 3.12.14、Node.js 24.21.0、pnpm 11.28.5 |
-| 权限预设（本会话） | `danger-full-access`（会话级，不是 profile 配置） |
+| 权限预设（本会话） | `danger-full-access`；源 profile 也持久设置了同名默认预设 |
 | 文件策略（本会话） | `danger-full-access` |
-| 审批策略（本会话） | `never`（默认是 `ask`；`never` 表示需要审批的动作直接拒绝、不弹窗） |
-| Web 界面地址 | `http://127.0.0.1:56469`（每次启动重新分配，不要记录） |
+| 审批策略（本会话） | `never`（本机 profile 默认预设也是 `never`；需要审批的动作直接拒绝、不弹窗） |
+| Web 界面地址 | 每次启动重新分配，不作为配置迁移 |
 
 ### 1.1 快照的边界
 
@@ -78,7 +78,7 @@
 - 打包运行时现在是应用目录下的 `resources\runtime\primary-runtime`（`runtime.json` 里有 `payloadDigest` 和 `desktopVersion`），随应用升级重建；`%USERPROFILE%\.dsh\dsh-runtimes` 里那份是旧版遗留（`desktopVersion: 0.2.2-rc.3`），两份都不要复制。
 - `acp` profile 是 `0.2.2-rc.5` 起提供的第三种运行 profile（ACP 自动化接入），没有 GUI 设置页；桌面端只加载 `desktop` profile。
 - 外观只有字号写在 profile 里；字体族由系统决定，本机没有在 patch 中覆盖字体，因此不涉及字体文件迁移。
-- 文件策略与审批策略是**会话级**状态，记录在会话日志的 `sandbox/mode`、`approval/policy` 事件里，不写进 `cordis.patch.yml`，也不会随 profile 迁移。本机当前会话是 `danger-full-access` + `never`，官方默认是 `workspace-write` + `ask`；新电脑应在知情后自行选择。
+- 权限预设的**默认选择**可持久写入 profile；本机 `permission.config.defaultPreset` 是 `danger-full-access`，配套 sandbox `danger-full-access` + approval `never`。单个会话还可有自己的选择，与 profile 默认值区分。迁移模板不复制这个宽松默认值；新电脑应知情后自行选择。
 
 ### 1.2 明确不迁移的内容
 
@@ -107,7 +107,7 @@
 
 ## 2. 旧电脑：生成迁移资源包
 
-下面的命令只导出可迁移的用户资产，不复制 `.credentials.yaml`，也不会带上任何会话或缓存。请在旧电脑的 PowerShell 中运行。
+下面的命令只导出可迁移的用户资产，不复制 `.credentials.yaml` 或原始 patch，也不会主动带上会话或缓存。技能与工程目录仍可能包含用户数据或秘密，压缩前必须自行检查。脚本在压缩前暂停，确认无误后才继续。请在旧电脑的 PowerShell 中运行。
 
 ```powershell
 $ErrorActionPreference = 'Stop'
@@ -123,14 +123,13 @@ foreach ($sub in 'desktop-profile', 'web-profile', 'acp-profile', 'agents-skills
 }
 
 # 1) profile 用户层：patch、bundle 清单、依赖版本快照
-Copy-Item -LiteralPath (Join-Path $profileDir 'cordis.patch.yml')   -Destination (Join-Path $bundleRoot 'desktop-profile') -Force
+# 不自动导出 patch：可能含 provider 地址、凭据或其他私人配置。
+# 如需留档，先人工筛选、脱敏后再放入 desktop-profile。
 Copy-Item -LiteralPath (Join-Path $profileDir 'package.json')       -Destination (Join-Path $bundleRoot 'desktop-profile') -Force
 Copy-Item -LiteralPath (Join-Path $profileDir 'pnpm-lock.yaml')     -Destination (Join-Path $bundleRoot 'desktop-profile') -Force
 Copy-Item -LiteralPath (Join-Path $profileDir 'pnpm-workspace.yaml') -Destination (Join-Path $bundleRoot 'desktop-profile') -Force
 
-# 2) web / acp profile 的用户层（web 只配了 opencode-go 的 deepseek-v4.1-flash；acp 是空数组）
-Copy-Item -LiteralPath (Join-Path $dshHome 'profiles\web\cordis.patch.yml') -Destination (Join-Path $bundleRoot 'web-profile') -Force
-Copy-Item -LiteralPath (Join-Path $dshHome 'profiles\acp\cordis.patch.yml') -Destination (Join-Path $bundleRoot 'acp-profile') -Force
+# 2) web / acp patch 同样不自动复制；如需迁移，先人工审查和脱敏。
 
 # 3) 共享技能注册信息（.skill-lock.json 只记录来源和哈希，不是密钥）
 $agentsSkill = Join-Path $agentsHome 'skills\answer-me-with-html'
@@ -145,7 +144,7 @@ if (Test-Path -LiteralPath $skillLock) {
 # 4) DSH 用户级技能（0.2.2-rc.5 起新增的技能根，纯 Markdown 与资源，可迁移）
 $userSkills = Join-Path $dshHome 'skills'
 if (Test-Path -LiteralPath $userSkills) {
-  Copy-Item -LiteralPath (Join-Path $userSkills '*') -Destination (Join-Path $bundleRoot 'dsh-skills') -Recurse -Force
+  Copy-Item -Path (Join-Path $userSkills '*') -Destination (Join-Path $bundleRoot 'dsh-skills') -Recurse -Force
 }
 
 # 5) 工作区级 AGENTS 规则（本机工作区已从 C: 迁到 Q:，盘符按实际填写）
@@ -171,6 +170,7 @@ $fontSource = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
 Get-ChildItem -LiteralPath $fontSource -Filter 'MapleMono-NF-CN-*.ttf' -ErrorAction SilentlyContinue |
   Copy-Item -Destination (Join-Path $bundleRoot 'fonts') -Force
 
+if ((Read-Host "请检查资源包无秘密、私有会话或不应迁移的内容，输入 YES 后压缩") -cne "YES") { throw "已取消压缩，请检查 $bundleRoot" }
 $zipPath = "$bundleRoot.zip"
 Compress-Archive -Path (Join-Path $bundleRoot '*') -DestinationPath $zipPath -Force
 Write-Host "迁移资源包已生成：$zipPath"
@@ -178,8 +178,8 @@ Write-Host "迁移资源包已生成：$zipPath"
 
 检查点：
 
-- `desktop-profile` 里有 `cordis.patch.yml`、`package.json`、`pnpm-lock.yaml`、`pnpm-workspace.yaml` 四个文件。
-- `web-profile` 和 `acp-profile` 里各有 `cordis.patch.yml`。
+- `desktop-profile` 里有 `package.json`、`pnpm-lock.yaml`、`pnpm-workspace.yaml`；patch 默认不导出，只有人工审查并脱敏后才可放入迁移包。
+- `web-profile` 和 `acp-profile` 默认留空；如需配置，同样先审查脱敏。
 - `agents-skills\answer-me-with-html` 和根目录的 `.skill-lock.json` 存在。
 - `dsh-skills` 里有 11 个技能目录（`paper-spine` 系列 6 个、`humanizer`、`i-have-adhd`、`manage-skills`、`ppt-master`、`prompt-master`）。
 - `AGENTS.md` 存在。
@@ -230,7 +230,7 @@ if (Test-Path -LiteralPath $sourceLock) {
 $userSkillsSource = Join-Path $bundleRoot 'dsh-skills'
 if (Test-Path -LiteralPath $userSkillsSource) {
   New-Item -ItemType Directory -Path (Join-Path $dshHome 'skills') -Force | Out-Null
-  Copy-Item -LiteralPath (Join-Path $userSkillsSource '*') -Destination (Join-Path $dshHome 'skills') -Recurse -Force
+  Copy-Item -Path (Join-Path $userSkillsSource '*') -Destination (Join-Path $dshHome 'skills') -Recurse -Force
 }
 
 # profile 目录留档：先备份应用生成的版本，再按第 4.3 节手工合并
@@ -246,6 +246,8 @@ Write-Host "参考清单：$bundleRoot\desktop-profile"
 ```
 
 ### 3.1 AGENTS 规则
+
+除下面的工作区规则外，本机还有 `%USERPROFILE%\.dsh\AGENTS.md` 用户级规则，包含论文协作与写作要求。它可影响用户级会话；迁移前先检查适用范围及隐私，按需单独备份，在目标机与现有规则合并，不要覆盖。上面的脚本只导出工作区规则，不自动导出用户级规则。
 
 当前项目的规则不在项目目录中，而在 Git 工作区的父目录：
 
@@ -291,25 +293,26 @@ DSH 没有 `config.toml`。它的配置是**分层组合**出来的：profile �
 |---|---|---|
 | `DSH_HOME` | `%USERPROFILE%\.dsh` | 保留默认 |
 | profile | `desktop`（另有 `web`、`acp`） | 保留 |
-| 默认 provider | `opencode-go`（`@deepseek-ai/dsh-llm-pi-ai`） | 保留名称，密钥重填 |
-| 默认模型 | `deepseek-v4.1-flash` | 保留 |
-| 上下文/输出上限 | 1000000 / 384000 | 保留 |
-| 输入模态 | text、image | 保留 |
+| 默认 provider（2026-11-19 历史值） | `opencode-go`（`@deepseek-ai/dsh-llm-pi-ai`） | 保留名称，密钥重填 |
+| 默认模型（2026-11-19 历史值） | `deepseek-v4.1-flash` | 保留 |
+| 上下文/输出上限（历史值） | 1000000 / 384000 | 保留 |
+| 输入模态（历史值） | text、image | 保留 |
 | `reasoningEffort` | `high` | 保留；也可按任务调高到 `max` |
-| 凭据引用 | `OPENCODE_GO_API_KEY`、`K8S_15_API_KEY`、`MUZE_AI_API_KEY` | 只迁移变量名，不迁移值 |
-| 追加 provider | `k8s-15`（OpenAI 兼容内网端点）、`muze-ai`（OpenAI Responses） | 地址、端口、密钥按新网络重填 |
-| 文件策略默认值 | `workspace-write`（由 `@deepseek-ai/dsh-sandbox-policy` 决定，可被 `DSH_PERMISSION_MODE` 覆盖） | 新电脑自行选择 |
-| 审批策略默认值 | `ask`（`@deepseek-ai/dsh-user-approval` 的 `policy`；`DSH_PERMISSION_MODE=danger-full-access` 时为 `never`） | 新电脑自行选择 |
+| 凭据引用（历史值） | `OPENCODE_GO_API_KEY`、`K8S_15_API_KEY`、`MUZE_AI_API_KEY` | 只迁移变量名，不迁移值 |
+| 追加 provider（历史值） | `k8s-15`（OpenAI 兼容内网端点）、`muze-ai`（OpenAI Responses） | 地址、端口、密钥按新网络重填 |
+| 源 profile 默认预设 | `danger-full-access`，sandbox `danger-full-access` + approval `never` | 不自动迁移；新电脑自行选择 |
+| `never` 语义 | 需要审批的操作直接拒绝，不弹窗 | 不是自动批准 |
 | 权限预设（本会话） | `danger-full-access` = sandbox `danger-full-access` + approval `never` | 会话级，不随 profile 迁移 |
 | 正文/代码/终端字号 | 15 / 13 / 14 | 保留 |
 | 对话视图 | `transcriptView: detailed` | 保留 |
 | 性能用量显示 | `performanceUsage: detailed` | 保留 |
 | 账号面板 | `step: done`、`process: detailed`、`usage: detailed`、`developerTools: true` | 保留 |
+| 运行中回车 | `ui-conversation.config.busyEnter: steer` | 按需合并 |
 | 界面语言 | `zh-CN`（`%APPDATA%\@deepseek-ai\dsh-desktop\desktop\locale-cache`） | 由应用重新写入，不迁移 |
 
 ### 4.2 当前 `cordis.patch.yml` 的参考快照
 
-下面是 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch.yml` 的参考快照（0.2.2-rc.5，2026-11-19）。它不含密钥（密钥在 `.credentials.yaml` 里），可以安全地进仓库，但有两处已脱敏：`k8s-15.baseURL` 的内网地址和 `agenteroBin` 里的用户名。**不要把它当作可直接覆盖的文件**——新电脑的 profile 可能已有别的 patch 条目，应当按 `id` 合并而不是整文件替换。
+下面是 2026-11-19 的历史参考快照，尤其模型和 provider 已过期，**不是当前 profile 快照，也不应直接迁移模型配置**。当前非模型变更另见下文。它不含密钥（密钥在 `.credentials.yaml` 里），可以安全地进仓库，但有两处已脱敏：`k8s-15.baseURL` 的内网地址和 `agenteroBin` 里的用户名。**不要把它当作可直接覆盖的文件**——新电脑的 profile 可能已有别的 patch 条目，应当按 `id` 合并而不是整文件替换。
 
 ```yaml
 - id: agent-default-model
@@ -469,27 +472,22 @@ profile 根的 `cordis.yml` 始终是一个空数组，注释里也写明了"编
         apiKeyEnv: OPENCODE_GO_API_KEY
 ```
 
-`acp` profile 的用户层是空数组 `[]`，它的 bundle 清单由 `package.json` 决定（`dsh-base` + `dsh-acp-app`），不需要 patch。
+2026-11-27 核查显示 `acp` 的用户层不再是空数组，含模型 provider 配置；根据本次范围不展开。
 
 重要说明：
 
 - patch 条目是"按 `id` 定向覆盖"的，`name` 要和该 id 对应的模块一致；写错 `name` 会导致该行加载失败，而不是静默忽略。
 - patch 里允许 `!!js` 表达式（composed 配置里 `sandbox-policy.mode` 是 `process.env.DSH_PERMISSION_MODE ?? 'workspace-write'`，`user-approval.policy` 在 `DSH_PERMISSION_MODE=danger-full-access` 时取 `never`，其余取 `ask`）。用户层尽量只用字面量，便于迁移时审查。
-- **权限预设 / 文件策略 / 审批策略不在这份 patch 里**。它们由 `dsh-base` 的 `permission` 行定义（`read-only`、`workspace-write`、`danger-full-access` 三套），实际选择是会话级事件；不要为了迁移旧机器的 `danger-full-access` + `never` 去改 patch。
+- 2026-11-27 的用户 patch 包含 `permission` 行：`defaultPreset: danger-full-access`，并列出 `read-only`、`workspace-write`、`danger-full-access` 三套预设。可同时存在会话级选择；不要默认将此宽松预设迁移。
+- 新增 `ui-conversation` 行，`busyEnter: steer`。
 - 只改 `ui-theme` 的字号、`agent-default-model` 的模型与推理等级、`llm-pi-ai` 的 provider 目录，是这套配置里最稳定的三处。其余 `ui-*` 条目是界面面板的展开状态，可以照抄也可以让应用重新生成。
 - `agentero-host` 和 `better-sidebar` 两行是 2026-11-19 新增插件的配置行：只有装了对应 bundle 才需要；`agentero-host` 的 `vault` / `agenteroBin` 是旧机器的绝对路径，迁移时按新机器重填。
 
 ### 4.3 新电脑使用的便携 `cordis.patch.yml` 模板
 
-在新电脑上先启动一次应用，确认 `profiles\desktop\cordis.patch.yml` 已存在；然后**按 `id` 合并**下列条目（同一个 id 以你的值为准，新增 id 直接追加），不要整文件覆盖。
+先启动应用，备份目标 profile 的 patch。按 `id` 合并以下**非模型**条目，不要整文件覆盖；插件配置只在安装对应 bundle 后使用。
 
 ```yaml
-- id: agent-default-model
-  name: "@deepseek-ai/dsh-agent-default-model"
-  config:
-    provider: opencode-go
-    model: deepseek-v4.1-flash
-    reasoningEffort: high
 - id: ui-theme
   name: "@deepseek-ai/dsh-client-ui-theme"
   config:
@@ -501,47 +499,21 @@ profile 根的 `cordis.yml` 始终是一个空数组，注释里也写明了"编
   config:
     transcriptView: detailed
     performanceUsage: detailed
-- id: llm-pi-ai
-  name: "@deepseek-ai/dsh-llm-pi-ai"
+- id: ui-conversation
+  name: "@deepseek-ai/dsh-client-ui-conversation"
   config:
-    providers:
-      opencode-go:
-        models:
-          - id: deepseek-v4.1-flash
-            name: DeepSeek V4.1 Flash
-            contextWindow: 1000000
-            maxTokens: 384000
-            input:
-              - text
-              - image
-        apiKeyEnv: OPENCODE_GO_API_KEY
+    busyEnter: steer
+- id: better-sidebar
+  name: dsh-better-sidebar
+  config:
+    agentOpenTools: true
 ```
 
-模板故意省略了以下内容：
-
-- `ui-settings-account` 面板状态：让应用重新初始化即可。
-- `ui-settings.enabled`：默认已启用。
-- `k8s-15`、`muze-ai` 两个追加 provider：一个是内网端点、一个需要第三方 key，按需从第 4.2 节照抄并替换地址与 `apiKeyEnv`。
-- `agentero-host`、`better-sidebar` 的配置行：只在安装了对应 bundle 时才需要。
-- 任何 `DSH_PERMISSION_MODE`、`sandbox-policy`、`approval` 覆盖：这些是安全相关项，应由新电脑显式选择，而不是从旧机器继承。
-- `.credentials.yaml`、`storages`、`sessions`：见第 1.2 节。
-
-保存后不要重启应用，先做一次"离线语法与合并校验"。`desktop` profile 不允许 CLI 启动，但可以把它的 patch 叠加到 `web` profile 上试组合：
-
-```powershell
-$dsh    = Join-Path $env:LOCALAPPDATA 'Programs\DeepSeek Harness\resources\runtime\cli\bin\dsh.cmd'
-$patch  = Join-Path $env:USERPROFILE '.dsh\profiles\desktop\cordis.patch.yml'
-$dump   = Join-Path $env:TEMP 'dsh-composed-check.txt'
-
-& $dsh --profile web --patch $patch --dump-config 2>&1 | Out-File -FilePath $dump -Encoding utf8
-"exit=$LASTEXITCODE"
-Select-String -LiteralPath $dump -Pattern 'provider: opencode-go|reasoningEffort: high|fontSize: 15' |
-  ForEach-Object { "$($_.LineNumber): $($_.Line.Trim())" }
-```
-
-预期：退出码为 0，且能同时看到 `provider: opencode-go`、`reasoningEffort: high` 和 `fontSize: 15`。如果 CLI 报错，说明 YAML 语法或 `id`/`name` 对应关系有误，此时应用内也不会生效。
+`agentero-host` 的 vault 与 CLI 路径依新机器填写。模型、provider 和密钥由目标机自行配置。源机器的 `permission.defaultPreset: danger-full-access` 有意省略，避免静默放宽权限；目标机如确需使用应手动选择。不要将只适用于 desktop 的插件 patch 套到缺少对应 bundle 的 web profile 来判断 desktop 是否有效；在目标应用内检查加载状态。
 
 ### 4.4 模型 provider 与凭据
+
+**历史资料（2026-11-19）**：本节具体 provider、模型及凭据引用未经本次同步，不代表当前状态；新电脑按实际配置，不要照搬。
 
 DSH 把"provider 目录"和"密钥"彻底分开：
 
@@ -613,21 +585,22 @@ refs:
 
 bundle 里的每个"插件"本质上是一个 cordis 行（row）：`id` + `name`（npm 模块）+ `config`。同名的 row 在不同 profile 里重复出现是正常的——组合后的配置里 `skill-filesystem` 会出现多次：每个 agent preset 各有一份本地技能发现行，各插件 bundle（`genui`、`dsh-hyperframes`、`dsh-ppt`、`dsh-answer-me-with-html`）再各自插入一份指向自己的 `skills/` 根。
 
-### 5.2 本机启用的 19 个 bundle
+### 5.2 desktop profile 清单中的 20 个 bundle
 
 | bundle | 版本 | 来源 | 作用 | 迁移方式 |
 |---|---:|---|---|---|
 | `@deepseek-ai/dsh-base` | `0.2.2-rc.5` | 应用内置 | 核心层：LLM、会话、沙箱、审批、权限预设、工具、技能、goal、agent team、subagent、workflow、MCP 资源 | 随应用，不要复制 |
 | `@deepseek-ai/dsh-web-app` | `0.2.2-rc.5` | 应用内置 | 浏览器面：HTTP/API、UI 组件、终端、文件树、schedule、插件管理器、office 技能 | 随应用，不要复制 |
-| `dsh-codex-effort-slider` | `1.1.4` | npm | 把推理等级选择换成一条可拖动的连续滑条 | 重装 |
-| `dsh-skin-market` | `0.1.81` | npm | 皮肤/主题市场与生命周期管理 | 重装 |
-| `@changfenhuang/dsh-genui` | `0.16.0` | npm | GenUI：`dsh-ui` 代码块内联渲染交互界面 | 重装 |
-| `dsh-hyperframes` | `0.11.5` | npm | HTML→视频工作台（21 个技能 + 工程/渲染工具） | 重装 |
+| `dsh-codex-effort-slider` | `1.1.9` | npm | 把推理等级选择换成一条可拖动的连续滑条 | 重装 |
+| `dsh-skin-market` | `0.1.83` | npm | 皮肤/主题市场与生命周期管理 | 重装 |
+| `@changfenhuang/dsh-genui` | `0.17.0` | npm | GenUI：`dsh-ui` 代码块内联渲染交互界面 | 重装 |
+| `dsh-hyperframes` | `0.14.0` | npm | HTML→视频工作台（23 个技能 + 工程/渲染工具） | 重装 |
 | `dsh-answer-me-with-html` | `0.5.0` | npm | 只用技能、不加工具的 bundle：一页 HTML 回答 | 重装 |
-| `dsh-context` | `0.84.0` | npm | 上下文洞察：Context 面板、Fleet 视图、`/context` 命令 | 重装 |
+| `dsh-context` | `0.87.1` | npm | 上下文洞察：Context 面板、Fleet 视图、`/context` 命令 | 重装 |
 | `agentero-dsh` | `0.1.8` | npm | 把 Agentero 文献库 / 笔记 / PDF 阅读器接进 DSH，提供 5 个 `agentero_*` 工具 | 重装，另装 Agentero CLI |
-| `dsh-ppt` | `0.25.0` | npm | 演示文稿三件套：HTML 放映 + 可编辑 PPTX + JSON 工程 | 重装 |
+| `dsh-ppt` | `0.36.0` | npm | 演示文稿三件套：HTML 放映 + 可编辑 PPTX + JSON 工程 | 重装 |
 | `dsh-better-sidebar` | `0.32.1` | npm | 右侧栏增强：文件树、可编辑编辑器、Git、任务、侧边对话、`sidebar_open` 工具 | 重装，注意与宿主版本匹配 |
+| `ds-bot` | `0.3.10`（依赖范围 `^0.3.10`） | npm | 长期 Bot、群聊、记忆及协作；bundle 还覆盖搜索配置与设置界面入口 | 重装；团队数据和凭据分开审查，默认不迁移 |
 | `@deepseek-ai/dsh-experimental-voice-input-bundle` | `0.2.2-rc.5` | 应用内置 | 本地 SenseVoice 语音输入 | 随应用，开启即可 |
 | `@deepseek-ai/dsh-experimental-plugin-market-bundle` | `0.2.2-rc.5` | 应用内置 | Discover 插件市场 | 随应用，开启即可 |
 | `@deepseek-ai/dsh-experimental-auto-review` | `0.2.2-rc.5` | 应用内置 | Auto 权限预设下的逐工具 LLM 授权审查 | 随应用，开启即可 |
@@ -644,27 +617,23 @@ bundle 里的每个"插件"本质上是一个 cordis 行（row）：`id` + `name
   "name": "dsh-profile-desktop",
   "private": true,
   "dependencies": {
-    "@changfenhuang/dsh-genui": "0.16.0",
+    "@changfenhuang/dsh-genui": "0.17.0",
     "agentero-dsh": "0.1.8",
+    "ds-bot": "^0.3.10",
     "dsh-answer-me-with-html": "0.5.0",
     "dsh-better-sidebar": "^0.32.1",
-    "dsh-codex-effort-slider": "1.1.4",
-    "dsh-context": "0.84.0",
-    "dsh-hyperframes": "0.11.5",
-    "dsh-ppt": "0.25.0",
-    "dsh-skin-market": "0.1.81"
+    "dsh-codex-effort-slider": "1.1.9",
+    "dsh-context": "0.87.1",
+    "dsh-hyperframes": "0.14.0",
+    "dsh-ppt": "0.36.0",
+    "dsh-skin-market": "0.1.83"
   },
   "dsh": {
     "profile": {
       "bundles": [
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-web-app",
-        "dsh-codex-effort-slider",
-        "dsh-skin-market",
-        "@changfenhuang/dsh-genui",
-        "dsh-hyperframes",
         "dsh-answer-me-with-html",
-        "dsh-context",
         "agentero-dsh",
         "@deepseek-ai/dsh-experimental-voice-input-bundle",
         "@deepseek-ai/dsh-experimental-plugin-market-bundle",
@@ -674,8 +643,14 @@ bundle 里的每个"插件"本质上是一个 cordis 行（row）：`id` + `name
         "@deepseek-ai/dsh-experimental-session-titles-bundle",
         "@deepseek-ai/dsh-experimental-cot-translation-bundle",
         "@deepseek-ai/dsh-experimental-inspector-profile",
+        "dsh-better-sidebar",
+        "dsh-codex-effort-slider",
+        "dsh-skin-market",
+        "dsh-context",
+        "@changfenhuang/dsh-genui",
+        "dsh-hyperframes",
         "dsh-ppt",
-        "dsh-better-sidebar"
+        "ds-bot"
       ]
     }
   }
@@ -695,12 +670,12 @@ $dsh = Join-Path $env:LOCALAPPDATA 'Programs\DeepSeek Harness\resources\runtime\
 
 & $dsh --version
 & $dsh plugin --profile desktop list --depth 0     # 查看已装依赖
-& $dsh plugin --profile desktop add dsh-ppt@0.25.0 # 只装包
+& $dsh plugin --profile desktop add dsh-ppt@0.36.0 # 只装包
 ```
 
 注意几个 CLI 的边界：
 
-- `dsh --profile desktop --dump-config` 会失败并提示 `profile "desktop" is managed exclusively by the Electron application`。**desktop profile 不能由 CLI 启动**，只能用桌面应用；第 4.3 节那个用 `web` 校验 patch 的办法是唯一可行的离线检查手段。
+- `dsh --profile desktop --dump-config` 会失败并提示 `profile "desktop" is managed exclusively by the Electron application`。**desktop profile 不能由 CLI 启动**，只能用桌面应用；web 与 desktop 的 bundle 不同，不能用 web 的组合结果验证所有 desktop 插件行。
 - `dsh plugin --profile desktop ...` 只是把参数转发给该 profile 目录下的 pnpm，所以 `list`/`add`/`remove`/`why` 都能用。
 - `dsh --from-default-profile <name>` 会用随应用发布的模板重建一个 profile，出问题时比手改更快。
 - CLI 默认不在 PATH 上（本机 `HKCU\Software\DeepSeekHarness\Command` 不存在，`where dsh` 找不到）。需要在应用设置里启用命令行，或直接使用上面的完整路径。
@@ -726,39 +701,45 @@ $dsh = Join-Path $env:LOCALAPPDATA 'Programs\DeepSeek Harness\resources\runtime\
 
 另有 2 个只在目录里出现、本机装不上：`@deepseek-ai/dsh-subagent-claude-code`、`@deepseek-ai/dsh-subagent-codex`（`availability: missing`）。
 
-`@deepseek-ai/dsh-experimental-agent-team-profile` 已不存在：agent team 的协作行和 `team_task_*` 工具在 0.2.2-rc.5 已并入 `dsh-base`，本机默认可用。
+`@deepseek-ai/dsh-experimental-agent-team-profile` 已不存在：agent team 的协作行已并入 `dsh-base`；`team_task_*` 在本次会话未暴露，实际可见性依会话而定。
 
-### 5.5 九个第三方插件的能力说明
+### 5.5 十个第三方插件的能力说明
 
-#### `dsh-ppt` 0.25.0
+#### `ds-bot` 0.3.10
 
-- **工具面**：`ppt_create`、`ppt_edit`、`ppt_check`、`ppt_render`、`ppt_undo`、`ppt_data`、`ppt_themes`、`ppt_templates`、`ppt_import`、`ppt_absorb`。
-- **产物**：一次生成三件套——独立 HTML 放映页、可编辑 PPTX、dsh-ppt JSON 工程；后续修改都基于 JSON 工程，能撤销。0.25.0 的工具面比上一版多出外部 `.pptx` 导入（`ppt_import`）和参考母版骨架吸收（`ppt_absorb`）。
+- 提供长期 Bot、群聊和记忆；插件 bundle 同时加入 `web-search-auto`，将 `web` 搜索设为 `auto`，并禁用原 `ui-settings-general` 行。安装顺序与其他搜索/设置插件可能相互影响。
+- 默认团队数据位置为 `%DSH_HOME%\bot`，含用户内容；不纳入基础迁移包。凭据和连接器秘密不复制，确需迁移团队数据应先按官方文档单独审查和备份。当前普通会话未暴露 Bot 专用工具，不应据此声称所有 Bot 工具都可用。
+- 当前会话可见 `ds-bot-manual`、`report-ds-bot-issue` 技能；与团队专用工具的可见性分别验证。
+
+#### `dsh-ppt` 0.36.0
+
+- **工具面**：`ppt_create`、`ppt_edit`、`ppt_check`、`ppt_render`、`ppt_undo`、`ppt_data`、`ppt_themes`、`ppt_templates`、`ppt_import`、`ppt_absorb`、`ppt_cite`、`ppt_from_office`、`ppt_remotion`。
+- **产物**：一次生成三件套——独立 HTML 放映页、可编辑 PPTX、dsh-ppt JSON 工程；后续修改都基于 JSON 工程，能撤销。相较上次快照，本会话还可见文献引用、Office 导入和 Remotion 导出工具。
 - **渲染**：`ppt_render` 依赖 `@deepseek-ai/libreoffice-kit@0.2.3`（应用里已 unpack，win32-x64），输出逐页 PNG/PDF 并报告缺失字体；装不上时普通建卡流程仍可用。
 - **技能**：`dsh-ppt`。
-- **迁移要点**：工程文件是普通文件，跟着工作区走；插件本身重装即可。主题、模板是只读参考，不需要迁移。从 0.20.x 升到 0.25.0 后旧工程建议先 `ppt_check` 再改。
+- **迁移要点**：工程文件是普通文件，跟着工作区走；插件本身重装即可。主题、模板是只读参考，不需要迁移。从 0.20.x 升到 0.36.0 后旧工程建议先 `ppt_check` 再改。
 
-#### `dsh-hyperframes` 0.11.5
+#### `dsh-hyperframes` 0.14.0
 
 - **工具面**：`hyperframes_project`（建/读受管理工程）、`hyperframes_render`（准备环境、预览、渲染 MP4、查询/取消任务）、`hyperframes_health`（校验技能文件与宿主注册状态）。
-- **技能面**：这是本机技能最多的插件，21 个，覆盖 `hyperframes`（总入口）、`hyperframes-cli`、`hyperframes-registry`、`media-use`、`figma`、`slideshow`、`remotion-to-hyperframes`，以及 14 个兼容入口（见 6.2）。
+- **技能面**：这是本机技能最多的插件，23 个，覆盖 `hyperframes`（总入口）、`hyperframes-cli`、`hyperframes-registry`、`media-use`、`figma`、`slideshow`、`remotion-to-hyperframes`，以及 14 个兼容入口（见 6.2）。
 - **数据**：工程在 `%DSH_HOME%\data\dsh-hyperframes\projects`，这是用户内容，可以迁移；但它不是缓存，删了就没了。
 - **迁移要点**：首次准备渲染环境会下载依赖，所以新电脑第一次渲染一定比旧机器慢；`hyperframes_health` 可以用来确认技能是否重新注册成功。
 
-#### `@changfenhuang/dsh-genui` 0.16.0
+#### `@changfenhuang/dsh-genui` 0.17.0
 
 - **工具面**：`render_ui`（工具行卡片）、`validate_dsh_ui`（校验 ```dsh-ui 代码块 JSON）。
 - **协议**：回答正文里的 ```dsh-ui 围栏 + 固定组件词表（布局/展示/图表/交互/高级五类）。组件带 `action` 时，交互会以 `[genui-action]` 回传，触发重渲染。
 - **技能**：`genui`。
 - **迁移要点**：组件词表和 schema 随版本变化。旧机器生成的页面不要跨版本复用；升级后以 `validate_dsh_ui` 的返回为准。
 
-#### `dsh-skin-market` 0.1.81
+#### `dsh-skin-market` 0.1.83
 
 - **作用**：原生皮肤市场与生命周期管理，浏览/安装社区主题。
 - **缓存**：`%DSH_HOME%\profiles\desktop\.dsh-skin-market\catalog.json` 是市场索引缓存（首次打开市场时生成，本机当前没有该目录）；**不要迁移**，新机器首次打开会自动重建。
 - **迁移要点**：已安装的皮肤包本身是普通依赖，会出现在 profile 的 `dependencies` 里；只迁 profile 清单，缓存让新机器重新拉。
 
-#### `dsh-codex-effort-slider` 1.1.4
+#### `dsh-codex-effort-slider` 1.1.9
 
 - **作用**：纯 UI 插件，把输入框工具行的推理等级档位换成一条连续滑条（Codex 风格）。
 - **迁移要点**：不提供工具和技能。真正的默认等级仍由 `agent-default-model.config.reasoningEffort` 决定，滑条只是改运行时的值。
@@ -769,7 +750,7 @@ $dsh = Join-Path $env:LOCALAPPDATA 'Programs\DeepSeek Harness\resources\runtime\
 - **技能**：`answer-me-with-html`，在该 bundle 里通过第二个 `@deepseek-ai/dsh-skill-filesystem` 行（row id `answer-me-with-html-skill`）挂载自己的 `skills/` 目录。
 - **迁移要点**：本机同时在 `%USERPROFILE%\.agents\skills\answer-me-with-html` 有一份共享副本。DSH 侧由 bundle 提供，bundle 是权威来源；共享副本保留无害，但在确认技能发现优先级之前不要删。
 
-#### `dsh-context` 0.84.0
+#### `dsh-context` 0.87.1
 
 - **作用**：上下文洞察与生命周期管理。提供跨会话的 **Context 洞察页**（Token/成本 KPI、活动热力图、组成环形图、会话卡片）、Context / Fleet 侧边栏标签页、Context 面板和 `/context` 命令。
 - **工具面**：不注册模型工具，纯 Host + Web UI 插件。
@@ -815,9 +796,9 @@ DSH 的技能由 `@deepseek-ai/dsh-skill-filesystem` 等提供者按 rank 合并
 
 项目根 = 最近的含 `.git` 的祖先目录；没有 `.git` 时用当前 cwd。除本地根外还有"打包技能提供者"：应用自带的 office 技能、`@deepseek-ai/dsh-agent-preset/skills` 里的 `dsh-doc`、`sandbox-windows-acl` 的 `diagnose-windows-sandbox-acl`，以及个性化推荐 bundle 里的 `personalized-pages` / `official-plugins`。
 
-### 6.1 应用自带的 4 个 office 技能
+### 6.1 应用自带的 office 技能
 
-随应用发布（`@deepseek-ai/dsh-skill-office` 的 `assets/`），随应用升级，不要复制：
+当前会话可见以下 office 技能；其中 `office-tools` 的具体来源本次未单独核验，迁移后在新会话中检查：
 
 | 技能 | 作用 |
 |---|---|
@@ -825,22 +806,23 @@ DSH 的技能由 `@deepseek-ai/dsh-skill-filesystem` 等提供者按 rank 合并
 | `office-docx` | 创建、读取、编辑、校验 Word 文档 |
 | `office-xlsx` | 读取、创建、编辑、校验 Excel 工作簿、数据与公式 |
 | `office-pptx` | 创建、读取、编辑、校验 PowerPoint 演示文稿 |
+| `office-tools` | 离线检查与编辑 Office 文件包 |
 
 0.2.2-rc.5 把上一版的 `office-render`、`office-export-pdf`、`office-recalculate` 三个独立技能合并进了 `office` 路由：**加载 `office` 技能后**，`office_render`、`office_convert`、`office_recalculate` 三个工具从下一步开始可用（未加载时不在工具列表里，这是"渐进加载"/条件工具，不是故障）。渲染依赖应用里的 `@deepseek-ai/libreoffice-kit@0.2.3`（win32-x64 已 unpack），不需要装系统 LibreOffice。Python 环境说明会指向 `load_workspace_dependencies`。
 
-### 6.2 bundle 自带的 24 个技能
+### 6.2 bundle 自带技能
 
 | bundle | 技能 | 数量 |
 |---|---|---:|
-| `dsh-hyperframes` | 真实技能：`hyperframes`、`hyperframes-cli`、`hyperframes-registry`、`media-use`、`figma`、`slideshow`、`remotion-to-hyperframes` | 7 |
+| `dsh-hyperframes` | 真实技能：`hyperframes`、`hyperframes-cli`、`hyperframes-registry`、`media-use`、`figma`、`slideshow`、`remotion-to-hyperframes`、`reverse-any-video`、`style-sampling` | 9 |
 | `dsh-hyperframes` | 兼容入口：`hyperframes-animation`、`hyperframes-audio`、`hyperframes-core`、`hyperframes-creative`、`hyperframes-keyframes`、`hyperframes-studio`、`motion-graphics`、`music-to-video`、`pr-to-video`、`product-launch-video`、`faceless-explainer`、`talking-head-recut`、`embedded-captions`、`general-video` | 14 |
 | `dsh-ppt` | `dsh-ppt` | 1 |
 | `@changfenhuang/dsh-genui` | `genui` | 1 |
 | `dsh-answer-me-with-html` | `answer-me-with-html` | 1 |
 
-那 14 个是**兼容入口**，SKILL.md 里明确写着"已退役技能 X 的入口，路由到当前官方技能"（大部分路由到 `hyperframes`，`hyperframes-audio` 路由到 `media-use`，`hyperframes-studio` 路由到 `hyperframes-cli`）。不要因为目录名"过时"就删掉它们——旧引用会命中这些入口。
+上述 14 个是**兼容入口**，SKILL.md 里明确写着"已退役技能 X 的入口，路由到当前官方技能"（大部分路由到 `hyperframes`，`hyperframes-audio` 路由到 `media-use`，`hyperframes-studio` 路由到 `hyperframes-cli`）。不要因为目录名"过时"就删掉它们——旧引用会命中这些入口。
 
-`dsh-skin-market`、`dsh-codex-effort-slider`、`dsh-context`、`agentero-dsh`、`dsh-better-sidebar` 不注册技能（前两个是纯 UI 插件，后三个走面板/工具）。`dsh-doc` 由 agent-preset 打包提供，不在上面的 24 个里。
+`dsh-skin-market`、`dsh-codex-effort-slider`、`dsh-context`、`agentero-dsh`、`dsh-better-sidebar` 不注册技能（前两个是纯 UI 插件，后三个走面板/工具）。`dsh-doc` 由 agent-preset 打包提供，不在上面的统计里。当前会话另可见 `ds-bot-manual`、`report-ds-bot-issue` 和 `goal-grill`；其发现来源未逐一核验，以会话目录为准。
 
 ### 6.3 用户级技能目录（0.2.2-rc.5 新增）
 
@@ -859,7 +841,7 @@ DSH 的技能由 `@deepseek-ai/dsh-skill-filesystem` 等提供者按 rank 合并
 └── prompt-master\
 ```
 
-这些是通过技能管理器（`manage-skills`）安装的共享技能，纯 Markdown + 资源，没有密钥。rank 400，优先级高于 `.agents\skills`（500），低于项目内技能根。迁移时整目录复制即可；`paper-spine` 系列的版本锁在 `%USERPROFILE%\.dsh\.paperspine-skills\`，不迁移，新机器重新安装/更新。
+这些是用户级技能目录，可能包含 Markdown 和资源；来源与内容须在迁移前逐项检查，不应假定没有私有数据。rank 400，优先级高于 `.agents\skills`（500），低于项目内技能根。迁移时整目录复制即可；`paper-spine` 系列的版本锁在 `%USERPROFILE%\.dsh\.paperspine-skills\`，不迁移，新机器重新安装/更新。
 
 ### 6.4 共享技能目录
 
@@ -920,7 +902,7 @@ Use the dsh-doc skill to check how this DSH version handles approvals.
 
 ### 7.2 本机可见的工具族
 
-下表按 2026-11-19 的会话实测工具目录整理（工具面随 bundle 和条件加载变化，以新会话实际目录为准）。
+下表按 2026-11-27 的当前会话工具目录整理（工具面随 bundle 和条件加载变化，以新会话实际目录为准）。
 
 | 来源 | 工具 | 说明 |
 |---|---|---|
@@ -928,7 +910,7 @@ Use the dsh-doc skill to check how this DSH version handles approvals.
 | base | `todo_write`、`ask_user_question`、`present` | 计划、追问、交付文件声明 |
 | base | `create_goal`、`get_goal`、`update_goal` | 跨轮次目标，自动续跑 |
 | base | `subagent`、`subagent_fork`、`list_agents`、`list_subagent_models`、`send_message`、`wait_agent` | 子代理；`interrupt_agent` 在 rc.5 包里仍有定义，但当前 preset 组合未暴露到本会话目录，以实际会话工具列表为准 |
-| base | `team_task_create`、`team_task_list`、`team_task_get`、`team_task_update` | Agent Team 共享任务板 |
+| Agent Team | 本次普通会话未列出 `team_task_*` | 是否可见取决于运行环境与会话 |
 | base | `workflow` | 用 JS 脚本编排大量子代理 |
 | base | `web_search`、`web_fetch` | 网页搜索与抓取 |
 | base | `skill`、`plugin_manager` | 技能加载、插件/ bundle 管理 |
@@ -938,7 +920,7 @@ Use the dsh-doc skill to check how this DSH version handles approvals.
 | web-app | `schedule_create`、`schedule_edit`、`schedule_list`、`schedule_view` | 定时任务 |
 | web-app | `office_render`、`office_convert`、`office_recalculate` | **条件工具**：加载 `office` 技能后才出现 |
 | genui | `render_ui`、`validate_dsh_ui` | 交互界面渲染与校验 |
-| dsh-ppt | `ppt_create`、`ppt_edit`、`ppt_check`、`ppt_render`、`ppt_undo`、`ppt_data`、`ppt_themes`、`ppt_templates`、`ppt_import`、`ppt_absorb` | 演示文稿、外部 PPTX 导入、母版骨架吸收 |
+| dsh-ppt | `ppt_create`、`ppt_edit`、`ppt_check`、`ppt_render`、`ppt_undo`、`ppt_data`、`ppt_themes`、`ppt_templates`、`ppt_import`、`ppt_absorb`、`ppt_cite`、`ppt_from_office`、`ppt_remotion` | 演示文稿、外部 PPTX 导入、母版骨架吸收 |
 | dsh-hyperframes | `hyperframes_project`、`hyperframes_render`、`hyperframes_health` | 视频工程与渲染 |
 | agentero-dsh | `agentero_discover_arxiv`、`agentero_import_paper`、`agentero_list_papers`、`agentero_read_note`、`agentero_search_notes` | 文献库、笔记、arXiv 导入 |
 | dsh-better-sidebar | `sidebar_open` | 让模型主动打开侧边栏并定位文件/设置页 |
@@ -947,8 +929,8 @@ Use the dsh-doc skill to check how this DSH version handles approvals.
 ### 7.3 迁移原则
 
 - 不要复制任何工具路径、运行时路径或端口配置；它们由应用在启动时生成。
-- `DSH_WEB_URL`（本机当前是 `http://127.0.0.1:56469`）是每次启动重新分配的，不要写进任何配置或文档快照。
-- 工具面由 bundle 决定，所以"工具不见了"几乎总是"bundle 没启用"，而不是配置写错了。先看 设置 → 插件，再看 `cordis.patch.yml`。
+- `DSH_WEB_URL` 是每次启动重新分配的，不要写进迁移配置。
+- 工具面由 bundle 决定，所以"工具不见了"可能与 bundle、条件加载、配置或当前会话有关。先看 设置 → 插件，再看 `cordis.patch.yml`。
 
 ---
 
@@ -1045,7 +1027,7 @@ git --version
 
 ### 10.1 当前工作区
 
-`%USERPROFILE%\.dsh\storages\workspace.json` 记录了 3 个工作区（**不要迁移这个文件**）：
+2026-11-19 时 `%USERPROFILE%\.dsh\storages\workspace.json` 记录了 3 个工作区（本次未核验）（**不要迁移这个文件**）：
 
 | 工作区 | 路径 | 会话数 |
 |---|---|---:|
@@ -1065,7 +1047,7 @@ git --version
     └── session.v4.jsonl.zstd
 ```
 
-目录名是工作区路径的编码，文件是压缩后的 v4 JSONL。本机共 52 个会话目录（分布在 5 个路径桶里：`default-workspace` 16、`MasterGraduationProject` 30、`2026Spring2Winter` 2、`Q:\vault` 2、Agentero agent cwd 2）。这些全部属于"私有历史"，不迁移；新电脑从空白开始。
+目录名是工作区路径的编码，文件是压缩后的 v4 JSONL。2026-11-19 时有 52 个会话目录（本次未核验）（分布在 5 个路径桶里：`default-workspace` 16、`MasterGraduationProject` 30、`2026Spring2Winter` 2、`Q:\vault` 2、Agentero agent cwd 2）。这些全部属于"私有历史"，不迁移；新电脑从空白开始。
 
 ### 10.3 附件
 
@@ -1088,21 +1070,12 @@ $dsh = Join-Path $env:LOCALAPPDATA 'Programs\DeepSeek Harness\resources\runtime\
 重点确认：
 
 - 版本与桌面端一致（本机都是 `0.2.2-rc.5`）。
-- `plugin list` 能列出 9 个第三方依赖及其版本。
+- `plugin list` 能列出 10 个第三方依赖及其版本；清单不代表每行成功加载，还需在插件页核实。
 - `--help` 里能看到 `--profile`、`--from-default-profile`、`--patch`、`--dump-config`。
 
-### 11.2 patch 合并检查（离线）
+### 11.2 patch 合并检查
 
-```powershell
-$patch = Join-Path $env:USERPROFILE '.dsh\profiles\desktop\cordis.patch.yml'
-$dump  = Join-Path $env:TEMP 'dsh-composed-check.txt'
-& $dsh --profile web --patch $patch --dump-config 2>&1 | Out-File -FilePath $dump -Encoding utf8
-"exit=$LASTEXITCODE"
-Select-String -LiteralPath $dump -Pattern 'provider: opencode-go|reasoningEffort: high|fontSize: 15' |
-  ForEach-Object { "$($_.LineNumber): $($_.Line.Trim())" }
-```
-
-预期三项都能命中。命中但应用里不生效，说明是 bundle 没启用，而不是 patch 有问题。
+检查目标应用的设置和插件页面，确认 `ui-theme`、`ui-chat`、`ui-conversation` 与按需安装的插件配置生效；检查报错并开启新会话。desktop 与 web 所加载的 bundle 不同，不能用 web 的组合结果证明 desktop 的所有插件行有效。不要将包含私人配置的完整 dump 写入共享目录。
 
 ### 11.3 目录检查
 
@@ -1116,7 +1089,7 @@ Get-ChildItem -LiteralPath (Join-Path $env:USERPROFILE '.dsh\skills') -Directory
 
 预期：
 
-- `package.json` 的 `dsh.profile.bundles` 有 19 项。
+- `package.json` 的 `dsh.profile.bundles` 有 20 项。
 - `cordis.yml` 仍是空数组 `[]`。
 - `.agents\skills` 下有 `answer-me-with-html`。
 - `.dsh\skills` 下有 `paper-spine` 系列（6 个）以及 `humanizer`、`i-have-adhd`、`manage-skills`、`ppt-master`、`prompt-master`。
@@ -1163,7 +1136,8 @@ Get-ChildItem -LiteralPath (Join-Path $env:USERPROFILE '.dsh\skills') -Directory
 - 版本升级指南：应用内 `docs\upgrade-guide\<版本目录>\`（0.2.2-rc.1 ～ rc.5 的破坏性变更都在这里）
 - dsh CLI 自带帮助：`dsh --help`、`dsh web --help`、`dsh plugin --help`、`dsh --dump-config-schema`
 - bundle 与 row 的权威来源：应用内 设置 → 插件（对应 `plugin_manager` 的 `list_bundles` / `list_plugins`）
-- 九个第三方 bundle 的 npm 包页：
+- 十个第三方 bundle 的 npm 包页：
+  - <https://www.npmjs.com/package/ds-bot>
   - <https://www.npmjs.com/package/dsh-ppt>
   - <https://www.npmjs.com/package/dsh-hyperframes>
   - <https://www.npmjs.com/package/dsh-skin-market>
@@ -1192,34 +1166,22 @@ Get-ChildItem -LiteralPath (Join-Path $env:USERPROFILE '.dsh\skills') -Directory
 
 补充三条本机专属提醒：
 
-1. **文件策略和审批策略的放宽要单独记录**。本机当前会话的权限预设是 `danger-full-access`：sandbox = `danger-full-access`、approval = `never`（本会话是从默认的 `ask` 切到 `never` 的）。这与 `cordis.patch.yml` 无关，也不会被写进 profile——它属于会话级事件，所以"能用"不等于"配置正确"。注意 `never` 的含义是**需要审批的动作直接拒绝且不弹窗**，不是自动放行。新电脑默认是 `workspace-write` + `ask`。
-2. **遇到 `grantWrite` 失败不要关沙箱**。正确顺序是：先确认路径和权限对象，用沙箱 ACL 修复流程补齐 `WRITE_OWNER`/`WRITE_DAC`，验证后再重试原操作；修复前会留下可回退的备份脚本。把沙箱关掉只会把问题推到以后。
-3. **Agentero vault 是用户内容，不是配置**。`Q:\vault` 里的论文、笔记和 `.agentero\catalog.sqlite` 应按用户数据单独备份；迁移包里只放 `agentero-host` 的配置行，不放 vault 内容。
+1. **源 profile 默认预设是 `danger-full-access` + `never`**。这既是持久默认配置，也可能被会话单独选择覆盖；不在新电脑上自动复现。`never` 表示需要审批的动作直接被拒绝。
+2. **遇到 `grantWrite` 失败不要关沙箱绕过**。使用 Windows 沙箱 ACL 诊断流程，并先确认实际路径和权限。
+3. **Agentero vault 与 DS Bot 团队数据是用户内容**，不属于基础 profile 迁移包；按需单独审查、备份。
 
 如果迁移过程中发现 `.credentials.yaml` 曾进入共享目录或压缩包，请在 provider 控制台轮换 key，而不是只删除文本。
 
 ---
 
-## 14. 与 2026-11-11 快照的差异
+## 14. 与 2026-11-19 快照的非模型差异
 
-本节记录这次同步（2026-11-19）实际发生的变化，便于对照上一版快照和排查"文档与机器不一致"。
+本次核对日期为 2026-11-27。模型和 provider 未同步；工作区、会话等易变历史统计未重新核验。
 
-| 类别 | 2026-11-11 快照 | 2026-11-19 实测 | 影响 |
-|---|---|---|---|
-| 应用 / CLI | `0.2.2-rc.1` | `0.2.2-rc.5`（桌面端文件版本 `0.2.2.0`） | 随应用升级；迁移以 rc.5 为准 |
-| profile | `desktop`、`web` | `desktop`、`web`、`acp`（新增） | `acp` 供 ACP 客户端接入，桌面端不加载 |
-| 默认推理等级 | `max` | `high` | 持久配置在 `agent-default-model` |
-| 模型 provider | `opencode-go` | `opencode-go` + `k8s-15`（内网）+ `muze-ai` | 新增 `K8S_15_API_KEY`、`MUZE_AI_API_KEY` 两个凭据引用 |
-| 已启用 bundle | 8 个 | 19 个（2 核心 + 9 第三方 + 8 内置实验） | 见 5.2 |
-| 第三方 bundle | 6 个 | 9 个：新增 `dsh-context` 0.84.0、`agentero-dsh` 0.1.8、`dsh-better-sidebar` 0.32.1；`dsh-ppt` 0.20.5 → 0.25.0 | 插件页数量、工具面、技能目录都变了 |
-| office 技能 | 7 个独立技能 | 4 个技能（`office` + 3 个创作技能），渲染/转换/重算变成条件工具 | 见 6.1 |
-| 技能来源 | 应用 / bundle / `.agents` | 增加 `%USERPROFILE%\.dsh\skills`（rank 400）和 agent-preset 的 `dsh-doc` 等打包技能 | 见 6 节 |
-| 运行时位置 | `%USERPROFILE%\.dsh\dsh-runtimes\...` | `resources\runtime\primary-runtime\`；旧目录是 rc.3 遗留 | 不要复制旧目录 |
-| LibreOffice Kit | `0.1.5` | `0.2.3` | 随应用，不单独迁移 |
-| 工作区路径 | `C:\workspace\...` | `Q:\workspace\...` | 导出脚本里的路径、会话桶名都变了 |
-| 会话 / 工作区 | 16 个会话、3 个工作区 | 52 个会话目录、3 个工作区（路径变化） | 都不迁移 |
-| Web 界面地址 | `http://127.0.0.1:60694` | `http://127.0.0.1:56469` | 每次启动重新分配，不写进配置 |
-| 文件策略 | `danger-full-access` | `danger-full-access`（会话级） | 未变 |
-| 审批策略 | 上一版会话为 `never`（快照写"审批提示已关闭"） | 本会话由 `ask` 切到 `never`（切到 `danger-full-access` 预设时一并写入） | **本次变更**：需要审批的动作直接拒绝、不再弹窗；会话级，不随 profile 迁移 |
-| 权限预设 | 未记录 | `danger-full-access` = sandbox `danger-full-access` + approval `never` | 会话级；默认仍是 `workspace-write` + `ask` |
-| 应用更新通道 | `nightly` | `nightly`（未变） | — |
+- desktop profile 的 bundle 清单从 19 项变为 20 项，新增 `ds-bot`；bundle 顺序也已调整，见第 5.2 节。清单本身不证明各行加载成功。
+- 第三方依赖变化：`dsh-ppt` 0.25.0 → 0.36.0、`dsh-hyperframes` 0.11.5 → 0.14.0、`@changfenhuang/dsh-genui` 0.16.0 → 0.17.0、`dsh-context` 0.84.0 → 0.87.1、`dsh-skin-market` 0.1.81 → 0.1.83、`dsh-codex-effort-slider` 1.1.4 → 1.1.9；`ds-bot` 当前安装 0.3.10。
+- HyperFrames 技能目录增加 `reverse-any-video`、`style-sampling`，目前共 23 个；当前会话另可见 `office-tools`、`ds-bot-manual`、`report-ds-bot-issue`、`goal-grill`。
+- 用户 patch 新增 `ui-conversation.busyEnter: steer`，并持久设置 `permission.defaultPreset: danger-full-access`；前者按需迁移，后者不在迁移模板中自动复制。
+- 用户级 `%USERPROFILE%\.dsh\AGENTS.md` 与工作区 `AGENTS.md` 同时存在；脚本只导出后者，前者需按需审查。
+- `acp` 用户 patch 已非空；其模型内容不在本次同步范围。
+- 修正技能复制脚本中的通配符用法，原始 patch 不再自动导出，避免携带未审查的私人配置。
