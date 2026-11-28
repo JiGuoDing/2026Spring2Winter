@@ -1,0 +1,18 @@
+00558-01 CONFIRMED | 仅删除 27/989 条 | 989−962=27；清洗还修订或扩充了保留样本答案集。 | p12 “validation subsets of 988 and 989 instances” p12 “884 for HotpotQA, and 962 for 2WikiMHQA”
+00558-02 CONFIRMED | 16.2% → 47.3% | Table 1 的 2WikiMHQA 模型分数相差 31.1 个百分点。 | p14 “Llama 3.1 8B 14.5% 35.3% (+20.8) 16.2% 47.3% (+31.1)”
+00558-03 CONFIRMED | 评估器切换 | 评估器与答案集同时改变，观察差值不能只归因于数据清洗。 | p12 “exact match and standard alias lookup” p12 “using Qwen-plus as an equivalence judge”
+00558-04 OVERSTATED | 核心发现（“基准缺陷导致大幅压分和模型排名反转”）实质上是换评分器造成的 | 存在混杂，但缺少同评分器反事实对照，不能确定差异完全由评分器造成。 | p12 “using Qwen-plus as an equivalence judge”
+00558-05 OVERSTATED | 数学不可能增益 | 对固定评分及指定受影响集合可计算上界；原实验同时换裁判和答案集，实测差值本身不是数学不可能。 | p12 “validation subsets of 988 and 989 instances” p12 “using Qwen-plus as an equivalence judge” p14 “16.2% 47.3% (+31.1)”
+00558-06 CONFIRMED | GPT-6-Luna | 这是稿件对考官的模型标识；离线无法核验型号及版本。 | p11 “GPT-6-Luna operating in zero-shot closed-book mode”
+00558-07 CONFIRMED | 30.3% | Table 3 给出考官模型后代准确率 30.3%。 | p18 “GPT-6-Luna 59.6 30.3 −29.3”
+00558-08 CONFIRMED | mandatory failure acceptance rule | 方法声称考官答对则不接收，但复测的提示、模型快照或采样条件可能不同，应要求澄清。 | p11 “If Mexam correctly solves candidate” p11 “Candidate acceptance is governed by”
+00558-09 OVERSTATED | 直接自相矛盾 | 表面冲突成立；没有足够证据证明生成与复测是同一次确定性调用，不能排除协议差异。 | p11 “If Mexam correctly solves candidate” p18 “GPT-6-Luna 59.6 30.3 −29.3”
+00558-10 CONFIRMED | 289 条任务 | Fig. 5 样本数 289，一致 254、分歧 35。 | p14 “Overall Agreement 87.9% (254 / 289)”
+00558-11 CONFIRMED | 87.5% | Fig. 5(c) 两组准确率；原稿还须解释一致样本标签来源。 | p14 “87.5% 84.8%”
+00558-12 WRONG | 双双低于一致率，在数学上不可自洽 | 一致样本可同时出错；但在同一 289 个二分类标签及通常四舍五入假设下，完整计数还有独立的奇偶性疑点，详见决策报告。 | p14 “Overall Agreement 87.9% (254 / 289)” p14 “87.5% 84.8%”
+00558-13 CONFIRMED | 35 条分歧做专家仲裁 | 只明确对分歧样本做专家仲裁；一致样本的标签来源及计数需澄清。 | p14 “all 35 disputed instances were resolved through”
+00558-14 UNVERIFIABLE | 零自动化基线对比与零系统消融实验 | 现有锚点只能证实有人类对照，不能单凭片段证明全文或附录不存在自动基线及消融。 | p14 “Human Annotators”
+00558-15 CONFIRMED | 233 条 | Table 3 为 233 对原题/后代题，考官复测与筛选协议是否相同未交代清楚。 | p18 “233 original–descendant pairs”
+00558-16 CONFIRMED | 验证集 2,415 + 训练集 19,902 | §4.1 所述 MuSiQue 审计规模；只核对稿件报告。 | p12 “complete validation split (2,415 instances) and the full training split (19,902 instances)”
+00558-17 OVERSTATED | 所有缺陷与多解样本加总仅约 **10%–11%** | 2.8% 与至少 7.7% 的分母、重叠和其他缺陷并不确定受评分器影响的样本上界；不能以此证明 31.1 pp 增益不可能。 | p12 “and 2.8% of 2WikiMHQA” p13 “7.7% of 2WikiMHQA admit multiple legitimate answers” p12 “using Qwen-plus as an equivalence judge”
+00558-18 CONFIRMED | 82.8% | 这是文稿报告的协议内修复成功率，分母为 87 个已确认缺陷；不能等同独立评审的修复正确率。 | p15 “82.8% protocol-internal repair success rate” p15 “confirms 87 of these candidates as genuine defects”

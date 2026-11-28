@@ -29,9 +29,12 @@
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>四道控制是“共享前提下仍成立”的底线；跨过这条线的租户，必须换隔离载体，而不是加配置。</Text>
         </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [C-1] [J-01] [J-02]</Text>
+        </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>A / B 分类由第 10 页打分台账判定，此处只给载体差异</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>13 / 20</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>13 / 21</Text>
         </Box>
     </Box>
 </Slide>

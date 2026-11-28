@@ -21,6 +21,15 @@ MAP = {
     "update_events.jsonl": "events/update_events.jsonl",
     "act_plan_pool.json": "events/act_plan_pool.json",
     "real_calibration_300.csv": "events/real_calibration_300.csv",
+    "update_impact_summary.jsonl": "events/update_impact_summary.jsonl",
+    "fallback_costs.csv": "costs/fallback_costs.csv",
+    "tool_cost_model.json": "costs/tool_cost_model.json",
+    "rag_rerank_costs.csv": "costs/rag_rerank_costs.csv",
+    "rag_ir_eval.csv": "costs/rag_ir_eval.csv",
+    "act_toolchain_costs.csv": "costs/act_toolchain_costs.csv",
+    "act_prod_costs.csv": "costs/act_prod_costs.csv",
+    "act_value_diagnostics.json": "costs/act_value_diagnostics.json",
+    "deployment_profiles.json": "costs/deployment_profiles.json",
 }
 
 

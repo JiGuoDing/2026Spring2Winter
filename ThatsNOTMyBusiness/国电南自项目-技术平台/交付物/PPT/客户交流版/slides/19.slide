@@ -31,7 +31,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>编号沿用方案附录的待确认事项清单，便于逐条对账</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>19 / 20</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>19 / 21</Text>
         </Box>
     </Box>
 </Slide>

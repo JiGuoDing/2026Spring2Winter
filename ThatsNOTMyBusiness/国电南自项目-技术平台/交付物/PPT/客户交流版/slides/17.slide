@@ -48,7 +48,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>人月为经验估算，按 8 人 × 月口径折算；不含客户侧配合人力</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>17 / 20</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>17 / 21</Text>
         </Box>
     </Box>
 </Slide>

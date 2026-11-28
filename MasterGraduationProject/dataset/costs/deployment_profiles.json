@@ -1,0 +1,142 @@
+{
+  "dataset_version": "0.6.0",
+  "profiles": [
+    {
+      "act_stage": {
+        "mean_ms": 1.44,
+        "mode": "single_sqlite",
+        "source": "events/real_calibration_300.csv",
+        "status": "measured"
+      },
+      "id": "P1_slow_local_base",
+      "label": "P1 慢思考模型 + 基础本地检索/单次SQLite（全实测基线）",
+      "model_stage": {
+        "model": "qwen3.8-27b (xhigh)",
+        "n": 300,
+        "plan_mean_ms": 51798.14,
+        "resp_mean_ms": 147050.95,
+        "source": "events/real_calibration_300.csv",
+        "status": "measured",
+        "total_mean_ms": 198849.09
+      },
+      "rag_stage": {
+        "mean_ms": 6.37,
+        "mode": "bm25_doc_only",
+        "source": "events/real_calibration_300.csv",
+        "status": "measured"
+      },
+      "summary": {
+        "act_share_pct": 0.001,
+        "e2e_mean_ms": 198856.9,
+        "model_share_pct": 99.996,
+        "rag_share_pct": 0.003
+      }
+    },
+    {
+      "act_stage": {
+        "concurrency": 8,
+        "local_49k_baseline_mean_ms": 8.32,
+        "mean_ms": 3118.03,
+        "mode": "http_readonly_gateway_4.4m_rows_c8_bi_probes",
+        "p50_ms": 1489.98,
+        "p95_ms": 5537.4,
+        "pool_size": 4,
+        "source": "costs/act_prod_costs.csv",
+        "status": "measured"
+      },
+      "id": "P2_slow_modern_rag_prod_act",
+      "label": "P2 慢思考模型 + 现代六阶段重排RAG + 百万行网关act(c=8)（全实测）",
+      "model_stage": {
+        "model": "qwen3.8-27b (xhigh)",
+        "n": 300,
+        "plan_mean_ms": 51798.14,
+        "resp_mean_ms": 147050.95,
+        "source": "events/real_calibration_300.csv",
+        "status": "measured",
+        "total_mean_ms": 198849.09
+      },
+      "rag_stage": {
+        "mean_ms": 1862.64,
+        "mode": "hybrid_rrf_rerank_dynamic (bge-reranker-v2-m3 INT8 ONNX)",
+        "p50_ms": 1856.43,
+        "source": "costs/rag_rerank_costs.csv",
+        "status": "measured"
+      },
+      "summary": {
+        "act_share_pct": 1.53,
+        "e2e_mean_ms": 203829.76,
+        "model_share_pct": 97.556,
+        "rag_share_pct": 0.914
+      }
+    },
+    {
+      "act_stage": {
+        "concurrency": 8,
+        "local_49k_baseline_mean_ms": 8.32,
+        "mean_ms": 3118.03,
+        "mode": "http_readonly_gateway_4.4m_rows_c8_bi_probes",
+        "p50_ms": 1489.98,
+        "p95_ms": 5537.4,
+        "pool_size": 4,
+        "source": "costs/act_prod_costs.csv",
+        "status": "measured"
+      },
+      "id": "P3_fast_modern_rag_prod_act",
+      "label": "P3 快模型 + 现代六阶段重排RAG（实测） + 百万行网关act(c=8，实测)",
+      "model_stage": {
+        "plan_mean_ms": 1200.0,
+        "resp_mean_ms": 2800.0,
+        "source": "costs/tool_cost_model.json (待 run_fast_model_calibration.py --write-back 替换为 50 条实测)",
+        "status": "assumed",
+        "total_mean_ms": 4000.0
+      },
+      "rag_stage": {
+        "mean_ms": 1862.64,
+        "mode": "hybrid_rrf_rerank_dynamic (bge-reranker-v2-m3 INT8 ONNX)",
+        "p50_ms": 1856.43,
+        "source": "costs/rag_rerank_costs.csv",
+        "status": "measured"
+      },
+      "summary": {
+        "act_share_pct": 34.719,
+        "e2e_mean_ms": 8980.67,
+        "model_share_pct": 44.54,
+        "rag_share_pct": 20.741
+      }
+    },
+    {
+      "act_stage": {
+        "mean_ms": 4500.0,
+        "mode": "enterprise_warehouse_with_retries",
+        "p_fail": 0.1,
+        "retry_sidecar": "events/tool_failures.jsonl (P4_fast_model_warehouse)",
+        "source": "costs/tool_cost_model.json",
+        "status": "assumed"
+      },
+      "id": "P4_fast_modern_rag_warehouse",
+      "label": "P4 快模型 + 现代六阶段重排RAG（实测） + 跨区企业数仓/长排队（假设）",
+      "model_stage": {
+        "plan_mean_ms": 1200.0,
+        "resp_mean_ms": 2800.0,
+        "source": "costs/tool_cost_model.json (待 run_fast_model_calibration.py --write-back 替换为 50 条实测)",
+        "status": "assumed",
+        "total_mean_ms": 4000.0
+      },
+      "rag_stage": {
+        "mean_ms": 1862.64,
+        "mode": "hybrid_rrf_rerank_dynamic (bge-reranker-v2-m3 INT8 ONNX)",
+        "p50_ms": 1856.43,
+        "source": "costs/rag_rerank_costs.csv",
+        "status": "measured"
+      },
+      "summary": {
+        "act_share_pct": 43.425,
+        "e2e_mean_ms": 10362.64,
+        "model_share_pct": 38.6,
+        "rag_share_pct": 17.975
+      }
+    }
+  ],
+  "rule": "每个分量独立标注 measured / assumed，论文引用时严禁混淆。",
+  "schema_version": 2
+}

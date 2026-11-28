@@ -7,10 +7,10 @@
 
 | 实验 | 输入文件 | 用到的列 | 产出 |
 |---|---|---|---|
-| M1 异质开销与重复率 | `events/request_stream.jsonl`、`events/real_calibration_300.csv`、`events/act_plan_pool.json` | `req_id/timestamp/query_text/query_emb/plan_id/act_key/gold_doc_ids`；校准表 `t_plan_ms/t_rag_ms/t_act_ms/t_resp_ms/t_total_ms/token_cost` | `exp_motivation/results/m1_stage_costs.csv`、`m1_repetition.csv`（已产出） |
-| M2 静态策略两难 | `events/request_stream.jsonl` + `events/update_events.jsonl` 按 `timestamp` 归并 | `snapshot.index`、`gold_doc_ids`、更新的 `doc_id/old_ver/new_ver/changed_chunk_ids` | `exp_motivation/results/m2_baselines.csv`（已产出） |
-| M2-ext 局部波及 | 同上 + `tasks/tasks.jsonl` 的 `truth.claims[].evidence` | `changed_chunk_ids` 与 claim 证据块的交集 | `results/m2_update_impact.csv` |
-| M3 工具成本结构敏感性 | `costs/tool_cost_model.json`、`events/act_plan_pool.json` | `calls.act_fanout_mean`、`calls.plan_steps_mean`、`profiles[].{model_ms,rag_ms_per_call,act_ms_per_call,p_fail}` | `exp_motivation/results/m3_tool_cost_sensitivity.csv` |
+| M1 异质开销与重复率 | `events/request_stream.jsonl`、`events/real_calibration_300.csv`、`events/act_plan_pool.json`、`costs/fallback_costs.csv` | `req_id/timestamp/query_text/query_emb/plan_id/act_key/gold_doc_ids`；校准表与本地回退成本表 | `exp_motivation/results/m1_stage_costs.csv`、`m1_repetition.csv`（待补回退口径） |
+| M2 静态策略两难 | `events/streams/seed42..46.jsonl` + `events/update_events.jsonl` 按 `timestamp` 归并 | `snapshot.index`、`gold_doc_ids`、更新的 `doc_id/old_ver/new_ver/changed_chunk_ids` | `exp_motivation/results/m2_baselines.csv`（待按 5 种子 + 固定容量 + 版本对照收口） |
+| M2-ext 局部波及 | `events/update_impact_summary.jsonl`（40 条逐事件权威汇总） | `doc_affected_reqs`、`claim_affected_reqs`、`local_repair_cnt`、`major_change_cnt`、`false_invalidation_reqs` | `exp_motivation/results/m2_update_impact.csv` |
+| M3 工具成本结构敏感性 | `costs/tool_cost_model.json`、`events/act_plan_pool.json`、`events/tool_failures.jsonl` | `calls.act_fanout_mean`、`calls.plan_steps_mean`、`profiles[]`、失败重试 sidecar（`assumed_synthetic`） | `exp_motivation/results/m3_tool_cost_sensitivity.csv` |
 
 **口径约定**：`τ_sem = 0.88`、容量档位与误用惩罚权重全部读 `config/params.json`，不得在脚本里另写一份。
 

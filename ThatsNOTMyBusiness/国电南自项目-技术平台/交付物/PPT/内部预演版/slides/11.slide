@@ -55,7 +55,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>“轻改”指只加适配层与租户上下文透传，不改数据模型与流程定义</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>11 / 12</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>11 / 13</Text>
         </Box>
     </Box>
 </Slide>

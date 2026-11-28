@@ -1,0 +1,21 @@
+difficulty,stage,n,p50_ms,p95_ms,mean_ms,measured,mock,note
+all,schema_inspect,300,2.2221,5.6491,2.6171,1,,PRAGMA table_info 探查主查询涉及表的字段结构（只读 SQLite 实测）
+all,sql_validate,300,1.1147,2.0904,1.2328,1,,EXPLAIN QUERY PLAN 语法与执行计划预检（只读 SQLite 实测）
+all,sql_execute,300,3.4156,10.5783,4.4358,1,,真实执行 gold_sql；join/nested_agg 含 1 次主表行数探查（只读 SQLite 实测）
+all,result_check,300,0.0344,0.0889,0.0390,1,,compare.normalize 规范化、空值与行数截断校验（本地实测）
+all,e2e_toolchain,300,7.5132,16.1477,8.3247,1,,4 步只读取数工具链端到端本地实测总耗时；远程数仓缩放见 deployment_profiles.json
+single_table,schema_inspect,91,1.1490,2.2334,1.2617,1,,PRAGMA table_info 探查主查询涉及表的字段结构（只读 SQLite 实测）
+single_table,sql_validate,91,1.0422,2.1297,1.1661,1,,EXPLAIN QUERY PLAN 语法与执行计划预检（只读 SQLite 实测）
+single_table,sql_execute,91,1.6252,4.4528,2.3408,1,,真实执行 gold_sql；join/nested_agg 含 1 次主表行数探查（只读 SQLite 实测）
+single_table,result_check,91,0.0198,0.0557,0.0261,1,,compare.normalize 规范化、空值与行数截断校验（本地实测）
+single_table,e2e_toolchain,91,3.9344,8.7003,4.7947,1,,4 步只读取数工具链端到端本地实测总耗时；远程数仓缩放见 deployment_profiles.json
+join,schema_inspect,102,2.3228,4.4587,2.6450,1,,PRAGMA table_info 探查主查询涉及表的字段结构（只读 SQLite 实测）
+join,sql_validate,102,1.0855,1.6849,1.1878,1,,EXPLAIN QUERY PLAN 语法与执行计划预检（只读 SQLite 实测）
+join,sql_execute,102,3.7916,9.5353,5.3707,1,,真实执行 gold_sql；join/nested_agg 含 1 次主表行数探查（只读 SQLite 实测）
+join,result_check,102,0.0439,0.0965,0.0477,1,,compare.normalize 规范化、空值与行数截断校验（本地实测）
+join,e2e_toolchain,102,7.9437,14.3004,9.2512,1,,4 步只读取数工具链端到端本地实测总耗时；远程数仓缩放见 deployment_profiles.json
+nested_agg,schema_inspect,107,3.5862,6.3160,3.7431,1,,PRAGMA table_info 探查主查询涉及表的字段结构（只读 SQLite 实测）
+nested_agg,sql_validate,107,1.2032,2.2971,1.3323,1,,EXPLAIN QUERY PLAN 语法与执行计划预检（只读 SQLite 实测）
+nested_agg,sql_execute,107,3.7963,18.5172,5.3262,1,,真实执行 gold_sql；join/nested_agg 含 1 次主表行数探查（只读 SQLite 实测）
+nested_agg,result_check,107,0.0344,0.0889,0.0418,1,,compare.normalize 规范化、空值与行数截断校验（本地实测）
+nested_agg,e2e_toolchain,107,8.9618,20.3983,10.4435,1,,4 步只读取数工具链端到端本地实测总耗时；远程数仓缩放见 deployment_profiles.json

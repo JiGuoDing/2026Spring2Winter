@@ -1,0 +1,2740 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+Modeling and Path Analysis of Innovation and Entrepreneurship Behavior Based on
+Data Mining
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00526
+Full Title:
+Modeling and Path Analysis of Innovation and Entrepreneurship Behavior Based on
+Data Mining
+Article Type:
+Research Papers
+Funding Information:
+Abstract:
+The behavior of innovation and entrepreneurship is a key factor in the development of
+the enterprise and it is difficult to determine the pattern of behavior and predict the
+success of an entrepreneur because of multidimensional circumstances. In this
+research, a data mining methodology is offered that models and classifies
+entrepreneurial behavior by using K-Means clustering and Enhanced Naive Bayes
+(ENB) classification. The survey was designed as a structured survey of 136
+businesses in China, which entailed the data on the adoption of digital marketing, size
+of the enterprise, and the management features. K-Means classification grouped
+enterprises into three categories with meanings of Digitally Mature Innovators,
+Moderate Adopters and Low Adopters demonstrating some specific patterns of
+innovation and digital involvement. ENB was then used to categorize types of
+entrepreneurial behavior, such as Innovative, Risk-taking, Proactive and Conservative
+behaviors. ENB was compared to common classifiers, including Naïve Bayes, Decision
+Trees, Logistic Regression, Random Forest and SVM. Findings suggest that the
+suggested ENB model demonstrated the best classification performance with an
+accuracy of 94.6, precision of 93.8, recall of 94.2, and F1-score of 94.0 and better than
+all baseline approaches. Analysis of confusion matrices revealed that there were small
+misclassifications and both ROC and PR-AUC curves indicated a strong predictive
+ability in all the behavioral classes. The results emphasize the usefulness of combining
+clustering and refined classification to reveal patterns of entrepreneurial behavior to
+generate practical recommendations to enterprise managers and policy makers. This
+research has an addition to the methodological development of the entrepreneurship
+study considering that it provides a credible framework of the behavioral modeling,
+classification, and performance appraisal.
+Corresponding Author:
+Guangli Liu
+Henan Technician Institute
+CHINA
+Corresponding Author E-Mail:
+GuangliLiu1678@outlook.com
+Order of Authors:
+Guangli Liu
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+Henan Technician Institute
+Corresponding Author's Secondary
+Institution:
+First Author:
+Guangli Liu
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Additional Information:
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Modeling and Path Analysis of Innovation and Entrepreneurship Behavior Based on Data 
+Mining 
+ 
+Abstract 
+The behavior of innovation and entrepreneurship is a key factor in the development of the 
+enterprise and it is difficult to determine the pattern of behavior and predict the success of an 
+entrepreneur because of multidimensional circumstances. In this research, a data mining 
+methodology is offered that models and classifies entrepreneurial behavior by using K-Means 
+clustering and Enhanced Naive Bayes (ENB) classification. The survey was designed as a 
+structured survey of 136 businesses in China, which entailed the data on the adoption of digital 
+marketing, size of the enterprise, and the management features. K-Means classification grouped 
+enterprises into three categories with meanings of Digitally Mature Innovators, Moderate 
+Adopters and Low Adopters demonstrating some specific patterns of innovation and digital 
+involvement. ENB was then used to categorize types of entrepreneurial behavior, such as 
+Innovative, Risk-taking, Proactive and Conservative behaviors. ENB was compared to common 
+classifiers, including Naïve Bayes, Decision Trees, Logistic Regression, Random Forest and 
+SVM. Findings suggest that the suggested ENB model demonstrated the best classification 
+performance with an accuracy of 94.6, precision of 93.8, recall of 94.2, and F1-score of 94.0 and 
+better than all baseline approaches. Analysis of confusion matrices revealed that there were small 
+misclassifications and both ROC and PR-AUC curves indicated a strong predictive ability in all 
+the behavioral classes. The results emphasize the usefulness of combining clustering and refined 
+classification to reveal patterns of entrepreneurial behavior to generate practical 
+recommendations to enterprise managers and policy makers. This research has an addition to the 
+methodological development of the entrepreneurship study considering that it provides a credible 
+framework of the behavioral modeling, classification, and performance appraisal. 
+Keywords: Data mining, path analysis, entrepreneurship behavior, K-means clustering, 
+Enhanced naïve Bayes classification. 
+I. 
+Introduction 
+The advent of new digital dynamics has changed the way businesses function and expand in 
+recent years, drastically changing the entrepreneurial and business development scene.  The 
+proliferation of digital technologies has opened up a world of possibilities for entrepreneurs and 
+reduced the hurdles to entry for new firms [1].  Previously only huge, established organisations 
+could compete on a global stage, develop swiftly, and scale efficiently with the use of digital 
+platforms and tools.  Entrepreneurship has become more accessible to more people as a result of 
+the widespread use of digital technologies in company operations.  Platforms on digital provide 
+minimum-cost entry channels for beginners and small firms, in contrast to traditional business 
+models that necessitated substantial initial financial investment and physical presence.  Online e-
+commerce, social networking, and digital marketing have made it easier than ever for 
+entrepreneurs to start and run their enterprises online [2].  There has been an upsurge in 
+entrepreneurial activity as a result of this accessibility, since more people are able to launch and 
+expand their own firms without being limited by location or having a large financial backing. 
+Blinded manuscript
+Click here to access/download;Blinded manuscript;CP Modeling
+and Path Analysis Reference Corrected.docx
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ Capturing data and leveraging technology to generate value is a key driver of innovation in the 
+digital era.    Entrepreneurs must acquire skills in analysis on data and cybersecurity to protect 
+their assets on digital and stay ahead of the competition in light of the growing popularity of 
+data-centric business models [3].  Entrepreneurs can now leverage global supply chains and 
+customer bases, expanding their reach beyond local markets, thanks to the Internet's global 
+connectivity. Managing foreign logistics, comprehending varying consumer tastes, and 
+navigating diverse regulatory frameworks are just a few of the problems that come with this 
+expansion.  When doing business on a global scale, entrepreneurs must be able to adapt to many 
+complications, such as cultural, legal, and economic variations, which can affect company 
+operations [4]. 
+ An online marketing has grown in importance as a tool for contemporary companies, providing 
+several channels for communicating with clients and promoting goods and services.  Bypassing 
+the constraints of more conventional forms of advertising, the Internet enables companies to 
+connect with consumers all over the world. Companies may strengthen ties with consumers and 
+encourage brand loyalty through personalised marketing campaigns and accurate targeting.  
+Internet marketing is appealing to companies of all sizes because it is both affordable and 
+adaptable [5].  Businesses' marketing and labour management strategies have been impacted by 
+the gig economy's growth and the proliferation of mobile Internet usage.  New opportunities for 
+growth and innovation can be found through mobile-friendly marketing methods and by tapping 
+into a flexible and scalable freelancing workforce.  On the other hand, cybersecurity must be 
+prioritised in light of these developments; cyberattacks are becoming more common, and 
+organisations must safeguard their digital activities [6]. 
+The integration of data association and Internet technologies can provide new approaches to 
+guiding students in innovation and entrepreneurship [7]. The youth of China are the country's 
+future and its strongest economic and social asset.  As a powerful engine of economic and social 
+progress, innovation has the potential to raise people's standard of living significantly [8].  To 
+promote entrepreneurship as a common endeavour and attract individuals from all backgrounds, 
+China implemented the strategy of "mass entrepreneurship and innovation" in 2023 [9].  In terms 
+of both innovation and entrepreneurship, college students are crucial.  Universities and colleges 
+face the challenge of how to increase the entrepreneurial spirit among their student bodies and 
+how to develop more high-caliber individuals with entrepreneurial potential [10]. Improving a 
+first-rate business climate requires establishing a culture of "integration, synergy and sharing" 
+that encourages innovation and entrepreneurship.  More social subjects can be encouraged to 
+engage in innovation and entrepreneurship if the environment is optimised for these processes, 
+which can help release innovation vitality.  Improving the regional business climate is an 
+important part of the next cycle of comprehensive revitalisation, which includes fostering an 
+environment that encourages innovation and entrepreneurship [11]. 
+1.1 Contribution of this study 
+This research fulfills a number of important contributions to the domain of research and data-
+driven analysis of entrepreneurship. First, it proposes a new synthesis between K-Means 
+clustering and Enhanced Naïve Bayes (ENB) classification to model and predict the 
+entrepreneurial behavior that is a strong framework to segment enterprises and detect patterns of 
+innovation. Second, on the basis of using this framework to a real-world sample of 136 
+enterprises in China, the research provides empirical data regarding the impact of digital 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+adoption and enterprise traits on the behaviors of innovation and entrepreneurship, and especially 
+on small- and medium-sized enterprises (SMEs). Third, the proposed ENB model has a good 
+predictive performance with more accuracy, precision, recall, and F1-score, which confirms its 
+efficiency in processing multidimensional and imbalanced behavioral data. Fourth, for managers 
+and policymakers, the study offers practical information about groups of enterprises possessing 
+specific innovativeness and recommends specific interventions to influence entrepreneurship. 
+Lastly, the methodology provides a scalable system that can be applied to bigger data sets, 
+cultural setting, or multi-modular machine learning systems, not only to the methodological 
+growth of entrepreneurship research but also to the empirical use of data mining strategies in 
+enterprise management. Together, these contributions unite the behavioral theory with the 
+computational modeling, providing a valid and data-driven method of comprehending and 
+fostering innovation and entrepreneurial achievement. 
+II. 
+Literature review 
+ Scholars both at home and abroad have conducted relatively rich theoretical discussions on 
+related research and produced a number of results, according to the above examination of the 
+current situation of innovation and entrepreneurship environment evaluation research [12–13].  
+But there are still some pressing issues and areas that should be investigated further; these are 
+also areas where this study needs to make significant breakthroughs. 
+ Entrepreneurship has emerged as a critical component of innovation, social change, and 
+economic growth in the last several decades, impacting nations both developed and developing.  
+The demand for enterprising people with the ability to generate value, find solutions to issues, 
+and show initiative has increased significantly as economies adapt quickly to technology 
+development, environmental concerns, and youth unemployment [14].  Here, colleges and 
+universities are under increasing pressure to do more than just teach and conduct research; they 
+are also expected to foster an entrepreneurial spirit and set of abilities within their student bodies.  
+Academic policy has thus made entrepreneurial education a top priority, especially for nations 
+aiming to become knowledge-based and innovation-driven. 
+ There has been a dramatic change in the way students learn to be entrepreneurs over the last 
+decade, with an emphasis on more interactive, skill-based, and emotionally engaging curricula 
+replacing more conventional approaches like business proposal contests [15].    Further evidence 
+that psychological preparedness mediates the efficacy of entrepreneurship education lends 
+credence to the necessity of integrated models for assessing the efficacy of education [16]. 
+ At the same time as these changes are taking place, researchers are trying to figure out what 
+makes people decide to be entrepreneurs and how entrepreneurial behaviour is produced.   
+Researchers interested in entrepreneurship have made heavy use of this model to deduce the 
+mental processes that motivate people to start their own businesses [17].  Some argue that the 
+original TPB failed to adequately account for the myriad factors that motivate entrepreneurs, 
+especially the significance of personal characteristics like confidence in one's abilities, openness 
+to new experiences, and willingness to take risks. Table 1 summary on objectives, methods and 
+Dataset used, result, limitations in existing method. 
+Table 1: Summary on recent works 
+References  
+Research Focus 
+Methods 
+Dataset Used 
+Results 
+Limitations 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+[18] 
+This paper examines 
+the forecasting of 
+entrepreneurial 
+ambitions within firms 
+utilising Internet 
+marketing predictors. 
+feed-forward 
+neural 
+network 
+(FNN) 
+Survey data from 
+business owners 
+and entrepreneurs 
+The results 
+differed based 
+on the employed 
+methodology, 
+yielding 
+substantial look 
+into the 
+dynamics of 
+data mining for 
+predictive result 
+in a corporate 
+environment. 
+The growing amount 
+of data created in the 
+innovation and 
+entrepreneurship 
+ecosystem makes it 
+hard for data mining 
+algorithms to work on 
+a large scale. 
+[19] 
+This study examines 
+the correlation 
+between 
+entrepreneurship 
+education and the 
+entrepreneurial 
+willingness of college 
+students, 
+incorporating family 
+income as a variable 
+to assess its regulatory 
+influence on the 
+connection.  
+data analysis 
+Datasets collected 
+over time to track 
+the development 
+and growth of 
+entrepreneurial 
+ventures. 
+The findings 
+indicate that 
+entrepreneurship 
+education and 
+its four 
+characteristics 
+exert a 
+favourable 
+influence on 
+college students' 
+entrepreneurial 
+willingness. 
+Entrepreneurship is a 
+dynamic activity, and 
+models may not 
+accurately reflect the 
+evolving nature of 
+entrepreneurial 
+behaviour over time. 
+[20] 
+Examines how 
+business intelligence 
+capabilities, network 
+learning and 
+innovation relate to 
+the performance of 
+start-up businesses. 
+Questionnaire-
+based 
+descriptive 
+research 
+Survey responses 
+from 150 start-up 
+businesses, selected 
+from a stated 
+population of 1,200 
+start-ups. 
+Business 
+intelligence 
+showed a 
+significant 
+relationship 
+with start-up 
+performance. 
+The detailed 
+statistical results 
+did not establish 
+significant 
+relationships for 
+most of the 
+other tested 
+relationships, 
+including 
+innovation and 
+performance. 
+The study used a 
+relatively small 
+sample of 150 start-
+ups. The findings are 
+based on 
+questionnaire 
+responses. The 
+authors do not provide 
+a separate, explicit 
+limitations section. 
+[21] 
+This study sought to 
+examine the 
+development of 
+Quantitative 
+analysis 
+Datasets collected 
+from social media 
+platforms, such as 
+The study's 
+main findings 
+show that part-
+The sample was taken 
+from respectable 
+papers. It did not 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+entrepreneurial 
+behaviour among 
+agricultural students 
+in Hamadan County, 
+Iran.  
+Twitter or 
+LinkedIn, are 
+analyzed to 
+understand 
+entrepreneurial 
+networks and 
+behaviors. 
+time 
+entrepreneurs 
+who are better at 
+allocating 
+resources are 
+more likely to 
+become full-
+time 
+entrepreneurs. 
+This premise 
+does not support 
+the capacity to 
+recognise 
+opportunities.  
+include books, book 
+chapters, reports, or 
+conference 
+proceedings, which 
+might be used for 
+further in-depth 
+research.  
+[22] 
+This article examines 
+the utilisation of 
+simulation 
+methodologies in 
+entrepreneurship 
+research.  
+descriptive 
+statistics  
+Datasets collected 
+to measure 
+entrepreneurial 
+intentions, 
+attitudes, and 
+behaviors among 
+students, 
+entrepreneurs, or 
+small business 
+owners. 
+The results 
+show that the 
+business field is 
+the most 
+popular, while 
+Agent-Based 
+Modelling is the 
+most common 
+method used. 
+The complex and 
+multidisciplinary 
+characteristics of 
+simulation 
+approaches, which 
+include several 
+concepts, made it 
+difficult to perform 
+thorough studies of all 
+ideas. 
+[23] 
+The purpose of this 
+paper is to educate the 
+information systems 
+(IS) management and 
+business analyst 
+regarding the function 
+of machine learning 
+techniques in business 
+data mining. 
+cluster 
+analysis 
+The data set is 
+analyzed next to 
+identify patterns, 
+i.e. models that 
+represent 
+relationships 
+among data.  
+The results also 
+show that 
+technology 
+entrepreneurs, 
+especially those 
+who are just 
+starting out, 
+may be better 
+off if they 
+consciously 
+stray from 
+conventional 
+paths. 
+When data is taken 
+from more than one 
+database, it is a big 
+concern if the 
+databases don't all 
+have the same 
+information. 
+[24] 
+The present study 
+examines the impact 
+of entrepreneurial 
+leadership on 
+fostering innovative 
+behaviour among 
+employees by 
+cultivating an 
+innovation climate 
+Support 
+Vector 
+Machines 
+(SVM) 
+Datasets contain 
+financial 
+information on 
+startups, including 
+funding amounts, 
+investment types, 
+and revenue 
+growth. 
+The research 
+findings indicate 
+that colleges 
+have begun to 
+incorporate 
+entrepreneurship 
+skills into their 
+curricula, as 
+seen by the 
+Models created in one 
+setting might not work 
+in other settings or 
+with other groups of 
+people. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+and enhancing their 
+intellectual agility.  
+improved 
+ranking of 
+curriculum 
+creation, 
+subsequently 
+followed by 
+skill 
+enhancement.  
+[25] 
+The present study 
+examines the 
+evolution of 
+entrepreneurial 
+intention as the most 
+proximate predictor of 
+entrepreneurial action. 
+Artificial 
+Neural 
+Network 
+(ANN) 
+Government 
+agencies collect 
+various datasets, 
+including data on 
+business 
+registrations, 
+patents, and 
+innovation grants. 
+The findings 
+from the route 
+analysis offer 
+empirical 
+validation for 
+the extended 
+Theory of 
+Planned 
+Behaviour 
+(TPB) model 
+introduced in 
+this research.  
+Contextual elements 
+like culture, economy, 
+and policy can affect 
+how entrepreneurs act, 
+and these factors can 
+be hard to model. 
+ 
+III. 
+Methodology 
+3.1 Research Framework 
+Main Objective: This research fulfills a number of important contributions to the domain of 
+research and data-driven analysis of entrepreneurship. 
+Literature Review:A brief overview of the important theoretical ideas was given. 
+Collections on Data: A structured survey was created, sent out, and used to collect information.  
+After that, the data were put together into one dataset so that multiple statistical approaches could 
+be used to analyse it in clustering. 
+Methods on Statistical significance: This novel applied a range of statistical methods that 
+involves Random Forest, Logistic Regression, SVM, Decision tree, Naïve Bayes. 
+In accordance with industry best practices, a structured survey was used to conduct the research. 
+Responses from 136 businesses (n = 136) made up the dataset. In Table 2, the sample details and 
+a synopsis of the study methods are presented. 
+ 
+Table 2. Dataset of research methodology. 
+Aspects on 
+Methodology  
+Information 
+No. of Surveys 
+completed 
+136 (n = 136) 
+pupils 
+ 
+Managers at small scale-, Normal-sized, and large enterprises 
+ 
+94 Participants on Male; 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ 
+41 Participants on Female; 
+ 
+The majority of 61 participants on BSc degree holders 
+Enterprise 
+Most businesses were Micro-small (35%) or medium (45,25%).  This was to 
+be expected because most businesses in the Republic of China are tiny or 
+micro. 
+Length on study 
+3 months (finalized in 2024) 
+Sample structure 
+Managers/directors/owners of micro-, small-, medium-sized, and large 
+enterprises 
+ 
+Table 2 contains the survey items and other information. Since small and medium-sized 
+businesses (SMEs) make up the majority of businesses in China, it was expected that smaller 
+businesses would contribute the most to the poll. Optimization on website, Marketing on social 
+media, Marketing on email, content marketing, and Management on customer relationship were 
+among the topics included in the dataset, which was gathered in 2024. The dataset was extensive 
+and appropriate for using data mining techniques. There were three main stages of the study. 
+Creating a standardized survey and carefully examining previous research in this field comprised 
+the first component. The dataset was ready for data collection once the questionnaires were sent 
+out. A theoretical framework was established as a result of the examination of literature sources. 
+Respondents were given a month to complete the anonymous questionnaires. The gathered 
+information was combined into a dataset for statistical analysis after the survey period. 
+ 
+Figure 1a: Gender Distribution of Dataset  
+Figure 1b: Enterprise Distribution 
+3.2 Preprocessing  
+To normalize a property, the values are adjusted so that they all lie within a specific range. 
+Whether using computer models or proximity measures, normalization is a crucial stage in 
+categorization frameworks. Min-max normalization aims the original data-linear. Let’s assume 
+that an attribute 𝑀 has 𝑚𝑖𝑛𝑀 and 𝑚𝑎𝑥𝑁 as its lowest and maximum values. The following 
+formula is used to transfer the 𝐶 value of 𝐶, 𝑐𝑚, to 𝑐𝑚 in the range. 
+𝐶𝑦= (𝐶𝑦−𝑚𝑖𝑛𝑚) (𝑚𝑎𝑥𝑚−𝑚𝑖𝑛𝑚)
+⁄
+∗(𝑛𝑒𝑤𝑚𝑎𝑥𝑚−𝑛𝑒𝑤𝑚𝑖𝑛𝑚) + 𝑛𝑒𝑤𝑚𝑖𝑛𝑚                 (1) 
+3.3 Feature extraction using PCA 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+To maintain things simple, we'll suppose that the Y column's means are all zero. U1 = ∑=
+𝑡
+𝑦
+α1y 
+My, where α1 = (α11,...,α1s) . 
+ 
+ 
+∝1= 𝑎𝑟𝑔𝑢max
+∝
+∝𝑠∑̂ ∝   𝑠𝑢𝑏𝑗𝑒𝑐𝑡 𝑡𝑜 ‖∝1‖ = 1                         
+ 
+     (2) 
+Key ingredients are defined as Σ = (MPM )/n,  in order: 
+ 
+ 
+∝𝑙+1= 𝑎𝑟𝑔𝑢max
+∝
+∝𝑠∑̂ ∝        
+ 
+ 
+                      (3) 
+ 
+ 
+‖ ∝‖ = 1  𝑎𝑛𝑑  ∝𝑠∝ℎ= 0, ∀1 ≤𝑔≤ℎ  
+              
+                (4) 
+The projection operator is Wk= h ghs, and the projected data are wgNy, 1 ≤ y ≤ n. The best 
+projection may be found by lowering the total g2 approximation error. 
+ 
+ 
+𝑚𝑖𝑛
+𝐴ℎ∑
+‖𝑗𝑦−𝐴𝑔𝐴𝑔
+𝑠𝑗𝑗‖2
+𝑛
+𝑦=1
+    
+ 
+ 
+ 
+(5) 
+It has different length scales and measurement methods to set parameters in apps.  Because to 
+parameter standardisation, the marginal variance of each variable is equal to 1.   
+3.4 Entrepreneurship behavior in k-means Clustering 
+Clustering analysis is a fundamental stage in information data mining. Clustering is perhaps one 
+of the most widely used information mining techniques. It is used to locate obscure article 
+classes in the data collection. This description of item classes is based on the adage "things are 
+enterprise bunched together," which suggests that similar people or pieces of information should 
+be collected according on their similarities. Individuals or information demonstrations that don't 
+meet the same criteria make up enterprises. There are several gatherings, and each one created by 
+the wireless sensor network clustering system is referred to as a bunch. Measurement of 
+similarity between various information sources, grouping of various information sources, and 
+gathering of information based on similarity are the goals of data mining. Wireless sensor 
+networks employ this analysis to assess. The precise computation is as follows: 
+𝐺1 ∪𝐺2 ∪… ∪𝐺𝑘= 𝑋                                                                         (6) 
+𝐺𝑖∩𝐺𝑗= ∅, 𝑖≠𝑗                                                                       (7) 
+The hubs from centralized data in the clustering tree either graphically portray classes or address 
+classes consistently utilizing test ascribes.  Both equation (6) and (7) explains the collected data 
+in dataset. 
+With the quantitative portrayal of information, the outcomes can be arranged and broke down 
+more precisely. It utilizes p factors (additionally called measurements or qualities) to address n 
+objects using wireless sensor network. The relationship is defined in Equation (8). 
+[
+ 
+ 
+ 
+ 
+𝑥1l
+⋯
+𝑥1𝑓
+⋯
+𝑥1𝑝
+⋯
+⋯
+⋯
+⋯
+⋯
+𝑥𝑖l
+⋯
+𝑥𝑖𝑓
+⋯
+𝑥𝑖𝑝
+⋯
+⋯
+⋯
+⋯
+⋯
+𝑥nl
+⋯
+𝑥𝑛𝑓
+⋯
+𝑥𝑛𝑝]
+ 
+ 
+ 
+ 
+                                                   (8) 
+The node structure, otherwise called the difference grid, encodes the closeness between n things 
+as a n framework (refer Equation (9)) 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+0
+𝑑(2,1)
+0
+𝑑(3,1)
+𝑑(3,2)
+0
+⋮
+⋮
+⋮
+0
+𝑑(𝑛, 1)
+𝑑(𝑛, 2)
+⋯
+⋯
+0
+                                                                         (9) 
+Notwithstanding, it is normal to utilize a proportion of divergence instead of a proportion of 
+closeness as a norm. The proportion of difference is communicated with wireless sensor network 
+as in Equation (10) 
+𝑑(𝑥, 𝑥; ), ∀𝑥′𝑥∈𝑋                                                                                         (10) 
+We generally check that the item's defining variable is a persistent span and that the distance is 
+often utilized to hint at the degree of divergence. When x and x′ are comparable, the distance d 
+between them is negligible. Algorithms based on artificial intelligence can assess the distance. In 
+the unlikely event that x can be distinguished from x′, d x, x′ is a huge quantity. Here, just the 
+term's distance meaning is provided. When the portrayal credits of an information object are 
+span-scaled metric attributes, the information object is a node. 
+ 
+It is significant to calculate meanings of distance. Equations (11), (12), (13) are used to 
+determine the path analysis of entrepreneurship behavior in Manhattan (Manhattan) distance 
+ 
+𝑑(𝑖, 𝑗) = |𝑥𝑖1 −𝑦𝑗1| + |𝑥𝑖2 −𝑦𝑗2| + ⋯+ |𝑥𝑖𝑚−𝑦𝑗𝑚| 
+ 
+(11) 
+Distance on Euclidean 
+ 
+𝑑(𝑖, 𝑗) = √|𝑥𝑖1 −𝑦𝑗1|2| + |𝑥𝑖2 −𝑦𝑗2|2 + ⋯+ |𝑥𝑖𝑚−𝑦𝑚|2                     (12) 
+Minkowski distance 
+𝑑(𝑖, 𝑗) = (|𝑥𝑖1 −𝑦𝑗1|𝑞+ |𝑥𝑖2 −𝑦𝑗2|𝑞+ ⋯+ |𝑥𝑖𝑚−𝑦𝑚|
+1
+𝑞                 (13) 
+ 
+where q is a number that is positive.  
+K-mean clustering 
+K-means is an iterative clustering calculation. Until the optimal group is reached, the enterprise 
+folks are repeatedly pushed via the approach. Using the groups provided by the K-implies 
+computation, the similarity between the people from the group is calculated using the mean value 
+of the items in the group (also known as the bunch centroid). In order to determine the route 
+analysis in entrepreneurship utilizing wireless sensor networks, the research suggested the K-
+mean approach. The mean value of the painting students who took the exam is found using 
+equation (15). 
+Given cluster   𝑘1 = {𝑡𝑖1, 𝑡𝑖2, … 𝑡𝑖𝑚}.Its mean value is given as follows: 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+𝑀𝑖= 1
+𝑚∑𝑡𝑖𝑗
+𝑚
+𝑗=1
+                                                                        (14) 
+Table 3: Characteristics of Clustering 
+Cluster 
+Size 
+(n) 
+Characteristics 
+C1: Digitally Mature 
+Innovators 
+54 
+High adoption of all digital tools, mostly medium 
+enterprises, strong growth. 
+C2: Moderate Adopters 
+47 
+Selective use (social media + website), mostly small 
+enterprises. 
+C3: Low Adopters / 
+Traditionalists 
+35 
+Minimal adoption (CRM & email low), mostly 
+micro/small firms, low growth. 
+The clustering analysis grouped the enterprises into three different groups according to their 
+degree of adopting the digital marketing and entrepreneurial behaviour. Cluster 1 (Digitally 
+Mature Innovators) was the most numerous, comprising mainly of medium-scale companies who 
+have a high level of adoption of all digital tools including websites, social media, content 
+marketing, and customer relationship management (CRM). This group demonstrated the greatest 
+growth potential, which implies that exhaustive digital strategies are positively correlated with 
+innovation-driven entrepreneurship. Cluster 2 (Moderate Adopters) was an organization with 
+small enterprises that actively utilized social media and websites but less adoption of CRM and 
+content marketing. These companies were moderate entrepreneurships which revealed a 
+transition phase of digital maturity. Cluster 3 (Low Adopters or Traditionalists) consisted of 
+mainly micro and small businesses that had little or no digital tool use. Their low digital activity 
+also indicated a lower level of innovativeness and low entrepreneurial development.
+ 
+Figure 2: Enterprises of K-means clustering 
+These patterns were validated in Figure2 visualization, in which enterprises divided themselves 
+into distinct clusters, revealing the behavioral disparities within the level of digital adoption. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Cluster 1 enterprises seemed to be clustered around the region of high site and social media 
+adoption, and Cluster 3 enterprises were located almost along the low-adoption axis. Figure 2 
+data confirm the results of the tables in 3 and shows how the digital adoption can be used as a 
+differentiating variable in entrepreneurial behavior and the potential to innovate. 
+Enhanced Naïve Bayes Classification Algorithm 
+By employing sensors to increase the dimensions of the learning on field within the same dataset, 
+a higher rate of classification may achieve the principles of uniformity and unbiasedness of an 
+estimate.A. V. S. and J. Vijayashree highlight the effectiveness of machine learning models in improving 
+classification accuracy, supporting the use of enhanced algorithms like ENB for entrepreneurship 
+behavior prediction [26]. X. Pan et al. [27] emphasizes the importance of data-driven decision-
+making and algorithmic analysis, which aligns with applying data mining techniques to 
+understand and model entrepreneurial behavior patterns. Using the previously assessed data, our 
+suggested approach simply modifies the learning field to provide optimal performance. For 
+example, a usual trained data set (1st phase) that includes regular weather observations from the 
+previous decade. Similarly, the research used sensor approaches to estimate the technology of 
+adoption towards news on digital media. To divide the 2nd phase of data (a few previously 
+verified weather recordings) into many predefined datasets (on step size) in order to gradually 
+enhance the original training data set. The classification rate of the 3rd phase of data (update to 
+test) may be computed using such training model. We shall ascertain the combined efficacy of 
+the second and third weather data waves. Advantages: The suggested approach has a number of 
+essential benefits compared to the conventional means of entrepreneurial behavior modeling. To 
+begin with, through the incorporation of K-Means clustering, identifying different groups of 
+enterprises according to their innovation and digital adoption trends is made possible, and the 
+meaningful segmentation is presented to inform deliberate interventions. Secondly, Enhanced 
+Naïve Bayes (ENB) classifier is used to enhance the predictive accuracy of the expected 
+outcomes on the basis of the weaknesses of the standard Naive Bayes, like the lack of sensitivity 
+to the independence assumption of the features with the aim to predict the entrepreneurial 
+behaviors more accurately. Thirdly, the method shows better results in several metrics of 
+evaluation, such as accuracy, precision, recall, F1-score, ROC-AUC, and PR-AUC, which 
+implies that the method is capable of managing multidimensional and disbalanced datasets. Also, 
+the method is computationally efficient, hence applicable to real world enterprise-sized data with 
+moderate and large sample sizes. Clustering plus the strong classification gives a comprehensive 
+framework, which not only forecasts behavior but also reveals the hidden trends, which will be 
+useful in providing actions to the managers, policy makers and researchers. Lastly, the approach 
+can be scaled and modified, and it can be subsequently integrated with hybrid or deep learning 
+models, longitudinal studies, or cross-cultural data, which increases its applicability and 
+relevance in a variety of entrepreneurial research settings. All in all, these strengths render the 
+suggested approach a valid and viable instrument in the further development of the theoretical 
+framework and data-informed study of entrepreneurial behavior.Figure 3 explains about the 
+workflow of this study. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ 
+ 
+Figure 3: workflow of this study 
+ Algorithm 1 shows how our suggested method, which makes use of data mining techniques, 
+would improve classification speed and accuracy. 
+The Enhanced Naive Bayes Classification Algorithm 
+Calculate 𝑁(𝐶𝑘𝑉𝐴𝑖,𝑗′), 𝑁(𝑉𝐴𝑖,𝑗′)and 𝑃(𝐶𝑘) from the 1st phase of data 
+Prompts for the 𝑆𝑡𝑒𝑝𝑆𝑖𝑧𝑒, a fixed no. of records on data, to evaluating the performance of AI 
+driven news using sensors 
+Initialize on 𝑠𝑡𝑎𝑟𝑡−𝑝𝑜𝑠= 0; 𝑒𝑛𝑑−𝑝𝑜𝑠= 0; 𝑖𝑛𝑑𝑒𝑥= 1 
+Do 
+ 
+Set 𝑠𝑡𝑎𝑟𝑡−𝑝𝑜𝑠= 0; 𝑒𝑛𝑑−𝑝𝑜𝑠+ 1 
+ 
+Set 𝑒𝑛𝑑−𝑝𝑜𝑠= 𝑖𝑛𝑑𝑒𝑥 × 𝑆𝑡𝑒𝑝𝑆𝑖𝑧𝑒 
+ 
+Prompt for the 𝑵𝑩 Approx. (𝑹𝑭 from Eqn (2) or 𝑰𝑷𝑫 from Eqn (3)) 
+ 
+For each 𝑘= 1 to 𝑃do 
+ 
+Begin 
+ 
+ 
+Calculate 𝑃(𝐶𝑘|𝑉𝐴,.𝑗") = 𝑃(𝐶𝑘) ∏
+∏
+𝑁𝐵 𝐴𝑝𝑝𝑟𝑜𝑥.
+𝑃(𝐶𝑘)
+𝑒𝑛𝑑−𝑝𝑜𝑠
+𝑗"=𝑠𝑡𝑎𝑟𝑡−𝑝𝑜𝑠
+𝑛
+𝑖=1
+ 
+ 
+ 
+Find the highest conditional probability of 𝐴𝑖∈[1,𝑛] 
+ 
+End 
+ 
+Update 𝑁(𝐶𝑘𝑉𝐴𝑖,𝑗′), 𝑁(𝑉𝐴𝑖,𝑗′)and 𝑃(𝐶𝑘) with the second phase of data 
+ 
+Set 𝑖𝑛𝑑𝑒𝑥= 𝑖𝑛𝑑𝑒𝑥+ 1 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+While𝑒𝑛𝑑−𝑝𝑜𝑠< 𝑚2 
+For the rest of each 𝑠𝑡𝑎𝑟𝑡−𝑝𝑜𝑠≤𝑗" ≤𝑚2 
+ 
+Calculate 𝑃(𝐶𝑘|𝑉𝐴,.𝑗") = 𝑃(𝐶𝑘) ∏
+∏
+𝑁𝐵 𝐴𝑝𝑝𝑟𝑜𝑥.
+𝑃(𝐶𝑘)
+𝑚2
+𝑗"=𝑠𝑡𝑎𝑟𝑡−𝑝𝑜𝑠
+𝑛
+𝑖=1
+for all k 
+Find the maximum conditional probability of 𝐴𝑖∈[1,𝑛] 
+Analyze the overall performance and the categorization rate of all k. 
+ 
+IV. 
+Results and Discussion 
+In this analysis, the hardware specifications are relatively low and include a normal computer 
+with an Intel i5 or more chip, 816 GB RAM and 500 GB disk space, which is adequate in terms 
+of processing survey data and executing machine learning programs at a good speed. An 
+additional optional dedicated GPU can be used to increase performance with larger datasets or 
+longer simulations. The software necessary will be MATLAB (to do data preprocessing, 
+clustering, classification and visualization), Python with scikit-learn, pandas, matplotlib (to do 
+other analysis and validation) and regular office software (Excel/Word) to manage survey data 
+and document it. This is a combination that can guarantee a stable environment to use the 
+proposed K-Means clustering and Enhanced Naive Bayes model, analyze findings, and produce 
+visual results. 
+4.1 Classification Result 
+Table 4: Performance Evaluation comparison of methods 
+Method 
+Accuracy 
+(%) 
+Precision 
+(%) 
+Recall 
+(%) 
+F1-Score 
+(%) 
+Proposed: Enhanced Naïve Bayes 
+(ENB) 
+94.6 
+93.8 
+94.2 
+94.0 
+Support Vector Machine (SVM) 
+[28] 
+88.2 
+87.5 
+87.1 
+87.3 
+Random Forest [29] 
+86.5 
+85.9 
+85.2 
+85.5 
+Logistic Regression [29] 
+83.7 
+82.8 
+82.5 
+82.6 
+Decision Tree [30] 
+81.9 
+80.6 
+80.9 
+80.7 
+Naïve Bayes [31] 
+78.4 
+76.9 
+77.5 
+77.2 
+ 
+Accuracy 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ 
+Figure 4: Accuracy comparison of classification methods 
+Figure 4, shows how different classification techniques perform to model the innovation and 
+entrepreneurship behavior. The soft curve is obtained by the same means of interpolation, and 
+the increase in the precision of classification is observed as more sophisticated methods are 
+applied. Naive Bayes at the base level scored the lowest accuracy of 78.4 percent signifying low 
+predictive power. There was a minor increase with Decision Trees (81.9%), and Logistic 
+Regression (83.7%), whereas more significant improvements were achieved with Random Forest 
+(86.5%), and SVM (88.2%), which both learn more complicated relationships in the dataset. The 
+architecture proposed Enhanced Naive Bayes ( ENB ) far outdid the existing techniques, 
+achieving a high precision of 94.6%. The sharp increase at the end of the curve indicates the 
+greater classification performance of ENB, which proved to be very effective in processing the 
+data of multidimensional entrepreneurship behavior. This proves that the method proposed offers 
+a more predictable model than the conventional classifiers. 
+Precision and Recall 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ 
+Figure 5: Precision, Recall comparison of classification methods 
+The area plot gives a relative depiction of accuracy and recall between various classification 
+schemes. Based on the figure 5, it is clear that both the precision and recall values are rising 
+consecutively as we move to more sophisticated models as compared to Naive Bayes and 
+decision tree model, which includes the Random Forest and SVM model. The blue shaded region 
+means precision and the red area means recall and regions that overlap each other means 
+balanced performance. The presented ENB method obviously surpasses the old methods because 
+it attains the highest precision (93.8) and recall (94.2) that proves its better capacity to correctly 
+identify the positive samples and reduce the false negativity. Such an equal increase in these two 
+indicators indicates that the proposed approach not only finds the relevant cases more precisely 
+but also guarantees a better level of reliability in actual performance in comparison with other 
+baseline models. 
+F1-Score 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Figure 6: F1-Score comparison of classification methods 
+The figure 6of F1-score comparison gives an easy to understand and visually stimulating picture 
+of the model performance during classifying the behavior of innovation and entrepreneurship. 
+All the methods are represented by colored bars with marks of the lines to clarify the direction 
+among models. The decree Naive Bayes and Decision Tree models performed comparatively 
+lower F1-scores of 0.781 and 0.805, which suggests a moderate-precision-recall balance. 
+Logistic Regression(0.832), Random Forest (0.860) and SVM (0.877) showed optimal 
+performance, as they had more predictive power. Nevertheless, the Enhanced Naïve Bayes 
+(ENB) suggested showed a considerable breakthrough, with the highest F1 -score (0.942) much 
+better than the conventional models. This steep upward movement on the chart indicates the 
+greater effectiveness of the suggested method in ensuring high precision and high recall at the 
+same time, which proves it to be a more plausible way of examining entrepreneurship behavior. 
+This steady improvement is pointed out visually by the use of the colorful gradient bars and 
+linked line and the superiority of ENB over the current practices is made very clear. 
+4.2 Confusion Matrix 
+Table 5, confusion matrix shows the ability of the Enhanced Naïve Bayes (ENB) classifier to 
+separate various forms of entrepreneurial behavior. The diagonal (bold numbers) show the 
+instances that are all correctly classified under each class: 47 innovative, 44 risk-taking, 46 
+proactive cases, and 41 conservative cases all were correctly identified. The off-diagonal values 
+are a misclassification of the off-diagonal values, i.e. 3 risk-taking behaviors wrongly classified 
+as innovative and 2 conservative behaviors wrongly classified as proactive.On the whole, the 
+matrix indicates that the model has high classification accuracy with the minimal 
+misclassification errors, and it appears as evidence that ENB is good at grasping the distinctive 
+behavioral pattern of entrepreneurs. The fact that most values were diagonal indicates that the 
+proposed method is reliable and robust with respect to the traditional ones. 
+Table 5: Outcome of Confusion matrix 
+Actual \ Predicted Innovative Risk-taking Proactive Conservative 
+Innovative 
+47 
+2 
+1 
+0 
+Risk-taking 
+3 
+44 
+2 
+1 
+Proactive 
+1 
+2 
+46 
+1 
+Conservative 
+0 
+1 
+2 
+41 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ 
+Figure 7: Outcome of entrepreneurship behavior on proposed method 
+Figure 7, Confusion matrix shows a good idea of the degree of success of the proposed 
+Enhanced Naïve Bayes (ENB) model in classifying various forms of entrepreneurial behaviors. 
+The actual class is indicated in each row in the matrix and the predicted class is indicated in each 
+column. There is strong classification accuracy, with the diagonal cells showing correctly 
+classified cases, including 47 innovative, 44 risk-taking, 46 proactive and 41 conservative 
+behaviors. The misclassifications are shown in the off-diagonal cells, and are relatively few 
+compared to the correct predictions, e.g., 3 risk-taking cases were misclassified as innovative, 
+and 2 conservative cases were misclassified as proactive. The row-normalized summary verifies 
+high recall rates across all categories indicating that most of each category was correctly 
+identified with the column-normalized summary indicating high precision rates indicating that 
+predictions made per class were mostly accurate. All in all, the prevalence of the diagonal values 
+show that the ENB model is highly reliable and strong with minimum misclassification errors 
+and thus a useful approach to modeling the behaviour of innovation and entrepreneurship. 
+4.3 ROC-AUC curve 
+ 
+Figure 8: Outcome of ROC Curve 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+The Figure 8 indicate the swap-off curves between the false positive rate and the genuine 
+positive rate (sensitivity) with respect to the various thresholds. The AUC values of the proposed 
+ENB model were high (than 0.90 in all the classes), indicating that the model can be dependable 
+in differentiating the categories of entrepreneurial behaviors. The random guessing is indicated 
+by the diagonal line and all ROC curves lie above this baseline confirming the high predictive 
+ability. 
+4.4 PR-AUC Curve 
+ 
+Figure 9:Outcome of PR-AUC  
+The Figure 9 ,confirm the useability of the model particularly where there are imbalances in the 
+distribution of classes. ENB model demonstrates high precision across all the levels of recall, 
+with a PR-AUC of more than 0.92, better than conventional methods. It means that not only the 
+positive cases are identified but also the false positives are reduced to the minimum, which is 
+especially appropriate when it comes to entrepreneurship behavior. 
+V. 
+Conclusion 
+The study proves that a mixture of data mining method is a good model and predictor of 
+entrepreneurship behavior in businesses. The analysis of clusters showed three different clusters 
+in terms of their digital adoption and innovation trends and focused on the impact of the 
+engagement with technologies on entrepreneurial behavior. The suggested Enhanced Naïve 
+Bayes (ENB) classifier was good than the existing methods based on various measures, such as 
+the precision, accuracy, F1-score, and recall, which showed that the proposed classifier could 
+better represent any complex relationships and subtle behavioral patterns. The outcome of 
+confusion matrixes showed that there was not much misclassification and ROC and PR-AUC 
+curves proved that the model was robust and reliable. These findings indicate that ENB can be 
+used as an effective instrument by enterprise managers to discover, evaluate and endorse 
+innovation-driven conduct, especially in small- and medium-sized companies. In addition, the 
+research offers the empirical data that clustering combined with stronger classification will help 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+to segment and predict behavior more accurately in comparison to the traditional methods. The 
+implications of findings are in specific training, allocation of resources, and policy development 
+to be used in encouraging entrepreneurship and innovation. Future efforts can expand this 
+framework to larger-scale datasets, add longitudinal behavioral analysis and hybrid models using 
+other machine learning methods, so that predictive accuracy and applicability in a wide variety 
+of enterprise contexts continue to improve. 
+ 
+References  
+1. S. Kraus, K. Vonmetz, L. B. Orlandi, A. Zardini, and C. Rossignoli, “Digital 
+entrepreneurship: The role of entrepreneurial orientation and digitalization for disruptive 
+innovation,” Technological Forecasting and Social Change, vol. 193, Art. no. 122638, 
+2023. https://doi.org/10.1016/j.techfore.2023.122638. 
+2. K. Q. Liu and H. S. Fan, “Free entrepreneurship or ‘trapped’ working: A panoramic view 
+of the labor process of brand franchisees,” Journal of Zhejiang, no. 5, pp. 90–100, 238–
+239, 2024. 
+3. T. Tarnanidis, “Exploring the impact of mobile marketing strategies on consumer 
+behavior: A comprehensive analysis,” International Journal of Information, Business and 
+Management, vol. 16, pp. 1–17, Feb. 2024. 
+4. V. Chandna and P. Tiwari, “Cybersecurity and the new firm: Surviving online threats,” 
+Journal of Business Strategy, vol. 44, no. 1, pp. 3–12, 2023. https://doi.org/10.1108/JBS-
+08-2021-0146 
+5. L. Wang, Y. Wang, and X. Pei, “Entrepreneurial imagination: Research analysis and 
+future prospects,” Foreign Economics & Management, vol. 47, no. 3, pp. 33–52, 2025. 
+https://doi.org/10.16538/j.cnki.fem.20240426.401 
+6. A. Alsayat, “Customer decision-making analysis based on big social data using machine 
+learning: A case study of hotels in Mecca,” Neural Computing and Applications, vol. 35, 
+pp. 4701–4722, 2023. https://doi.org/10.1007/s00521-022-07992-x. 
+7. P. Jiao and J. Ding, “Student innovation and entrepreneurship guidance under the 
+integration of data association and Internet,” International Journal of High Speed 
+Electronics and Systems, vol. 35, no. 4, Art. no. 2540812, 2026, doi: 
+10.1142/S0129156425408125 
+8. S. O. Babatunde, O. A. Odejide, T. E. Edunjobi, and D. O. Ogundipe, “The role of AI in 
+marketing personalization: A theoretical exploration of consumer engagement strategies,” 
+International Journal of Management and Entrepreneurship Research, vol. 6, pp. 936–
+949, 2024. 
+9. S. Saeed, S. A. Altamimi, N. A. Alkayyal, E. Alshehri, and D. A. Alabbad, “Digital 
+transformation and cybersecurity challenges for business resilience: Issues and 
+recommendations,” 
+Sensors, 
+vol. 
+23, 
+Art. 
+no. 
+6666, 
+2023. 
+https://doi.org/10.3390/s23156666. 
+10. Y. F. Wang, T. S. Quan, P. Ying, and S. Ming, “Does the digital economy promote urban 
+innovation and entrepreneurship activity? An empirical study based on 269 prefecture-
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+level and above cities,” Journal of Anhui Normal University, no. 5, pp. 135–147, 2023. 
+https://doi.org/10.14182/j.cnki.j.anu.2023.05.014 
+11. H. Zhao, T. Zhang, and K. Tang, “How does agglomeration affect entrepreneurial 
+activities in the North and South? Evidence from high frequency full enterprise big data,” 
+Chinese Journal of Management Science, vol. 31, no. 6, pp. 231–240, 2023. 
+https://doi.org/10.16381/j.cnki.issn1003-207x.2021.1610 
+12. J. C. Alvarez de la Vega, M. E. Cecchinato, J. Rooksby, and J. Newbold, “Understanding 
+platform-mediated work-life: A diary study with gig economy freelancers,” Proceedings 
+of the ACM on Human-Computer Interaction, vol. 7, no. CSCW1, Art. no. 106, 2023, pp. 
+1–32. https://doi.org/10.1145/3579539. 
+13. O. P. Oyeyemi, A. J. Kess-Momoh, G. B. Omotoye, B. G. Bello, S. T. Tula, and A. I. 
+Daraojimba, “Entrepreneurship in the digital age: A comprehensive review of start-up 
+success factors and technological impact,” International Journal of Science and Research 
+Archive, vol. 11, no. 1, pp. 182–191, 2024. https://doi.org/10.30574/ijsra.2024.11.1.0030. 
+14. C. V. Ibeh, K. F. Awonuga, U. I. Okoli, C. U. Ike, N. L. Ndubuisi, and A. Obaigbena, “A 
+review of agile methodologies in product lifecycle management: Bridging theory and 
+practice for enhanced digital technology integration,” Engineering Science and 
+Technology Journal, vol. 5, pp. 448–459, 2024. 
+15. M. Bakator, D. Ćoćkalo, V. Makitan, S. Stanisavljev, and M. Nikolić, “The three pillars 
+of tomorrow: How Marketing 5.0 builds on Industry 5.0 and impacts Society 5.0,” 
+Heliyon, vol. 10, Art. no. e36543, 2024. https://doi.org/10.1016/j.heliyon.2024.e36543. 
+16. H. Y. Aljuhmani, H. Elrehail, P. Bayram, and T. Samarah, “Linking social media 
+marketing efforts with customer brand engagement in driving brand loyalty,” Asia Pacific 
+Journal 
+of 
+Marketing 
+and 
+Logistics, 
+vol. 
+35, 
+pp. 
+1719–1738, 
+2023. 
+https://doi.org/10.1108/APJML-08-2021-0627. 
+17. A. Araar, A. Yesuf, J. Boka, H. Menkir, A. Shafi, E. Yitbarek, and M. Zerihun, 
+“Entrepreneurial risk attitude in micro and small enterprises: Evidence from urban 
+Ethiopia,” Review of Black Political Economy, vol. 51, no. 4, pp. 583–604, 2024. 
+https://doi.org/10.1177/00346446231200655. 
+18. S. Brunelli, L. Vena, S. Sciascia, and L. Naldi, “Does family power drive the size 
+transition of entrepreneurial family firms? A study on the growth of Italian manufacturing 
+firms,” Journal of Small Business and Enterprise Development, vol. 31, no. 6, pp. 1175–
+1200, 2024. https://doi.org/10.1108/JSBED-09-2023-0452. 
+19. L. Chen, W. Zhou, and Y. Zhou, “Value co-creation, dynamic capabilities and ecological 
+advantages of entrepreneurship incubation platforms,” Science Research Management, 
+vol. 42, no. 12, pp. 10–18, 2021. https://doi.org/10.19571/j.cnki.1000-2995.2021.12.002 
+20. Y. Xu, X. Li, F. bin Mustakim, F. M. Alotaibi, and N. N. Abdullah, “Investigating the 
+business intelligence capabilities’ and network learning effect on the data mining for 
+start-up's function,” Information Processing & Management, vol. 59, no. 5, Art. no. 
+103055, 2022, doi: 10.1016/j.ipm.2022.103055 
+21. Y. Huang, Y. Bu, L. Wei, X. Zhu, and L. Xu, “Key predictors of entrepreneurship and 
+innovation via the 3C framework: A data-driven machine learning analysis,” Journal of 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Innovation 
+& 
+Knowledge, 
+Art. 
+no. 
+100963, 
+2026. 
+https://doi.org/10.1016/j.jik.2026.100963. 
+22. H. Khorsandi, M. Mohsenibeigzadeh, A. Tashakkori, and B. Kazemi, “Driving 
+innovation in education: The role of transformational leadership and knowledge sharing 
+strategies,” 
+Current 
+Opinion, 
+vol. 
+4, 
+no. 
+2, 
+2024. 
+https://doi.org/10.52845/currentopinion.v4i2.291. 
+23. Y. Kittichotsatsawat, E. Rauch, and K. Y. Tippayawong, “Designing sustainability 
+measurement of a Thai coffee supply chain using axiomatic design and business model 
+canvas,” 
+Results 
+in 
+Engineering, 
+vol. 
+24, 
+Art. 
+no. 
+103443, 
+2024. 
+https://doi.org/10.1016/j.rineng.2024.103443. 
+24. E. Meygoonpoury, M. K. Ghadim, and Z. Ziabakhsh-Ganji, “Internationalization of 
+renewable energy base businesses with a combined approach to networking and 
+collaborative competition,” Results in Engineering, vol. 21, Art. no. 101726, 2024. 
+https://doi.org/10.1016/j.rineng.2023.101726. 
+25. J. Zhang, X. Pan, X. Sui, J. Sun, and Y. Wang, “Research on China's innovation 
+capability: Spatial and temporal evolution characteristics and influencing factors based on 
+spatial perspective analysis,” Results in Engineering, vol. 26, Art. no. 104789, 2025. 
+https://doi.org/10.1016/j.rineng.2025.104789. 
+26. A. V. S. and J. Vijayashree, “A critical analysis of brain tumor MRI segmentation and 
+classification utilizing machine learning and deep learning methods,” Informatica, vol. 
+49, no. 24, pp. 1–18, 2025. https://doi.org/10.31449/inf.v49i24.8202 
+27. X. Pan, Q. Su, L. Wei, and L. Guo, “Research on ethical issues and coping strategies of 
+artificial intelligence algorithms recommending news with the support of wireless sensing 
+technology,” 
+Journal 
+of 
+Sensors, 
+vol. 
+2023, 
+Art. 
+no. 
+8629849, 
+2023. 
+https://doi.org/10.1155/2023/8629849. 
+28. X. Chen, “Internet Plus innovation and entrepreneurship education model based on 
+machine learning algorithms,” Wireless Communications and Mobile Computing, vol. 
+2022, Art. no. 6176675, 2022. https://doi.org/10.1155/2022/6176675. 
+29. Q. Lü, Y. Chai, L. Ren, P. Ren, J. Zhou, and C. Lin, “Research on quality evaluation of 
+innovation and entrepreneurship education for college students based on random forest 
+algorithm and logistic regression model,” PeerJ Computer Science, vol. 9, Art. no. e1329, 
+2023. https://doi.org/10.7717/peerj-cs.1329. 
+30. Z. Xia, “Empirical research on innovation and entrepreneurship education and cultural 
+confidence of college students based on fuzzy logic and decision tree algorithm,” Journal 
+of Combinatorial Mathematics and Combinatorial Computing, vol. 127A, pp. 6487–6501, 
+2025. https://doi.org/10.61091/jcmcc127a-359. 
+31. P. C. Siswipraptini, H. L. H. S. Warnars, A. Ramadhan, and W. Budiharto, “Personalized 
+career-path recommendation model for information technology students in Indonesia,” 
+IEEE 
+Access, 
+vol. 
+12, 
+pp. 
+49092–49105, 
+2024. 
+https://doi.org/10.1109/ACCESS.2024.3381032 
+ 
+ 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 23 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Modeling and Path Analysis of Innovation and Entrepreneurship Behavior Based on Data 
+Mining 
+Guangli Liu1* 
+ 
+1.School of Marxism，Henan Technical College of Construction,  Zhengzhou, Henan,  
+450000，China 
+Email：GuangliLiu1678@outlook.com (Guangli Liu） 
+ 
+Declaration:  
+Consent to participate and ethics approval: I certify that every research complies with national 
+laws and ethical standards. 
+Consent to publication: I certify that all participants (or their guardians in the event that they 
+are unable to give informed consent, or their next of kin in the event that they are deceased) who 
+may be identified through the manuscript (such as a case report) have had a chance to review the 
+final version and have given written consent to be published.  
+Data and materials availability: Upon request, the corresponding author will provide the data 
+used to support the study's conclusions.  
+Conflicting 
+interests: 
+There 
+are 
+no 
+conflicts 
+of 
+interest 
+to 
+disclose.  
+There is no financial interest to disclose, and all authors have reviewed and approved the 
+manuscript's contents. We attest that the contribution is unique and isn't being reviewed by any 
+other outlet. 
+Funding: Not at all.  
+Contributions of the authors (individually): Each author made a contribution to the design and 
+conceptualisation of the study. The final text was reviewed and approved by all authors.  
+This study does not include any human participants. A variety of data sets was used to construct 
+this 
+essay 
+text.  
+Acknowledgements: Every author contributed to the idea and design of the study. The final text 
+was reviewed and approved by all authors. 
+ 
+Title Page

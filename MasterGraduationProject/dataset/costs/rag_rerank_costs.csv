@@ -1,0 +1,9 @@
+stage,n,p50_ms,p95_ms,mean_ms,measured,mock,note
+prefilter,300,2.2331,4.1119,2.3251,1,,"RBAC (PRIV[doc.perm]<=PRIV[req.perm]) 与 sys_ver(doc,ts) 前置过滤"
+query_encode,300,8.0634,11.7244,8.3957,1,,bge-small-zh-v1.5 ONNX 实时查询编码
+bm25,300,11.4171,19.4459,11.8099,1,,Contextual BM25 块级倒排召回 Top-30
+dense,300,4.1529,6.1847,4.3819,1,,"13,770 块向量矩阵内积召回 Top-30"
+rrf,300,0.0802,0.1227,0.0850,1,,Reciprocal Rank Fusion (k=60) 融合至 Top-20
+rerank,300,1822.7393,2369.7142,1835.5909,1,,bge-reranker-v2-m3 INT8 ONNX 交叉编码器重排 Top-20
+repack,300,0.0516,0.0834,0.0545,1,,"Per-Doc Cap=2 + 动态阈值截断(tau=0.50, K∈[3,8]) + Sides Repacking"
+e2e_rag,300,1856.4287,2400.2977,1862.6430,1,,现代六阶段块级 RAG 端到端本地实测耗时（全实测，零伪造）

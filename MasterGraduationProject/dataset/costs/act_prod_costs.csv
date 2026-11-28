@@ -1,0 +1,85 @@
+concurrency,difficulty,stage,n,p50_ms,p95_ms,mean_ms,measured,mock,note
+1,all,auth_parse,300,0.0288,0.1251,0.0468,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+1,all,pool_wait,300,0.0033,0.0077,0.0041,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+1,all,schema_inspect,300,0.1022,0.1817,0.1067,1,,pragma_table_info 元数据探查（真机实测）
+1,all,sql_validate,300,0.0657,0.1367,0.0742,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+1,all,sql_execute,300,320.7836,935.5466,1010.7273,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+1,all,result_serialize,300,0.0709,0.1250,0.0762,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+1,all,e2e_client,300,324.9785,936.8889,1016.9270,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+1,single_table,auth_parse,91,0.0232,0.1116,0.0410,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+1,single_table,pool_wait,91,0.0033,0.0079,0.0042,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+1,single_table,schema_inspect,91,0.0786,0.1415,0.0842,1,,pragma_table_info 元数据探查（真机实测）
+1,single_table,sql_validate,91,0.0525,0.1023,0.0564,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+1,single_table,sql_execute,91,173.1815,882.4726,348.4467,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+1,single_table,result_serialize,91,0.0550,0.0885,0.0594,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+1,single_table,e2e_client,91,179.0690,900.5113,354.9136,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+1,join,auth_parse,102,0.0271,0.1328,0.0468,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+1,join,pool_wait,102,0.0033,0.0075,0.0040,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+1,join,schema_inspect,102,0.1077,0.1738,0.1143,1,,pragma_table_info 元数据探查（真机实测）
+1,join,sql_validate,102,0.0644,0.1112,0.0689,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+1,join,sql_execute,102,310.9391,726.9918,332.6842,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+1,join,result_serialize,102,0.0874,0.1484,0.0906,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+1,join,e2e_client,102,312.5241,728.6138,338.5774,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+1,nested_agg,auth_parse,107,0.0329,0.1251,0.0517,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+1,nested_agg,pool_wait,107,0.0032,0.0089,0.0040,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+1,nested_agg,schema_inspect,107,0.1125,0.1871,0.1185,1,,pragma_table_info 元数据探查（真机实测）
+1,nested_agg,sql_validate,107,0.1009,0.1538,0.0945,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+1,nested_agg,sql_execute,107,378.7831,26098.5554,2220.3342,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+1,nested_agg,result_serialize,107,0.0718,0.1129,0.0767,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+1,nested_agg,e2e_client,107,380.1312,26109.3074,2226.5989,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+8,all,auth_parse,300,0.0317,0.1644,0.0536,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+8,all,pool_wait,300,773.2986,2515.3863,1450.0356,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+8,all,schema_inspect,300,0.4704,0.9748,0.5183,1,,pragma_table_info 元数据探查（真机实测）
+8,all,sql_validate,300,0.1519,0.3507,0.1630,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+8,all,sql_execute,300,476.3868,2629.1123,1662.6610,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+8,all,result_serialize,300,0.0787,0.1516,0.0868,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+8,all,e2e_client,300,1489.9789,5537.4041,3118.0263,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+8,single_table,auth_parse,91,0.0279,0.1594,0.0518,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+8,single_table,pool_wait,91,681.4508,1931.4223,1311.6046,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+8,single_table,schema_inspect,91,0.3199,0.6909,0.3702,1,,pragma_table_info 元数据探查（真机实测）
+8,single_table,sql_validate,91,0.1605,0.3657,0.1656,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+8,single_table,sql_execute,91,285.4819,2969.5555,795.1567,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+8,single_table,result_serialize,91,0.0621,0.1074,0.0690,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+8,single_table,e2e_client,91,1249.4811,3992.9650,2112.6833,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+8,join,auth_parse,102,0.0281,0.1615,0.0477,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+8,join,pool_wait,102,764.0642,2927.4319,2101.8724,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+8,join,schema_inspect,102,0.5137,0.8765,0.5461,1,,pragma_table_info 元数据探查（真机实测）
+8,join,sql_validate,102,0.1418,0.2957,0.1399,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+8,join,sql_execute,102,484.3465,1379.2844,613.3865,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+8,join,result_serialize,102,0.0897,0.1583,0.0967,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+8,join,e2e_client,102,1300.6869,3493.2708,2720.2089,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+8,nested_agg,auth_parse,107,0.0362,0.1709,0.0607,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+8,nested_agg,pool_wait,107,805.0751,2214.3372,946.3895,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+8,nested_agg,schema_inspect,107,0.5313,1.2483,0.6178,1,,pragma_table_info 元数据探查（真机实测）
+8,nested_agg,sql_validate,107,0.1542,0.4065,0.1827,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+8,nested_agg,sql_execute,107,669.3664,34019.8442,3400.6879,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+8,nested_agg,result_serialize,107,0.0860,0.1451,0.0925,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+8,nested_agg,e2e_client,107,1673.2027,35864.9457,4352.2655,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+16,all,auth_parse,300,0.0301,0.1362,0.0487,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+16,all,pool_wait,300,2170.5045,9590.0023,3619.9289,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+16,all,schema_inspect,300,0.4742,0.8597,0.5771,1,,pragma_table_info 元数据探查（真机实测）
+16,all,sql_validate,300,0.1477,0.2939,0.1569,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+16,all,sql_execute,300,409.6584,1546.8357,1478.1943,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+16,all,result_serialize,300,0.0805,0.1394,0.0867,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+16,all,e2e_client,300,2688.0277,30769.0055,5103.1823,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+16,single_table,auth_parse,91,0.0257,0.1700,0.0519,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+16,single_table,pool_wait,91,2202.8115,9446.0714,3166.4096,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+16,single_table,schema_inspect,91,0.3031,0.6699,0.4919,1,,pragma_table_info 元数据探查（真机实测）
+16,single_table,sql_validate,91,0.1791,0.2901,0.1707,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+16,single_table,sql_execute,91,256.0947,1340.4737,559.7953,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+16,single_table,result_serialize,91,0.0629,0.1038,0.0698,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+16,single_table,e2e_client,91,2574.6166,9895.7656,3731.3700,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+16,join,auth_parse,102,0.0281,0.1208,0.0399,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+16,join,pool_wait,102,2153.6073,32016.4540,4945.2397,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+16,join,schema_inspect,102,0.5066,0.8452,0.5406,1,,pragma_table_info 元数据探查（真机实测）
+16,join,sql_validate,102,0.1356,0.3171,0.1479,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+16,join,sql_execute,102,421.9128,1101.9959,449.4737,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+16,join,result_serialize,102,0.0964,0.1646,0.0979,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+16,join,e2e_client,102,2553.9775,32481.0555,5399.0498,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）
+16,nested_agg,auth_parse,107,0.0372,0.1578,0.0543,1,,HTTP 请求解析 + RBAC 鉴权 + SQL 只读校验（真机实测）
+16,nested_agg,pool_wait,107,2149.8668,6392.6304,2742.2520,1,,有界只读连接池(pool_size=4)真实排队等待耗时（真机实测）
+16,nested_agg,schema_inspect,107,0.5139,0.9013,0.6842,1,,pragma_table_info 元数据探查（真机实测）
+16,nested_agg,sql_validate,107,0.1477,0.3063,0.1538,1,,SELECT * FROM (sql) LIMIT 0 执行计划预检（真机实测）
+16,nested_agg,sql_execute,107,507.7499,39183.0921,3239.9120,1,,150 万行 prod_scale.sqlite 真实分析查询执行（真机实测）
+16,nested_agg,result_serialize,107,0.0834,0.1306,0.0904,1,,compare.normalize 规范化与 JSON 响应序列化（真机实测）
+16,nested_agg,e2e_client,107,2854.8151,40660.6300,5987.8219,1,,含 TCP/HTTP 往返、连接池排队与 4 步工具链的客户端端到端总耗时（真机实测）

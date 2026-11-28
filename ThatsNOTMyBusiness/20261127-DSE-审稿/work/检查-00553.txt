@@ -1,0 +1,13 @@
+00553-01 CONFIRMED | 80.18% | CIFAR-10 验证集成绩，须同时给出同预算和独立测试结果。 | p9 “80.18% 55.80 224.15”
+00553-02 CONFIRMED | Evolved 6 epochs vs. Static 3 epochs vs. None 2 epochs | 不等的微调时长会混杂消融归因。 | p13 “6 epochs for evolved mentorship, 3 for static, and 2 for none”
+00553-03 CONFIRMED | G=8 | 搜索代数不等；代数与计算预算并非必然等价。 | p9 “main genera- tions G = 8 (baseline/ablation generations Gbase = 5)”
+00553-04 CONFIRMED | G=3 | E6 的搜索代数不等，应进一步报告总算力及测试协议。 | p10 “G = 3 generations for EvoMentor-Net, G = 2”
+00553-05 CONFIRMED | +7.69% | Table 4 的绝对准确率差为 7.69 个百分点，不排除预算差异。 | p10 “78.85% +7.69%”
+00553-06 OVERSTATED | 统计显著性完全无效 | p 值计算本身不因预算不等自动无效；它不能排除预算混杂。 | p10 “Wilcoxon W p-value p < 0.05” p10 “0.0312 YES”
+00553-07 CONFIRMED | 71.47%，4.20M FLOPs，59.47K 参数 | LeNet 表内三指标如所引；该表基线是否计入搜索 Pareto 集需明确。 | p9 “71.47% 4.20 59.47 NO”
+00553-08 OVERSTATED | Table 1 错误地将 LeNet-5 | 搜索得到的 Pareto 前沿与纳入全部外部基线的全局前沿是不同集合；应先澄清标记口径。 | p9 “LeNet-5 (Baseline) N/A 71.47% 4.20 59.47 NO” p9 “non-dominated Pareto frontier discovered by EvoMentor-Net”
+00553-09 OVERSTATED | 0–52M FLOPs 区间内所提方法被 LeNet-5 和 Shallow CNN 压制 | 按三目标比较，参数量更少的搜索候选不一定被 LeNet 支配；应逐项给出范围。 | p9 “Subnet #1 85c24163 40.37% 9.82 46.35” p9 “71.47% 4.20 59.47 NO”
+00553-10 UNVERIFIABLE | 无一篇 2021 年后的技术方法论文 | 文末含 2021 年综述及 2023 年数据基准，不能笼统写全部文献停在 2020 年；技术基线新旧需专门逐项核查。 | p14 “Knowledge distillation: A survey, Int. J. Comput. Vis. 129 (2021)”
+00553-11 UNVERIFIABLE | 严重偏离 DSE 期刊定位 | 主题与输入分辨率可确认，期刊适配属于编辑裁决。 | p9 “on CIFAR-10” p13 “Both CIFAR-10 and PathM- NIST were evaluated”
+00553-12 UNVERIFIABLE | held-out test evaluations are missing | 所查主要结果为验证集，但全篇外部测试缺失的断言须完成全文定位后再采用。 | p9 “Val Acc (%)”
+00553-13 OVERSTATED | LeNet-5 支配其前沿 | 三目标比较中 LeNet 的参数多于 Subnet #1；是否支配须同时比较精度、FLOPs、参数，并说明比较集合。 | p9 “Subnet #1 85c24163 40.37% 9.82 46.35” p9 “LeNet-5 (Baseline) N/A 71.47% 4.20 59.47 NO” p9 “Complete Rank-0 non-dominated Pareto frontier”

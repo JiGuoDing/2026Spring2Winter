@@ -1,0 +1,50 @@
+00552-01 CONFIRMED | 76.00% | Table 5 的四图等权 Macro-F1，为稿件报告值。 | p14 “highest average Macro-F1 of 76.00” p15 “69.94 70.59 76.00”
+00552-02 CONFIRMED | 1.88 | Table 5 的排名跨图且跨 Macro/Micro 两个指标计算。 | p14 “the best average rank of 1.88”
+00552-03 CONFIRMED | 0.09–0.79 GiB | 限全监督目标阶段峰值并四舍五入；不能泛化为所有预算或端到端峰值。 | p26 “0.475 NA NA 0.788” p26 “0.0906 NA NA 0.0919”
+00552-04 CONFIRMED | ACM 0.151 GiB、DBLP 0.114 GiB | 按原文限定全监督目标阶段。 | p19 “0.151 GiB on ACM and 0.114 GiB on DBLP”
+00552-05 CONFIRMED | Freebase 0.788 GiB | Table E1 对应 SCETRA/48、Freebase 全监督目标阶段。 | p26 “0.475 NA NA 0.788”
+00552-06 CONFIRMED | 88.80%（5-shot） | 仅 ACM 与 DBLP 的平均 Macro-F1；并非四图均值。 | p15 “88.80 89.20 1.50”
+00552-07 CONFIRMED | 91.17%（10-shot） | 仅 ACM 与 DBLP 的平均 Macro-F1；表格值未经复现实验。 | p15 “91.17 91.44 1.50”
+00552-08 CONFIRMED | HeCo（79.83% / 82.23%） | 对应 ACM+DBLP 5/10-shot 的 Macro 均值。 | p15 “79.83 80.26 2.00” p15 “82.23 82.51 2.00”
+00552-09 CONFIRMED | HGPrompt（78.32% / 80.38%） | 对应 ACM+DBLP 5/10-shot 的 Macro 均值。 | p15 “78.32 79.16 3.00” p15 “80.38 80.81 3.00”
+00552-10 CONFIRMED | MUG（69.77% / 72.71%） | 对应 ACM+DBLP 5/10-shot 的 Macro 均值。 | p15 “69.77 71.39 4.00” p15 “72.71 73.88 4.00”
+00552-11 CONFIRMED | HGMAE（64.34%）与 CHoE（57.26%） | 这是 5-shot 而非两个 shot 的共同值。 | p15 “64.34 65.73 4.50” p15 “57.26 58.47 6.00”
+00552-12 CONFIRMED | I=+11.84±5.43 pp | Table 10 的 DBLP 5-shot 配对交互效应均值及样本标准差。 | p19 “+11.84 ± 5.43”
+00552-13 OVERSTATED | 显著正向交互 | ± 是样本标准差；不能单凭该写法称已报告统计显著性。 | p19 “sample standard deviations in percentage points” p19 “+11.84 ± 5.43”
+00552-14 CONFIRMED | -9.79 | DBLP 5-shot 的固定融合与 LOO 交互对比；数值为百分点。 | p18 “changes Macro-F1 by −9.79 points” p18 “by +2.05 points with LOO”
+00552-15 CONFIRMED | checkpoint 选择 | 主文与附录文字存在实质不一致，需代码及具体协议澄清。 | p19 “selects a checkpoint on validation data” p23 “no separate validation set for checkpoint selection”
+00552-16 CONFIRMED | Train ∪ Val | 这是 Appendix A.3 的 initial/learned fusion；不能据此直接代入 Table 5 的 SCETRA。 | p23 “the union of the training and validation subsets”
+00552-17 CONFIRMED | Table 4 未标明各图验证集规模 | 列仅报告 Train/Test；比较方法实际可用标签尚需进一步对照。 | p13 “Graph Nodes Edges Types Rel. Classes Train Test”
+00552-18 IMPRECISE | 禁用了其标签传播模块 | 原文只说明该运行使用未传播标签的属性；是否违背官方基线配置需外部证据。 | p24 “attributes with- out propagated labels”
+00552-19 CONFIRMED | 68 个测试节点 | Table 4 的 RDF-MUTAG 测试集规模。 | p13 “RDF-MUTAG 23,644 148,454 1 46 2 272 68”
+00552-20 CONFIRMED | 78.02% | 用 ACM、DBLP、Freebase 表中 Macro-F1 推算 78.0167%，为额外的三图描述。 | p15 “93.44 93.39 94.35 94.79 46.26 63.67”
+00552-21 CONFIRMED | 78.38% | SeHGNN 三图报告均值按显示值算为 78.3767%。 | p15 “93.28±0.32 93.19±0.33 94.84±0.17” p15 “47.01±0.57”
+00552-22 CONFIRMED | 78.15% | Simple-HGN 三图报告均值按显示值算为 78.1467%。 | p15 “93.14±0.60 93.07±0.62 93.70±0.36” p15 “47.60±0.57”
+00552-23 CONFIRMED | 仅 68 个测试节点 | 强调小测试集及同一划分，不能把随机种子 SD 当作划分间 SD。 | p13 “RDF-MUTAG 23,644 148,454 1 46 2 272 68”
+00552-24 CONFIRMED | 18.8s | SCETRA、R-GCN、HetGCN 只比较 Freebase 目标适配阶段，尚未计入端到端其他步骤。 | p26 “18.8 0.475 NA NA 0.788” p25 “14.9 0.326 NA NA 6.67” p25 “17.2 0.219 NA NA 2.5”
+00552-25 UNVERIFIABLE | 预处理耗时缺报 | 正文表示单独测量但已查看的表中无预处理数值；尚不能证明附件或全文所有位置均缺失。 | p25 “Times exclude separately measured preprocessing”
+00552-26 CONFIRMED | 44 规则 | 固定规则库存在；网格敏感性及选择稳定性仍需评估。 | p23 “uniform averaging of 44 candidates” p24 “evaluate the 44 ﬁxed rules”
+00552-27 IMPRECISE | 最多 512 条半路径 | 独立短语有歧义；速览卡已写明超出阈值退回单跳，不能误称截取前 512 条。 | p8 “at most 512 eligible paths; otherwise we use one hop”
+00552-28 CONFIRMED | upon reasonable request | 要求可获取代码以核查协议，而非视为已公开。 | p32 “available from the corresponding author upon reasonable request”
+00552-29 OVERSTATED | Eqs. 19–22，经核验代数推导准确无误 | 已抽核 Eq.15 的上界及 Eq.20 的中心矩删除恒等式；本复审未能逐项验证 Eqs.19–22 的全部边界条件及实现，不应给出整组公式无误的保证。 | p10 “It follows from the triangle inequality” p12 “The centered-moment identity updates the scale:”
+00552-30 OVERSTATED | 具备扎实、经逐项核验无误的数学构造与工程思路 | 原稿提出删除机制及数学构造；本复审仅抽核部分公式，不能保证所有公式和工程实现无误。 | p11 “only its label contribution is removed” p12 “The centered-moment identity updates the scale:”
+00552-31 UNVERIFIABLE | 不存在科研诚信红线或导致核心结论坍塌的结构性造假/混杂缺陷 | 没有原始日志、实现及全量标签预算，不能证明不存在关键混杂；暂未发现足以直接推翻送审的证据。 | p13 “methods use the released training and validation labels according to their respective protocols” p23 “no separate validation set for checkpoint selection”
+00552-32 CONFIRMED | SCETRA 在 ACM/DBLP/Freebase/RDF-MUTAG 的适配耗时分别为 3.47s / 1.14s / 18.8s / 0.858s | Table E1 中 A 为目标适配秒数；时间不含另测预处理。 | p26 “ACM/Full SCETRA/46 0 3.47 0.101 NA NA 0.151” p26 “DBLP/Full SCETRA/47 0 1.14 0.0454 NA NA 0.114” p26 “Freebase/Full SCETRA/48 0 18.8 0.475 NA NA 0.788” p26 “RDF-MUTAG/Full SCETRA/49 0 0.858 0.0906 NA NA 0.0919”
+00552-33 IMPRECISE | ±4.85%–12.23% | 4.85 和 12.23 是两个基线的标准差，但并非所有学习型基线的完整范围：Table 5 的 RDF-MUTAG Macro-F1 标准差为 3.62–12.23 个百分点，且是固定划分的跨随机种子标准差，不是方差或跨划分波动。 | p15 “54.73±12.23 57.94±12.15” p15 “65.24±4.85 69.12±4.99” p15 “43.21±3.62 61.76±7.50”
+00552-34 CONFIRMED | 在 ACM 5/10-shot 略低于 HeCo | 5-shot：87.15 对 89.98；10-shot：90.55 对 91.05，均为 ACM Macro-F1。 | p15 “89.98±1.97 89.94±1.93” p15 “87.15±4.73 87.31±4.33” p15 “91.05±1.05 90.98±1.04” p15 “90.55±1.77 90.49±1.80”
+00552-35 CONFIRMED | Freebase 5-shot 上劣于更简单的直接标签传播 | 完整 SCETRA 为 24.37，Table 10 固定融合直接 LP 为 27.86；方法配置以表格说明为准。 | p15 “24.37±4.05 24.07±4.67” p19 “27.86 19.97 27.58 24.64”
+00552-36 CONFIRMED | few-shot: MUG, CHoE; full-budget latest: 2023 SeHGNN | 这里只核实稿件正文给出的引用年份，不等于外部核实文献发表情况或前沿覆盖完整。 | p14 “Lv et al. 2021; Yang et al. 2023” p14 “Shan et al. 2026; Li et al. 2026”
+00552-37 CONFIRMED | 1–2 跳类型化半路径 | 阈值按 schema 的合格路径数判断；超过 512 则只用单跳。 | p8 “schema-compatible one- and two-hop half-paths, including back- tracking”
+00552-38 CONFIRMED | 分图 Macro/Micro-F1 为 ACM 93.44/93.39 | SCETRA 四图 Macro/Micro 为 93.44/93.39、94.35/94.79、46.26/63.67、69.94/70.59；逐图比较以 Table 5 表头为准。 | p15 “93.44 93.39 94.35 94.79 46.26 63.67” p15 “69.94 70.59 76.00” p15 “93.14±0.60 93.07±0.62 93.70±0.36” p15 “47.60±0.57 66.39±0.44” p15 “72.35±1.92” p15 “94.84±0.17 95.23±0.15” p15 “47.01±0.57”
+00552-39 CONFIRMED | ACM（10,942 节点，1,095,744 边，4 类型，16 关系，3 类，Train 907 / Test 2,118） | Table 4，按图节点、边、类型、关系、类别、训练、测试的列顺序；仅核对文稿自报值。 | p13 “ACM 10,942 1,095,744 4 16 3 907 2118”
+00552-40 CONFIRMED | DBLP（26,128 节点，479,132 边，4 类型，12 关系，4 类，Train 1,217 / Test 2,840） | Table 4，按表头解释列。 | p13 “DBLP 26,128 479,132 4 12 4 1217 2840”
+00552-41 CONFIRMED | Freebase（180,098 节点，2,115,376 边，8 类型，72 关系，7 类，Train 2,386 / Test 5,568） | Table 4，按表头解释列。 | p13 “Freebase 180,098 2,115,376 8 72 7 2386 5568”
+00552-42 CONFIRMED | RDF-MUTAG（23,644 节点，148,454 边，1 类型，46 关系，2 类，Train 272 / Test 68） | Table 4，按表头解释列；68 是测试节点数。 | p13 “RDF-MUTAG 23,644 148,454 1 46 2 272 68”
+00552-43 IMPRECISE | 全监督不含预处理时，SCETRA | 表 E1 仅明确时间排除单独测量的预处理；峰值显存维持记录范围，可能包含预处理。 | p25 “Times exclude separately measured preprocessing” p26 “which can include preprocessing”
+00552-44 CONFIRMED | 20 固定嵌套支持集采样，无额外验证标签，CHoE 仅 5 种子 | 原卡已区分 CHoE 的五个 support/head seeds；不同方法实际预算、随机种子的对应方式仍需核实。 | p13 “twenty ﬁxed seeds generate nested support sets” p15 “CHoE has ﬁve support/head seeds”
+00552-45 CONFIRMED | 75.09%、Simple-HGN 74.34% | Table 5 四图平均 Macro-F1；这是稿件自报的两个数值，不代表已复现。 | p15 “74.34 81.49 2.38” p15 “75.09 79.78 2.25”
+00552-46 CONFIRMED | 纯属性（69.11）、纯实体（66.63）、固定规则（69.15）与均匀平均（68.89） | Table 7 的四图平均 Macro-F1；不同控制组的选择范围也不同。 | p17 “69.11 69.82 3.25” p17 “66.63 78.31 3.50” p17 “69.15 78.83 3.50” p17 “68.89 79.33 3.38”
+00552-47 OVERSTATED | 彻底消除了自适应规则选择中极易发生的自标签泄露问题 | 稿件给出每一留一折中移除自身标签贡献、再以该标签评分的协议；不能仅据公式断言实现完全无误或排除其他形式的数据泄漏。 | p11 “only its label contribution is removed” p12 “the held-out label ys serves only as the scoring target”
+00552-48 OVERSTATED | 显著超越 HeCo | Table 6 的跨图平均数更高；未凭所引数字核实显著性检验，且 ACM 上 HeCo 在 5/10-shot 高于 SCETRA。 | p15 “Averages use ACM and DBLP” p15 “CHoE has ﬁve support/head seeds” p15 “88.80 89.20 1.50” p15 “79.83 80.26 2.00”
+00552-49 UNVERIFIABLE | 2026 基线完整 | 原稿报告了 2026 年引用，但离线无法据此穷尽同领域 2026 年基线并证明覆盖完整。 | p14 “Shan et al. 2026; Li et al. 2026”
+00552-50 CONFIRMED | 而 HGMAE、MUG、CHoE 在 Freebase 与 RDF-MUTAG 上均 OOM | Table 6 五样本结果注明 OOM；应结合所用硬件、方法实现及资源测量解释，不作普遍不可运行的推论。 | p15 “HGMAE 64.12±4.24 65.38±3.46 64.57±5.73 66.08±4.90 OOM OOM OOM OOM” p15 “MUG 75.91±11.88 77.63±9.27 63.64±5.19 65.15±4.57 OOM OOM OOM OOM” p15 “CHoE 63.10±6.86 64.72±5.50 51.42±4.06 52.21±4.25 OOM OOM OOM OOM”

@@ -1,0 +1,3251 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+Smart Learning Paths for Future Entrepreneurs: An AI-Optimized Personalized Support
+System Based on Learning Trajectories
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00527
+Full Title:
+Smart Learning Paths for Future Entrepreneurs: An AI-Optimized Personalized Support
+System Based on Learning Trajectories
+Article Type:
+Research Papers
+Funding Information:
+Abstract:
+Entrepreneurship education is crucial in nurturing innovative thinking, ability to think
+and solve problems as well as entrepreneurial intentions in university students.
+However, the traditional forms of teaching are not typically customized and they fail to
+address the different student learning needs. To bridge this gap, this paper introduces
+Entrepreneurship Education White Shark Optimization using Intelligent Learning
+Support Vector Machine (EEWSO-ILSVM) model to build individualized support system
+under the guidance of intelligent learning paths. A structured questionnaire survey was
+used to obtain a dataset of 330 valid responses of students in various fields, covering
+accounting, computer applications, machine operations and preschool education. The
+questions about the Internet use, on-line studying, and expectations to receive
+personal assistance were asked to the students and the entrepreneurial skills were
+rated on the six-item scale with the focus on the entrepreneurial abilities, problem-
+solving, and intentions. The suggested EEWSO-ILSVM combines the optimization
+ability of the White Shark Optimization algorithm with the predictive ability of an SVM,
+which is able to adequately represent tendencies in the learning trajectory and
+entrepreneurial development of students. Comparative experiments against the
+existing models include SVM, GA-SVM, LSTM and CNN-LSTM, which prove that
+EEWSO-ILSVM performs better in terms of accuracy as 92.1%, precision as 91%,
+recall as 90.2%, F1-score as 90.6% and AUC-ROC as highest performance. Moreover,
+radar and bar chart analyses indicate that with this model students show great
+improvements in their entrepreneurial competencies. The results indicate that support
+systems based on intelligent learning trajectory have the potential to improve
+entrepreneurship education by allowing personalized intervention, limiting
+misclassification in competency evaluation, and promoting entrepreneurial
+preparedness in students.
+Corresponding Author:
+Ling Jiang
+Anhui Sanlian University
+CHINA
+Corresponding Author E-Mail:
+LingJiang131@outlook.com
+Order of Authors:
+Ling Jiang
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+Anhui Sanlian University
+Corresponding Author's Secondary
+Institution:
+First Author:
+Ling Jiang
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Additional Information:
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Smart Learning Paths for Future Entrepreneurs: An AI-Optimized Personalized Support 
+System Based on Learning Trajectories 
+ 
+Abstract 
+Entrepreneurship education is crucial in nurturing innovative thinking, ability to think and solve problems 
+as well as entrepreneurial intentions in university students. However, the traditional forms of teaching are 
+not typically customized and they fail to address the different student learning needs. To bridge this gap, 
+this paper introduces Entrepreneurship Education White Shark Optimization using Intelligent Learning 
+Support Vector Machine (EEWSO-ILSVM) model to build individualized support system under the 
+guidance of intelligent learning paths. A structured questionnaire survey was used to obtain a dataset of 330 
+valid responses of students in various fields, covering accounting, computer applications, machine 
+operations and preschool education. The questions about the Internet use, on-line studying, and expectations 
+to receive personal assistance were asked to the students and the entrepreneurial skills were rated on the 
+six-item scale with the focus on the entrepreneurial abilities, problem-solving, and intentions. The 
+suggested EEWSO-ILSVM combines the optimization ability of the White Shark Optimization algorithm 
+with the predictive ability of an SVM, which is able to adequately represent tendencies in the learning 
+trajectory and entrepreneurial development of students. Comparative experiments against the existing 
+models include SVM, GA-SVM, LSTM and CNN-LSTM, which prove that EEWSO-ILSVM performs 
+better in terms of accuracy as 92.1%, precision as 91%, recall as 90.2%, F1-score as 90.6% and AUC-ROC 
+as highest performance. Moreover, radar and bar chart analyses indicate that with this model students show 
+great improvements in their entrepreneurial competencies. The results indicate that support systems based 
+on intelligent learning trajectory have the potential to improve entrepreneurship education by allowing 
+personalized intervention, limiting misclassification in competency evaluation, and promoting 
+entrepreneurial preparedness in students. 
+Keywords: Entrepreneurship education, intelligent learning, learning trajectories, EEWSO-ILSVM. 
+1. Introduction  
+With the full implementation of vocational education and the rise of online vocational education model, the 
+knowledge system of curriculum construction is becoming more and more abundant. In the information-
+based teaching, students can acquire knowledge not only through the teacher’s lectures in the classroom 
+but also through the Internet [1]. Teachers’ teaching methods are no longer single, and different teaching 
+schemes can be designed by using the information-based teaching system; Smart classroom, as a new form 
+of deep integration of information technology and education, promotes the transformation of traditional 
+Blinded manuscript
+Click here to access/download;Blinded manuscript;Construction
+Of A Personalized Support 1552.docx
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+classroom, develops in the direction of intelligence. With the in-depth study of neural network and DL 
+(deep learning), the combination of intelligent classroom and AI (artificial intelligence) is bound to be the 
+future development trend. 
+The arrival of the era of big data has driven the development of all walks of life, and the field of education 
+is also being deeply affected. Infiltrating advanced big data technology into the field of education is the 
+future development trend of educational information [2]. If the characteristics of learners and the learning 
+process can be combined, effectively analyze learners’ characteristic information and learning data, identify 
+and match learning resources that meet learners’ individual needs from massive online learning resources, 
+and actively push them in the online learning platform, it can not only improve the learning efficiency of 
+learners but also obtain better learning effect, but also fully improve the utilization rate of the online learning 
+platform. CF (collaborative filtering) is the most familiar, widely used, and mature recommendation 
+technology in PR system at present [3]. It uses the idea of similarity between users of computing system to 
+filter information to solve the recommendation problem. By classifying system users, the interests and 
+hobbies of one user in the class are extended to other users in the class [4]. Therefore, it is very important 
+to study educational resources PR (personalized recommendation). In other fields, the research of PR 
+technology was earlier, including e-commerce websites, video websites, and reading websites. CF 
+technology is the most successful technology used in PR in these fields. CF technology has many 
+advantages such as simple calculation and high recommendation quality. 
+PR system can analyze the explicit and implicit information of users’ interests, preferences, ratings, and so 
+on, using data mining in the original data source, and can quickly and effectively obtain the potential needs 
+of users [5]. The key technology to consider in the design process of a PR system is the recommendation 
+algorithm; which recommendation algorithm to use depends on the type of recommendation system. This 
+paper avoids the hassle of maintaining and upgrading C/S mode by recommending personalized learning 
+resources in B/S mode. The system’s recommendation of personalized learning resources is based on the 
+cognitive level, learning style, preferences, and learning process of the learners, among other factors. The 
+CF algorithm’s optimization is also based on an analysis of learners’ characteristics and learning process 
+data, giving learners the ability to push for the learning resources they really need [6]. 
+In recent years, with the continuous expansion of the scale of colleges and universities and the wide 
+application of information technology, assisted teaching with the help of online teaching platforms has 
+become the direction of colleges and universities competing to learn. On the one hand, at this stage, most 
+of China’s online teaching platforms usually use hypertext to present teaching content according to the 
+chapters of the course, although this method can provide students with a large number of learning resources 
+[7]. How-ever, it cannot eﬀectively guide students how to use these resources correctly, which has high 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+requirements for students’ learning consciousness and the ability to ﬁnd learning resources and lacks 
+personalized learning guidance for student groups. On the other hand, there are relatively few online course 
+resources in the online personalized learning platform of many colleges and universities, which cannot meet 
+the demand for large quantities of learning resources [8]. Therefore, this paper develops a self-learning 
+platform with the help of intelligent recommendation algorithm and personal recommendation algorithm 
+from the perspective of industry-university integration, so as to teach according to the individual needs of 
+students. 
+1.1 Research Objective 
+The purpose of the study is to develop a personalized support system of university entrepreneurship 
+education through the analysis of intelligent learning processes and application of the EEWSO-ILSVM 
+model to the task of precise assessment and improvement of entrepreneurial competencies, problem-solving 
+skills, and entrepreneurial intentions. 
+1.2 Contribution of the Study 
+The contributions made in this study to the body of entrepreneurship education include the construction of 
+the EEWSO-ILSVM model which involves the use of White Shark Optimization plus Support Vector 
+Machines to build an individualized support system using intelligent learning paths. One of the key 
+advantages of the proposed method to address individual differences in learning behaviors and 
+entrepreneurial competencies is the ability to provide students with a personalized approach, unlike 
+traditional methods, which assume that the groups are homogeneous. On the basis of this model, using the 
+data obtained in this study through secondary technical schools, the study illustrates how a machine learning 
+algorithm that optimizes its results can be used to predict accurately and optimize entrepreneurial potential 
+and problem-solving capacity as well as entrepreneurial intentions. The addition of full performance 
+analysis indicators (accuracy, precision, recall, F1-score, and AUC-ROC) confirm the superiority of the 
+suggested model in comparison with traditional SVM, GA-SVM, LSTM, and CNN-LSTM. Additionally, 
+the use of visual analytics such as radar charts, bar graphs and confusion matrices provide quantifiable data 
+to teachers, policy makers, and education institutions. In sum, the current study presents a new 
+methodological framework and empirical data demonstrating that smart, data-driven models can reshape 
+the entrepreneurship education process to create individualized learning backgrounds and improve the 
+entrepreneurial preparedness of university students. 
+1.3 Research Questions 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+1. 
+What are the best ways of studying intelligent learning pathways to create a specialized support model 
+of university entrepreneurship education? 
+2. 
+Does the suggested EEWSO-ILSVM model enhance the precision of evaluating the entrepreneurial 
+competencies of the students over the available models that include SVM, GA-SVM, LSTM, and CNN- 
+LSTM? 
+3. 
+How does the suggested approach improve the critical entrepreneurial results, such as entrepreneurial 
+skills, problem-solving skills, and entrepreneurial intentions? 
+4. 
+What is the effect of White Shark Optimization implementation in alleviating misclassification and 
+general overall performance in entrepreneurship education support systems? 
+2. Literature review 
+In the context of the gradual popularization of intelligent devices and communication technology, learners 
+who complete autonomous learning through mobile devices are gradually increasing. Knowledge 
+visualization refers to the important content of current knowledge in the research field, with cognitive and 
+intermediary characteristics [9]. It can help learners to acquire cognitive knowledge structure through the 
+graphical interface that can reflect the interaction, and also help researchers build learning environment.  
+The construction of a complete IAEE system in colleges can not only help students cope with the impact 
+of the severe employment situation, guide students to form a stable employment mentality, but also enable 
+students to form correct values. It can also enable students to combine personal development with the 
+progress of the country and the times. At the same time, personal career selection should be combined with 
+the mission of shouldering the great rejuvenation of the nation better integrating personal entrepreneurial 
+dream and the career dream as well as the Chinese dream and promoting social progress [10].  
+The construction of the IAEE system can not only promote the comprehensive ability, but also promote the 
+comprehensive quality of college students. The IAEE system, for college students who are in a confused 
+period of life, can help them point out the direction of employment, encourage them to work hard for their 
+ideals and goals, and stimulate their motivation to learn. At the same time, the construction of the IAEE 
+system can effectively guide college students to learn and master the methods of entrepreneurship, help and 
+guide students to pay attention to and strengthen their practical ability, and cultivate their strong will and 
+confidence to overcome difficulties [11]. 
+At present, the new scientiﬁc and technological revolution and the tide of industrialtransformation meet, 
+and China’s social and economic development has ushered in animportant period in which opportunities 
+and challenges coexist. In this context, Chinawill ﬁrmly implement the innovation-driven development 
+strategy, promote the development of entrepreneurial innovation to a higher level and higher quality, and 
+inject kinetic energy of scientiﬁc and technological innovation into the full realization of Chinese 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+modernization [12]. The key link in the implementation of innovation-driven developmentstrategy lies in 
+the cultivation of entrepreneurial talents in the new era. As the trainingplatform and output position of 
+entrepreneurial talents, colleges and universities shouldfocus on entrepreneurship education throughout the 
+whole university stage of youngstudents, and enhance students’ innovative consciousness and stimulate 
+entrepreneurialenthusiasm 
+from 
+different 
+dimensions 
+[13]. 
+However, 
+in 
+the 
+process 
+of 
+entrepreneurshipeducation at this stage, colleges and universities still follow the traditional teachingmode, 
+and the lack of educational resources, pertinence and evaluation seriously restrictthe effectiveness of 
+entrepreneurship education, which leads to the lack of strong talent guarantee for implementing the 
+innovation-driven development strategy in China.In view of this, this paper believes that in the era of digital 
+intelligence, colleges anduniversities need to deepen the reform of entrepreneurship education with the help 
+of thepractical advantages of digital information technologies such as the Internet and big data [14]. The 
+platform of entrepreneurship education in colleges and universities can rely ononline education, virtual 
+scene practice, public communication space, data analysis andevaluation and other functional services, 
+reshape the whole process of entrepreneurshipeducation practice in colleges and universities, and realize 
+the digital and intelligenttransformation and upgrading of teaching mode. In addition, the platform focuses 
+onintroducing the concept of “user portrait” under big data technology, which opens upnew directions and 
+new ways to improve the accuracy of entrepreneurial knowledge services in colleges and universities, and 
+effectively helps contemporary college students take the ﬁrst step in entrepreneurship [15]. The construction 
+of the platform further improves the entrepreneurship education system in colleges and universities, and 
+provides necessary technical support for the innovative practice of cultivating entrepreneurial talentsin 
+colleges and universities in the new period. 
+Table 1: Summary on related works 
+References  Objectives  
+Methods  
+Limitation  
+[16] 
+This paper primarily focuses on 
+developing a personalized learning 
+platform 
+based 
+on 
+the 
+CF 
+(collaborative filtering) algorithm, 
+as well as conducting system 
+requirements 
+analysis, 
+database 
+design, functional module design, 
+implementation, and testing on this 
+foundation. 
+neural network 
+The results produced by 
+the system are not 
+quantified, 
+and 
+establishing 
+deterministic accuracy 
+for flashcards, quizzes, 
+chatbot responses, and 
+other components is 
+challenging 
+without 
+classroom evaluation. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+[17] 
+This research is aimed at the current 
+lack of intelligent function design in 
+the 
+network 
+teaching 
+platform 
+ofcolleges and universities. 
+Reinforcement 
+Learning 
+These factors highlight 
+the potential technical 
+and 
+logistical 
+difficulties that must be 
+addressed as part of 
+ongoing 
+development 
+efforts.  
+[18] 
+In general, this study provides an 
+innovative technical path for smart 
+labor education. 
+Big data 
+ 
+The 
+complexity 
+and 
+variability 
+of 
+these 
+systems create potential 
+barriers 
+to 
+smooth 
+integration, 
+including 
+issues 
+with 
+data 
+standardization, 
+API 
+compatibility, 
+and 
+security protocols. 
+[19] 
+The objective of this paper is to 
+organize the vast literature on the use 
+of 
+AI 
+for 
+personalization 
+of 
+education and to shed light on the 
+key themes by which an AI-driven 
+approach 
+makes structural 
+modifications to 
+the 
+existing 
+education system.  
+Human-In-The-Loop 
+(HITL) model 
+Data 
+privacy 
+issues, 
+availability of digital 
+resources 
+and 
+affordability constraints 
+surely come in the way 
+of 
+promoting 
+such 
+systems for day-to-day 
+practice. 
+[20] 
+This study investigation the impact 
+of AI-driven personalized learning 
+on 
+entrepreneurship 
+education 
+outcomes, 
+highlighting 
+the 
+mediating role of experience and 
+engagement and the moderating 
+influence of contextual factors. 
+AI-driven personalized 
+learning 
+Educational 
+infrastructures 
+may 
+have 
+institutional 
+policies or limitations 
+that 
+complicate 
+the 
+adoption 
+and 
+deployment 
+of 
+AI-
+driven 
+tools 
+like 
+VirtualTA. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+[21] 
+This study examines the current 
+research on educational data mining, 
+educational 
+learning 
+support 
+services, 
+personalized 
+learning 
+services, and personalized learning 
+paths in education. 
+ 
+Multimodal 
+Fusion 
+Techniques 
+The integration process 
+often 
+requires 
+close 
+collaboration 
+with 
+institutional 
+IT 
+departments, which can 
+introduce 
+additional 
+delays and barriers.  
+[22] 
+This 
+paper 
+presents 
+a 
+novel 
+framework, artificial intelligence-
+enabled intelligent assistant (AIIA), 
+for 
+personalized 
+and 
+adaptive 
+learning in higher education. 
+intelligent 
+learning 
+system 
+One major challenge we 
+faced was the handling 
+of PDF files, which 
+often 
+contain 
+unstructured data. 
+[23] 
+This study examines the current 
+research on educational data mining, 
+educational learning support  
+services, 
+personalized 
+learning 
+services, and personalized learning 
+paths in education. 
+ 
+Personalized Learning 
+Quantitative analysis is 
+necessary to assess the 
+quality of outcomes, but 
+accurately 
+measuring 
+impact and perceived 
+benefits can only be 
+achieved 
+through 
+practical 
+implementation 
+in 
+a 
+classroom setting.  
+[24] 
+This  paper  combs  the  
+help of big data and artificial 
+intelligence for the individualized 
+teaching of university  
+teachers, 
+the 
+individualized 
+management of college educators  
+and  the  individualized  
+learning of  college  students  
+through  the  mining  of  common  
+and  individual data, the equal  
+emphasis  of  process  and  result,  
+Adaptive Learning 
+The training system of 
+innovation 
+and 
+entrepreneurship talents 
+in some universities not 
+yet mature, and only a 
+few 
+innovation 
+and 
+entrepreneurship 
+courses are simply set 
+up. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+and  the  combination  of  task  
+learning  and  
+autonomous  learning.   
+ 
+[25] 
+The study aims to identify the status 
+quo of artificial intelligence in 
+entrepreneurship education with a 
+view 
+to 
+identifying 
+potential 
+research gaps, especially in the 
+adoption 
+of 
+certain 
+intelligent 
+technologies 
+and 
+pedagogical 
+designs applied in this domain. 
+Big data analytics 
+Some 
+colleges 
+lack 
+high-quality teachers of 
+IAEE, and the structure 
+of 
+the 
+teachers 
+is 
+relatively single, and the 
+integration 
+between 
+schools and enterprises 
+is relatively low.  
+ 
+3. Methodology 
+3.1 Dataset 
+Basic network use, awareness and degree of network autonomous learning, and the desire to get learning 
+help and other information on the network platform are the key components of the questionnaire. Students 
+at a school of science and technological engineering are the survey's object. For secondary technical school 
+pupils in the first, second, and third grades, the questionnaire survey technique is used. Accounting, 
+machine tool processing, computer application, elevator operation and maintenance, marketing, vehicle 
+operation and maintenance, numerical control technology, and preschool teaching are among the 365 
+majors. 330 of the 369 distributed surveys are eventually retrieved, for an 88.7% questionnaire recovery 
+rate. The effective questionnaire rate was 81.7% after the faulty questionnaires were eliminated. It displays 
+the respondents' gender distribution: 51.3% of respondents are male, 48.7% are female, and 51.3% are male. 
+However, there is no discernible difference between the two groups. The grade makeup of the kids that 
+were polled shows the statistical findings. Students in technical secondary school classes 1, 2, and 3 were 
+chosen as survey subjects for this questionnaire. While the pupils in grades two and three have a reasonably 
+profound learning experience, the first-graders of technical secondary schools have not abandoned the 
+indoctrination learning style from middle school, therefore the selection percentage is rather low. Their 
+comments are quite helpful in guiding the study for this work. This research looked at how students in a 
+scientific and technology engineering school used the internet on a regular basis. 16.8% of students spend 
+less than 2.5 hours a day online, 42.6% spend 2-4 hours, 29.5% spend 4-6 hours, and 11.9% spend more 
+than 6 hours, according to the figure. It is evident that secondary vocational college students are capable of 
+using the Internet, which has no impact on the adoption of online instruction [26–27]. According to Table 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3, 69.5% of students are able to use the Internet for basic tasks like web browsing, email sending and 
+receiving, forum participation, QQ chat, and finding pertinent information. Additionally, 22.6% of students 
+believe that even though they are not very proficient in using the Internet, it will not have an impact on 
+online learning [28–29]. The prerequisites for putting network learning into practice are network operating 
+abilities. The survey's findings indicate that a scientific and technology engineering school is well-
+positioned to use network teaching. The customized network teaching platform, which is the subject of this 
+research, supports learning activities since the great majority of students may utilize the network for 
+independent 
+learning.  
+Outcome of entrepreneurship education: six-item scale entrepreneurship skills, the ability to solve 
+problems, and entrepreneurial ambitions. A 5-point Likert scale was used to assess the responses. 
+ 
+3.2 Data Filtering and Normalization using Kalman Filter and Min-Max Normalization 
+The Kalman filter is a real-time preprocessing method used to degrade multivariate sensor stream 
+data. Because noise from learning behaviors and educational trajectories might alter tscale 
+encoding readings, this is done to provide robust hazard prediction and increase the quality of input 
+for the proposed EEWSO-ILSVM model. According to Eq. (1), it is assumed to be Gaussian and 
+linear. 
+𝜃𝑠= 𝐹𝑠𝜃𝑠−1 + ∅𝑠  and 𝑦𝑠= 𝐻𝑠𝜃𝑠+ φ𝑠  
+ 
+ 
+ 
+ 
+          (1) 
+ Considering the customized learning prior state distribution represented by Equation (2) 
+𝑎(𝜃𝑠|𝑦1:𝑠−1) = 𝑁(𝜃𝑠|𝜇𝑗|𝑠−1, Σ𝑖|𝑖−1) 
+ 
+ 
+ 
+ 
+ 
+          (2) 
+where 𝜇𝑎 𝜖 ℝ𝑚  and ∑∈ ℝ𝑚×𝑚
+𝑎
+ represent the initial mean and covariance of AI-driven, the 
+Kalman filter performs exact Bayesian prediction expressed in Eq (3-5) and update steps are 
+expressed in Eq. (6-9). 
+𝑎(𝜃𝑠|𝑦1:𝑠−1) = 𝑁(𝜃𝑠|𝜇𝑗|𝑠−1, Σ𝑖|𝑖−1)                                                                                   (3) 
+𝑎(𝜃𝑠|𝑦1:𝑠) = 𝑀(𝜃𝑠|𝜇𝑠 , Σ𝑠)                                                                                         (4) 
+𝜇𝑠|𝑠−1 = 𝐹𝑠𝜇𝑠−1 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(5) 
+Σ𝑖|𝑖−1 = 𝐹𝑠Σ𝑠−1𝐹𝑡
+𝑇+ 𝑄𝑠 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(6) 
+∑
+= ∑
++ 𝐻𝑠𝑇
+−1
+𝑖|𝑠−1
+−1
+𝑠
+𝑅𝑠−1𝐻𝑠 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(7) 
+𝐾𝑠= ∑𝐻𝑠𝑇
+𝑠
+𝑅𝑠−1 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(8) 
+𝜇𝑠= μ𝑖|𝑖−1 + 𝐾𝑠 (𝑦𝑠−𝑦̂𝑠) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(9) 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+The anticipated observation at time 𝑠 is represented by 𝑦̂𝑠= 𝐻𝑠μ𝑖|𝑠−1, where 𝐾𝑠 is the Kalman Gain, which 
+is used to translate the residual (error between observed and predicted sensor value) into the latent space. 
+For increased dependability and fewer erroneous data records, the filtered denoize parameter streams are 
+then normalized by Min-Max before being fed into the EEWSO-ILSVM hazard prediction model. Each 
+input feature is converted to a common scale [0,1] using min-max normalization, which preserves the range 
+of values. The definition of the transformation is Eq (10). 
+ 
+𝑌𝑤= 
+𝑦−min (𝑦)
+max(𝑦)−min (𝑦) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(10) 
+where Y is the original value from the sensor dataset, min (𝑦)  is the minimum value, min (𝑦) is the 
+maximum value, and  𝑌𝑤 is the new normalized value (scaled between 0 and 1). The EEWSO-ILSTM 
+model's learning stability, convergence rate, and forecast accuracy are all enhanced by the normalized 
+output. Prior to dimensionality reduction by PCA and model training/inference, this procedure is executed 
+individually to each parameter stream. 
+3.3 Feature Extraction Using Principal Component Analysis (PCA) 
+Prior to being fed into the EEWSO-ILSVM model, multivariate learning data is optimized using PCA, an 
+effective dimensionality reduction technique. Because direct processing of raw data might result in higher 
+computing burden and decreased model generalization, this strategy lowers dimensionality and redundancy 
+in the system. By converting a big collection of possibly correlated variables into principle components, 
+PCA preserves the majority of the information in the original dataset and guarantees effective, scalable, and 
+quicker learning in the EEWSO-ILSVM-based hazard prediction. The following stages are used to illustrate 
+the PCA method. 
+Step 1: Min-Max Normalization of Sensor Data 
+In order to improve neural network training efficiency and model generalization in changing subterranean 
+settings, sensor data is normalized using Min-Max scaling, which removes scale discrepancies among 
+observations. Eq. (11) shows the normalized learning risk index. 
+𝑇𝑖𝑗
+′ = (𝑇𝑖𝑗− 𝑇𝑖𝑗−𝑚𝑖𝑛)/(𝑇𝑖𝑗−𝑚𝑎𝑥−𝑇𝑖𝑗−𝑚𝑖𝑛)  
+ 
+ 
+ 
+ 
+ 
+ 
+(11) 
+Where 𝑇𝑖𝑗
+′ is a Normalized value of the 𝑗th parameter for the 𝑖𝑡ℎ sample, 𝑇𝑖𝑗 denotes the original 
+value, 𝑇𝑖𝑗−𝑚𝑖𝑛 is the Minimum value, and 𝑇𝑖𝑗−𝑚𝑎𝑥is a Maximum value. 
+Step 2: Matrix Construction in convariance 
+To capture the interdependencies across parameters, a covariance matrix is created using the normalized 
+multivariate data samples. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Step 3: Eigenvalue and Eigenvector Computation 
+The eigenvalues and eigenvectors of the covariance matrix is evaluated, to identify the principal 
+directions of variance within the dataset. 
+Step 4: Variance Contribution Rate Analysis 
+Each primary component's variance contribution and cumulative contribution rate are calculated using the 
+corresponding eigenvalue. The amount of information that each component maintains from the original 
+variables is determined in this stage. 
+Step 5: Principal Component Selection 
+The EEWSO-ILSVM model improves inference speed and prediction accuracy by using a smaller number 
+of main components with high contribution rates as input. For effective real-time hazard categorization and 
+forecasting, particularly in resource-constrained contexts with low latency and economical processing, it 
+employs PCA-based feature compression. 
+ 
+3.4 Entrepreneurship Education White Shark Optimizer (EEWSO) based on Intelligent 
+Learning Support Vector Machine (ILSVM) 
+3.4.1 Entrepreneurship Education White Shark Optimizer (EEWSO) 
+A metaheuristic technique called EEWSO is utilized to tune the ILSTM network's hyperparameters in order 
+to recognize danger patterns from the input sensor data. It imitates white sharks' clever hunting techniques, 
+allowing for the best detection accuracy with the least amount of delay in high-dimensional, complicated, 
+and nonlinear issues, such as those posed by subterranean, real-time environmental data streams. In Figure 
+1, the EEWSO processing flowchart is shown. 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Figure 1. EEWSO Flowchart  
+Initialization of Search Space 
+A potential hyperparameter set is represented by each shark (search agent). In Eq. (12), the starting 
+population is dispersed at random within the search region that is determined by model constraints. 
+𝑦= [
+𝑦1
+1
+𝑦1
+2
+…
+𝑦1
+𝑚
+𝑦2
+1
+𝑦2
+2
+…
+𝑦2
+𝑚
+… .
+……
+…
+𝑦𝑐
+1
+𝑦𝑐
+2
+…
+𝑦𝑐
+𝑚
+]  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(12) 
+where 𝑐 is the hyperparameter space's dimensions, 𝑚 is the number of subterranean worker solutions 
+(sharks), and 𝑦 is the population matrix. 
+Dynamic Parameter Update 
+Throughout iterations, the EEWSO dynamically modifies control settings to preserve an adaptive balance 
+between local exploitation and global exploration. In Eqs. (13 to 15), these modifications enable the 
+optimizer to converge efficiently while avoiding local optima. 
+𝑠= 𝑠𝑚𝑖𝑛+
+𝑠𝑚𝑎𝑥−𝑠𝑚𝑖𝑛
+𝑠𝑚𝑎𝑥+𝑠𝑚𝑖𝑛 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(13) 
+𝑚𝑣= 
+1
+𝑎0+𝑒(1 2
+⁄ −𝑘)/𝑎1 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(14) 
+𝑆𝑆= |1 −𝑒(−𝑎2×𝑘
+𝑘)| 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(15) 
+Velocity Update Based on Prey Tracking 
+Each search agent's velocity is modified in accordance with local and global best experiences to simulate 
+the chase behavior of white sharks, promoting convergence towards the ideal hyperparameter values 
+indicated by Equation (16). 
+𝑏𝑘+1
+𝑖
+= 𝜇[𝑏𝑘
+𝑖+ 𝑝1(𝑑𝑔𝑏𝑒𝑠𝑡𝑘−𝑑𝑘
+𝑖) × 𝑐1 + 𝑝2(𝑑𝑏𝑒𝑠𝑡
+𝑣𝑘
+𝑖
+−𝑑𝑘
+𝑖) × 𝑐2]  
+ 
+ 
+(16) 
+Position Update Based on Adaptive Movement 
+Depending on the sensory input represented in Equation (17), shark locations are updated either via 
+oscillatory movement or migration based on momentum. 
+𝑑𝑘+1
+𝑖
+= {
+𝑑𝑘
+𝑖→⊕𝑑0 + 𝑢. 𝑎+ 𝑙. 𝑏; 𝑟𝑎𝑛𝑑< 𝑚𝑣
+𝑑𝑘
+𝑖+
+𝑢𝑘
+𝑖
+𝑓; 𝑟𝑎𝑛𝑑≥𝑚𝑢
+  
+ 
+ 
+ 
+ 
+(17) 
+Exploratory Adjustment Toward Global Best 
+As shown by Eqs. (18 and 19), EEWSO incorporates stochastic perturbation to prevent premature 
+convergence and promote deeper investigation. 
+𝑑𝑘+1
+𝑖
+= 𝑑𝑔𝑏𝑒𝑠𝑡𝑘+ 𝑟1𝐷⃗⃗ 𝑤𝑠𝑔𝑛(𝑟2 −0.5)𝑟3 < 𝑆𝑠  
+ 
+ 
+ 
+ 
+(18) 
+𝐷⃗⃗ 𝑤= |𝑟𝑎𝑛𝑑× (𝑑𝑔𝑏𝑒𝑠𝑡−𝑑𝑘
+𝑖)|   
+ 
+ 
+ 
+ 
+ 
+ 
+(19) 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+This avoids early convergence and improves the capacity to search globally. In order to improve model 
+training speed, prediction accuracy for gas anomalies, impact events, and environmental changes, 
+generalization to invisible subsurface risks, and effective inference for real-time warnings, EEWSO 
+improves the whole ILSTM architecture. Proactive safety measures in underground settings are supported 
+by this adaptive optimization, which guarantees accurate and responsive danger estimates. 
+3.4.2 Intelligent Learning Support Vector Machine (ILSVM) 
+ILSVM is a machine learning model that uses a least-squares loss function and equality constraints to solve 
+linear equations, making classification and regression tasks easier. By categorizing thermal data, fault 
+detection improves system dependability by anticipating high-priority issues like overheating or load 
+spikes. Finding a function that maximizes failure detection and system resilience is its aim. The objective 
+of ILSVM is to use Equation (20) to identify a function. 
+𝑒(𝑤) = 𝑥𝑠∅(𝑤) + 𝑎                                                                                                                     (20) 
+The best fits training data {(𝑤𝑗, 𝑧𝑗)}𝑗=1
+𝑚, 𝑤ℎ𝑒𝑟𝑒𝑤𝑗𝜖𝑄𝑚, 𝑧𝑗𝜖{−1,1}𝑎𝑛𝑑 ∅(𝑤) is a nonlinear mapping to a 
+feature space with great dimensions. Equations (21-22) construct equality restrictions that apply to 
+the primal optimization problem. It examines how these components work together to affect the 
+system of entrepreneurship education, enabling intelligent, real-time system reactions and the 
+prediction of possible learning. 
+min
+𝑥,𝑎,𝜉𝐼(𝜔, 𝜉) =
+1
+2 ||𝑥||2 +
+𝐷
+2 ∑
+, 𝜉𝑗
+2
+𝑚
+𝑗=1
+                                                                                        (21) 
+𝑍𝑗(𝑥𝑠∅(𝑤𝑗) + 𝐶) = 1 −𝜉𝑗,     𝑗= 1, . . 𝑚                                                                                (22) 
+As a regularization parameter, 𝐷> 𝑂 controls the trade-off between minimizing the training error and 
+optimizing the margin. Equation (23), which introduces Lagrange multipliers ∝𝑗, provides the Lagrangian. 
+By looking at sensor data pertaining to student and system performance, it is possible to find tailored support 
+learning in education, such as overfitting. 
+𝐾(𝑥, 𝑏, ∝, 𝜉) =
+1
+2 ‖𝑋‖2 +
+𝐷
+2 ∑
+, 𝜉𝑗
+2 −∑
+∝𝑗[𝑧𝑗(𝑥𝑠
+𝑚
+𝑗=1
+𝑚
+𝑗=1
+∅(𝑤𝑗) + 𝐶) −1 + 𝜉𝑗]          (23) 
+Where Ω𝑗𝑖= 𝐿(𝑤𝑗, 𝑤𝑖) = ∅(𝑤𝑗)
+𝑆∅(𝑤𝑗) is the matrix of kernels. By minimizing a cost function made up 
+of two primary terms—the sum of squared errors, which penalizes deviations from the actual student data, 
+and the squared norm of the weight vector, which aids in controlling the model's complexity—ILSVM 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+creates a decision surface in the high-dimensional feature space. Equations (24–26) illustrate how this 
+procedure enables the model to determine the best decision limits for program defect detection. 
+[
+0
+1𝑠
+1
+Ω +
+1
+𝐷𝐽] [𝑎
+𝛼] = [0
+𝑧]                                                                                                           (24) 
+𝐿(𝑤𝑗, 𝑤𝑖) = exp (−
+||𝑤𝑗−𝑤𝑗||2
+𝜎2
+)                                                                                          (25) 
+𝑒(𝑤) = ∑
+∝𝑗𝐿(𝑤𝑗, 𝑤𝑖) + 𝑐
+𝑚
+𝑗=1
+                                                                                               (26) 
+It adjusts to real-time students changes and detects faults in early stages, which are appropriate for 
+predictive maintenance activity. The ILSVM equation variables are defined in Table 2. 
+Table 2: Variables and their explanation  
+Variable 
+Meaning 
+𝑤 
+Weight vector in the high-dimensional feature space 
+𝑒(𝑤) 
+Final decision function 
+𝑋 
+Coefficient vector  
+𝑥𝑠 
+Feature vector 
+𝛼 
+Constraint weight 
+𝜙(𝑤) 
+Nonlinear feature mapping from high-dimensional space to input space 
+𝑍𝑗 
+Target label for the 𝑗𝑡ℎ sample (∈{−1,1}\𝑖𝑛\{−1,1\}) 
+𝑤𝑗 
+ Input sample 
+𝑚 
+Total number of training samples 
+𝜉𝑗 
+Squared-error (slack) variable for the jth constraint 
+‖𝑋‖2 
+Squared Euclidean norm of the weight vector (measures model complexity) 
+𝐷 
+Regularization parameter (trade-off between margin size and squared error) 
+𝛼𝑗 
+Lagrange multiplier associated with the jth constraint 
+𝐶 
+Bias term (offset of the decision function) 
+𝛺𝑗𝑖 
+Kernel matrix entry, Ω𝑗𝑖= 𝐿(𝑤𝑗, 𝑤𝑖) = ∅(𝑤𝑗)
+𝑆∅(𝑤𝑗) 
+𝐿(𝑤𝑗, 𝑤𝑖) 
+Kernel function, here RBF: exp (−
+||𝑤𝑗−𝑤𝑗||2
+𝜎2
+ 
+𝜎 
+Kernel bandwidth parameter in the RBF kernel 
+𝑓(𝑤) 
+Decision function: 𝑒(𝑤) = ∑
+∝𝑗𝐿(𝑤𝑗, 𝑤𝑖) + 𝑐
+𝑚
+𝑗=1
+ 
+[𝑎
+𝛼] 
+Vector of unknowns (bias term and language multipliers) to be solved 
+[0
+𝑧] 
+Right-hand side vector in the linear system representing training labels 
+[
+0
+1𝑠
+1
+Ω + 1
+𝐷 𝐽] 
+Augmented matrix in combining constraints and kernel for solving the system 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Advantages: The proposed EEWSO-ILSVM approach has many significant advantages within the 
+framework of entrepreneurship education and figure 2 describe about work flow of proposed approach. 
+First, it combines White Shark Optimization (WSO) with SVM, which provides parametric optimization 
+efficiency high to improve the classification level significantly with a simplified computation complexity. 
+Second, it will also allow the model to become intelligent in tracking individual learning patterns and 
+learning competencies of the learners, and, therefore, provide them with a truly personalized support system 
+unlike a one-fits-all-situations model. Third, the approach shows a better performance than other models 
+including SVM, GA-SVM, LSTM, and CNN-LSTM in several assessment measures, such as accuracy, 
+precision, recall, F1-score, and AUC-ROC. This makes the identification of strengths and weaknesses of 
+students in entrepreneurship more reliable. Fourth, the model reduces the misclassification errors that are 
+indicated in the confusion matrix analysis and thus improves the effectiveness of tailored interventions. 
+Finally, the solution proposal is very realistic because once the evidence based information is provided to 
+educators and institutions, the more effective ways of developing entrepreneurial capabilities, problem 
+solving skills and entrepreneurial intentions of students will be created. 
+ 
+Figure 2: Proposed method 
+ 
+EEWSO-ILSVM as described in Algorithm 1. 
+Algorithm 1:  EEWSO-ILSVM 
+Initialize sensor data and model parameters 
+𝑠𝑒𝑛𝑠𝑜𝑟_𝑑𝑎𝑡𝑎 = 𝑙𝑜𝑎𝑑_𝑠𝑒𝑛𝑠𝑜𝑟_𝑑𝑎𝑡𝑎()          
+𝑑𝑒𝑐𝑖𝑠𝑖𝑜𝑛𝑡𝑟𝑒𝑒= 𝑖𝑛𝑖𝑡𝑖𝑎𝑙𝑖𝑧𝑒𝑑𝑒𝑐𝑖𝑠𝑖𝑜𝑛𝑡𝑟𝑒𝑒(
+) 
+𝑙𝑠𝑠𝑣𝑚_𝑚𝑜𝑑𝑒𝑙 = 𝑖𝑛𝑖𝑡𝑖𝑎𝑙𝑖𝑧𝑒_𝑙𝑠𝑠𝑣𝑚()   
+Preprocess the data (filter noise) 
+𝑝𝑟𝑒𝑝𝑟𝑜𝑐𝑒𝑠𝑠𝑒𝑑_𝑑𝑎𝑡𝑎 = 𝑎𝑝𝑝𝑙𝑦_𝑠𝑎𝑣𝑖𝑡𝑧𝑘𝑦_𝑔𝑜𝑙𝑎𝑦_𝑓𝑖𝑙𝑡𝑒𝑟(𝑠𝑒𝑛𝑠𝑜𝑟_𝑑𝑎𝑡𝑎) 
+Train the Decision Tree on the preprocessed data 
+𝑑𝑒𝑐𝑖𝑠𝑖𝑜𝑛_𝑡𝑟𝑒𝑒. 𝑡𝑟𝑎𝑖𝑛(𝑝𝑟𝑒𝑝𝑟𝑜𝑐𝑒𝑠𝑠𝑒𝑑_𝑑𝑎𝑡𝑎) 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Train the ILSVM model using historical thermal data 
+𝑖𝑙𝑠𝑣𝑚_𝑚𝑜𝑑𝑒𝑙. 𝑡𝑟𝑎𝑖𝑛(𝑝𝑟𝑒𝑝𝑟𝑜𝑐𝑒𝑠𝑠𝑒𝑑_𝑑𝑎𝑡𝑎) 
+Make predictions for fault detection 
+𝑑𝑡_𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑖𝑜𝑛𝑠 = 𝑑𝑒𝑐𝑖𝑠𝑖𝑜𝑛_𝑡𝑟𝑒𝑒. 𝑝𝑟𝑒𝑑𝑖𝑐𝑡(𝑝𝑟𝑒𝑝𝑟𝑜𝑐𝑒𝑠𝑠𝑒𝑑_𝑑𝑎𝑡𝑎) 
+𝑖𝑙𝑠𝑣𝑚_𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑖𝑜𝑛𝑠 = 𝑖𝑙𝑠𝑣𝑚_𝑚𝑜𝑑𝑒𝑙. 𝑝𝑟𝑒𝑑𝑖𝑐𝑡(𝑝𝑟𝑒𝑝𝑟𝑜𝑐𝑒𝑠𝑠𝑒𝑑_𝑑𝑎𝑡𝑎) 
+Combine results using decision-tuning (combine DT and ILSVM outputs) 
+𝑐𝑜𝑚𝑏𝑖𝑛𝑒𝑑_𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑖𝑜𝑛𝑠 = 𝑐𝑜𝑚𝑏𝑖𝑛𝑒_𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑖𝑜𝑛𝑠(𝑑𝑡_𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑖𝑜𝑛𝑠, 𝑖𝑙𝑠𝑣𝑚_𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑖𝑜𝑛𝑠) 
+Identify faults (classify as normal or abnormal) 
+𝑓𝑎𝑢𝑙𝑡_𝑠𝑡𝑎𝑡𝑢𝑠 = 𝑐𝑙𝑎𝑠𝑠𝑖𝑓𝑦_𝑓𝑎𝑢𝑙𝑡𝑠(𝑐𝑜𝑚𝑏𝑖𝑛𝑒𝑑_𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑖𝑜𝑛𝑠) 
+Output the result 
+if 𝑓𝑎𝑢𝑙𝑡_𝑠𝑡𝑎𝑡𝑢𝑠 == "Abnormal": 
+    𝑡𝑟𝑖𝑔𝑔𝑒𝑟_𝑚𝑎𝑖𝑛𝑡𝑒𝑛𝑎𝑛𝑐𝑒_𝑎𝑙𝑒𝑟𝑡() 
+Else: 
+    continue monitoring ()  
+End 
+ 
+4. Results and Discussion 
+4.1 Configuration setup 
+Table 3: Hardware and software configuration  
+Category 
+Specification 
+Processor 
+Intel Core i7 or higher 
+RAM 
+16 GB minimum 
+Storage 
+512 GB SSD 
+GPU 
+NVIDIA RTX series (for deep learning models) 
+Programming Environment 
+MATLAB R2022a / Python 3.9 
+Libraries & Toolboxes 
+Scikit-learn, TensorFlow/Keras, MATLAB ML toolbox 
+Visualization Tools 
+MATLAB plotting, Python Matplotlib/Seaborn 
+ 
+ 4.2 Performance Evaluation 
+Performance assessment is a very important procedure to determine the success of the proposed EEWSO-
+ILSVM model in the field of entrepreneurship education. It encompasses a methodological measurement 
+of the predictive validity and consistency of the model to classify the entrepreneurial capabilities of the 
+students according to their learning processes. Using conventional metrics of evaluation accuracy, 
+precision, recall, F1-score, and AUC-ROC, Table 4 provides a holistic view of how the model performs in 
+comparison with the existing models including SVM [30], GA-SVM [31], LSTM [32], and CNN-LSTM 
+[33]. These measures give us a picture of not only how accurate the predictions are but also how the model 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+is able to strike a balance between correctly predicting high-competency students (true positives) and 
+reducing false predictions (false positives and false negatives). In addition, performance outcomes are 
+presented in a manner that can be understood using visual tools like confusion matrices, radar charts, and 
+bar graphs. By conducting performance assessment, the proposed study confirms the soundness of the 
+suggested approach and proves that it can be used to provide individual and effective entrepreneurial 
+education assistance. 
+Table 4: Comparison of existing and proposed methods 
+Model 
+Accuracy (%) Precision (%) Recall (%) F1-score (%) 
+SVM (baseline) 
+78.2 
+76.5 
+74.1 
+75.2 
+GA-SVM 
+82.5 
+80.8 
+79.3 
+80.0 
+LSTM 
+84.7 
+83.2 
+82.5 
+82.8 
+CNN-LSTM 
+87.4 
+86.1 
+85.5 
+85.8 
+EEWSO-ILSVM (Proposed) 92.1 
+91.0 
+90.2 
+90.6 
+ 
+ Accuracy 
+Fig 3 demonstrates the comparison of the accuracy of five models used on the entrepreneurship education 
+data. As shown in the graph, the default SVM model was about 78.2 per cent accurate which shows poor 
+performance in handling nonlinear patterns in learning trajectories of the students. The accuracy of the 
+hyperparameter optimization is 82.5 in the Genetic Algorithm (GA-SVM), which proves the usefulness of 
+the hyperparameter optimization. The sequential data LSTM model, that optimizes the accuracy to 84.7, 
+was found to learn the temporal dependencies in smart learning trajectories. An even greater accuracy of 
+87.4% was achievable with the CNN-LSTM hybrid model, which suggests the additive effect of 
+convolutional feature extraction and recurrent sequence modeling. Lastly, the EEWSO-ILSVM method 
+performed better than any of the baselines by achieving an accuracy of 92.1 as indicated in the plot. The 
+specified positive result confirms the predictive performance improvement provided by the combined 
+White Shark Optimization and Intelligent Learning SVM, thus, resulting in the more authoritative 
+categories of the entrepreneurial preparedness and permitting offering students a more useful customized 
+care. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ 
+Figure 3: Outcome of Accuracy 
+ Precision and Recall 
+ 
+Figure 4: Outcome of Precision and Recall 
+The plot of combined precision and recall is a good indicator of the relative performance of the various 
+models used in the personalized entrepreneurship education support system. As depicted, both of these 
+metrics are constantly increasing compared to SVM to the suggested EEWSO-ILSVM approach, which 
+shows the efficiency of hybrid optimization in figure 4. The classical SVM model has the least precision 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+and recall, which is an indicator of its limited flexibility to learn complex learning curves. The performance 
+of GA-SVM and LSTM models is moderately improved, and CNN-LSTM is even better because it captures 
+sequential information and feature interdependencies. Nevertheless, the EEWSO-ILSVM model is the most 
+precise (91.0% and 90.2% on the plot), and recalls (distinct magenta and green highlights). The high 
+correlation of the two values of precision and recall among the models also indicate a robustness though 
+the large difference among baseline methods and the proposed methodology indicates the significance of 
+integration of metaheuristic optimization (White Shark Optimization) and intelligent learning-based SVM. 
+As a rule, the plot gives a feeling that the offered EEWSO-ILSVM practice is more stable and better in 
+terms of performance and an efficient means of creating an individualized system of support within the area 
+of entrepreneurship education. 
+ F1-Score 
+ 
+Figure 5: Outcome of F1-Score 
+In figure 5, the F1-score area plot offers a better understanding of how the various models trade off the 
+precision and recall of learning support in the context of entrepreneurship education. The performance has 
+also been shown to increase gradually with increasing distance between the baseline SVM model and the 
+proposed EEWSO-ILSVM approach as illustrated in the shaded region. SVM and GA-SVM models have 
+relatively low F1-scores, which means that these models are capable of recognizing a specific pattern but 
+fail to reach not only high accuracy but also high recall rates. The findings demonstrate superior 
+performance of LSTM and CNN-LSTM since they can perform sequential learning besides extracting 
+features leading to enhanced consistency between the learning trajectories predicted and actual 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+entrepreneurial ventures. The EEWSO-ILSVM model, however, has the highest F1-score, indicated by the 
+magenta marker, which proves that this approach provides a better balance of goals on both sides of the 
+coin: recognizing the entrepreneurial potential and reducing the number of false forecasts. This is 
+fundamental to the education of entrepreneurship where the appropriate identification of learners and 
+entrepreneurial intentions directly affects the success of individual support systems. The continuous 
+monotonic increase in the plot graphically supports the idea that incorporating White Shark Optimization 
+into an intelligent SVM framework contributes to a meaningful improvement in the prediction of learning 
+performance. 
+4.3 AUC-ROC curve 
+ 
+Figure 6: Result of ROC curve 
+The performance in terms of classification of the SVM, GA-SVM, LSTM, CNN-LSTM, and the proposed 
+EEWSO-ILSVM is compared in Figure 6. The curves indicate the variation of True Positives rate (TPR) 
+with the False Positives rate (FPR) at different thresholds. The models approaching the top-left side of the 
+diagram have a better classification performance because they attain a higher sensitivity with minimum 
+false alarms. SVM curve that reflects the lower discriminative power is nearest to the diagonal, but the 
+improvement of GA-SVM and LSTM are moderate. CNN-LSTM is a bit better as it displays powerful 
+sequential learning. The steepest curve is the proposed EEWSO-ILSVM, almost touching the top-left 
+boundary which implies the maximum Area Under the Curve (AUC). There is a diagonal line indicating 
+random guessing and all the models do better than this threshold, with the greatest difference associated 
+with EEWSO-ILSVM.When used in the context of entrepreneurship teaching, this ROC analysis indicates 
+the extent to which either model will be able to differentiate students with solid entrepreneurial learning 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+outcomes and those with less robust engagement or abilities. The larger the AUC, the more predictable the 
+system is about what kind of students need more personalized assistance, and the more precise the 
+interventions can be. The better curve of the EEWSO-ILSVM shows that White Shark Optimization 
+coupled with intelligent learning-based SVM is a powerful and trustworthy framework to develop 
+customized support systems.  
+ 
+Figure 7: Result of Improvement in Average Score 
+Figure 7 shows that the average scores in entrepreneurial competencies have improved in different models 
+used in the personalized support system. As indicated, the baseline SVM model performs the worse because 
+of its low capability to reflect the patterns of complex learning in the field of entrepreneurship education. 
+As the scores based on the introduction of GA-SVM increase significantly, there is a positive indication 
+that optimization helps to improve the results. LSTM and CNN-LSTM can also improve performance by 
+using sequential learning and more powerful feature extraction to make significantly more accurate 
+predictions of entrepreneurial competencies. Nevertheless, the best gain is realised with the proposed 
+EEWSO-ILSVM method, with an average competency score of 91%. This significant increase, which is 
+emphasized by the last bar, proves that the combination of White Shark Optimization and intelligent 
+learning SVM is the most suitable framework to facilitate the entrepreneurial growth of students. Those 
+steadily increasing trends across models also confirm that more complex and hybrid approaches improve 
+predictive accuracy, permitting more and more customized and effective entrepreneurship education 
+interventions. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 23 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+4.4 Confusion Matrix 
+ 
+Figure 8: Result of Confusion Matrix 
+Figure 8 ,comparison between the current Exisitng model against the proposed EEWSO-ILSVM clearly 
+shows that the new approach is more effective than the current one. In the current confusion matrix, there 
+are also observable cases of misclassifications, in which a small percentage of students are misplaced in 
+their corresponding entrepreneurial competency levels. In contrast, the EEWSO-ILSVM confusion matrix 
+is more focused on the center of the right predictions, which is evidence that the model can distinguish 
+between high and low competency learners. It shows that the proposed approach is not sensitive to false 
+positives, false negatives, and the ability of the method to capture intelligent learning paths. Consequently, 
+the EEWSO-ILSVM leads to an improved identification of the strengths and weaknesses of students, which 
+allows building a more efficient personalized support system in entrepreneurship education at the university 
+level. 
+Statistical Significance 
+Model Comparison 
+Mean Accuracy (%) Standard Deviation p-value 
+CNN-LSTM vs. SVM 
+85.4 vs. 78.2 
+±1.92 
+0.003 
+CNN-LSTM vs. GA-SVM 
+85.4 vs. 81.6 
+±1.65 
+0.009 
+CNN-LSTM vs. LSTM 
+85.4 vs. 83.1 
+±1.48 
+0.021 
+CNN-LSTM vs. EEWSO-ILSVM 85.4 vs. 91.0 
+±1.12 
+0.001 
+In order to confirm that the performance improvement of the proposed EEWSO-ILSVM model is 
+statistically significant, paired t-test was used to compare the proposed method and existing models. The 
+findings indicate that EEWSO-ILSVM is statistically significantly better than CNN-LSTM and other 
+baseline algorithms with a p-value of 0.001 (p < 0.05). This proves that the noticed improvement in the 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 24 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+accuracy of predictions of entrepreneurial competency is not a simple coincidence, but a direct outcome of 
+the intelligent learning trajectory analysis and White Shark Optimization strategy. 
+Learning Trajectory  
+ 
+Figure 9: Result of Development of Students learning stages 
+Figure 9 depicts the learning trajectory of the entrepreneurial competencies of students in different stages 
+of learning with the adoption of different learning models. The graph indicates that the initial SVM model 
+has a gradual but the limited improvement which suggests that it cannot fully describe the dynamic learning 
+behaviors of the students. The CNN-LSTM model is exhibiting a stronger increasing pattern, which 
+indicates the ability to predict sequential learning patterns as well as temporal dependencies. Nevertheless, 
+the EEWSO-ILSVM model proposed offers the most significant and consistent growth curve between the 
+initial and late learning process. Such a steady rise means that the combination of intelligent learning path 
+analysis and White Shark Optimization allows better determining the learning needs of students and 
+providing personal support in time. Consequently, EEWSO-ILSVM directed students demonstrate quicker 
+competency learning and a long-term learning development. Altogether, the graph helps to confirm that the 
+effectiveness of personalized entrepreneurship education systems is greatly improved through the analysis 
+of the learning trajectories, instead of the use of the fixed measures. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 25 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ 
+5. Conclusion 
+This work proves that the suggested Entrepreneurship Education White Shark Optimization on the basis of 
+Intelligent Learning Support Vector Machine (EEWSO-ILSVM) model offers a strong and efficient 
+application of the support system building in university entrepreneurship education. Through the 
+combination of smart learning paths and cutting-edge optimization and classification algorithms, one would 
+be able to assess the entrepreneurial capabilities of the learners, such as skills, aptitudes, problem-solving, 
+and entrepreneurship intention, with high accuracy. The analysis of EEWSO-ILSVM against the traditional 
+models like SVM, GA-SVM, LSTM, and CNN-LSTM has clearly revealed that EEWSO-ILSVM performs 
+better in various measurement parameters, including accuracy, precision, recall, F1-score, and AUC-ROC. 
+Furthermore, it is proved that the model has the potential to reduce misclassification and maximize custom 
+learning interventions through the confusion matrix analysis. Moreover, the radar and bar chart presentation 
+proves that the growth of entrepreneurial abilities has improved significantly, and it is possible to say that 
+the model positively affects the learning results of students. Overall, the paper presents an innovative 
+approach that can be adopted to supplement intelligent optimization and entrepreneurship education that 
+provides future entrepreneurs with a data-driven, high-quality, and personalized learning process. 
+Future Enhancement 
+Although the further evolution of the proposed EEWSO-ILSVM model may be generalized to any other 
+sphere, the further research activities may be performed in a great number of ways, to make the given model 
+more feasible and applicable. First, the real-time use of digital platform learning analytics may allow the 
+further refinement of learning pathways tracking, which can offer personalized support that changes 
+dynamically. Second, to increase the generalizability of the model and the power of the model, the model 
+needs to be generalized to other universities and other disciplines. Third, the analysis of multimodal data, 
+including behavioral records, social, and psychological indicators, may lead to more insights into the 
+entrepreneurial preparedness than survey-based measures. We can also add that future systems can 
+implement hybrid deep learning models that use reinforcement learning to constantly optimize custom 
+interventions. And finally, to convert intelligence into a practical tool to be utilized by students, teachers, 
+and administrators to establish a complete entrepreneurship education ecosystem, the intelligence of the 
+model can be utilized to create an interactive dashboard or a mobile-based support platform. 
+ 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 26 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+References  
+1. Y. Ding, X. Zhao, Z. Zhang, W. Cai, and N. Yang, “Graph sample and aggregate-attention network for 
+hyperspectral image classification,” IEEE Geoscience and Remote Sensing Letters, vol. 19, pp. 1–5, 2022. [Online]. 
+Available: https://doi.org/10.1109/LGRS.2021.3062944 
+2. X. B. Jin, W. T. Gong, J. L. Kong, Y. T. Bai, and T. L. Su, “PFVAE: A planar flow-based variational auto-
+encoder prediction model for time series data,” Mathematics, vol. 10, no. 4, Art. no. 610, 2022. [Online]. Available: 
+https://doi.org/10.3390/math10040610 
+3. E. Katsamakas, O. V. Pavlov, and R. Saklad, “Artificial intelligence and the transformation of higher education 
+institutions: A systems approach,” Sustainability, vol. 16, no. 14, Art. no. 6118, 2024. [Online]. Available: 
+https://doi.org/10.3390/su16146118 
+4. D. Akiba and M. C. Fraboni, “AI-supported academic advising: Exploring ChatGPT's current state and future 
+potential toward student empowerment,” Education Sciences, vol. 13, no. 9, Art. no. 885, 2023. [Online]. Available: 
+https://doi.org/10.3390/educsci13090885 
+5. L. Raimi, N. B. Bamiro, and S. A. Lim, “Two facets of AI-driven applications for sustainable learning and 
+development: A systematic review of tech-entrepreneurial benefits and threats to creative learning,” Developments 
+in Corporate Governance and Responsibility, vol. 23, pp. 223–248, 2024. https://doi.org/10.1108/S2043-
+052320240000023012 
+6. F. Otto, N. Kling, C.-A. Schumann, and C. Tittmann, “A conceptual approach to an AI-based adaptive study 
+support system for individualized higher education,” International Journal of Advanced Corporate Learning, vol. 16, 
+no. 2, pp. 69–80, 2023. [Online]. Available: https://doi.org/10.3991/ijac.v16i2.35699 
+7. K. de Fine Licht, V. Carlsson, and A. Berman, “Trustworthy AI in the public sector: An empirical analysis of a 
+Swedish labor market decision-support system,” Technology in Society, vol. 76, Art. no. 102471, 2024. [Online]. 
+Available: https://doi.org/10.1016/j.techsoc.2024.102471 
+8. P. Mishra, “Revolutionizing education with AI and ML,” in Internet of Behavior-Based Computational 
+Intelligence for Smart Education Systems, M. Ouaissa et al., Eds. IGI Global, 2025, pp. 53–94. 
+https://doi.org/10.4018/979-8-3693-8151-9.ch003 
+9. A. Alam, “The secret sauce of student success: Cracking the code by navigating the path to personalized learning 
+with educational data mining,” in Proc. 2023 2nd Int. Conf. Smart Technologies and Systems for Next Generation 
+Computing (ICSTSN), 2023, pp. 1–8. https://doi.org/10.1109/ICSTSN57873.2023.10151558 
+10. C. Baek and T. Doleck, “Educational data mining versus learning analytics: A review of publications from 2015 
+to 2019,” Interactive Learning Environments, vol. 31, no. 6, pp. 3828–3850, 2023. [Online]. Available: 
+https://doi.org/10.1080/10494820.2021.1943689 
+11. R. I. Fariani, K. Junus, and H. B. Santoso, “A systematic literature review on personalised learning in the higher 
+education context,” Technology, Knowledge and Learning, vol. 28, no. 2, pp. 449–476, 2023. [Online]. Available: 
+https://doi.org/10.1007/s10758-022-09628-4 
+12. X. Ji, L. Yu, and X. Lei, “Research on personalized learning path of distance education based on data mining 
+technology,” Curriculum and Teaching Methodology, vol. 6, no. 6, pp. 79–84, 2023. [Online]. Available: 
+https://doi.org/10.23977/curtm.2023.060612. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 27 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+13. G. Lampropoulos, “Educational data mining and learning analytics in the 21st century,” in Encyclopedia of Data 
+Science and Machine Learning, J. Wang, Ed. IGI Global, 2023, pp. 1642–1651. [Online]. Available: 
+https://doi.org/10.4018/978-1-7998-9220-5.ch098 
+14. K. C. Li and B. T. M. Wong, “Artificial intelligence in personalised learning: A bibliometric analysis,” 
+Interactive Technology and Smart Education, vol. 20, no. 3, pp. 422–445, 2023. [Online]. Available: 
+https://doi.org/10.1108/ITSE-01-2023-0007 
+15. A. Rabelo, M. W. Rodrigues, C. Nobre, S. Isotani, and L. Zárate, “Educational data mining and learning 
+analytics: A review of educational management in e-learning,” Information Discovery and Delivery, vol. 52, no. 2, 
+pp. 149–163, 2024. [Online]. Available: https://doi.org/10.1108/IDD-10-2022-0099 
+16. M. Shao and L. Zhao, “Analysis of learning styles based on multimodal techniques: Evolution, dilemma and 
+landscape,” Open Education Research, vol. 28, no. 4, pp. 102–109, 2022. [Online]. Available: 
+https://doi.org/10.13966/j.cnki.kfjyyj.2022.04.012 
+17. Y. Y. Wang and Y. H. Zheng, “Realistic dilemma, implication reconstruction and model construction of 
+personalized learning in intelligent age,” Educational Technology Review, vol. 44, no. 3, pp. 28–35, 2023. [Online]. 
+Available: https://doi.org/10.13811/j.cnki.eer.2023.03.004 
+18. Ö. Baydaroğlu, S. Yeşilköy, Y. Sermet, and İ. Demir, “A comprehensive review of ontologies in the hydrology 
+towards guiding next-generation artificial intelligence applications,” Journal of Environmental Informatics, vol. 42, 
+no. 2, pp. 90–107, 2023. [Online]. Available: https://doi.org/10.3808/jei.202300500 
+19. H. B. Essel, D. Vlachopoulos, A. Tachie-Menson, E. E. Johnson, and P. K. Baah, “The impact of a virtual 
+teaching assistant (chatbot) on students' learning in Ghanaian higher education,” International Journal of Educational 
+Technology in Higher Education, vol. 19, Art. no. 57, 2022. [Online]. Available: https://doi.org/10.1186/s41239-
+022-00362-6 
+20. M. Neumann, M. Rauschenberger, and E.-M. Schön, “‘We need to talk about ChatGPT’: The future of AI and 
+higher education,” in Proc. 2023 IEEE/ACM 5th Int. Workshop on Software Engineering Education for the Next 
+Generation (SEENG), Melbourne, Australia, May 16, 2023, pp. 29–32. [Online]. Available: 
+https://doi.org/10.1109/SEENG59157.2023.00010 
+21. V. Pursnani, Y. Sermet, M. Kurt, and İ. Demir, “Performance of ChatGPT on the US fundamentals of 
+engineering exam: Comprehensive assessment of proficiency and potential implications for professional 
+environmental engineering practice,” Computers and Education: Artificial Intelligence, vol. 5, Art. no. 100183, 
+2023. [Online]. Available: https://doi.org/10.1016/j.caeai.2023.100183 
+22. M. Perkins, “Academic integrity considerations of AI large language models in the post-pandemic era: ChatGPT 
+and beyond,” Journal of University Teaching and Learning Practice, vol. 20, no. 2, Art. no. 7, 2023. [Online]. 
+Available: https://doi.org/10.53761/1.20.02.07 
+23. E. Kasneci et al., “ChatGPT for good? On opportunities and challenges of large language models for education,” 
+Learning and Individual Differences, vol. 103, Art. no. 102274, 2023. [Online]. Available: 
+https://doi.org/10.1016/j.lindif.2023.102274 
+24. M. Alqahtani, “Artificial intelligence and entrepreneurship education: A paradigm in Qatari higher education 
+institutions after COVID-19 pandemic,” International Journal of Data and Network Science, vol. 7, no. 2, pp. 695–
+706, 2023. [Online]. Available: https://doi.org/10.5267/j.ijdns.2023.3.002 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 28 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+25. R. Bell and H. Bell, “Entrepreneurship education in the era of generative artificial intelligence,” 
+Entrepreneurship Education, vol. 6, no. 3, pp. 1–16, 2023. [Online]. Available: https://doi.org/10.1007/s41959-023-
+00099-x 
+26. X. Ding, H. Ding, F. Zhou, and L. Zhao, “Personalized learning path optimization based on enhanced deep 
+neural network: Higher education teaching model integrating learner behavior and cognitive style,” Discover 
+Artificial Intelligence, vol. 5, Art. no. 205, Aug. 2025. https://doi.org/10.1007/s44163-025-00467-7 
+27. X. Zhang, Y. Zhang, Y. Lv, and H. Zhang, “Innovative application of electrical and intelligent personnel training 
+mode in the construction industry under the background of artificial intelligent technology,” Journal of Physics: 
+Conference Series, vol. 1915, no. 4, Art. no. 042026, 2021. [Online]. Available: https://doi.org/10.1088/1742-
+6596/1915/4/042026 
+28. F. Yang, L. Chao, and Z. Yang, “Research on the construction of teaching staff in higher vocational colleges 
+under the background of enrollment expansion,” Education Study, vol. 3, no. 2, pp. 202–206, 2021. 
+https://doi.org/10.35534/es.0302032 
+29. A. L. Kazakov, P. A. Kuznetsov, and L. F. Spevak, “Construction of solutions to a boundary value problem with 
+singularity for a nonlinear parabolic system,” Journal of Applied and Industrial Mathematics, vol. 15, no. 4, pp. 
+616–626, 2021. https://doi.org/10.1134/S1990478921040050 
+30. C. Fang, “Intelligent online English teaching system based on SVM algorithm and complex network,” Journal of 
+Intelligent and Fuzzy Systems, vol. 40, no. 2, pp. 2709–2719, 2021. https://doi.org/10.3233/JIFS-189313 
+31. A. Kalwar, D. Shekhawat, S. Joshi, and A. K. Bairwa, “A genetic algorithm approach to adaptive learning: 
+Enhancing learner satisfaction and performance,” IEEE Access, vol. 13, pp. 102815–102829, 2025. [Online]. 
+Available: https://doi.org/10.1109/ACCESS.2025.3578867 
+32. G. Zhou, “Learning trajectory analysis in English learning using LSTM neural networks,” Journal of 
+Computational Methods in Sciences and Engineering, vol. 26, no. 1, pp. 699–711, 2026. 
+https://doi.org/10.1177/14727978251361291 
+33. Y. Shen, “Using long short-term memory networks (LSTM) to predict student academic achievement: Dynamic 
+learning path adjustment,” in Proc. 2024 Int. Conf. Machine Intelligence and Digital Applications (MIDA '24), 
+2024, pp. 627–634. [Online]. Available: https://doi.org/10.1145/3662739.3672328 
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 29 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Smart Learning Paths for Future Entrepreneurs: An AI-Optimized Personalized Support 
+System Based on Learning Trajectories 
+Ling Jiang1* 
+1. Office of  Safety Quality of Management and Evaluation, 
+Anhui Sanlian University , 
+Hefei,Anhui，230601, China 
+Email: LingJiang131@outlook.com 
+ 
+Declaration: 
+Ethics approval and consent to participate:  I confirm that all the research meets ethical 
+guidelines and adheres to the legal requirements of the study country. 
+Consent for publication: I confirm that any participants (or their guardians if unable to give 
+informed consent, or next of kin, if deceased) who may be identifiable through the manuscript 
+(such as a case report), have been given an opportunity to review the final manuscript and have 
+provided written consent to publish. 
+Availability of data and materials: The data used to support the findings of this study are 
+available from the corresponding author upon request. 
+Competing interests: Here are no have no conflicts of interest  to declare. 
+All authors have seen and agree with the contents of the manuscript and there is no financial 
+interest to report. We certify that the submission is original work and is not under review at any 
+other publication. 
+Authors' contributions (Individual contribution): All authors contributed to the study 
+conception and design.  All authors read and approved the final manuscript. 
+There is no human participate involved in this research. this article manuscript is created from 
+collection of data set.  
+Funding: Not applicable 
+Acknowledgements: All authors contributed to the study conception and design. All authors 
+read and approved the final manuscript. 
+Clinical Trial Number: Not applicable 
+ 
+Title Page

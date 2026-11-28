@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "dataset_version": "0.4.0",
+  "purpose": "显式划分在线缓存策略合法可见字段（online_visible）与仅离线评测真值字段（eval_only），严禁在线策略读取 eval_only 字段。",
+  "tables": {
+    "request_stream": {
+      "online_visible": [
+        "req_id",
+        "timestamp",
+        "query_text",
+        "query_emb",
+        "plan_id",
+        "act_key",
+        "domain",
+        "permission",
+        "snapshot",
+        "obj_types"
+      ],
+      "eval_only": [
+        "cluster_id",
+        "gold_doc_ids",
+        "gold_fact_spans"
+      ],
+      "note": "在线分簇只能基于 query_text/query_emb 等观测特征，严禁读取题库 cluster_id；严禁在线读取 gold_doc_ids / gold_fact_spans。"
+    },
+    "update_events": {
+      "online_visible": [
+        "event_id",
+        "timestamp",
+        "doc_id",
+        "old_ver",
+        "new_ver",
+        "changed_chunk_ids",
+        "change_type",
+        "domain",
+        "permission"
+      ],
+      "eval_only": [
+        "effective_at",
+        "notification_delay_s",
+        "answer_impact",
+        "negative_control"
+      ],
+      "note": "在线系统仅在 timestamp（notified_at）获知更新；effective_at 仅用于离线真值判定，answer_impact/negative_control 仅用于离线评估。"
+    },
+    "docs_versioned": {
+      "online_visible": [
+        "doc_id",
+        "version",
+        "doc_type",
+        "domain",
+        "permission",
+        "chunks"
+      ],
+      "eval_only": [
+        "updated_at"
+      ],
+      "note": "updated_at 等价于真实生效时刻 effective_at；在线可见版本必须经系统通知表 notified_at 解析，不能直接按 updated_at 偷看未到达更新。"
+    },
+    "act_plan_pool": {
+      "online_visible": [
+        "acts",
+        "plans"
+      ],
+      "eval_only": [],
+      "note": "工具目录与计划模板目录属系统配置；注意 plan.completion_rate 是构造参数，在线估值应由执行日志统计或显式标注为先验假设。"
+    },
+    "tasks": {
+      "online_visible": [],
+      "eval_only": [
+        "task_id",
+        "cluster_id",
+        "question",
+        "difficulty",
+        "gold_sql",
+        "snapshot",
+        "answer_shape",
+        "expected_columns",
+        "truth",
+        "metric_refs",
+        "permission",
+        "time_window"
+      ],
+      "note": "tasks.jsonl 全部属于评测真值库，在线策略严禁直接读取；在线执行 SQL 由实验台工具执行器封装。"
+    }
+  }
+}

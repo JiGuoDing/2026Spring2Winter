@@ -38,7 +38,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>02 / 08</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>02 / 09</Text>
         </Box>
     </Box>
 </Slide>

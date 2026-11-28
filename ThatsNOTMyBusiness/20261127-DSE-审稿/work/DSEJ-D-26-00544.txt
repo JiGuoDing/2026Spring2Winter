@@ -1,0 +1,3817 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+CGANHW: An Efficient Synthetic Trace Scheme for Electromagnetism and Power
+Profiled Attacks
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00544
+Full Title:
+CGANHW: An Efficient Synthetic Trace Scheme for Electromagnetism and Power
+Profiled Attacks
+Article Type:
+Research Papers
+Funding Information:
+National Natural Science Foundation of
+China
+(62462009)
+Prof. Yuling Luo
+National Natural Science Foundation of
+China
+(42501519)
+Prof. Yuling Luo
+Natural Science Foundation of Guangxi
+Zhuang Autonomous Region
+(GuiKeFN2600640064)
+Prof. Yuling Luo
+Guangxi Natural Science Foundation
+(2026GXNSFBA00640257)
+Prof. Yuling Luo
+Guangxi Science and Technology
+Projects
+(GuiKeAD24010047)
+Prof. Yuling Luo
+Guangxi Young Elite Scientist
+Sponsorship Program
+(GXYESS2026035)
+Prof. Yuling Luo
+Abstract:
+Side Channel Attacks (SCAs) effectively extract sensitive data from cryptographic
+devices. In profiled SCAs, leakage traces for each label are extremely unbalanced
+using Hamming Weight (HW) and Hamming Distance (HD) models, which results in
+lacking the number of leakage traces for minority classes. To address the data
+imbalance problem, this paper proposes an efficient synthetic traces scheme based on
+Conditional Generative Adversarial Nets and HW (CGANHW) to generate traces for
+few-sample labels. Specifically, the average leakage trace of HW model serves as the
+CGAN generator's input, and the leakage traces of minority class labels are the training
+dataset for the discriminator. CGANHW generates unmasked power datasets on the
+ChipWhisperer (CW) platform, as well as the masked ASCAD public electromagnetic
+datasets and the CHES CTF datasets. It employs Template Attacks (TA) and Deep
+Learning Profiling Attacks (DLPA) to target the Advanced Encryption Standard (AES).
+Experiments demonstrate that the proposed CGANHW generates both power and
+electromagnetic traces. The generated traces can successfully recover the AES secret
+key, outperforming those using only the original traces and other data augmentation
+techniques. Additionally, CGANHW achieves comparable attack performance in 1,000
+iterations on the CW dataset, compared to 3,000 iterations with CGAN.
+ 
+Keywords: side-channel attacks, imbalanced data, conditional generative adversarial
+network, Electromagnetic leakage
+Corresponding Author:
+Xue Ouyang
+Guangxi Normal University
+CHINA
+Corresponding Author E-Mail:
+ouyangxue@gxnu.edu.cn
+Order of Authors:
+Yuling Luo
+Qiuhui Li
+Xue Ouyang
+Haiyang Xu
+Chenpeng Wu
+Yanyan Xu
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Junxiu Liu
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+Guangxi Normal University
+Corresponding Author's Secondary
+Institution:
+First Author:
+Yuling Luo
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Additional Information:
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+CGANHW: An Efficient Synthetic Trace Scheme
+for Electromagnetism and Power Profiled Attacks
+Abstract
+Side Channel Attacks (SCAs) effectively extract sensitive data from crypto-
+graphic devices. In profiled SCAs, leakage traces for each label are extremely
+unbalanced using Hamming Weight (HW) and Hamming Distance (HD) mod-
+els, which results in lacking the number of leakage traces for minority classes.
+To address the data imbalance problem, this paper proposes an efficient syn-
+thetic traces scheme based on Conditional Generative Adversarial Nets and HW
+(CGANHW) to generate traces for few-sample labels. Specifically, the average
+leakage trace of HW model serves as the CGAN generator’s input, and the leak-
+age traces of minority class labels are the training dataset for the discriminator.
+CGANHW generates unmasked power datasets on the ChipWhisperer (CW)
+platform, as well as the masked ASCAD public electromagnetic datasets and
+the CHES CTF datasets. It employs Template Attacks (TA) and Deep Learning
+Profiling Attacks (DLPA) to target the Advanced Encryption Standard (AES).
+Experiments demonstrate that the proposed CGANHW generates both power
+and electromagnetic traces. The generated traces can successfully recover the
+AES secret key, outperforming those using only the original traces and other data
+augmentation techniques. Additionally, CGANHW achieves comparable attack
+performance in 1,000 iterations on the CW dataset, compared to 3,000 iterations
+with CGAN.
+Keywords: side-channel attacks, imbalanced data, conditional generative adversarial
+network, Electromagnetic leakage
+1 Introduction
+Electronic devices can leak some side-channel information about power consumption,
+electromagnetic, sound, heat, etc. during the execution of cryptographic algorithms,
+and the information leaked is related to the data and operation processed by the
+equipment. Timing attacks (Kocher 1996) is the earliest research on side-channel
+attacks (SCAs). After that, there has been a growing number of approaches to SCAs.
+SCAs pose a significant threat to the security of Consumer Electronics(CE). In-depth
+research on attack techniques can continuously drive the improvement of crypto-
+graphic defense, thereby better protecting the security of CE (Peelam et al. 2024;
+Popoola et al. 2024). Nowadays, SCAs are mainly divided into profiling attacks and
+1
+Blinded manuscript
+Click here to access/download;Blinded
+manuscript;Data_Science_and_Engineering.pdf
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+non-profiling attacks. Non-Profiling attacks require only the collection of side-channel
+information on the target chip and recovering the key by means of statistical anal-
+ysis. Non-Profiling attacks are differential power analysis (DPA) (Fei et al. 2012),
+correlation power analysis (CPA) (Brier et al. 2004), collision attacks (Schramm et al.
+2003), etc. Profiling attacks require the attacker to use the same controllable chip
+as the target chip, collect the corresponding side-channel information to establish a
+model between the side-channel information and the cipher, and use the model in
+the subsequent attack phases. Profiling attacks include Template Attacks (TA) (Chari
+et al. 2002), random models (Schindler et al. 2005), machine learning-based Profiling
+attacks (Wu et al. 2023; Arpaia et al. 2023), etc. Profiling attacks rely on extensive
+side-channel traces to build accurate models. However, practical constraints in trace
+collection often lead to insufficient data, severely degrading attack success rates and
+accuracy. In profiled side-channel analysis, Hamming Weight (HW) and Hamming Dis-
+tance (HD) are widely used as leakage models. However, under uniformly distributed
+plaintexts and keys, the resulting label distribution is inherently imbalanced (Picek
+et al. 2019). For example, HW values 0 and 8 occur much less frequently than middle-
+range values such as HW = 4, which leads to a severe shortage of minority-class traces
+(Zhang et al. 2020). Ito et al. showed that such imbalance can significantly degrade
+the performance of deep learning-based SCAs (Ito et al. 2021). As a result, minority
+classes are insufficiently represented during profiling, limiting the model’s ability to
+learn discriminative leakage characteristics and ultimately reducing attack effective-
+ness. Therefore, mitigating data imbalance is essential for improving the effectiveness
+of profiled SCA. In practical hardware security evaluations, addressing data imbalance
+is particularly critical during the profiling phase, where evaluators construct leakage
+models using open clone devices. However, capturing a statistically viable number
+of minority-class traces (such as HW=0 or HW=8) requires an excessive number of
+encryption executions. This makes the data acquisition process highly time-consuming
+and resource-intensive. By functioning as a targeted data augmentation pre-processing
+step, the proposed CGANHW framework enables evaluators to rapidly build robust
+profiling models despite limited data collection budgets, ultimately supporting more
+reliable vulnerability assessments of cryptographic hardware.
+1.1 Traditional Synthetic Methods
+Several non-generative strategies have been explored to alleviate data imbalance and
+data scarcity in SCAs. One possible solution is to use the S-box output as the sensitive
+intermediate value instead of the HW model, which can reduce label aggregation but
+substantially increases the number of classes and makes profiling more difficult to
+train effectively (Wang et al. 2022). Another line of work relies on resampling-based
+balancing strategies. Picek et al. showed that such methods can partially mitigate
+the negative impact of class imbalance in profiled SCA. For example, SMOTE has
+been used to expand minority-class traces and improve the balance of the training set.
+However, such methods do not explicitly model the underlying leakage distribution,
+and excessive oversampling may increase the risk of overfitting, especially in masked
+or complex leakage settings.
+2
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Interpolation-based augmentation has also been introduced into deep learning-
+based SCA. In particular, Mixup was adopted to strengthen attacks under limited
+training data by constructing intermediate samples between existing traces (Luo et al.
+2021). Although this strategy can improve generalization, over-reliance on smoothed
+intermediate samples may weaken discriminative leakage patterns and reduce attack
+effectiveness. Therefore, while traditional augmentation methods can partially allevi-
+ate the small-sample problem, their ability to preserve realistic leakage characteristics
+remains limited.
+1.2 Based-Deep Learning Synthetic Methods
+In recent years, generative adversarial networks (GANs) have been widely used for
+synthetic data generation (Goodfellow et al. 2014). Conditional generative adver-
+sarial networks (CGANs) further incorporate label information into the generation
+process, making them suitable for class-conditional sample synthesis (Mirza and
+Osindero 2014). Compared with traditional resampling- and interpolation-based aug-
+mentation methods, these generative approaches attempt to learn the underlying data
+distribution and synthesize new traces directly.
+In the context of side-channel analysis, Wang et al. introduced CGAN-based trace
+generation to improve profiling attacks under limited training data (Wang et al. 2020).
+That work adopted the least significant bit (LSB) as the leakage model and evaluated
+both unprotected and protected implementations. However, restricting the genera-
+tion process to only two labels limits its applicability to more fine-grained leakage
+modeling. Another study employed HW as the leakage model and used CGAN to gen-
+erate simulated power traces for deep learning-based SCAs. However, that method
+was validated only on unprotected AES power traces. To further address the imbal-
+anced small-sample setting, Wang et al. proposed SCA-CGAN and demonstrated that
+CGAN-based augmentation can improve attack performance under data imbalance
+(Wang et al. 2023).
+Nevertheless, existing CGAN-based methods mainly rely on conventional noise-
+driven generation and provide limited discussion on how to exploit the structural
+regularity of side-channel traces or how to select the most suitable generated traces for
+augmentation. These limitations motivate the present work. Different from previous
+studies, the proposed method uses the mean trace as a structured conditional input
+and focuses on minority-class trace synthesis under the HW leakage model.
+1.3 CGANHW for Profiling Phase Data Augmentation
+In this work, CGANHW is introduced as a task-specific data augmentation module
+integrated into the profiling phase of side-channel analysis (SCA). The main objective
+of CGANHW is to generate synthetic traces for underrepresented minority classes,
+specifically those with Hamming Weight (HW) values that are sparsely represented in
+the dataset (e.g., HW0, HW1, HW7, and HW8). These minority classes often suffer
+from limited trace availability, making it difficult for conventional machine learning
+models to learn discriminative leakage characteristics and ultimately reducing attack
+performance.
+3
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+The proposed method works as follows: In the profiling phase, a reference device
+is used to collect side-channel traces under known plaintexts and keys. These traces
+are then used to train a CGAN-based model, where the generator is conditioned on
+the mean trace of the minority class and the discriminator is trained on a balanced
+dataset of both original and synthetic traces. The mean trace serves as a structured
+prototype, helping the generator to focus on class-dependent leakage refinement rather
+than generating traces from random noise. The resulting synthetic traces are then
+incorporated into the profiling dataset, improving the overall model’s ability to capture
+leakage information for minority classes.
+Unlike conventional augmentation methods, which rely on resampling or interpo-
+lation, CGANHW directly addresses the problem of class imbalance by generating
+new traces that are aligned with the leakage characteristics of the target classes. This
+approach improves the robustness of the leakage model and significantly reduces the
+number of attack traces required for successful key recovery in the attack phase.
+Therefore, CGANHW is not just a data preprocessing technique but a critical
+component of the profiling phase, specifically designed to improve the accuracy and
+effectiveness of side-channel attacks under imbalanced data conditions.
+1.4 Contributions
+Thus, this paper first analyzes and investigates the deficiencies of data imbalance and
+data insufficiency in existing synthetic methods of SCAs. It then proposes CGANHW
+to generate traces for minority classes, thereby addressing these issues. Different from
+previous works, this work considers the mean value of the traces as the input to the
+CGAN generator and the data input to CGAN is balanced by replicating the leakage
+traces. Since a device’s energy consumption depends on its operations and processed
+data, it primarily comprises an operation-dependent component and a data-dependent
+component. Since the same operation is executed at the determined moment, only the
+data-dependent component is considered, and the data-dependent component approx-
+imately satisfies a normal distribution. CGANHW can be described as follows. First,
+traces containing only HW0, HW1, HW7, and HW8 are extracted to form a new
+dataset. Second, this new dataset serves as the training dataset for CGAN, and the
+average leakage trace of the new dataset is computed as the input to the CGAN gen-
+erator to generate traces with a balanced ratio of HW0:HW1:HW7:HW8 = 1:1:1:1.
+Finally, the generated traces are combined with the original traces in a 4:1 ratio to
+form the dataset for SCAs. CGANHW not only efficiently reduces the degree of data
+imbalance, but also increases the amount of leaked traces used for profiled SCAs. The
+quality of the generated traces during CGANHW training is evaluated using Euclidean
+distance and Pearson correlation coefficient. The major contributions of this paper
+include as follow.
+• A class-aware trace augmentation framework, named CGANHW, is developed for
+profiled side-channel analysis under Hamming-weight (HW) class imbalance. By
+conditioning the generation process on HW labels, CGANHW generates electromag-
+netic and power traces for minority HW classes, thereby alleviating the imbalance
+of the profiling dataset.
+4
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+• Template Attack (TA) and convolutional neural network-based Deep Learning
+Profiling Attacks (DLPA) are conducted to evaluate the effectiveness of the aug-
+mented traces in AES key recovery. The TA estimates the correct key using
+maximum likelihood estimation, while the DLPA learns discriminative leakage
+features through convolutional and pooling layers with cross-entropy loss. The
+attack results demonstrate that the CGANHW-augmented dataset can improve
+the practical effectiveness of profiled side-channel attacks under imbalanced data
+conditions.
+• Using the unmasked CW power dataset, the masked ASCAD public electromagnetic
+dataset, and the masked CHES CTF 2018 dataset, profiled attacks is performed on
+the key of the AES encryption algorithm. The experimental results demonstrate that
+CGANHW can learn the noisy, adversarial, and low Signal-to-Noise Ratio (SNR)
+trace information. Compared with (Wang et al. 2022), the quality of the traces
+generated by CGANHW is better. Compared with (Wang et al. 2022) and (Wang
+et al. 2023), CGANHW-based attacks demonstrate greater effectiveness.
+The rest of this paper is organized as follows. Section 2 introduces some background
+knowledge. In Section 3, the structure of CGANHW is introduced, the similarity of
+the generated traces is evaluated, and the construction of the balanced dataset is
+presented. In Section 4, the guessing entropy is used as an evaluation metric for SCAs,
+and the TA and DLPA are performed on the balanced dataset to compare the attack
+results of the original traces and the synthetic balanced traces. Compare the CGAN-
+based attack with the CGANHW-based attack to evaluate the quality of the traces
+generated by the two methods. Finally, Section 5 concludes the paper.
+2 Preliminaries
+This section first introduces the universal principle of profiled SCAs, covering both the
+profiling and attack phases. It then discusses classical TA and DLPA. Additionally, a
+deep learning model, GAN, capable of generating synthetic data that closely resembles
+real data is introduced.
+2.1 Profiled Attacks
+SCAs are divided into Non-profiling attacks and profiled attacks, where profiled
+attacks (Li et al. 2022) are the most powerful class of SCAs. In side-channel attacks, we
+typically assume that the attacker has complete knowledge of the implementation of
+the cryptographic algorithm. The attacker can repeatedly collect the physical leakage
+signals generated during the operation of the target device, such as power consump-
+tion, electromagnetic signals, and timing information. Additionally, the attacker has
+access to plaintext-ciphertext pairs from the encryption device. The profiled attack
+consists of two phases: profiling and attacking. During the profiling phase, a random
+plaintext p and a random key k are used to perform m encryption rounds on a cloned
+device that is identical to the target device. The leakage traces Q = {q1, q2, · · · , qm}
+generated during the encryption process are collected. Based on the analysis of the
+collected data, a probability density function template P[Q|λ] is estimated, where Θ
+5
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+is the leakage model, which can be identity, HW, or HD. Λ denotes the set of leakage
+intermediate values, where Λ = {λ1, λ2, · · · }. The λ is calculated as
+λ = Θ(sbox(p ⊕k)).
+The attacking phase involves performing n rounds of encryption using a fixed key k and
+a randomly selected plaintext p on the target device, while simultaneously collecting
+leakage traces Q′ = {q′
+1, q′
+2, · · · , q′
+n} during the encryption process. Classification of
+new leakage traces according to Bayes’ theorem and conditional probability model
+P[Q | λ]. Given a key assumption k
+′ (︂
+0 ≤k
+′ ≤255
+)︂
+, calculate the corresponding
+result for each key assumption and return the key assumption that corresponds to the
+maximum probability value, denoted as ˆ∆
+ˆ∆= argmax
+λi∈Λ
+n
+∏︂
+j=1
+P [q′j | λi] × P [λi]
+P [q′j]
+.
+In this paper, we adopt the HW model as the leakage model, as it effectively
+characterizes the energy leakage of most microcontrollers. The HW model is both
+simple and easy to implement, significantly reducing computational complexity and
+enhancing the efficiency of key recovery. Notably, the energy consumption associated
+with data transitions from 0→1 and 1→0 is asymmetric, with the 0→1 transition
+consuming more energy. Consequently, data with higher HW leads to greater energy
+consumption compared to data with lower HW. Since HW exhibits a strong correlation
+with actual energy consumption, its feasibility as a leakage model is experimentally
+validated. As shown in Fig. 1, the average energy traces for different HW values near
+the leakage point of the CW dataset illustrate a linear relationship between HW and
+voltage at the 204th sampling point.
+200
+202
+204
+206
+208
+Time Samples
+0.4
+0.3
+0.2
+0.1
+0.0
+0.1
+Voltage
+HW=0
+HW=1
+HW=2
+HW=3
+HW=4
+HW=5
+HW=6
+HW=7
+HW=8
+Fig. 1 The relationship between HW and voltage at the leakage position
+6
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+2.1.1 Template Attacks
+TA is a typical profiling attack, which is widely used in SCAs. Due to the long length
+of individual side-channel leaks (Cheng et al. 2022), the power traces need to be
+pre-processed and s points of interest are selected for each side-channel leakage. The
+side-channel information can be expressed as
+T =
+⎡
+⎢⎢⎢⎣
+t11 t12 · · · t1s
+t21 t22 · · · t2s
+...
+...
+...
+...
+tm1 tm2 · · · tms
+⎤
+⎥⎥⎥⎦.
+The position after the first round of byte substitution is usually selected as the attack
+position (Zhang 2020), and the encrypted data is mapped to the side-channel leakage
+using the HW. The HW of the sensitive intermediate value is calculated as
+H = HW(sbox(p ⊕k)).
+The encrypted data has 8 bits per byte, and the middle value of HW is taken as
+9 categories in the range of 0 to 8. The side channel leakage is divided into 9 cat-
+egories. The average leakage traces L = {L0, L1, · · · , L8} and covariance matrix
+C = {C0, C1, · · · , C8} are calculated for each category to build 9 templates. There
+are r side-channel leakage traces of HW d. Ld is calculated as
+Ld =
+⎡
+⎢⎢⎢⎣
+1
+r
+∑︁r
+i=1 ti1
+1
+r
+∑︁r
+i=1 ti2
+...
+1
+r
+∑︁r
+i=1 tis
+⎤
+⎥⎥⎥⎦,
+0 ≤d ≤8.
+The covariance matrix Cd of the side-channel leakage traces with HW d can be defined
+as
+Cd =
+⎡
+⎢⎢⎢⎣
+C11 C12 · · · C1s
+C21 C22 · · · C2s
+...
+...
+...
+...
+Cs1 Cs2 · · · Css
+⎤
+⎥⎥⎥⎦,
+0 ≤d ≤8,
+where Cmn is the covariance between column m and column n. A covariance matrix
+Cd and mean leakages trace Ld is seen as a template.
+The attacking phase is to collect the side-channel leakages in the encryption process
+of the target device, construct different templates according to different guessed keys
+(Yilmaz et al. 2020), and calculate the probability density function of the multivariate
+normal distribution of the template and side-channel traces. The calculation of the
+probability density function is shown in
+f(Q; (L, C)d) =
+1
+√︁
+(2π)s|C|
+e−(Q−L)T C−1(Q−L)
+2
+,
+7
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Mean trace
+Mean trace
+Conditional 
+generation 
+adversarial 
+network
+ Original traces
+ Original traces
+Generated traces
+Generated traces
+label
+Original traces
+Original traces
+label
+Multivariate 
+Gaussian model
+Test data
+Maximum 
+likelihood score
+Correct 
+key
+TA
+DLPA
+CGANHW
+Training neural 
+network
+Network model
+n×9
+(Prediction 
+probability)
+Test data
+Test data
+Key guessing 
+space
+Correct 
+key
+
+−
+=
+1
+0
+i
+,
+log
+=
+P(k)
+n
+j
+ip
+255
+-
+0
+k 
+)]
+255
+(
+,
+),
+1(
+),
+0
+(
+[
+max
+arg
+P
+P
+P
+k
+
+Save model
+Training data
+Training data
+Mean trace
+Conditional 
+generation 
+adversarial 
+network
+ Original traces
+Generated traces
+label
+Original traces
+label
+Multivariate 
+Gaussian model
+Test data
+Maximum 
+likelihood score
+Correct 
+key
+TA
+DLPA
+CGANHW
+Training neural 
+network
+Network model
+n×9
+(Prediction 
+probability)
+Test data
+Key guessing 
+space
+Correct 
+key
+
+−
+=
+1
+0
+i
+,
+log
+=
+P(k)
+n
+j
+ip
+255
+-
+0
+k 
+)]
+255
+(
+,
+),
+1(
+),
+0
+(
+[
+max
+arg
+P
+P
+P
+k
+
+Save model
+Training data
+Mean trace
+Conditional 
+generation 
+adversarial 
+network
+ Original traces
+Generated traces
+label
+Original traces
+label
+Multivariate 
+Gaussian model
+Test data
+Maximum 
+likelihood score
+Correct 
+key
+TA
+DLPA
+CGANHW
+Training neural 
+network
+Network model
+n×9
+(Prediction 
+probability)
+Test data
+Key guessing 
+space
+Correct 
+key
+
+−
+=
+1
+0
+i
+,
+log
+=
+P(k)
+n
+j
+ip
+255
+-
+0
+k 
+)]
+255
+(
+,
+),
+1(
+),
+0
+(
+[
+max
+arg
+P
+P
+P
+k
+
+Save model
+Training data
+Fig. 2 The overall flow chart of CGANHW-based deep learning SCAs
+where (L, C)d is the corresponding template when HW of d, and Q is the power trace
+leaked during encryption or decryption. Where the correct template corresponds to
+the largest probability density function, thus attacking the most likely key.
+2.1.2 Deep Learning Side Channel Attacks
+Deep learning has emerged as a powerful tool for SCAs, reframing key recovery as
+a classification problem. Unlike traditional methods, deep learning bypasses assump-
+tions like manual feature engineering, enabling automated extraction of critical leakage
+patterns from traces (Wang et al. 2020; Wouters et al. 2020). Convolutional Neural
+Networks (CNN) are used to perform SCAs. The structure of a CNN is composed of an
+input layer, an output layer, and a hidden layer, where the hidden layer consists of mul-
+tiple one-dimensional convolutional and average pooling layers, and a fully connected
+layer. When HW is used as an intermediate value, the predictions of the probabilities
+for all possible labels of the attack traces obtained from testing the trained model are
+represented as a two-dimensional matrix F. The prediction space of key k is 0-255.
+Guessing key is calculated as
+k∗= arg max
+k
+D(k) = arg max
+k
+Q
+∑︂
+x=0
+log(fx,y),
+where k∗is the correct key guess, fx,y is the element in the two-dimensional matrix
+F, and y is calculated from the guessed key and the plaintext. The key guess with the
+largest logarithm is the correct key out of the attack.
+8
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+2.2 Generating Adversarial Networks
+GAN is an unsupervised learning deep learning model (Goodfellow et al. 2014). In
+recent years, many variations of GAN have been proposed (Mirza and Osindero 2014;
+Xudong et al. 2017). CGAN is one of the variants that label the samples and can
+generate samples with specific labels. CGAN is a deep learning model with supervised
+learning.
+GAN is consisted of two models. One is the generator which aims to learn the
+distribution of real samples and try to make the generated samples indistinguishable
+from the real samples. The another is the discriminator whose purpose is to try to
+discriminate between the real samples and the generated samples. The discriminator’s
+input is the real sample and the output probability is as close to one as possible. The
+discriminator’s input is the generated sample and the output probability is as close
+to zero as possible. The generator and discriminator constitute a ”dynamic game”
+process. Eq. (1) is the principle of the GAN.
+min
+G max
+D R(D, G) = Ex∼preal(x)[log D(x)]
++ Ez∼pz(z)[log(1 −D(G(z)))].
+(1)
+When the better the effect of the generator, the closer D(G(z)) is to 1, the smaller
+log(1 −D(G(z))), and log D(x) is independent of the generator, so the smaller the
+value of Eq. (1). The output of the discriminator is a value between zero and one.
+When the discriminator is more effective, the closer the D(x) of the real sample is to
+one and the D(G(z)) of the generated sample is to zero, the larger log D(x) and the
+larger log(1 −D(G(z))) is, so the larger the value of Eq. (1).
+3 CGANHW Solves the Problem of Data Imbalance
+in SCAs
+The following introduces CGANHW to address data imbalance and data insufficiency
+issues. CGANHW uses conditional generation adversarial learning to motivate the
+generator to generate side-channel traces with specific labels and close to the original
+traces. The average trace is used as a CGANHW generator input to solve the label
+imbalance problem by generating side channel traces with a small number of label
+classes. The proposed approach is tested using the CW dataset (Luo et al. 2020),
+the ASCAD dataset (Benadjila et al. 2020), and the CHES CTF 2018 dataset. Fig. 2
+shows the overall flow chart of the experiment.
+3.1 Data Pre-processing
+The power traces of the CW dataset are power data containing 3,000 consecutive time
+sample points. To reduce the computational cost, SNR (Bhasin et al. 2014) is used to
+detect the leakage points associated with the side-channel leakage model, and SNR is
+calculated as
+9
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+SNR = var[E[Vt | HW(sbox(p ⊕k))]]
+E[var[Vt | HW(sbox(p ⊕k))]],
+Vt is the leakage value of the side channel trace at moment t, E is the mean value,
+and var represents the variance.
+Input
+Cat(average 
+trace,label)
+Linear
+Leaky Relu
+Dropout
+BatchNorm1d
+Linear
+tanh
+n1
+layer
+Input
+Cat(trace,label)
+Linear
+Leaky Relu
+Dropout
+Linear
+sigmoid
+n2
+layer
+Input
+Cat(average 
+trace,label)
+Linear
+Leaky Relu
+Dropout
+BatchNorm1d
+Linear
+tanh
+n1
+layer
+Input
+Cat(trace,label)
+Linear
+Leaky Relu
+Dropout
+Linear
+sigmoid
+n2
+layer
+(a)
+(b)
+Original traces
+Original traces
+Generators
+Generators
+Discriminator
+Original traces
+or
+Generated traces
+Label
+Generated traces
+Generated traces
+Mean trace
+Mean trace
+Original traces
+Generators
+Discriminator
+Original traces
+or
+Generated traces
+Label
+Generated traces
+Mean trace
+Fig. 3 (a) The overall architecture of the CGANHW network, (b) the structure of the Generator,
+and (c) the structure of the Discriminator
+INPUT
+)
+500
+(
+OUTPUT
+0
+1
+2
+8
+Conv1D(11)+RELU
+AvgPooling1D(2, 2)
+Flatten
+Dense+RELU
+Dense+Softmax
+Conv1D(11)+RELU
+AvgPooling1D(2, 2)
+Flatten
+Dense+RELU
+Dense+Softmax
+INPUT
+)
+500
+(
+OUTPUT
+0
+1
+2
+8
+Conv1D(11)+RELU
+AvgPooling1D(2, 2)
+Flatten
+Dense+RELU
+Dense+Softmax
+Fig. 4 CNN Network Architecture
+Suppose N side-channel traces are collected and Vi,t is the leakage value of the
+side-channel trace indexed by i at time t. The mean E and variance var at moment t
+are calculated as
+E =
+∑︁N
+i=1 Vi,t
+N
+,
+var =
+∑︁N
+i=1(Vi,t −E)2
+N
+=
+∑︁N
+i=1 V 2
+i,t
+N
+−
+(︂∑︁N
+i=1 Vi,t
+)︂2
+N 2
+.
+10
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3.2 CGANHW Network Structure
+The side-channel traces are split into training and test sets. The training set is used to
+generate fake traces in the CGANHW network. The network structure of CGANHW is
+shown in Fig. 3 (a), with the generator and discriminator structures detailed in Fig. 3
+(b) and (c), respectively. The linear layer, LeakyReLU, Dropout layer and BatchNorm
+layer in the generator are iterated n1 times. The linear layer, LeakyReLU and Dropout
+layer in the discriminator are iterated n2 times. The principle of CGANHW network
+is shown in Eq. (2). For the CW dataset, both the generator output and discriminator
+input are one-dimensional data of size 500. Unlike previous studies that used standard
+normally distributed noise, this paper uses the average trace as the generator input.
+This work employs the widely-used HW model for power analysis attacks. The HW
+values range from 0 to 8, with HW0, HW1, HW7, and HW8 representing minority
+classes. The CGANHW generates traces for labels 0, 1, 7, and 8. The generator network
+consists of fully connected layers, BatchNorm, LeakyReLU, and Dropout, while the
+discriminator network includes fully connected layers, LeakyReLU, Dropout, and a
+Sigmoid activation function. The BCELoss function is used to calculate the loss, and
+the Adam optimizer is employed to optimize the network parameters.
+min
+G max
+D R(D, G) = Ex∼preal(x)[log D(x|n)]
++ Ez∼pz(z)[log(1 −D(G(z|n)))].
+(2)
+when the distribution of generators is fixed, the principle of CGANHW network is
+expressed in Eq. (3). The discriminator aims to maximize this equation, and the
+corresponding value of D(x) is given in Eq. (4). Bringing D(x) into R(D, G), the
+minimum value of its G(x) can be obtained as preal(x) = pg(x), i.e., the distribution of
+real data is equal to the distribution of generated data.
+R(D, G) =
+∫︂
+x
+preal(x) log(D(x|n)) dx
++
+∫︂
+z
+pz(z) log(1 −D(G(z|n))) dz
+=
+∫︂
+x
+(preal(x) log(D(x|n)) + pg(x) log(1 −D(G(x|n)))) dx.
+(3)
+D(x) =
+preal(x)
+preal(x) + pg(x).
+(4)
+3.3 Deep Learning Networks
+In this paper, a one-dimensional CNN is used to attack the side-channel data. Fig. 4
+shows the network architecture of the CNN for the CW dataset. The network struc-
+ture of the ASCAD dataset is similar to that of the CW dataset, except for the input
+dimension, which is 1×500 data for the CW dataset and 1×700 data for the ASCAD
+11
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+dataset. The network contains a one-dimensional convolutional layer, an average pool-
+ing layer, and a fully connected layer. The middle layer uses the ReLU activation
+function and the last layer uses the Softmax activation function, and the optimizers
+used are RSMProp with a learning rate of 0.0001.
+3.4 Mechanism Analysis of Why CGANHW Outperforms
+Standard CGAN
+The superiority of CGANHW over standard CGAN is attributed to the structured
+conditioning strategy used for side-channel trace generation. Unlike natural images,
+side-channel traces collected from the same implementation usually share a stable
+global waveform determined by the underlying operation flow, while the discriminative
+information is mainly reflected in local leakage variations related to the sensitive inter-
+mediate value. Under this view, a trace can be interpreted as the sum of a common
+operation-dependent component, a class-dependent leakage component, and residual
+noise.
+In standard CGAN, the generator starts from unconstrained random noise and
+must simultaneously learn the global waveform morphology, the class-related leak-
+age pattern, and the random disturbance. This learning problem becomes particularly
+difficult when only a limited number of minority-class traces are available. In con-
+trast, CGANHW uses the mean trace as a structured input, which already preserves
+the dominant temporal morphology of real traces while suppressing zero-mean fluc-
+tuations. Therefore, the generator mainly learns a class-guided refinement around a
+realistic signal prototype rather than synthesizing the entire trace from scratch.
+This design is especially beneficial for minority classes such as HW0, HW1, HW7,
+and HW8. Since these classes contain only a small number of real traces, noise-driven
+generation is more likely to produce unstable class-conditional distributions. By con-
+trast, mean-trace conditioning provides a more informative starting point that is closer
+to the manifold of realistic traces, thereby improving optimization stability and facil-
+itating the preservation of leakage locations and class-related features. In addition,
+balancing the discriminator-side training data reduces the bias toward majority classes
+and further strengthens the modeling of minority-class traces.
+Therefore, the advantage of CGANHW does not only lie in achieving better attack
+results, but also in transforming trace generation from generic noise-driven synthesis
+into a data-dependent and class-aware refinement process that is better aligned with
+the structural characteristics of side-channel signals.
+3.5 Mechanism Analysis of Mean-Trace Conditioning
+The use of a mean trace instead of random noise is motivated by the structural charac-
+teristics of side-channel signals. Unlike natural images, traces collected from the same
+implementation usually share a stable global waveform determined by the underlying
+operation flow, while the discriminative information is mainly reflected in local vari-
+ations related to the sensitive intermediate value. Accordingly, a trace of class y can
+be interpreted as
+xy(t) = scom(t) + sy(t) + ϵy(t),
+(5)
+12
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+where scom(t) denotes the common operation-dependent component, sy(t) denotes the
+class-dependent leakage component, and ϵy(t) represents random disturbance.
+Under this decomposition, the mean trace provides a structured prototype that
+preserves the dominant temporal morphology of real traces while suppressing zero-
+mean fluctuations. Therefore, compared with standard CGAN, the generator in the
+proposed method does not need to synthesize the entire waveform from an uncon-
+strained latent vector. Instead, it mainly learns a label-guided correction around a
+realistic signal template, which can be written as
+G(¯x, y) = ¯x + ry(t),
+(6)
+where ¯x is the mean trace and ry(t) is the class-dependent residual term. This refor-
+mulation reduces the functional complexity of the mapping to be learned, since the
+generator can focus on modeling task-relevant leakage differences rather than simulta-
+neously recovering the global waveform structure and the local class-related variations
+from random noise.
+This property is particularly beneficial in the minority-class setting. For classes
+such as HW0, HW1, HW7, and HW8, the number of available real traces is limited,
+making it difficult for a noise-driven generator to learn a stable class-conditional distri-
+bution. By contrast, mean-trace conditioning provides a more informative initialization
+that is already close to the manifold of realistic traces, thereby improving optimiza-
+tion stability and facilitating the preservation of leakage locations and class-related
+features. From this perspective, the proposed design is not merely an input replace-
+ment, but a data-dependent conditioning strategy tailored to the signal structure of
+side-channel traces.
+It should be emphasized that this analysis is intended to provide a mechanism-
+based explanation rather than a formal convergence proof. Nevertheless, it offers an
+intuitive theoretical justification for why mean-trace conditioning can improve gener-
+ation quality and training efficiency in the imbalanced few-sample scenario considered
+in this work.
+3.6 Generate Traces similarity assessment
+The similarity between the generated traces and the original traces is not easy to
+evaluate, and this paper can effectively and intuitively determine whether the gener-
+ated traces has effectively learned the original traces by finding the location of the
+leak point of the original traces and the generated traces. Since the HW of the leak
+point location and the side-channel trace are very correlated, the correlation can be
+measured using the Pearson correlation coefficient shown in
+corr(V, H) = E(V H) −E(V )E(H)
+√︁
+D(V ) +
+√︁
+D(H)
+.
+where H represents the HW and V denotes the strength of the side-channel leakage.
+13
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3.7 Constructing a Balanced Dataset
+The HW is the most widely used power model, but it suffers from the problem of data
+imbalance. According to the distribution of HW, the probability of HW being zero
+and eight is only 1/256, while the probability of HW being four is 70/256. To achieve a
+relatively balanced dataset (Pammu et al. 2019), the following procedures were under-
+taken. Initially, traces labeled as HW0, HW1, HW7, and HW8 were extracted from
+the original dataset to form the training dataset for CGAN. Subsequently, the CGAN
+was trained to generate synthetic traces with a label ratio of HW0:HW1:HW7:HW8
+=1:1:1:1. Finally, the original traces were combined with the generated traces in a
+4:1 ratio to produce the composite dataset. The method proposed in this study effec-
+tively reduced the ratio of majority to minority class labeled traces in the training
+dataset from 70:1 to 4:1, significantly mitigating the degree of data imbalance. In
+the experiment, the quantity of added generated traces must be carefully controlled
+due to inherent differences in leakage distributions between generated and original
+traces. An excessive number of generated traces may skew the model’s learned leakage
+distribution towards the generated data, potentially diminishing the model’s attack
+effectiveness.
+0
+500
+1000
+1500
+2000
+2500
+3000
+Time Samples
+0
+20
+40
+60
+80
+100
+120
+140
+SNR Value
+snr0
+snr1
+snr2
+snr3
+snr4
+snr5
+snr6
+snr7
+snr8
+snr9
+snr10
+snr11
+snr12
+snr13
+snr14
+snr15
+Fig. 5 Characterization of the signal-to-noise ratio (SNR) of the 16 S-box output operations
+14
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+4 Experiment
+4.1 Experimental Setup
+The PyTorch (Zimmer et al. 2021) open-source Python machine learning library is
+used in this paper, and experiments are conducted using an RTX A6000 GPU to vali-
+date the proposed method using four datasets. The CW dataset is generated using the
+ChipWhisperer (Prouff 2014) power analysis platform developed by NewAE technol-
+ogy, and executes AES encryption algorithm to collect power leakage information. The
+ASCAD-fixed dataset (Benadjila et al. 2020) is a collection of electromagnetic leakage
+during masked fixed-key AES encryption and decryption on ATMega8515, including
+50,000 training traces and 10,000 attack traces. The ASCAD-random dataset (Benad-
+jila et al. 2020) is a collection of electromagnetic leakage during masked random-key
+AES encryption and decryption on ATMega8515, including 200,000 training traces
+and 100,000 attack traces. The CHES CTF 2018 dataset was released at the Con-
+ference on Cryptographic Hardware and Embedded Systems (CHES) in 2018 (Perin
+et al. 2020). The traces were collected during the execution of a masked AES encryp-
+tion on a 32-bit STM microcontroller. The CHES CTF 2018 dataset comprises a total
+of 50,000 traces, with 45,000 traces allocated for the training dataset and 5,000 traces
+for the attack dataset.
+To ensure the reproducibility of our experiments, the detailed hyperparameters
+configured for training the CGANHW models on both the CW and ASCAD datasets
+are comprehensively summarized in Table.1. These hyperparameter settings were
+empirically optimized to achieve the best convergence and trace generation quality.
+Table 1 Hyperparameters for CGANHW Training on CW and ASCAD Datasets
+Hyperparameter
+CW Dataset (1D-CNN based)
+ASCAD Dataset (MLP based)
+Epochs
+45,000
+45,000
+Batch Size
+100
+100
+Optimizer
+Adam
+Adam
+Optimizer Betas (β1, β2)
+(0.5, 0.9)
+(0.9, 0.999)
+Learning Rate (Generator)
+9 × 10−3
+7 × 10−3
+Learning Rate
+(Discriminator)
+7 × 10−7
+2 × 10−7
+Number of Hidden Layers
+(n1 / n2)
+3 Deconv layers / 3 Conv layers
+8 Dense layers / 3 Dense layers
+Layer Widths / Channels
+(Generator)
+128, 64, 1 (channels)
+256, 320, 384, 448, 512, 600, 650
+(nodes)
+Layer Widths / Channels
+(Discriminator)
+32, 64, 128 (channels)
+768, 512, 80 (nodes)
+15
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+4.2 Data Pre-processing
+For the CW dataset, the SNR was computed for all 16 AES-128 key bytes. As shown
+in Fig. 5, sample points with high SNR correspond to leakage locations. A 500-
+sample trace segment containing the relevant leakage point was therefore extracted
+for subsequent experiments.
+(a)
+(b)
+(a)
+(b)
+(c)
+(a)
+(b)
+(c)
+Fig. 6 Distribution :(a) original traces and generated traces of CW dataset, (b) original traces and
+generated traces of ASCAD fixed key dataset, (c) Original traces and generated traces of the ASCAD
+random key dataset
+(a)
+(b)
+(c)
+(a)
+(b)
+(c)
+Fig. 7 Euclidean distance :(a) original traces and the generated traces of CW dataset, (b) original
+traces and generated traces of ASCAD fixed key dataset, (c) original traces and generated traces of
+ASCAD random key dataset
+4.3 Generate Trace Quality Assessment
+Evaluating the quality of generated high-dimensional side-channel traces requires care-
+ful consideration. We acknowledge that statistical metrics such as Euclidean distance
+and Pearson correlation may have inherent limitations in fully capturing complex dis-
+tribution similarities in general high-dimensional data. However, they offer practical
+diagnostic value in the specific context of side-channel analysis. Since a side-channel
+trace typically comprises a stable operation-dependent global waveform and highly
+localized data-dependent leakage points, Euclidean distance serves as a preliminary
+indicator of global waveform alignment. Meanwhile, Pearson correlation helps verify
+whether the generated traces have captured the locations and trends of cryptograph-
+ically relevant leakages.Nevertheless, these statistical measurements are primarily
+utilized as intermediate validation steps during the training phase. To more compre-
+hensively and rigorously assess the generation quality and distribution fidelity of the
+16
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+synthetic traces, this study further relies on task-specific metrics—namely GE and SR
+—in the subsequent DLPA evaluations.
+When the side-channel traces are generated, the quality of the generated traces
+needs to be evaluated. The first evaluation method is by observing the similarity
+between the original traces and the shape of the generated traces. Fig. 6 (a) shows
+the traces of the CW dataset, the blue line is the original power traces and the red
+line is the generated power traces. Fig. 6 (b) shows the traces of the ASCAD fixed
+key dataset, the blue line is the original electromagnetic traces, and the red line is the
+generated electromagnetic traces. Fig. 6 (c) shows the traces of the ASCAD random
+key dataset, the blue line is the original electromagnetic traces, and the red line is
+the generated electromagnetic traces. It is observed that the original traces and the
+generated traces are very similar for both datasets. Due to the significant variations in
+the shapes of traces within the CHES CTF 2018 dataset, it is not feasible to effectively
+compare the quality of the generated traces.
+After visual inspection, the similarity between the original and generated traces is
+further quantified using the Euclidean distance. Since the original and generated traces
+have the same number of sampling points, Euclidean distance is a natural metric for
+trace similarity. Fig. 7(a) shows the Euclidean distance results on the CW dataset. As
+a reference, 1,000 original traces and 400 original traces are randomly selected from
+the training set, and their average Euclidean distance over ten repeated trials is used
+as the baseline, shown by the red dashed line. For the generated traces, 1,000 original
+traces and 400 generated traces are randomly selected, and the average Euclidean
+distance is computed at each training round of CGANHW, which is shown by the
+solid blue line. The network is trained for 10,000 rounds to evaluate how the generated
+traces progressively approach the original-trace distribution. Fig. 7(b) and Fig. 7(c)
+present the corresponding results for the ASCAD fixed-key dataset and the ASCAD
+random-key dataset, respectively. The evaluation procedure is the same as that used
+for the CW dataset and is therefore omitted for brevity.
+The HW is chosen to portray the power consumption, and the leak location and
+correlation magnitude are found by correlation analysis of the leak median and time
+sampling points. The correlations of the original traces and the generated traces are
+calculated separately to evaluate whether the generated traces will learn the side-
+channel leakage location and leakage strength effectively (Liu et al. 2022). Pearson
+correlation coefficient was used to calculate the correlation, and the formula was
+ρV,HW = cov(V,HW)
+σV σHW . In Fig. 8, (a) is the correlation of the original traces, and (b) is
+the correlation of the generated traces. It can be seen that the generated traces can
+learn the leakage points effectively, but the noise of non-leakage points is larger.
+In addition to the above evaluation methods, the SNR can also effectively assess
+the quality of the generated traces. The experiment was conducted on the CW dataset,
+where the HW model of the S-box output corresponding to the third key byte in
+the first round of AES encryption was selected to characterize the leakage of the
+leakage model. In Fig. 9, the blue line represents the SNR characteristics of the original
+traces, while the orange line represents those of the generated traces. By analyzing the
+experimental results, it can be observed that the generated traces can also effectively
+capture meaningful information.
+17
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(b)
+(a)
+(b)
+(a)
+(b)
+(a)
+Fig. 8 (a) correlation of original traces and (b) correlation of generated traces
+It should be emphasized that the selection of the optimal generated traces remains
+strictly confined to the profiling phase. The attack dataset is completely isolated, and
+its label information is never accessed during trace generation or the subsequent trace
+selection process. Specifically, the selected traces are not determined by a single hard
+threshold. Instead, the selection relies on a comprehensive evaluation of convergence
+metrics measured exclusively against the original profiling traces. During the training
+of CGANHW, model checkpoints are evaluated at regular epoch intervals, primarily
+monitoring the Euclidean distance and the Pearson correlation. The generation model
+is deemed optimized when the Euclidean distance between the generated and original
+profiling traces converges to a stable minimum (as illustrated in Fig.6), and the Pearson
+correlation at the leakage points stabilizes at a high level (as analyzed in Fig.15).
+Once these convergence criteria are met on the profiling set, the model checkpoint is
+18
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+0
+100
+200
+300
+400
+500
+Time Samples
+0
+2
+4
+6
+8
+SNR Value
+original traces
+generated traces
+Fig. 9 SNR characteristics of original traces and synthetic traces
+frozen. Finally, the required number of synthetic traces is randomly sampled from this
+stabilized generator to construct the balanced dataset.
+4.4 CW Dataset
+4.4.1 Generated Traces for TA
+A total of 4,000 power traces were collected, among which 3,000 traces were used
+for trace generation and template construction, and the remaining 1,000 traces were
+used for template attacks. Since HW0, HW1, HW7, and HW8 correspond to minority
+classes, traces belonging to these four classes were extracted from the 3,000 profiling
+traces to train CGANHW. A total of 400 generated traces with a balanced class ratio
+of HW0:HW1:HW7:HW8 = 1:1:1:1 were obtained. Based on the convergence of the
+Euclidean distance and correlation metrics evaluated strictly on the training set, the
+optimal generator checkpoint was identified. From this optimal state, 400 generated
+traces were randomly sampled and combined with 1,600 original traces to form a
+2,000-trace dataset for template construction.
+To evaluate the effectiveness of the generated traces in TA, attacks were conducted
+on all 16 AES-128 subkeys, and guessing entropy was adopted as the evaluation metric.
+For each experiment, 50 traces were randomly selected from the 1,000 attack traces,
+and the process was repeated 40 times to obtain the average guessing entropy.
+Fig. 10 presents the attack results for the 16 subkeys. The orange curves cor-
+respond to the template constructed with 1,600 original traces and 400 generated
+traces, whereas the blue curves correspond to the template constructed with 1,600
+original traces only. It can be observed that incorporating generated traces consis-
+tently improves the attack performance. In particular, for Subkeys 1, 12, 13, and 14,
+the number of attack traces required to achieve low guessing entropy is significantly
+reduced.
+19
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+(b)
+(c)
+(d)
+(e)
+(i)
+(f)
+(j)
+(g)
+(m)
+(n)
+(h)
+(k)
+(l)
+(o)
+(p)
+(a)
+(b)
+(c)
+(d)
+(e)
+(i)
+(f)
+(j)
+(g)
+(m)
+(n)
+(h)
+(k)
+(l)
+(o)
+(p)
+Fig. 10 Guess entropy of original and generated traces on 0-15 bytes
+4.4.2 Generated Traces for DLPA
+The TA results indicate that CGANHW can effectively capture useful leakage infor-
+mation from the CW dataset. To further evaluate its benefit in deep learning-based
+attacks, DLPA was performed on the fourth key byte. Two training settings were con-
+sidered: the original dataset containing 1,600 original traces, and the balanced dataset
+containing 1,600 original traces and 400 generated traces. The HW value of the S-
+box output in the first round was used as the label, and a one-dimensional CNN was
+trained for classification. Guessing entropy and success rate were adopted as the eval-
+uation metrics. During testing, 100 traces were randomly selected from the test set
+for each attack, and the experiment was repeated 40 times.
+Fig. 11(a) shows the average guessing entropy results. The original method requires
+21 traces for a successful attack, while SMOTE and Mixup require 19 traces, and
+CGAN requires 10 traces. By contrast, the proposed method succeeds with only 7
+traces, demonstrating the advantage of CGANHW in improving attack efficiency.
+Fig. 11(b) shows the corresponding success rates, where the proposed method also
+achieves the best overall performance.
+4.5 Synthetic Trace of ASCAD fixed key Dataset for DLPA
+The ASCAD fixed key dataset is the electromagnetic leakage information collected
+by running the fixed-key AES algorithm with mask protection on the ATMega8515.
+20
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 23 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+(b)
+(a)
+(b)
+Fig. 11 (a) Guessing entropy and (b) success rate for original traces using DLPA on CW dataset
+with SMOTE, Mixup, CGAN, and CGANHW
+The public dataset has 50,000 training data samples and 10,000 attack data samples.
+During the first round of the encryption process, the output of the S-box corresponding
+to the third key byte is selected as the target for the attack.In this experiment, 4,000
+traces were used for training and 10,000 traces were used for testing. The training set
+was further processed by CGANHW to generate synthetic traces. DLPA models were
+then trained on five datasets, namely the original traces, SMOTE-augmented traces,
+Mixup-augmented traces, CGAN-generated traces, and CGANHW-generated traces.
+For evaluation, 5,000 traces were randomly selected from the test set to attack the
+trained models. Fig. 12(a) shows the guessing entropy results after 40 training epochs.
+The original traces require 3,704 attack traces to reduce the guessing entropy to zero,
+while SMOTE, Mixup, and CGAN require 2,030, 3,101, and 2,902 traces, respectively.
+In contrast, CGANHW achieves the same goal with only 1,817 traces, indicating its
+clear advantage in attack efficiency. Fig. 12(b) presents the corresponding success-rate
+21
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 24 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+(b)
+(a)
+(b)
+Fig. 12 (a) Guessing entropy and (b) success rate for original traces using DLPA on ASCAD fixed
+key dataset with SMOTE, Mixup, CGAN, and CGANHW
+results obtained over 100 repeated tests, where 5,000 traces were randomly selected
+in each test. The results further confirm that the proposed method achieves the best
+overall performance among the compared methods.
+To validate the selected ratio between original and generated traces for data synthe-
+sis, additional experiments were conducted by combining the same set of 4,000 original
+traces with different numbers of CGANHW-generated traces, namely 1,000, 4,000,
+and 8,000. The corresponding attack results are shown in Fig. 13(a) and Fig. 13(b) in
+terms of guessing entropy and success rate, respectively. The results indicate that an
+appropriate proportion of generated traces is critical for effective data augmentation,
+and also confirm the rationality of the ratio adopted in this work.
+22
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 25 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+(b)
+(a)
+(b)
+Fig. 13 4000 original traces, 4000 original traces +1000 generated traces, 4000 original traces +4000
+generated traces, 4000 original traces +8000 generated traces to construct the attack model (a)
+Guessing entropy and (b) success rate
+4.6 Synthetic Trace of ASCAD random key Dataset for DLPA
+The ASCAD random-key dataset contains electromagnetic leakage traces collected
+from an 8-bit AVR microcontroller (ATMega8515) running a masked AES implemen-
+tation with random keys. The public dataset includes 200,000 profiling traces and
+100,000 attack traces, each with 1,400 sampling points. In this work, the S-box out-
+put corresponding to the first key byte in the first encryption round was selected
+as the attack target. A total of 20,000 traces were used for training and 10,000
+traces were used for testing. The training set was further processed to generate syn-
+thetic traces using CGANHW. DLPA models were then trained on the original traces,
+SMOTE-augmented traces, Mixup-augmented traces, CGAN-generated traces, and
+CGANHW-generated traces. For evaluation, 5,000 traces were randomly selected from
+the test set to attack the trained models.
+23
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 26 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+(b)
+(a)
+(b)
+Fig. 14 (a) Guessing entropy and (b) success rate for original traces using DLPA on ASCAD random
+key dataset with SMOTE, Mixup, CGAN, and CGANHW
+Fig. 14(a) shows the guessing entropy results after 100 training epochs. The original
+traces and Mixup fail to achieve a successful attack within 5,000 attack traces, while
+SMOTE and CGAN require 4,240 and 2,705 traces, respectively, to reduce the guess-
+ing entropy to zero. In contrast, the proposed CGANHW method achieves the same
+goal with only 1,571 traces, demonstrating a clear improvement in attack efficiency.
+Fig. 14(b) presents the corresponding success-rate results over 50 repeated tests, where
+5,000 traces were randomly selected in each test. The results further confirm that the
+proposed method consistently outperforms the other compared methods.
+4.7 Synthetic Trace of CHES CTF 2018 Dataset for DLPA
+The CHES CTF 2018 dataset contains side-channel traces collected from a 32-bit STM
+microcontroller running a masked AES implementation. It includes 45,000 profiling
+traces and 5,000 attack traces, each with 2,200 sampling points. In this work, the
+24
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 27 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+(b)
+(a)
+(b)
+Fig. 15 (a) Guessing entropy and (b) success rate for original traces using DLPA on CHES CTF
+2018 dataset with SMOTE, Mixup, CGAN, and CGANHW
+S-box output corresponding to the first key byte in the first encryption round was
+selected as the attack target. A total of 20,000 traces were used for training and
+10,000 traces were used for testing. The training set was further processed to generate
+synthetic traces using CGANHW. DLPA models were then trained on the original
+traces, SMOTE-augmented traces, Mixup-augmented traces, CGAN-generated traces,
+and CGANHW-generated traces. For evaluation, 4,000 traces were randomly selected
+from the test set to attack the trained models.
+Fig. 15(a) shows the guessing entropy results after 100 training epochs. The original
+traces, SMOTE, Mixup, and CGAN require 3,508, 3,410, 2,842, and 3,305 attack
+traces, respectively, to reduce the guessing entropy to zero. In contrast, the proposed
+CGANHW method achieves the same goal with only 2,104 traces, indicating a clear
+improvement in attack efficiency. Fig. 15(b) presents the corresponding success-rate
+results over 50 repeated tests, where 4,000 traces were randomly selected in each test.
+25
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 28 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+The results further confirm that the proposed method consistently outperforms the
+other compared methods.
+4.8 Comparison Experiments
+Experimental study on the correlation between intermediate values and leakage traces
+of CGAN and CGANHW on the CW dataset. By observing the SNR of 16 bytes in
+Fig. 5, the subkey 1 with higher SNR value is selected for the experiment, which can
+make the difference of the control results more obvious. Experimenting with correlation
+analysis of the intermediate value of leakage and the time sampling point, the time
+point at the spike is the leakage point. CGAN is trained on the dataset with Gaussian
+random noise as the input for the generator. The training dataset for the discriminator
+is not balanced. The correlation of the leakage points is calculated by saving the
+generated traces from rounds 0 to 8,000. This is illustrated by the blue solid line in
+Fig. 16. The CGANHW is trained on the dataset using average traces as input to the
+generator. The training dataset for the discriminator is balanced. The generated traces
+are saved for rounds 0 to 8,000, and the correlation of the leakage points is calculated.
+This is shown by the red solid line in Fig. 16. Fig. 16 shows that using average traces
+as input to the generator enables the generated traces to learn the features of the
+original traces more quickly. Additionally, increasing the number of less-sample labels
+enhances the learning of traces with fewer samples. As a result, the correlation of the
+leakage points in the CGANHW-traces is greater when training reaches convergence
+compared to the correlation of the leakage points in the CGAN-traces.
+0
+2000
+4000
+6000
+8000
+Epoch
+0.8
+0.6
+0.4
+0.2
+0.0
+0.2
+Correlation
+CGAN traces [16]
+CGANHW traces
+Fig. 16 Correlation of CGANHW and CGAN leak point locations compared
+For the CW dataset, DLPA was performed on the attack traces generated by
+CGANHW and CGAN. Fig. 17 (a) shows the results of the DLPA, where the x-axis
+represents the number of training iterations of the generative network, while the y-
+axis represents the number of attack traces required to achieve a successful attack. For
+26
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 29 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+(b)
+(a)
+(b)
+Fig. 17 Results of CGANHW and CGAN DLPA: (a) for the CW dataset and (b) for the ASCAD
+fixed key dataset
+both CGANHW and CGAN, attack traces generated from 1,000 to 7,000 iterations
+(with a sampling interval of 1,000) were used for DLPA. The results for CGANHW
+and CGAN are shown as the red and blue solid lines, respectively. The green dashed
+line represents the number of traces needed for a successful attack using original traces
+for DLPA. By observing the experimental results, it can be concluded that the attack
+results on the generated traces trained by CGANHW are consistently better than those
+trained by CGAN. This demonstrates that training CGAN with balanced datasets
+and average traces as input to the generator leads to more realistic generated traces.
+With fewer training iterations, the attack results on the generated traces trained by
+CGAN were worse than those on the original traces, indicating that the CGAN failed
+to sufficiently learn the information from the original traces. However, in the case
+of fewer training iterations, the generated traces trained by CGANHW were able to
+27
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 30 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+better learn the information from the original traces. This suggests that using average
+traces as input to the generator can facilitate rapid learning of important information
+from the original traces.
+For the ASCAD fixed key dataset, a DLPA was conducted on the original traces,
+traces generated by CGAN, and traces generated by CGANHW. The results of the
+DLPA are shown in Fig. 17 (b), where the x-axis represents the number of training
+iterations, while the y-axis represents the number of attack traces required to achieve
+a successful attack. For both CGANHW and CGAN, DLPA was performed using
+1,000 to 8,000 generated traces, sampled every 1,000 iterations. The results are shown
+in Fig. 17 (b) as red (CGANHW) and blue (CGAN) solid lines. The green dashed
+line indicates the number of original traces needed for a successful DLPA attack.
+By observing the experimental results, it was found that the attack results on the
+generated traces trained by CGANHW were consistently better than those trained
+by CGAN, and both were better than the attack results on the original traces. These
+experimental results demonstrate the superiority of the proposed method in this study.
+5 Conclusion
+The proposed CGANHW framework provides a targeted solution to the data imbal-
+ance problem in profiled side-channel analysis by leveraging mean-trace conditioning
+and class-balanced training. This methodology integrates seamlessly with both TA
+and DLPA, facilitating high-fidelity trace generation that preserves critical leakage
+characteristics while significantly improving attack efficiency. Empirical evaluations
+across the CW, ASCAD, and CHES CTF 2018 datasets confirm that CGANHW con-
+sistently achieves superior performance in terms of guessing entropy and success rate
+compared to traditional augmentation methods like SMOTE and Mixup.Subsequent
+research will prioritize the framework’s generalizability across diverse cryptographic
+protocols and hardware architectures. To improve robustness against highly non-linear
+or non-Gaussian leakages characteristic of advanced hardware implementations, the
+development of generative models capable of capturing arbitrary distribution pro-
+files remains a key objective . Moreover, systematic ablation studies to disentangle
+specific architectural contributions and the establishment of theoretically grounded,
+adaptive sampling criteria will support the transition toward a more principled data
+augmentation paradigm for hardware security assessments.
+References
+Arpaia, P., Caputo, F., Cioffi, A., Esposito, A., Isgro, F.: Uncertainty Analysis in Cryp-
+tographic Key Recovery for Machine Learning-Based Power Measurements Attacks.
+IEEE Transactions on Instrumentation and Measurement 72, 1–8 (2023)
+Benadjila, R., Prouff, E., Strullu, R., Cagli, E., Dumas, C.: Deep learning for side-
+channel analysis and introduction to ASCAD database. Journal of Cryptographic
+Engineering 10(2), 163–188 (2020)
+28
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 31 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Bhasin, S., Danger, J.L., Guilley, S., Najm, Z.: Side-channel leakage and trace com-
+pression using normalized inter-class variance. In: ACM International Conference
+Proceeding Series, vol. 15, pp. 1–26 (2014)
+Brier, E., Clavier, C., Olivier, F.: Correlation power analysis with a leakage model. In:
+International Workshop on Cryptographic Hardware and Embedded Systems, pp.
+16–29 (2004)
+Chari, S., R.Rao, J., Rohatgi, P.: Template Attacks. In: Cryptographic Hardware and
+Embedded Systems, pp. 13–28 (2002)
+Cheng, W., Guilley, S., Danger, J.L.: Information Leakage in Code-Based Masking: A
+Systematic Evaluation by Higher-Order Attacks. IEEE Transactions on Information
+Forensics and Security 17, 1624–1638 (2022)
+Fei, Y., Luo, Q., Ding, A.A.: A statistical model for DPA with novel algorithmic
+confusion analysis. In: International Workshop on Cryptographic Hardware and
+Embedded Systems, pp. 233–250 (2012)
+Goodfellow, I.J., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair,
+S., Courville, A., Bengio, Y.: Generative Adversarial Network. In: International
+Conference on Computer Vision Workshop, pp. 3063–3071 (2014)
+Ito, A., Saito, K., Ueno, R., Homma, N.: Imbalanced Data Problems in Deep
+Learning-Based Side-Channel Attacks: Analysis and Solution. IEEE Transactions
+on Information Forensics and Security 16, 3790–3802 (2021) https://doi.org/10.
+1109/TIFS.2021.3092050
+Kocher, P.C.: Timing Attacks on Implementations of Diffie-Hellman, RSA, DSS,
+and Other Systems. In: Annual International Cryptology Conference, pp. 104–113
+(1996)
+Li, Y., Xu, S., Luo, Y., Qin, S., Zhang, S., Su, M.: A Highly Efficient Profiled Power
+Analysis Attack Based on Power Leakage Fitting. In: International Conference on
+High Performance Computing and Communications, pp. 791–796. IEEE (2022)
+Liu, J., Zhang, S., Luo, Y., Cao, L.: Machine Learning-Based Similarity Attacks for
+Chaos-Based Cryptosystems. IEEE Transactions on Emerging Topics in Computing
+10(2), 824–837 (2022)
+Luo, Y., Zhang, S., Liu, J., Cao, L.: Cryptanalysis of a Chaotic Block Cryptographic
+System against Template Attacks. International Journal of Bifurcation and Chaos
+30(15), 1–15 (2020)
+Luo, Z., Zheng, M., Wang, P., Jin, M., Zhang, J., Hu, H.: Towards Strengthening Deep
+Learning-based Side Channel Attacks with Mixup. In: 2021 IEEE 20th International
+Conference on Trust, Security and Privacy in Computing and Communications, pp.
+29
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 32 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+791–801 (2021)
+Mirza, M., Osindero, S.: Conditional Generative Adversarial Nets. arXiv preprint
+arXiv:1411.1784, 1–7 (2014)
+Pammu, A.A., Chong, K.S., Wang, Y., Gwee, B.H.: A Highly Efficient Side Channel
+Attack with Profiling through Relevance-Learning on Physical Leakage Information.
+IEEE Transactions on Dependable and Secure Computing 16(3), 376–387 (2019)
+Peelam, M.S., Sai, S., Chamola, V.: Explorative Implementation of Quantum Key Dis-
+tribution Algorithms for Secure Consumer Electronics Networks. IEEE Transactions
+on Consumer Electronics 70(3), 5576–5584 (2024)
+Perin, G., Chmielewski, L., Picek, S.: Strength in numbers: Improving generaliza-
+tion with ensembles in machine learning-based profiled side-channel analysis. IACR
+Transactions on Cryptographic Hardware and Embedded Systems 2020(4), 337–364
+(2020)
+Picek, S., Heuser, A., Jovic, A., Bhasin, S., Regazzoni, F.: The curse of class imbalance
+and conflicting metrics with machine learning for side-channel evaluations. IACR
+Transactions on Cryptographic Hardware and Embedded Systems 2019(1), 209–237
+(2019)
+Popoola, S.I., Imoize, A.L., Hammoudeh, M., Adebisi, B., Jogunola, O., Aibinu, A.M.:
+Federated Deep Learning for Intrusion Detection in Consumer-Centric Internet of
+Things. IEEE Transactions on Consumer Electronics 70(1), 1610–1622 (2024)
+Prouff, E.: ChipWhisperer: An Open-Source Platform for Hardware Embedded Secu-
+rity Research. In: International Workshop on Constructive Side-Channel Analysis
+and Secure Design, pp. 243–260 (2014)
+Schindler, W., Lemke, K., Paar, C.: A stochastic model for differential side chan-
+nel cryptanalysis. In: International Workshop on Cryptographic Hardware and
+Embedded Systems, pp. 30–46 (2005)
+Schramm, K., Wollinger, T., Paar, C.: A new class of collision attacks and its applica-
+tion to DES. In: International Workshop on Fast Software Encryption, pp. 206–222
+(2003)
+Wang, J., Gao, B., Yan, Y.: Research on side channel attack based on bagging ensemble
+strategy. Computer Engineering andApplications 58(6), 110–117 (2022)
+Wang, P., Chen, P., Luo, Z., Dong, G., Zheng, M., Yu, N., Hu, H.: Enhancing the Per-
+formance of Practical Profiling Side-Channel Attacks Using Conditional Generative
+Adversarial Networks. In: arXiv.2007.05285, pp. 1–26 (2020)
+Wang, W., Wang, J.N., Hu, F.L., Ni, F.: SCA-CGAN: A New Side-Channel Attack
+30
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 33 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Method for Imbalanced Small Samples. Radioengineering 32(1), 124–135 (2023)
+https://doi.org/10.13164/re.2023.0124
+Wouters, L., Arribas, V., Gierlichs, B., Preneel, B.: Revisiting a methodology for
+efficient cnn architectures in profiling attacks. IACR Transactions on Cryptographic
+Hardware and Embedded Systems 2020(3), 147–168 (2020)
+Wu, L., Weissbart, L., Krˇcek, M., Li, H., Perin, G., Batina, L., Picek, S.: Label
+Correlation in Deep Learning-Based Side-Channel Analysis. IEEE Transactions on
+Information Forensics and Security 18, 3849–3861 (2023)
+Xudong, M., Qing, L., Haoran, X., Raymond, Y.K.l., Zhen, W., smolley, S.: Least
+Squares Generative Adversarial Networks. In: International Conference on Com-
+puter Vision Workshop, pp. 2794–2802 (2017)
+Yilmaz, B.B., Prvulovic, M., Zajic, A.: Electromagnetic Side Channel Information
+Leakage Created by Execution of Series of Instructions in a Computer Processor.
+IEEE Transactions on Information Forensics and Security 15, 776–789 (2020)
+Zhang, H.: On the Exact Relationship between the Success Rate of Template Attack
+and Different Parameters. IEEE Transactions on Information Forensics and Security
+15, 681–694 (2020)
+Zhang, J., Zheng, M., Nan, J., Hu, H., Yu, N.: A novel evaluation metric for deep
+learning-based side channel analysis and its extended application to imbalanced
+data. IACR Transactions on Cryptographic Hardware and Embedded Systems 3,
+73–96 (2020)
+Zimmer, L., Lindauer, M., Hutter, F.: Auto-Pytorch: Multi-Fidelity MetaLearning for
+Efficient and Robust AutoDL. IEEE Transactions on Pattern Analysis and Machine
+Intelligence 43(9), 3079–3090 (2021)
+31
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 34 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Paper Title 
+CGANHW: An Efficient Synthetic Trace Scheme for Electromagnetism and Power 
+Profiled Attacks 
+ 
+Author Names 
+Yuling Luo¹,² Qiuhui Li,¹,² Xue Ouyang¹,²⁎  Haiyang Xu¹,² Chenpeng Wu¹,² Junxiu 
+Liu¹,² Yanyan Xu³ 
+ 
+Author Affiliations 
+¹ Guangxi Key Lab of Brain-inspired Computing and Intelligent Chips, School of 
+Electronic and Information Engineering, Guangxi Normal University, Guilin 541004, 
+China 
+² Key Laboratory of Nonlinear Circuits and Optical Communications, Education 
+Department of Guangxi Zhuang Autonomous Region, Guilin 541004, China 
+³ State Key Laboratory of Information Engineering in Surveying, Mapping and Remote 
+Sensing, Wuhan University, Wuhan 430000, China 
+ 
+Corresponding Author 
+⁎Corresponding author: Xue Ouyang 
+E-mail: ouyangxue@gxnu.edu.cn 
+ 
+Author Emails 
+yuling0616@163.com (Yuling Luo) 
+liqiuhui4321@163.com (Qiuhui Li) 
+ouyangxue@gxnu.edu.cn (Xue Ouyang) 
+17613931014@163.com (Haiyang Xu) 
+wuchenpeng16@163.com (Chenpeng Wu) 
+junxiu6@outlook.com (Junxiu Liu) 
+xuyy@whu.edu.cn (Yanyan Xu) 
+ 
+Abstract 
+Side Channel Attacks (SCAs) effectively extract sensitive data from cryptographic 
+devices. In profiled SCAs, leakage traces for each label are extremely unbalanced using 
+Hamming Weight (HW) and Hamming Distance (HD) models, which results in lacking 
+the number of leakage traces for minority classes. To address the data imbalance 
+problem, this paper proposes an efficient synthetic traces scheme based on Conditional 
+Generative Adversarial Nets and HW (CGANHW) to generate traces for few-sample 
+labels. Specifically, the average leakage trace of HW model serves as the CGAN 
+generator's input, and the leakage traces of minority class labels are the training dataset 
+for the discriminator. CGANHW generates unmasked power datasets on the 
+ChipWhisperer (CW) platform, as well as the masked ASCAD public electromagnetic 
+datasets and the CHES CTF datasets. It employs Template Attacks (TA) and Deep 
+Learning Profiling Attacks (DLPA) to target the Advanced Encryption Standard (AES). 
+Experiments demonstrate that the proposed CGANHW generates both power and 
+Title Page
+
+
+========== PDF_PHYSICAL_PAGE 35 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+electromagnetic traces. The generated traces can successfully recover the AES secret 
+key, outperforming those using only the original traces and other data augmentation 
+techniques. Additionally, CGANHW achieves comparable attack performance in 1,000 
+iterations on the CW dataset, compared to 3,000 iterations with CGAN. 
+ 
+Keywords: side-channel attacks, imbalanced data, conditional generative adversarial 
+network, Electromagnetic leakage 
+ 
+Acknowledgements  
+This research was supported by the National Natural Science Foundation of China 
+under Grant 62462009 and 42501519, Guangxi Natural Science Foundation under 
+Grant GuiKeFN2600640064, 2026GXNSFBA00640257, Guangxi Science and 
+Technology Projects under Grant GuiKeAD24010047, Guangxi Young Elite Scientist 
+Sponsorship Program under Grant GXYESS2026035. 
+ 
+ 
+Author Contributions 
+Yuling Luo conceived the study, designed the methodology, and wrote the original draft. 
+Qiuhui Li conducted experiments, curated the data, and prepared visualizations. Xue 
+Ouyang supervised the research, coordinated the project, and reviewed and edited the 
+manuscript. Haiyang Xu contributed to software development and visualization. 
+Chenpeng Wu performed formal analysis and contributed to validation. Junxiu Liu 
+contributed to the methodology and reviewed and edited the manuscript. Yanyan Xu 
+contributed to validation and reviewed and edited the manuscript. 
+ 
+Data Availability Data will be made available on request. 
+ 
+Declarations 
+Competing of Interests The authors declare that they have no known competing 
+financial interests or personal relationships that could have appeared to influence the 
+work reported in this paper. 

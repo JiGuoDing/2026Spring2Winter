@@ -58,9 +58,12 @@
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>配额不是一张表，是三个执行点各自算得出来、各自拦得住——缺一层，账就记不清。</Text>
         </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [G-03] [J-01]</Text>
+        </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>三层配额用同一套指标口径，差异只体现在“什么时候拦”</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>15 / 20</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>15 / 21</Text>
         </Box>
     </Box>
 </Slide>

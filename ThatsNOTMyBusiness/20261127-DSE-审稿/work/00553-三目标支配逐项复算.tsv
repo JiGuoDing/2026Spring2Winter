@@ -1,0 +1,15 @@
+﻿模型	验证准确率百分比	FLOPs百万	参数千	同表2子网中支配者	表1与表2合并后的支配者
+Subnet #1	40.37	9.82	46.35	无	Depthwise-Bottleneck CNN
+Subnet #2	43.65	10.05	46.87	无	Depthwise-Bottleneck CNN
+Subnet #3	38.98	6.92	47.13	无	无
+Subnet #4	56.57	19.63	65.42	无	Shallow CNN、LeNet-5
+Subnet #5	58.92	20.87	68.02	无	Shallow CNN、LeNet-5
+Subnet #6	60.34	58.03	83.9	无	BiNAS-Prune、Shallow CNN、LeNet-5
+Subnet #7	66.65	52.28	209.74	无	Shallow CNN、LeNet-5
+Subnet #8	80.18	55.8	224.15	无	无
+Subnet #9	63.84	35.09	305.76	无	BiNAS-Prune、Shallow CNN、LeNet-5
+BiNAS-Prune	63.84	22.68	57.19	无	Shallow CNN
+OFA-NAS	71.16	71.63	128.45	无	LeNet-5
+Shallow CNN	68.86	18.5	19.64	无	无
+LeNet-5	71.47	4.2	59.47	无	无
+Depthwise-Bottleneck CNN	55.25	8.1	2.5	无	无

@@ -60,9 +60,12 @@
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>省下的当量投到控制面开发、20 组越权用例与压测——不是省在质量上。</Text>
         </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [G-04]</Text>
+        </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>人月为经验估算，按 8 人 × 月口径折算；不含客户侧配合人力</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>05 / 08</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>05 / 09</Text>
         </Box>
     </Box>
 </Slide>

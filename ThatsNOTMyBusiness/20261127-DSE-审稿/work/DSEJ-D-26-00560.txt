@@ -1,0 +1,6940 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+Privacy-Preserving Exact Aggregate Query Answering in Recommendation Databases
+Using Incremental Inference Auditing and Utility-Aware Prioritization
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00560
+Full Title:
+Privacy-Preserving Exact Aggregate Query Answering in Recommendation Databases
+Using Incremental Inference Auditing and Utility-Aware Prioritization
+Article Type:
+Research Papers
+Funding Information:
+Abstract:
+Recommendation databases contain sensitive user preferences and interaction
+records that support personalized services and statistical analysis. Although aggregate
+query answering restricts direct access to individual records, successive exact
+aggregate results may be combined to reconstruct confidential numerical values. This
+study proposes an integrated privacy-preserving aggregate query answering
+framework comprising three models: Simple Aggregate Query Answering (S-AQA),
+History-Aware Aggregate Query Answering (H-AQA), and Incremental Utility-Aware
+History-Based Aggregate Query Answering (IUH-AQA). S-AQA enforces a minimum-
+support threshold, whereas H-AQA incorporates historical linear inference auditing to
+prevent the exact reconstruction of designated protected values. IUH-AQA extends this
+mechanism through incremental orthonormal row-space maintenance and utility-aware
+query prioritization to improve computational efficiency and analytical usefulness while
+preserving mandatory reconstruction-prevention constraints. Mathematical analysis
+establishes the necessary and sufficient condition for exact linear reconstruction and
+proves the equivalence of full-history and incremental auditing under identical historical
+states and exact arithmetic. The framework is evaluated using MovieLens 32M and
+Amazon Sales data, together with controlled reconstruction attacks, dataset-informed
+workloads, and analytical scalability assessments. Across 800 controlled
+reconstruction trials per dataset, S-AQA permitted target reconstruction in all trials,
+whereas H-AQA and IUH-AQA prevented reconstruction in every evaluated case, with
+query acceptance rates of 66.67\% compared with 100\% for S-AQA. In ablation
+experiments, incremental auditing reduced mean auditing time by approximately 18-
+fold and 14.1-fold for rating-like and price-like workloads, respectively. Utility-aware
+prioritization also increased normalized weighted utility, although its greedy strategy
+did not guarantee global optimality. The findings demonstrate that historical inference
+auditing can preserve exact aggregate results while preventing specified cumulative
+linear reconstruction attacks. The proposed framework provides a mathematical and
+experimental foundation for integrating reconstruction resistance, incremental auditing,
+and analytical utility in recommendation databases, subject to the stated threat-model
+and experimental limitations.
+Corresponding Author:
+Surapon Riyana
+Maejo University
+THAILAND
+Corresponding Author E-Mail:
+surapon_r@mju.ac.th
+Order of Authors:
+Surapon Riyana
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+Maejo University
+Corresponding Author's Secondary
+Institution:
+First Author:
+Surapon Riyana
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Additional Information:
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Privacy-Preserving Exact Aggregate Query
+Answering in Recommendation Databases Using
+Incremental Inference Auditing and Utility-Aware
+Prioritization
+Abstract
+Recommendation databases contain sensitive user preferences and interaction
+records that support personalized services and statistical analysis. Although
+aggregate query answering restricts direct access to individual records, successive
+exact aggregate results may be combined to reconstruct confidential numerical
+values. This study proposes an integrated privacy-preserving aggregate query
+answering framework comprising three models: Simple Aggregate Query Answer-
+ing (S-AQA), History-Aware Aggregate Query Answering (H-AQA), and Incre-
+mental Utility-Aware History-Based Aggregate Query Answering (IUH-AQA).
+S-AQA enforces a minimum-support threshold, whereas H-AQA incorporates
+historical linear inference auditing to prevent the exact reconstruction of desig-
+nated protected values. IUH-AQA extends this mechanism through incremental
+orthonormal row-space maintenance and utility-aware query prioritization to
+improve computational efficiency and analytical usefulness while preserving
+mandatory reconstruction-prevention constraints. Mathematical analysis estab-
+lishes the necessary and sufficient condition for exact linear reconstruction and
+proves the equivalence of full-history and incremental auditing under identi-
+cal historical states and exact arithmetic. The framework is evaluated using
+MovieLens 32M and Amazon Sales data, together with controlled reconstruc-
+tion attacks, dataset-informed workloads, and analytical scalability assessments.
+Across 800 controlled reconstruction trials per dataset, S-AQA permitted target
+reconstruction in all trials, whereas H-AQA and IUH-AQA prevented reconstruc-
+tion in every evaluated case, with query acceptance rates of 66.67% compared
+with 100% for S-AQA. In ablation experiments, incremental auditing reduced
+mean auditing time by approximately 18-fold and 14.1-fold for rating-like and
+price-like workloads, respectively. Utility-aware prioritization also increased nor-
+malized weighted utility, although its greedy strategy did not guarantee global
+optimality. The findings demonstrate that historical inference auditing can
+preserve exact aggregate results while preventing specified cumulative linear
+reconstruction attacks. The proposed framework provides a mathematical and
+experimental foundation for integrating reconstruction resistance, incremental
+auditing, and analytical utility in recommendation databases, subject to the
+stated threat-model and experimental limitations.
+1
+Blinded manuscript
+Click here to access/download;Blinded manuscript;RecAgg.pdf
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Keywords: Privacy-Preserving Data Analytics; Aggregate Query Answering;
+Recommendation Databases; Inference Auditing; Exact Linear Reconstruction;
+Incremental Row-Space Maintenance; Utility-Aware Query Prioritization.
+1 Introduction
+Recommendation systems [1–4] are widely employed in digital platforms to pro-
+vide personalized services, support product discovery, and facilitate data-driven
+decision-making. These systems rely on recommendation databases containing user
+preferences, item ratings, interaction histories, demographic characteristics, and
+behavioral attributes. Such information also supports statistical analysis [5–7], busi-
+ness intelligence [8], and service optimization [9, 10]. However, analytical access to
+recommendation databases may expose confidential user information even when direct
+record retrieval is restricted [11, 12]. Table 1 presents an illustrative user–item rat-
+ing database, while Figure 1 illustrates the relationship between a recommendation
+system and its underlying database.
+Table 1 Illustrative User–Item Rating Database for a Recommendation System
+User ID
+Age
+Gender
+Item ID
+Item Category
+Rating
+U01
+22
+Female
+I01
+Electronics
+5
+U01
+22
+Female
+I02
+Books
+4
+U01
+22
+Female
+I03
+Clothing
+3
+U02
+28
+Male
+I01
+Electronics
+4
+U02
+28
+Male
+I04
+Home Appliances
+5
+U02
+28
+Male
+I05
+Sports
+3
+U03
+35
+Female
+I02
+Books
+5
+U03
+35
+Female
+I03
+Clothing
+4
+U03
+35
+Female
+I04
+Home Appliances
+4
+U04
+41
+Male
+I01
+Electronics
+3
+U04
+41
+Male
+I05
+Sports
+5
+U04
+41
+Male
+I02
+Books
+4
+U05
+30
+Female
+I03
+Clothing
+5
+U05
+30
+Female
+I04
+Home Appliances
+3
+U05
+30
+Female
+I05
+Sports
+4
+Aggregate query answering [13–15] enables statistical analysis through functions
+such as SUM, AVG, COUNT, MIN, and MAX without directly exposing individual
+records. Nevertheless, restricting access to aggregate results does not inherently guar-
+antee confidentiality. Queries involving a single contributing value may directly disclose
+that value, whereas homogeneous populations may reveal protected attributes even
+2
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Fig. 1 Conceptual architecture of a recommendation system and its interaction with a user–item
+rating database.
+when their sizes exceed a predefined threshold. For example, MIN(age) = MAX(age)
+= 35 over a nonempty population establishes that every contributing non-null age
+equals 35. Consequently, population size alone cannot characterize all disclosure risks.
+More sophisticated attacks exploit mathematical relationships among multiple
+aggregate results [16, 17]. Consider two SUM queries over populations S1 and S2 =
+S1 ∪{j}, where j /∈S1. Their exact results reveal the individual contribution through
+xj = SUM(S2)−SUM(S1). Equivalent reconstruction may arise from combinations of
+AVG and COUNT when the contributing populations and non-null counts are known.
+Importantly, these attacks may succeed even when each query independently satisfies
+a minimum-support threshold. Figure 2 illustrates the reconstruction of individual
+ratings through cumulative aggregate inference.
+Existing
+privacy-preserving
+approaches
+address
+different
+disclosure
+threats.
+Anonymization and anatomization regulate information published from sensitive
+datasets [18, 19], whereas perturbation and Differential Privacy employ data mod-
+ification or randomized mechanisms under their respective privacy models [20, 21].
+Cryptographic techniques protect selected aspects of confidential computation [22].
+Although these approaches provide important protection mechanisms, they do not
+directly resolve the problem of selectively releasing exact aggregate results while
+preventing their cumulative use to reconstruct protected numerical values.
+Minimum-support verification offers a lightweight mechanism for rejecting queries
+involving insufficiently large populations while preserving exact results for eligible
+requests. However, this requirement is distinct from k-Anonymity and does not prevent
+homogeneous-value disclosure or cumulative reconstruction. History-based inference
+auditing addresses selected cumulative risks by examining candidate queries in relation
+to previously released information [23, 24]. For exact linear aggregates, accumu-
+lated disclosures can be represented as Ax = b, where A contains released query
+3
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Fig. 2 Privacy risks arising from individual rating reconstruction through aggregate query inference.
+coefficient vectors and b contains their exact results. Under a consistent linear sys-
+tem with otherwise unrestricted real-valued protected variables, a coordinate xj is
+uniquely reconstructable if and only if ej ∈Row(A). This criterion provides a precise
+mathematical foundation for controlling cumulative exact linear reconstruction.
+Despite this advantage, repeatedly analyzing the complete historical constraint
+matrix may introduce redundant computation as query histories expand. Incremental
+row-space maintenance offers an alternative by retaining a reusable basis for accu-
+mulated constraints [25]. Its computational benefits depend on the constraint rank,
+protected-data dimensionality, query overlap, and implementation. Furthermore, con-
+ventional sequential auditing does not consider the relative analytical importance of
+candidate queries. Approving a low-utility query may prevent the subsequent release
+of a more valuable query, motivating security-constrained utility-aware selection.
+To address these challenges, this study develops and comparatively evaluates three
+models: Simple Aggregate Query Answering (S-AQA), History-aware Aggregate Query
+Answering (H-AQA), and Incremental Utility-aware History-based Aggregate Query
+Answering (IUH-AQA). S-AQA establishes a minimum-support baseline for exact
+aggregate query answering. H-AQA extends this mechanism through cumulative linear
+inference auditing to prevent the exact reconstruction of designated protected numeri-
+cal coordinates. IUH-AQA further integrates incremental row-space maintenance with
+utility-aware query prioritization while preserving the same reconstruction-prevention
+criterion as H-AQA for equivalent historical states. Figure 3 illustrates the relationship
+among the three models and their corresponding protection mechanisms.
+The proposed framework operates through a controlled aggregate-only interface
+and preserves exact numerical results for approved queries without introducing per-
+turbation. Its principal contribution lies in the formal integration and comparative
+evaluation of minimum-support verification, historical inference auditing, incremental
+constraint maintenance, and security-constrained utility-aware selection. The frame-
+work does not claim comprehensive protection against all statistical inference attacks.
+4
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Fig. 3 Conceptual relationship among the recommendation database, aggregate-query disclosure
+risks, and the proposed S-AQA, H-AQA, and IUH-AQA models.
+Its formal reconstruction-prevention guarantee concerns exact linear inference under
+explicitly stated assumptions; nonlinear constraints, bounded or discrete domains,
+auxiliary knowledge, and observable query decisions may require supplementary
+controls.
+The theoretical analysis establishes reconstruction conditions and auditing correct-
+ness, while the experimental evaluation investigates disclosure prevention, numerical
+accuracy, processing latency, memory consumption, scalability, query availability, and
+weighted analytical utility using MovieLens 32M and an Amazon Sales Dataset.
+1.1 Research Objectives
+The primary objective of this study is to develop and evaluate an exact aggregate query
+answering framework that integrates cumulative linear inference prevention, incremen-
+tal auditing, and security-constrained analytical utility. The specific objectives are
+to:
+ Establish a controlled aggregate-only access architecture and a minimum-support
+baseline for exact statistical result release.
+ Develop a history-aware auditing mechanism to prevent exact reconstruction of
+designated protected numerical coordinates from accumulated linear aggregate
+constraints.
+ Develop an incremental auditing mechanism that preserves the reconstruction-
+prevention decisions of full-history analysis while reducing redundant computation.
+ Integrate utility-aware query prioritization with mandatory disclosure restrictions
+to improve the analytical value of approved queries.
+5
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ Establish formal security and computational properties and evaluate the proposed
+models in terms of reconstruction resistance, efficiency, scalability, query availability,
+and weighted analytical utility.
+1.2 Research Contributions
+The principal contributions of this study are summarized as follows:
+ Unified Aggregate Query Answering Framework: A controlled architecture integrat-
+ing query validation, minimum-support verification, historical inference auditing,
+and exact aggregate result release.
+ S-AQA Reference Model: A lightweight minimum-support-based mechanism for
+evaluating the computational advantages and disclosure limitations of independent
+aggregate query verification.
+ H-AQA Model: A history-aware mechanism for preventing exact reconstruction of
+designated protected numerical coordinates from accumulated linear constraints
+under specified assumptions.
+ IUH-AQA Model: An integrated approach combining incremental row-space audit-
+ing with security-constrained utility-aware query prioritization.
+ Formal Analysis: Mathematical reconstruction conditions, auditing-correctness
+properties, and computational complexity analyses establishing the relationship
+between full-history and incremental inference auditing.
+ Comparative Evaluation: An experimental methodology for assessing disclosure pre-
+vention, numerical accuracy, computational efficiency, scalability, query availability,
+and weighted analytical utility.
+These contributions emphasize the integration and comparative evaluation of
+established mechanisms rather than claiming that minimum-support control, historical
+auditing, incremental linear algebra, or utility optimization are independently novel.
+1.3 Organization of the Paper
+The remainder of this paper is organized as follows. Section 2 reviews existing privacy-
+preserving techniques and identifies the research gap addressed in this study. Section
+3 introduces the proposed models and their underlying mathematical foundations.
+Section 4 presents the formal security analysis and computational complexity evalu-
+ation. Section 5 reports the experimental results and performance evaluation, while
+Section 6 concludes the paper.
+2 Related Work and Research Gap
+Privacy-preserving database techniques address information disclosure during data
+publication, computation, and statistical analysis. Their protection objectives, math-
+ematical assumptions, computational requirements, and effects on analytical utility
+differ substantially. For recommendation databases, these distinctions are particularly
+important when analysts require exact statistical results derived from confidential
+user preferences, ratings, and interaction histories. This section reviews relevant
+6
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+privacy-preserving techniques, emphasizing their applicability to exact aggregate
+query answering, cumulative inference prevention, and analytical utility.
+2.1 Anonymization-Based Privacy Preservation
+Anonymization-based techniques reduce identity and attribute disclosure risks by
+transforming published datasets through generalization, suppression, or related mech-
+anisms [26, 27]. Representative models include k-Anonymity [18], l-Diversity [28],
+t-Closeness [29], km-Anonymity [30], and LKC-Privacy [31].
+The k-Anonymity model requires each record to be indistinguishable from at
+least k −1 other records with respect to selected quasi-identifiers. Although this
+requirement reduces selected re-identification risks, it does not inherently prevent
+sensitive-attribute disclosure when equivalence classes contain homogeneous values or
+when adversaries possess relevant background knowledge. Moreover, extensive gen-
+eralization and suppression may reduce data granularity and analytical accuracy
+[26].
+The l-Diversity model introduces diversity requirements for sensitive values within
+equivalence classes. However, semantically similar values and skewed distributions may
+still enable attribute inference. The t-Closeness model further constrains differences
+between equivalence-class and overall sensitive-attribute distributions, although strict
+distributional requirements may increase data transformation and reduce analytical
+usefulness [27].
+For transactional and set-valued datasets, km-Anonymity limits re-identification
+risks arising from adversarial knowledge of item combinations, whereas LKC-Privacy
+incorporates assumptions concerning background-knowledge size, record support, and
+sensitive-attribute disclosure confidence. Their effectiveness depends on the specified
+adversarial assumptions and may require transformations that affect transactional
+patterns.
+Although these models provide established foundations for privacy-preserving
+data publication, their objectives differ from interactive aggregate query answer-
+ing. In particular, anonymization does not independently guarantee that successive
+exact aggregate results cannot be combined to reconstruct protected numerical val-
+ues [23, 25]. Furthermore, minimum-support verification in aggregate query answering
+should not be equated with k-Anonymity because the two mechanisms impose different
+privacy requirements.
+2.2 Anatomization-Based Privacy Preservation
+Anatomization separates quasi-identifying attributes from sensitive attributes to
+obscure their associations while preserving selected original values [19]. Related
+approaches, including bucketization and slicing, partition records or attributes to
+reduce disclosure risks while retaining useful statistical characteristics [32]. Com-
+pared with extensive generalization, anatomization may preserve greater numerical
+precision. Nevertheless, its effectiveness depends on partitioning strategies, residual
+correlations, and adversarial background knowledge. In recommendation databases,
+distinctive preferences and sparse interaction histories may facilitate linkage attacks.
+7
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+More importantly, anatomization primarily regulates published data representations
+rather than cumulative information disclosed through successive exact aggregate
+queries. Consequently, it does not replace historical inference auditing.
+2.3 Perturbation-Based Privacy Preservation
+Perturbation-based techniques reduce disclosure risks by modifying original data or
+released statistical results through noise addition, data swapping, numerical masking,
+or related transformations [20]. These techniques provide flexibility in balancing pri-
+vacy and analytical usefulness. However, numerical modification may distort aggregate
+results, statistical distributions, and attribute relationships. Moreover, arbitrary per-
+turbation does not establish a formal privacy guarantee without an explicitly defined
+protection model. For applications requiring exact statistical results, perturbation may
+therefore be unsuitable. Exact-result disclosure control adopts a different strategy by
+restricting which aggregate results can be released rather than modifying their numer-
+ical values. However, preserving numerical accuracy does not itself imply stronger
+privacy protection.
+2.4 Differential Privacy-Based Techniques
+Differential Privacy provides formal probabilistic protection by limiting the influ-
+ence of individual records on the distribution of released outputs [21]. Mechanisms
+such as Laplace and Gaussian randomization introduce calibrated noise, while com-
+position principles characterize privacy loss across repeated queries. These properties
+provide substantial advantages for interactive statistical analysis. Nevertheless, ran-
+domized outputs generally involve a privacy–accuracy trade-off, and repeated releases
+require appropriate privacy-budget management. Consequently, conventional random-
+ized mechanisms may not satisfy applications requiring every approved aggregate
+result to equal the corresponding exact database statistic. Differential Privacy and
+exact-result auditing therefore address different protection objectives. The former
+provides probabilistic guarantees under a specified randomized mechanism, whereas
+the latter selectively releases deterministic results according to a defined inference-
+prevention criterion. The proposed framework does not claim equivalent privacy
+guarantees.
+2.5 Cryptography-Based Privacy Preservation
+Cryptographic techniques protect confidential information during storage, trans-
+mission, and computation [22]. Representative approaches include homomorphic
+encryption, secure multiparty computation, and trusted execution environments.
+These mechanisms support confidential computation across distributed or partially
+trusted environments. However, protecting inputs and intermediate computations does
+not necessarily prevent disclosure through final statistical outputs. An analyst may
+still combine multiple authorized aggregate results to reconstruct protected numerical
+values. Accordingly, cryptographic computation and historical inference auditing are
+complementary. Cryptographic mechanisms protect selected aspects of computation,
+whereas inference auditing evaluates the information disclosed by query results.
+8
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+2.6 Statistical Disclosure Control and Aggregate Inference
+Attacks
+Statistical disclosure control regulates information released through analytical inter-
+faces. Conventional approaches include minimum query-set sizes, output suppression,
+and restrictions on overlapping query populations [23, 24]. Minimum-support verifica-
+tion prevents selected small-population disclosures while preserving exact results for
+eligible queries [23, 33, 34]. However, satisfying a population-size threshold does not
+guarantee protection against cumulative inference. For example, consider two popula-
+tions S1 and S2 = S1 \ {j}. Releasing their exact SUM results enables reconstruction
+through xj = SUM(S1)−SUM(S2), even when both populations satisfy the minimum-
+support requirement. Similarly, when the contributing non-null count m is known, the
+relationship SUM(S) = m AVG(S) allows AVG results to be interpreted as equiva-
+lent linear constraints. Nonlinear aggregates introduce additional risks. For example,
+identical MIN and MAX results over the same nonempty population establish that
+all contributing non-null values are equal. Such disclosure may occur regardless of
+population size. These vulnerabilities demonstrate that minimum-support verification,
+homogeneous-value disclosure prevention, and cumulative reconstruction control are
+distinct requirements. In particular, linear inference auditing does not automatically
+prevent nonlinear disclosure arising from MIN and MAX.
+2.7 History-Based Inference Auditing
+History-based inference auditing evaluates candidate queries against previously
+released statistical information to identify cumulative disclosure risks [35–37]. Its
+underlying principle is that individually admissible queries may collectively reveal
+protected values. Early research established the importance of auditing overlapping
+statistical queries and examined the computational challenges of inference control [23].
+Subsequent work also investigated information leakage arising from both answered
+and denied queries [24]. For exact linear aggregates, previously released results can
+be represented as a consistent system Ax = b, where A contains query coefficient
+vectors and b contains their corresponding exact results. Assuming that x ∈Rn is
+otherwise unrestricted, a protected coordinate xj is uniquely reconstructable if and
+only if ej ∈Row(A). This necessary and sufficient condition provides a mathemat-
+ical foundation for evaluating whether an additional linear aggregate result would
+enable exact reconstruction of a designated protected coordinate. Unlike independent
+minimum-support verification, history-based auditing accounts for the accumulated
+information represented by previously released constraints. Nevertheless, the guaran-
+tee applies only under its specified assumptions. Nonlinear aggregates, bounded or
+discrete domains, auxiliary knowledge, and observable query decisions may introduce
+additional disclosure channels [24, 25]. Therefore, linear inference auditing should not
+be interpreted as comprehensive privacy protection.
+9
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+2.8 Incremental Inference Auditing and Computational
+Efficiency
+The computational efficiency of history-based auditing depends on how accumulated
+constraints are represented and maintained. Repeatedly constructing and analyzing
+the complete historical matrix may introduce redundant computation as the number
+of released queries increases [23, 25]. Incremental linear-algebra techniques address
+this limitation by maintaining reusable representations of accumulated constraints
+[25, 38, 39]. For exact linear reconstruction auditing, the relevant information is the row
+space of the released constraint matrix. An incremental mechanism can maintain an
+orthonormal basis Bt satisfying Row(Bt) = Row(At). When a newly approved query
+introduces an independent constraint, the basis can be updated without reconstruct-
+ing the complete historical matrix. Dependent queries do not increase the dimension of
+the accumulated row space. However, incremental basis maintenance is an established
+mathematical technique rather than an independently novel contribution. Yang et al.
+[25], for example, investigated normalized query basis matrices and auditing mech-
+anisms for aggregate database queries. Furthermore, the computational advantages
+of incremental auditing depend on constraint rank, data dimensionality, query spar-
+sity, history length, and numerical stability. Therefore, formal complexity analysis and
+experimental comparisons are required to determine when incremental maintenance
+improves practical efficiency.
+2.9 Security-Constrained Analytical Utility
+Privacy-preserving aggregate query answering must balance mandatory disclosure
+restrictions with the analytical usefulness of released information. For randomized
+mechanisms, utility is frequently associated with numerical accuracy [40]. In exact-
+result systems, however, approved outputs retain their original numerical values;
+analytical utility therefore depends primarily on query availability, selection, and rela-
+tive importance. A mechanism that rejects all queries may prevent disclosure through
+released results but provides little analytical value. Conversely, unrestricted query
+answering may enable cumulative reconstruction. Moreover, query-processing order
+influences future admissibility [41]. Releasing one constraint may prevent another,
+potentially more valuable, query from being safely answered. Consequently, conven-
+tional first-come, first-served processing does not necessarily maximize the analytical
+value of approved queries. Security-constrained utility-aware selection addresses this
+limitation by assigning analytical importance to candidate queries while preserving
+mandatory disclosure restrictions. Its effectiveness depends on the utility model, query
+workload, processing strategy, and security constraints. Accordingly, utility-aware
+mechanisms should be evaluated against sequential auditing and other appropriate
+baselines using query availability and weighted analytical utility rather than approval
+counts alone.
+2.10 Research Gap and Positioning of the Proposed Framework
+Existing privacy-preserving techniques address different aspects of data publication,
+computation, and statistical release. However, exact aggregate query answering in
+10
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+recommendation databases requires the simultaneous consideration of cumulative
+inference prevention, computational efficiency, and analytical utility. Three research
+challenges motivate the present study. First, minimum-support verification provides
+a lightweight mechanism for preventing selected small-population disclosures but
+cannot independently prevent cumulative reconstruction through overlapping aggre-
+gate queries. Homogeneous-value disclosure and nonlinear inference introduce further
+risks outside this mechanism’s protection scope. Second, history-aware auditing can
+prevent exact linear reconstruction under specified mathematical assumptions. How-
+ever, repeatedly processing complete historical constraint matrices may introduce
+unnecessary computational overhead. Incremental row-space maintenance offers an
+alternative, although its practical advantages require theoretical and experimental
+verification. Third, conventional sequential query processing does not necessarily max-
+imize the analytical value of safely released results. Because previously approved
+constraints affect future admissibility, utility-aware selection may improve weighted
+analytical utility while maintaining mandatory reconstruction-prevention require-
+ments. To investigate these challenges, this study develops three models within
+a unified aggregate-only access framework. S-AQA establishes a minimum-support
+reference mechanism; H-AQA incorporates historical exact linear reconstruction
+auditing; and IUH-AQA integrates incremental row-space maintenance with security-
+constrained utility-aware query prioritization. The intended contribution lies in the
+integration, formal characterization, and comparative evaluation of these mechanisms
+rather than their independent invention. In particular, the study investigates whether
+IUH-AQA can preserve the reconstruction decisions of full-history auditing while
+reducing computational overhead and improving weighted analytical utility under rep-
+resentative workloads. Importantly, the proposed framework does not claim protection
+against all statistical inference attacks or equivalence to Differential Privacy. Its formal
+guarantee concerns exact reconstruction of designated numerical coordinates from con-
+sistent linear aggregate constraints over otherwise unrestricted real-valued variables.
+Additional mechanisms may be necessary to address nonlinear inference, bounded or
+discrete domains, auxiliary knowledge, and query-decision leakage.
+Positioning against the closest baseline
+The relevant comparison is not between incremental auditing and an intention-
+ally inefficient full-matrix implementation alone. Existing history-aware and basis-
+maintenance approaches should be compared using matched arithmetic, optimized
+linear-algebra routines, identical query workloads, and the same reconstruction
+criterion. The distinctive research question is whether combining incremental recon-
+struction auditing with security-constrained query scheduling yields a measurable
+benefit beyond either component separately. This distinction guides the ablation stud-
+ies and limits claims of novelty to the integrated framework and its demonstrated
+properties.
+11
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3 Proposed Models and Mathematical Analysis
+This section presents three aggregate query answering models: Simple Aggregate
+Query Answering (S-AQA), History-aware Aggregate Query Answering (H-AQA), and
+Incremental Utility-aware History-based Aggregate Query Answering (IUH-AQA).
+The models progressively incorporate minimum-support verification, cumulative lin-
+ear inference auditing, incremental row-space maintenance, and security-constrained
+utility-aware selection. All three models preserve exact numerical results for approved
+queries.
+3.1 Problem Formulation and Security Assumptions
+3.1.1 Recommendation Database and Protected Numerical
+Attributes
+Consider a recommendation database D containing N user–item interaction records.
+Each record may include identifiers, quasi-identifiers, item characteristics, and pro-
+tected numerical attributes. Analytical users access statistical information through a
+controlled aggregate-only interface without directly retrieving protected records. For
+a selected confidential attribute, let x = [x1, x2, . . . , xn]T ∈Rn denote the protected
+numerical vector, where each coordinate represents a designated protected unit. The
+mapping between records and protected units must be defined consistently. In Table
+1, each user–item rating constitutes a protected coordinate. Accordingly, n = 15, and
+the protected vector is shown in Equation 1.
+x = [5, 4, 3, 4, 5, 3, 5, 4, 4, 3, 5, 4, 5, 3, 4]T
+(1)
+For example, the Electronics category contains ratings x1 = 5, x4 = 4, and x10 = 3,
+yielding the aggregate result x1 + x4 + x10 = 12. The theoretical analysis assumes
+that x remains fixed throughout the audited history and that its coordinates are
+otherwise unrestricted over R. Bounded and discrete attribute domains are outside
+this reconstruction model.
+3.1.2 Mathematical Representation of Aggregate Queries
+An aggregate query is represented by qi = (Pi, fi, Si), where Pi denotes its selection
+predicate, fi the aggregate function, and Si ⊆{1, . . . , n} the contributing protected
+coordinates. For an exact linear aggregate, the query result is shown in Equation 2.
+yi = aT
+i x =
+n
+X
+j=1
+aijxj
+(2)
+Where ai ∈Rn contains the query coefficients. For a conventional SUM query,
+aij = 1 if j ∈Si and aij = 0 otherwise. For example, the Electronics SUM query
+has Si = {1, 4, 10} and produces yi = x1 + x4 + x10 = 12. AVG queries also admit
+a linear representation when the contributing non-null count mi > 0 is known, since
+AVG(Si) = aT
+i x/mi. Thus, the corresponding linear constraint is aT
+i x = mi AVG(Si).
+12
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+COUNT may reveal contributing population sizes and support inference when com-
+bined with other results. In contrast, MIN and MAX generally introduce nonlinear
+constraints that are not covered by the linear auditing criterion.
+3.1.3 Minimum-Support Requirement
+Let s(qi) = |Si| denote the number of distinct protected coordinates contributing to
+query qi, and let k ≥2 be the administrator-defined minimum-support threshold.
+A query satisfies the support requirement when s(qi) ≥k. Its eligibility indicator
+is Ek(qi) = I[s(qi) ≥k], where I[·] denotes the indicator function. For k = 3, the
+Electronics query with S1 = {1, 4, 10} is eligible, whereas a query with S2 = {1, 4}
+is rejected. Nevertheless, minimum-support eligibility does not guarantee protection
+against cumulative inference or homogeneous-value disclosure.
+3.1.4 Historical Linear Constraint Representation
+Suppose ht exact linear aggregate results have been released by processing step t.
+Their accumulated information is represented by Equation 3.
+Atx = bt,
+At ∈Rht×n,
+bt ∈Rht
+(3)
+Where the rows of At are the released query coefficient vectors and bt contains
+their corresponding exact results. The accumulated constraint space is Rt = Row(At).
+Consider two queries over the example database: q1 selects {1, 4, 10} and returns y1 =
+12, whereas q2 selects {1, 4, 7, 10} and returns y2 = 17. Although both satisfy k =
+3, their difference reveals x7 = y2 −y1 = 5. Equivalently, their coefficient vectors
+satisfy a2 −a1 = e7, where e7 is the seventh standard basis vector. Hence, e7 ∈Rt,
+demonstrating that the accumulated constraints uniquely determine the protected
+coordinate x7.
+3.1.5 Exact Linear Reconstruction and Security Criterion
+Let P ⊆{1, . . . , n} denote the designated protected coordinates. For a consistent
+system Atx = bt with otherwise unrestricted x ∈Rn, a coordinate xj is uniquely
+reconstructable if and only if ej ∈Row(At). Indeed, when eT
+j = λT At, the protected
+value is determined by xj = λT bt. Conversely, if ej is outside the row space, the
+consistent system admits solutions with different values at coordinate j. Accordingly,
+the historical reconstruction-prevention requirement is shown in Equation 4.
+ej /∈Row(At),
+∀j ∈P
+(4)
+For a candidate query with coefficient vector aq, define the augmented matrix
+A(q)
+t
+= [At; aT
+q ]. The query is admissible under the linear security criterion only if ej /∈
+Row(A(q)
+t ) for every j ∈P. This condition is necessary and sufficient for preventing
+exact reconstruction of the designated coordinates within the stated linear model.
+13
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3.1.6 Threat Model and Security Assumptions
+The framework considers an analytical adversary who can submit authorized aggre-
+gate queries, observe released results, retain previous responses, and adapt subsequent
+queries. The adversary may know query predicates and contributing populations but
+cannot directly access protected values or compromise the trusted query processor.
+The formal security analysis assumes:
+ A fixed protected vector throughout the audited history.
+ Otherwise unrestricted real-valued protected coordinates.
+ Complete accounting of applicable previously released linear constraints.
+ A trusted query processor and a secure initial historical state.
+ Exact arithmetic for formal reconstruction decisions.
+Under these assumptions, historical auditing prevents additional linear aggregate
+releases that would uniquely reconstruct designated protected coordinates. The guar-
+antee does not automatically address nonlinear inference, bounded or discrete domains,
+arbitrary auxiliary knowledge, or leakage through observable query decisions. Prac-
+tical floating-point implementations also require conservative numerical handling or
+certified procedures to preserve the formal security criterion.
+3.2 Simple Aggregate Query Answering (S-AQA)
+3.2.1 Mathematical Formulation and Operational Principle
+S-AQA independently evaluates aggregate queries using authorization, supported-
+function validation, and minimum-support verification. It does not maintain historical
+inference constraints. For a valid query qi, the release decision is valied by Equation 5.
+AS−AQA(D, qi, k) =
+(
+fi(Si),
+s(qi) ≥k,
+⊥,
+s(qi) < k
+(5)
+Where ⊥denotes rejection and fi(Si) is the exact aggregate result. The operational
+procedure is summarized in Algorithm 1.
+Algorithm 1 Simple Aggregate Query Answering (S-AQA)
+Require: Database D, query qi, threshold k
+Ensure: Exact result or rejection
+1: Validate authorization and query function
+2: if validation fails then
+3:
+return ⊥
+4: end if
+5: Determine contributing population Si
+6: if |Si| < k then
+7:
+return ⊥
+8: end if
+9: return fi(Si)
+14
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3.2.2 Illustrative Example
+Consider the three candidate SUM queries over Table 1, with k = 3:
+ q1: S1 = {1, 4, 10}, y1 = 12, w1 = 4.
+ q2: S2 = {1, 4, 7, 10}, y2 = 17, w2 = 9.
+ q3: S3 = {7, 8, 9}, y3 = 13, w3 = 6.
+All three queries satisfy the minimum-support threshold and are approved by
+S-AQA. However, the released results of q1 and q2 reveal x7 = y2 −y1 = 5. There-
+fore, S-AQA preserves exact aggregate results but does not prevent cumulative linear
+reconstruction.
+3.2.3 Advantages, Limitations, and Computational Complexity
+S-AQA requires neither historical constraint storage nor matrix decomposition. Its
+principal advantages are implementation simplicity and minimal additional auditing
+overhead. However, independent support verification does not detect cumulative recon-
+struction or homogeneous-value disclosure. Let Teval(qi) denote the cost of evaluating a
+query, including population identification and aggregate computation. The per-query
+processing cost is O(Teval(qi)), with constant additional auditing-state memory apart
+from the database and query-processing structures.
+3.3 History-aware Aggregate Query Answering (H-AQA)
+3.3.1 Mathematical Formulation and Operational Principle
+H-AQA extends S-AQA by auditing candidate queries against previously released
+linear constraints. A query must satisfy both minimum-support eligibility and the
+exact linear reconstruction-prevention criterion. For a valid linear query qi, define
+Acandidate = [At; aT
+i ]. Its release condition is shown in Equation 6.
+ApproveH−AQA(qi) = Ek(qi) I[∀j ∈P, ej /∈Row(Acandidate)] .
+(6)
+When approved, the query returns its exact result and the historical state is
+updated. Otherwise, the result is withheld and the released-constraint history remains
+unchanged. Algorithm 2 summarizes this procedure.
+3.3.2 Illustrative Example
+Consider the query sequence q1, q2, q3 defined in the S-AQA example. H-AQA approves
+q1, since its coefficient vector does not uniquely determine any protected coordinate.
+The candidate q2 is rejected because a2 −a1 = e7, which would disclose x7 = 5.
+Since the rejected query is not added to the released history, q3 can subsequently be
+approved without violating the linear reconstruction-prevention requirement. Thus,
+H-AQA approves {q1, q3} and rejects q2. Its weighted analytical utility is UH−AQA =
+4 + 6 = 10. This example illustrates how historical auditing prevents a disclosure that
+remains undetected by independent minimum-support verification.
+15
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Algorithm 2 History-aware Aggregate Query Answering (H-AQA)
+Require: D, query qi, threshold k, history At, protected set P
+Ensure: Exact result or rejection
+1: Validate authorization and linear-query support
+2: if validation fails then
+3:
+return ⊥
+4: end if
+5: Determine Si and coefficient vector ai
+6: if |Si| < k then
+7:
+return ⊥
+8: end if
+9: Ac ←[At; aT
+i ]
+10: if ∃j ∈P : ej ∈Row(Ac) then
+11:
+return ⊥
+12: end if
+13: Compute exact result yi
+14: Update history At ←Ac
+15: return yi
+3.3.3 Advantages, Limitations, and Computational Complexity
+H-AQA prevents exact linear reconstruction from accumulated modeled constraints
+under the stated assumptions. Unlike S-AQA, it considers the cumulative information
+disclosed through previously approved queries. Its principal computational limitation
+is the repeated evaluation of the augmented historical constraint matrix. Let ht denote
+the number of previously released linear constraints. Storing the full coefficient history
+requires O(htn) memory, while the per-query auditing cost depends on the selected
+row-space membership algorithm and the dimensions of the historical matrix. H-AQA
+also remains sensitive to query processing order: an approved query may prevent the
+later release of another, more analytically valuable query.
+3.4 Incremental Utility-aware History-based Aggregate Query
+Answering (IUH-AQA)
+3.4.1 Mathematical Formulation and Operational Principle
+IUH-AQA combines incremental historical inference auditing with utility-aware query
+prioritization. It preserves the same exact linear reconstruction-prevention criterion as
+H-AQA while avoiding repeated full-history matrix analysis. The model maintains an
+orthonormal basis of the accumulated constraint row space and uses this representation
+to evaluate candidate queries. Eligible queries are processed according to predefined
+analytical utility weights.
+16
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3.4.2 Incremental Row-Space Representation
+Let Bt ∈Rrt×n denote an orthonormal basis for the row space of the accumulated
+historical constraint matrix At, where rt = rank(At). The orthonormality and row-
+space equivalence conditions are expressed in Equation 7.
+BtBT
+t = Irt,
+Row(Bt) = Row(At)
+(7)
+For a candidate coefficient vector ai, the component orthogonal to the historical
+row space is shown in Equation 8.
+vi = ai −BT
+t Btai
+(8)
+If vi = 0, the candidate is linearly dependent on previously released constraints
+and does not enlarge the row space. Otherwise, define the normalized residual ui =
+vi/∥vi∥2. For an approved independent query, the basis is updated as Equation 9.
+Bt+1 =
+Bt
+uT
+i
+
+(9)
+The updated basis spans the same row space as the augmented historical matrix.
+Rejected queries do not modify the basis.
+3.4.3 Incremental Reconstruction Auditing
+For each protected coordinate j ∈P, define its squared projection onto the historical
+row space as ρj(Bt) = ∥Btej∥2
+2. Because the basis is orthonormal, 0 ≤ρj(Bt) ≤1, and
+exact reconstruction occurs precisely when ρj(Bt) = 1. For an independent candidate
+direction ui, the updated projection magnitude is shown in Equation 10.
+ρj(Bt+1) = ρj(Bt) + u 2
+i,j
+(10)
+Accordingly, the candidate must be rejected if the updated projection equals one for
+any protected coordinate. For a dependent query, the row space does not change; there-
+fore, its reconstruction status is identical to that of the current historical state. This
+incremental criterion is mathematically equivalent to full-history row-space auditing
+under exact arithmetic and equivalent initial states.
+3.4.4 Incremental Auditing and Historical State Management
+IUH-AQA maintains the active auditing state (Bt, ρt), where ρt stores the squared
+projection magnitudes for the designated protected coordinates. For each candidate,
+the processor computes the orthogonal residual and determines whether the query
+introduces a new independent direction. If so, the proposed projection updates are
+examined before the result is released. An approved query updates the basis and
+projection state, whereas a rejected query leaves the state unchanged. The active rep-
+resentation depends on the accumulated rank rather than the total number of released
+constraints. However, implementations must separately account for any retained query
+logs, numerical results, or operational metadata. To maintain reliable reconstruc-
+tion decisions, floating-point implementations should use stable orthogonalization and
+17
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+conservative handling of numerically ambiguous cases. Exact-arithmetic guarantees
+cannot be inferred from approximate comparisons alone.
+3.4.5 Security-Constrained Utility Formulation
+Let Q = {q1, . . . , qm} denote a batch of candidate queries, each assigned a nonnegative
+analytical utility weight wi. Define zi ∈{0, 1} as the decision variable indicating
+whether qi is approved. The total weighted analytical utility is U(Q) = Pm
+i=1 wizi.
+The ideal selection problem is shown in Equation 11.
+max
+z
+m
+X
+i=1
+wizi
+subject to
+ej /∈span
+ Row(At) ∪{aT
+i : zi = 1}
+
+,
+∀j ∈P,
+zi ∈{0, 1},
+i = 1, . . . , m
+(11)
+Only queries satisfying authorization, supported-function, and minimum-support
+requirements are eligible for selection. This formulation characterizes the globally
+optimal feasible subset. The operational IUH-AQA algorithm instead uses greedy
+utility-based prioritization and does not guarantee global optimality for arbitrary
+workloads.
+3.4.6 Utility-Aware Query Selection
+IUH-AQA first validates candidate queries and excludes those failing mandatory eli-
+gibility conditions. The remaining queries are sorted in descending order of their
+utility weights, with a deterministic tie-breaking rule. Each candidate is then evalu-
+ated using incremental reconstruction auditing. An admissible query is approved and
+its exact result released; otherwise, it is rejected without updating the historical state.
+Algorithm 3 summarizes the complete procedure.
+The algorithm assumes a secure initial state and exact mathematical operations.
+Nonlinear functions are outside the formal linear reconstruction guarantee and must
+be rejected by H-AQA and IUH-AQA unless a separate audited policy is provided.
+Query denial decisions can themselves reveal information; the security claims therefore
+assume that this side channel is excluded or independently controlled. A denial is
+not counted as a released linear result, but its observable status cannot be presumed
+information-free.
+3.4.7 Illustrative Example
+Consider the three candidate queries defined previously, with utility weights w1 = 4,
+w2 = 9, and w3 = 6. Unlike sequential H-AQA, IUH-AQA processes the candidates in
+the order q2, q3, q1. The first query, q2, is approved because its coefficient vector does
+not independently reconstruct any protected coordinate. Query q3 is subsequently
+approved because the combined row space of q2 and q3 remains safe under the specified
+linear criterion. Finally, q1 is rejected because its addition would yield a2 −a1 = e7,
+allowing exact reconstruction of x7. Thus, IUH-AQA approves {q2, q3} and achieves
+18
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Algorithm 3 Incremental Utility-aware History-based Aggregate Query Answering
+(IUH-AQA)
+Require: D, query batch Q, weights w, threshold k, basis Bt, projections ρt,
+protected set P
+Ensure: Approved exact results and updated state
+1: Validate queries and minimum support
+2: Sort eligible queries by descending utility
+3: for each eligible query qi do
+4:
+Construct coefficient vector ai
+5:
+vi ←ai −BT
+t Btai
+6:
+if vi̸ = 0 then
+7:
+ui ←vi/∥vi∥2
+8:
+if ∃j ∈P : ρj + u2
+i,j = 1 then
+9:
+Reject qi
+10:
+continue
+11:
+end if
+12:
+Bt ←[Bt; uT
+i ]
+13:
+ρj ←ρj + u2
+i,j for all j ∈P
+14:
+end if
+15:
+Release exact result fi(Si)
+16: end for
+17: return Approved results and updated state
+weighted utility UIUH−AQA = 9 + 6 = 15. For the same workload, sequential H-AQA
+approves {q1, q3}, achieving utility 10. IUH-AQA therefore improves weighted utility
+by 50% in this illustrative example, while both models approve two queries.
+3.4.8 Verification of Optimal Utility
+For the illustrative three-query workload, all possible query subsets are exhaustively
+enumerated to assess their feasibility under the exact linear reconstruction-prevention
+criterion. The corresponding feasibility outcomes and weighted analytical utilities are
+presented in Table 2.
+The maximum feasible utility is UOPT = 15, achieved by {q2, q3}. Therefore,
+UIUH−AQA = UOPT and the optimality gap is zero for this example. This result estab-
+lishes optimality only for the enumerated workload. Greedy utility-aware selection is
+not globally optimal in general.
+3.4.9 Computational Complexity
+IUH-AQA incurs costs associated with query evaluation, utility-based sorting, orthog-
+onal residual computation, and projection-based reconstruction auditing. Let rt denote
+the current row-space rank, p = |P| the number of protected coordinates, and m
+the number of eligible candidate queries. For dense coefficient vectors, computing
+the residual requires O(nrt) arithmetic operations. Updating the protected projec-
+tion magnitudes requires O(p) additional operations for an independent candidate.
+19
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 2 Feasibility and weighted
+utility of candidate query subsets.
+Subset
+Utility
+Status
+∅
+0
+Safe
+{q1}
+4
+Safe
+{q2}
+9
+Safe
+{q3}
+6
+Safe
+{q1, q2}
+13
+Unsafe
+{q1, q3}
+10
+Safe
+{q2, q3}
+15
+Safe
+{q1, q2, q3}
+19
+Unsafe
+Accordingly, the incremental auditing cost per candidate is O(nrt + p), excluding
+database query evaluation and numerical stabilization. Sorting the batch requires
+O(m log m) comparisons. The active auditing state requires O(nrt + p) memory, com-
+pared with O(htn) for storing a full historical coefficient matrix. These bounds describe
+the mathematical auditing structures and do not include database storage, query
+logs, or implementation-specific overhead. Actual performance depends on rank, query
+sparsity, numerical methods, and workload characteristics.
+3.4.10 Comparative Discussion of S-AQA, H-AQA, and IUH-AQA
+The three models differ in their security mechanisms, historical-state representations,
+and query-selection strategies. Table 3 summarizes their principal characteristics and
+illustrative results.
+Table 3 Comparative characteristics and illustrative results of the proposed models.
+Criterion
+S-AQA
+H-AQA
+IUH-AQA
+Minimum-support verification
+Yes
+Yes
+Yes
+Historical linear auditing
+No
+Yes
+Yes
+Incremental basis maintenance
+No
+No
+Yes
+Utility-aware prioritization
+No
+No
+Yes
+Approved queries
+q1, q2, q3
+q1, q3
+q2, q3
+Acceptance rate
+100%
+66.67%
+66.67%
+Weighted utility
+19
+10
+15
+Exact linear reconstruction prevention
+No
+Yes∗
+Yes∗
+Active auditing memory
+O(1)
+O(htn)
+O(nrt + p)
+S-AQA provides the simplest processing mechanism but does not prevent cumu-
+lative linear reconstruction. H-AQA introduces historical auditing and enforces the
+specified reconstruction-prevention criterion. IUH-AQA preserves the same criterion
+while maintaining an incremental row-space representation and prioritizing queries
+20
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 23 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+according to analytical utility. In the illustrative workload, IUH-AQA achieves greater
+weighted utility than sequential H-AQA without increasing the number of approved
+queries. However, this result does not establish universal utility improvement or global
+optimality. Overall, the proposed models provide a common basis for examining the
+trade-offs among exact aggregate results, cumulative linear reconstruction prevention,
+computational efficiency, and analytical utility. Their formal security properties and
+computational characteristics are analyzed further in the subsequent section.
+4 Formal Security and Computational Complexity
+Analysis
+This section establishes the formal security properties of H-AQA and IUH-AQA and
+compares the computational requirements of all three models. The analysis follows the
+assumptions in Section 3.1, including a consistent linear constraint system, otherwise
+unrestricted real-valued protected coordinates, a secure initial historical state, and
+exact arithmetic.
+4.1 Exact Linear Reconstruction Criterion
+The following theorem establishes the necessary and sufficient condition for recon-
+structing a protected numerical coordinate from accumulated exact linear aggregate
+results.
+Theorem 1 (Exact Linear Reconstruction Criterion) Let A ∈Rh×n and b ∈Rh define
+a consistent system Ax = b, where x ∈Rn is otherwise unrestricted. A coordinate xj is
+uniquely determined if and only if ej ∈Row(A).
+Proof If ej ∈Row(A), there exists λ satisfying eT
+j = λT A. Consequently, xj = eT
+j x = λT b,
+so the released constraints uniquely determine xj. Conversely, suppose ej /∈Row(A). Since
+Row(A) = Null(A)⊥, there exists z ∈Null(A) with zj̸ = 0. For any solution x0, the vectors
+x0 + αz satisfy A(x0 + αz) = b for every α ∈R, while their jth coordinates vary with α.
+Therefore, xj is not uniquely determined.
+□
+Theorem 1 characterizes exact linear reconstruction through row-space mem-
+bership. It does not establish protection against nonlinear inference or additional
+restrictions on the protected variables.
+4.2 Historical Reconstruction Prevention
+H-AQA applies the reconstruction criterion before releasing each candidate linear
+aggregate result. Its security correctness follows from the preservation of the historical
+row-space condition.
+Theorem 2 (Historical Reconstruction Prevention) Let A0 be an initial historical constraint
+matrix satisfying ej /∈Row(A0) for every j ∈P. If H-AQA approves a candidate query
+21
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 24 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+only when its augmented historical matrix satisfies the same condition, then no designated
+protected coordinate becomes exactly reconstructable from the approved linear constraints.
+Proof The proof proceeds by induction on the number of approved queries. The initial state
+is safe by assumption. Suppose the historical state At satisfies the reconstruction-prevention
+condition. For a candidate coefficient vector aq, H-AQA examines Ac = [At; aTq ]. If any
+ej belongs to Row(Ac), the query is rejected and the released history remains unchanged.
+Otherwise, the query is approved and At+1 = Ac, which satisfies the required condition by
+the approval rule. Thus, the condition holds after every approved query. By Theorem 1, none
+of the designated protected coordinates is uniquely determined by the accumulated released
+linear constraints.
+□
+This result establishes the specified reconstruction-prevention guarantee for H-
+AQA, provided that the initial state is safe and every relevant linear disclosure is
+included in the audited history.
+4.3 Incremental Row-Space Preservation
+IUH-AQA replaces repeated full-history matrix analysis with an incrementally main-
+tained orthonormal basis. The following theorem establishes the correctness of this
+representation.
+Theorem 3 (Incremental Row-Space Preservation) Let Bt ∈Rrt×n have orthonormal rows
+satisfying Row(Bt) = Row(At). For a candidate coefficient vector aq ∈Rn, define v = aq −
+BT
+t Btaq. If v = 0, set Bt+1 = Bt. Otherwise, define u = v/∥v∥2 and set Bt+1 = [Bt; uT ].
+Then,
+Row(Bt+1) = Row
+At
+aTq
+
+.
+(12)
+Proof Because Bt has orthonormal rows, BT
+t Btaq is the orthogonal projection of aq onto
+Row(Bt). If v = 0, the candidate already belongs to the historical row space. Adding it there-
+fore does not change that space, and Bt+1 = Bt preserves the required equality. Otherwise,
+v is nonzero and orthogonal to every row of Bt. Consequently, u is a unit vector orthogonal
+to the historical basis, so Bt+1 has orthonormal rows. Furthermore, aq = BT
+t Btaq + ∥v∥2u.
+Thus, adjoining uT to Bt spans exactly the same enlarged space as adjoining aTq to At.
+□
+Theorem 3 shows that incremental basis maintenance preserves the complete his-
+torical row space relevant to exact linear reconstruction, without requiring the full
+constraint matrix for active auditing.
+4.4 Equivalence of Full-History and Incremental Auditing
+The equivalence of the two historical auditing mechanisms follows from their common
+reconstruction criterion and identical accumulated row spaces.
+22
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 25 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Theorem 4 (Full-History and Incremental Auditing Equivalence) Suppose H-AQA and IUH-
+AQA have equivalent historical states satisfying Row(At) = Row(Bt). Under exact arithmetic
+and identical security policies, both models produce the same reconstruction-auditing decision
+for the same candidate linear aggregate query.
+Proof For a candidate coefficient vector aq, H-AQA evaluates the row space of [At; aTq ].
+By Theorem 3, IUH-AQA constructs a basis spanning exactly the same augmented row
+space. Therefore, for every protected coordinate j ∈P, the membership condition ej ∈
+Row([At; aTq ]) holds if and only if ej belongs to the corresponding incremental row space.
+Both mechanisms consequently identify the same exact linear reconstruction risks and reach
+identical auditing decisions.
+□
+Theorem 4 concerns equivalent historical states and the same candidate query. Dif-
+ferent processing orders, including utility-based prioritization, may produce different
+approved subsets without contradicting this equivalence.
+4.5 Incremental Projection Criterion
+IUH-AQA evaluates row-space membership through squared orthogonal projections.
+This avoids repeated protected-coordinate membership tests against the complete
+historical matrix.
+Theorem 5 (Incremental Projection Criterion) Let Bt have orthonormal rows, and let u ∈
+Rn be a unit vector orthogonal to its row space. Define Bc = [Bt; uT ] and ρj(B) = ∥Bej∥2
+2.
+Then, for every protected coordinate j, Equation 13. Moreover, ej ∈Row(Bc) if and only if
+ρj(Bc) = 1.
+ρj(Bc) = ρj(Bt) + u2
+j
+(13)
+Proof Because the rows of Bc are orthonormal, ∥Bcej∥2
+2 = ∥Btej∥2
+2 +|uT ej|2 = ρj(Bt)+u2
+j.
+Furthermore, BTc Bc is the orthogonal projector onto Row(Bc). Since ∥ej∥2 = 1, its squared
+projection magnitude equals one precisely when ej lies entirely in that row space.
+□
+Accordingly, an independent candidate query is rejected whenever ρj(Bt)+u2
+j = 1
+for at least one j ∈P. A dependent candidate leaves the row space and projec-
+tion magnitudes unchanged. Combined with Theorems 2–4, this criterion establishes
+that IUH-AQA preserves the same exact linear reconstruction-prevention guarantee
+as H-AQA when initialized from an equivalent secure state. These results assume
+exact arithmetic. In practical floating-point implementations, numerically ambiguous
+projection tests must be handled conservatively to avoid unsafe releases.
+4.6 Comparative Computational and Memory Complexity
+Analysis
+The three models differ primarily in their historical auditing procedures and main-
+tained state. Let n denote the number of protected coordinates, h the number of
+23
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 26 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+released historical constraints, r their row-space rank, p = |P| the number of pro-
+tected coordinates subject to auditing, and m the number of eligible candidate queries.
+Let Teval(q) represent database query-processing cost, including population identifica-
+tion and aggregate computation where applicable. Table 4 summarizes the principal
+asymptotic bounds under dense coefficient-vector operations.
+Table 4 Comparative computational and memory complexities of S-AQA, H-AQA, and IUH-AQA.
+Criterion
+S-AQA
+H-AQA
+IUH-AQA
+Historical auditing
+None
+Full-history matrix
+Incremental basis
+Per-query auditing time
+O(1)
+O((h + 1)nr′ + pnr′)
+O(nr + p)
+Database evaluation
+O(Teval(q))
+O(Teval(q))
+O(Teval(q))
+Batch utility sorting
+Not required
+Not required
+O(m log m)
+Active auditing memory
+O(1)
+O(hn)
+O(nr + p)
+Batch scheduling memory
+Not required
+Not required
+O(m)
+Here, r′ denotes the rank of the augmented historical constraint matrix. The com-
+putational bound for H-AQA assumes a dense implementation that reconstructs the
+historical row-space basis and evaluates protected-coordinate membership. Its actual
+computational cost depends on the matrix factorization method and the numerical
+procedures employed. The three models also differ in their memory requirements.
+S-AQA maintains no historical auditing state and therefore incurs constant addi-
+tional auditing memory. H-AQA stores the complete historical coefficient matrix,
+requiring O(hn) memory. In contrast, IUH-AQA maintains an orthonormal basis of
+the accumulated constraint row space and the corresponding protected-coordinate
+projection magnitudes, requiring O(nr + p) active auditing memory. When utility-
+based query scheduling is included, its total active memory requirement becomes
+O(nr + p + m). For a batch of m candidate queries, IUH-AQA requires O(m log m)
+operations for utility-based sorting and O(mnrmax + mp) operations for incremental
+reconstruction auditing, where rmax denotes the maximum historical row-space rank
+encountered during processing. Consequently, the combined computational complex-
+ity is O(m log m+mnrmax +mp). When database query evaluation is also considered,
+the overall computational complexity of IUH-AQA is expressed in Equation 14.
+TIUH = O
+ m
+X
+i=1
+Teval(qi) + m log m + mnrmax + mp
+!
+.
+(14)
+These bounds exclude coefficient-vector construction, utility-weight assignment,
+query logging, and numerical certification costs. They also assume a fixed num-
+ber of orthogonalization passes. IUH-AQA offers its clearest storage advantage when
+r ≪h, because the active auditing structure depends on the historical row-space
+rank rather than the total number of released constraints. However, the theoreti-
+cal bounds do not establish universal computational superiority. Actual performance
+depends on query sparsity, constraint rank, numerical methods, database execution
+costs, and workload characteristics. Consequently, the formal analysis establishes the
+24
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 27 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+reconstruction-prevention correctness of H-AQA and IUH-AQA and characterizes their
+computational trade-offs. The experimental evaluation examines whether the expected
+efficiency and utility benefits are realized under representative query workloads.
+5 Experiment
+5.1 Experimental Setup
+This section evaluates three exact-result aggregate query answering models: Simple
+Aggregate Query Answering (S-AQA), History-Aware Aggregate Query Answering
+(H-AQA), and Incremental Utility-Aware History-Aware Aggregate Query Answer-
+ing (IUH-AQA). The evaluation distinguishes controlled reconstruction outcomes
+from analytical storage estimates and illustrative sensitivity analyses, with particu-
+lar attention to the relationship between disclosure prevention and access to exact
+aggregate answers. The evaluation examines the theoretical properties established in
+the preceding sections and assesses the practical implications of minimum-support
+verification, historical inference auditing, incremental row-space maintenance, and
+utility-aware query prioritization. Particular emphasis is placed on distinguishing the
+reconstruction-prevention guarantees of H-AQA and IUH-AQA from the support-
+only protection provided by S-AQA. All comparisons are conducted under consistent
+database configurations, candidate query workloads, and applicable security policies.
+When auditing correctness and computational efficiency are evaluated, H-AQA and
+IUH-AQA process identical query sequences from equivalent historical states. Utility-
+aware prioritization is evaluated separately to isolate its effects on analytical utility
+and query availability.
+5.1.1 Experimental Environment
+The experimental platform consists of a database management system, an aggregate
+query processor, and implementations of S-AQA, H-AQA, and IUH-AQA. Model-level
+comparisons use the same aggregate-query interface; differences arise from support
+checking, historical auditing, and query scheduling. All experiments are conducted on
+a computing platform equipped with an Intel Xeon Silver 4110 processor operating
+at 2.10 GHz, 16 GB of RAM, and a 1 TB hard disk, running Microsoft Windows 10
+Pro (64-bit). Oracle Database 21c serves as the database management system, while
+the Python-based experimental implementations interact with the database through
+the python-oracledb driver. To ensure consistent experimental conditions and min-
+imize implementation-related variability, all three models employ identical database
+connection configurations, query validation procedures, and aggregate computation
+mechanisms. The models differ primarily in their approaches to historical constraint
+management, exact reconstruction auditing, and utility-aware query prioritization.
+Specifically, S-AQA performs independent minimum-support verification, H-AQA
+incorporates full-history reconstruction auditing, and IUH-AQA employs incremen-
+tal row-space maintenance with utility-aware query prioritization. This configuration
+25
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 28 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+provides a basis for controlled comparisons. However, component-level runtime mea-
+surements are not supplied in the current results; implementation efficiency is therefore
+discussed separately from the formally established reconstruction guarantees.
+5.1.2 Experimental Datasets
+Two datasets are employed to evaluate the proposed models under different
+recommendation-related analytical workloads: MovieLens 32M [42] and an Amazon
+Sales Dataset [43]. MovieLens 32M contains approximately 32 million user–item rating
+interactions and associated metadata. The rating attribute is treated as confidential
+numerical information, whereas user identifiers, item identifiers, and available item
+characteristics are used to construct aggregate query predicates. Each rating record is
+assigned a stable coordinate in the protected numerical vector x ∈Rn, ensuring consis-
+tent representation across successive aggregate queries. The Amazon Sales Dataset is
+used to evaluate aggregate analytical workloads involving product categories and dis-
+counted prices. The discounted-price attribute is designated as confidential numerical
+information, while product categories and other available non-confidential attributes
+are used to construct query predicates. Both datasets undergo consistent prepro-
+cessing procedures, including attribute selection, missing-value handling, data-type
+validation, and construction of queryable populations. Records containing missing pro-
+tected numerical values are excluded from the corresponding aggregate computations
+unless an explicit missing-value policy is specified. No anonymization, perturbation,
+or numerical modification is applied to the protected values when evaluating the pro-
+posed exact-result models. The configurations in Table 5 apply specifically to the
+minimum-support and reconstruction evaluation. Larger query workloads and pro-
+gressively increasing historical constraint sizes are employed in the computational
+efficiency, scalability, and analytical utility experiments.
+5.1.3 Evaluated Models and Privacy Baselines
+Three proposed models are evaluated to distinguish the effects of minimum-support
+verification, historical reconstruction auditing, and incremental utility-aware pro-
+cessing. S-AQA independently evaluates each aggregate query according to the
+minimum-support requirement. It releases exact aggregate results for approved queries
+but does not account for information accumulated from previous releases. H-AQA
+extends minimum-support verification by evaluating whether the accumulated released
+linear constraints would uniquely determine any designated protected coordinate.
+IUH-AQA maintains an incremental orthonormal representation of the accumulated
+historical row space and incorporates utility-aware query prioritization. To isolate
+the contributions of incremental auditing and utility-based scheduling, four internal
+evaluation configurations are considered:
+ S-AQA with minimum-support verification.
+ H-AQA with full-history reconstruction auditing.
+ IUH-AQA with incremental auditing under the original query order.
+ IUH-AQA with incremental auditing and utility-aware prioritization.
+26
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 29 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 5 Experimental configuration for minimum-support and reconstruction evaluation.
+Parameter
+MovieLens 32M
+Amazon Sales
+Evaluated models
+S-AQA, H-AQA,
+IUH-AQA
+S-AQA, H-AQA,
+IUH-AQA
+Evaluated attribute
+User–item rating
+Discounted price
+Number of records
+100,000
+1,465
+Aggregate query type
+SUM
+SUM
+Minimum-support threshold (k)
+3, 5, 10, 20
+3, 5, 10, 20
+Query workload
+Controlled overlapping
+queries
+Controlled overlapping
+queries
+Queries per trial
+3
+3
+Trials per k
+200
+200
+Total trials
+800
+800
+Total query evaluations per model
+2,400
+2,400
+Evaluation metrics
+TRSR, QAR, EAAR
+TRSR, QAR, EAAR
+The third configuration provides an ablation baseline for evaluating the compu-
+tational effects of incremental row-space maintenance independently of utility-based
+scheduling. In addition, k-Anonymity [18] and Differential Privacy (DP) [21] are
+included as complementary privacy-preservation baselines. k-Anonymity applies gen-
+eralization and suppression to selected quasi-identifying attributes. Its anonymity
+parameter is configured independently of the minimum-support threshold used by the
+proposed models. Differential Privacy applies calibrated randomization to aggregate
+query results according to the specified privacy budget, query sensitivity, contribu-
+tion bounds, and privacy-budget composition policy. These approaches are evaluated
+according to their respective privacy definitions. Their guarantees are not assumed to
+be equivalent to exact linear reconstruction prevention.
+5.1.4 Evaluation Metrics
+The proposed models are evaluated using complementary metrics covering exact lin-
+ear reconstruction resistance, numerical accuracy, query acceptance, exact-answer
+availability, analytical utility, auditing correctness, computational efficiency, and
+memory consumption. These metrics are defined to distinguish formal reconstruction-
+prevention guarantees from empirical performance characteristics. Target Reconstruc-
+tion Success Rate (TRSR) measures the percentage of controlled attack trials in which
+the released aggregate constraints uniquely determine the designated target coordi-
+nate. For each trial, the accumulated linear constraints are examined using the exact
+row-space reconstruction criterion established in Section 4. The trial-level metric is
+defined as
+27
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 30 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+TRSR = Nsuccessful
+Ntrials
+× 100%,
+(15)
+where Nsuccessful denotes the number of trials in which the target is exactly recon-
+structable and Ntrials denotes the total number of attack trials. TRSR measures success
+for the designated target within the tested query structures; it does not measure the
+fraction of all protected coordinates disclosed or protection against attacks outside the
+linear threat model. Numerical accuracy is evaluated by comparing released aggregate
+results with their corresponding reference values. Let yi denote the reference aggre-
+gate result and ˆyi the released result for the i-th evaluated query. Mean Squared Error
+(MSE) is defined as Equation 16. Root Mean Squared Error (RMSE) is defined as
+Equation 17. Mean Absolute Percentage Error (MAPE) is defined as Equation 18.
+MSE = 1
+M
+M
+X
+i=1
+(yi −ˆyi)2
+(16)
+RMSE =
+v
+u
+u
+t 1
+M
+M
+X
+i=1
+(yi −ˆyi)2
+(17)
+MAPE = 100
+M+
+X
+1≤i≤M yi̸=0
+
+yi −ˆyi
+yi
+
+(18)
+Here, M denotes the number of evaluated aggregate results and M+ represents the
+number of reference results with nonzero values. MAPE is undefined when M+ = 0.
+For S-AQA, H-AQA, and IUH-AQA, the theoretical numerical errors of approved
+aggregate queries are zero under exact arithmetic. Rejected queries are excluded from
+numerical accuracy calculations because no aggregate results are released. For comple-
+mentary privacy baselines, accuracy is evaluated over corresponding released aggregate
+outputs using comparable reference queries. Query Acceptance Rate (QAR) measures
+the proportion of submitted aggregate queries approved by a model. It is shown in
+Equation 19.
+QAR = Napproved
+Nsubmitted
+× 100%
+(19)
+Here, Napproved denotes the number of approved queries and Nsubmitted repre-
+sents the total number of submitted queries. QAR is used to evaluate the effects
+of minimum-support verification, historical reconstruction auditing, and utility-aware
+query prioritization on query availability. A higher QAR does not necessarily indi-
+cate stronger privacy protection because S-AQA may approve queries that introduce
+cumulative reconstruction risks. Exact-Answer Availability Rate (EAAR) measures
+the proportion of submitted aggregate queries for which a model releases numerically
+exact answers. Let Nexact denote the number of submitted queries that receive exact
+aggregate results. EAAR is defined as Equation 20.
+EAAR =
+Nexact
+Nsubmitted
+× 100%
+(20)
+28
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 31 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+A released result is considered exact when it equals the corresponding reference
+aggregate result under the specified numerical evaluation convention. For the pro-
+posed exact-result models, every approved query returns an exact aggregate result
+under exact arithmetic. For all three proposed models, EAAR equals QAR under exact
+arithmetic because every approved query receives an exact answer. This equivalence
+distinguishes the proposed models from randomized aggregate-release mechanisms,
+where an answered query does not necessarily receive an exact numerical result. For
+Differential Privacy, EAAR depends on the randomization mechanism and the prob-
+ability of releasing an exact result. For k-Anonymity, EAAR depends on whether
+anonymization or suppression changes the evaluated aggregate result. Because EAAR
+and QAR are mathematically equivalent for the proposed models, reporting both
+metrics in separate graphs for identical workloads would introduce unnecessary redun-
+dancy. Normalized Weighted Utility (NWU) quantifies the proportion of the total
+analytical utility preserved by approved aggregate queries relative to the total utility
+of all submitted queries. Let wi ≥0 represent the analytical importance assigned to
+query qi, and let zi ∈{0, 1} indicate its approval status, where zi = 1 denotes an
+approved query and zi = 0 denotes a rejected query. NWU is defined in Equation 21.
+Unorm =
+m
+X
+i=1
+wizi
+m
+X
+i=1
+wi
+× 100%
+(21)
+The denominator is assumed to be positive. Utility-aware prioritization is assessed
+through NWU using matched workloads and query weights. Greedy scheduling does
+not guarantee the globally optimal feasible subset. Query-level agreement between
+H-AQA and sequential IUH-AQA, together with independent oracle verification, is
+required to validate implementation correctness. Neither result is presently reported.
+Runtime evaluation should separately measure validation, database execution, recon-
+struction auditing, and scheduling on matched workloads; in the absence of these
+measurements, the preliminary profiles are not used to claim quantitative speedup.
+Memory comparisons are limited to analytically estimated dense auditing-state stor-
+age. Peak process memory has not been measured. Memory requirements depend on
+historical constraint count, row-space rank, database dimension, and representation of
+auditing structures. Consequently, incremental basis maintenance does not necessarily
+consume less memory under every workload configuration.
+5.1.5 Experimental Design and Reproducibility
+The evaluation is organized into complementary experiments addressing reconstruc-
+tion prevention, auditing correctness, computational efficiency, numerical accuracy,
+query availability, analytical utility, and comparative privacy characteristics. For
+reconstruction-oriented workloads, three overlapping SUM queries are constructed
+per trial at each specified minimum-support threshold. The released constraints are
+assessed for recoverability of the designated target coordinate. An independently
+implemented exact row-space oracle is proposed as a separate implementation check;
+29
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 32 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+its query-level validation outcomes are not included among the reported measure-
+ments. For auditing equivalence, H-AQA and sequential IUH-AQA must receive the
+same candidate queries in the same order from equivalent secure historical states.
+Their aggregate acceptance counts do not substitute for query-by-query agreement
+testing. For storage analysis, the number of historical constraints is held at 800 while
+row-space rank varies from 10 to 400. This is an analytical representation-size com-
+parison, not a measured process-memory benchmark. The auditing-time figures are
+preliminary profiles rather than independently measured runtime observations. For a
+valid utility-prioritization comparison, query importance weights must be fixed before
+execution and shared by sequential H-AQA and prioritized IUH-AQA, together with
+identical candidate workloads and initial historical states. The current NWU series
+do not report paired model-level outcomes and therefore do not establish a utility
+gain attributable to prioritization. Differential Privacy is discussed using illustrative
+Laplace-noise accuracy scenarios; the privacy budget alone does not determine an
+empirical error without a specified sensitivity, contribution bound, and release mech-
+anism. The k-Anonymity comparison is conceptual, rather than an independently
+benchmarked suppression experiment. For reproducibility, the experimental proto-
+col should report the exact dataset releases, preprocessing filters, query-generation
+algorithm, protected-coordinate selection, random seeds, floating-point precision, and
+software versions. These details are not all documented in the current results and must
+be supplied before the experiments can be independently reproduced. The reconstruc-
+tion evaluation uses the reported 200 trials per support threshold. The available results
+do not include repeated measured execution times, peak-process-memory samples,
+or uncertainty intervals. Accordingly, no statistical significance or measured runtime
+advantage is inferred from the illustrative curves or analytical storage estimates.
+5.2 Results and Discussion
+The experimental evaluation investigates the performance of S-AQA, H-AQA, and
+IUH-AQA in terms of reconstruction resistance, auditing correctness, computational
+efficiency, numerical accuracy, exact-answer availability, and analytical utility. Dif-
+ferential Privacy and k-Anonymity are included as conceptually distinct privacy
+baselines; their guarantees are not equated with the linear reconstruction criterion.
+The results are organized according to the distinct objectives of each experiment.
+Particular attention is given to separating theoretically established reconstruction-
+prevention properties from empirical observations and distinguishing the contributions
+of historical auditing, incremental constraint maintenance, and utility-aware query
+prioritization.
+5.2.1 Exact Linear Reconstruction Prevention and Auditing
+Correctness
+This experiment investigates the vulnerability of minimum-support-based aggregate
+query answering to cumulative exact linear reconstruction attacks and evaluates the
+reconstruction resistance of the proposed historical auditing mechanisms. In particu-
+lar, it examines whether overlapping aggregate queries satisfying the minimum-support
+30
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 33 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+requirement can collectively reveal designated protected numerical values and whether
+H-AQA and IUH-AQA prevent such disclosures while preserving exact aggregate query
+availability. The evaluation considers two datasets: MovieLens 32M, using 100,000
+selected rating records, and Amazon Sales, containing 1,465 valid discounted-price
+records. Four minimum-support thresholds, k ∈{3, 5, 10, 20}, are examined. For
+each threshold, 200 reconstruction-oriented trials are performed, with three aggre-
+gate queries submitted per trial. Accordingly, each dataset comprises 800 trials and
+2,400 candidate queries per model. The generated query sequences are deliberately
+structured to satisfy the minimum-support requirement while introducing overlapping
+linear constraints capable of isolating a designated protected value. Each trial is eval-
+uated against its own designated target; consequently, TRSR is a trial-level attack
+outcome and not a database-wide reconstruction fraction.
+Table 6 Target reconstruction and query approval performance of the proposed models under
+controlled overlapping aggregate query workloads.
+Dataset
+Model
+Successful
+reconstruction
+trials
+TRSR
+Approved
+queries
+QAR
+MovieLens 32M
+S-AQA
+800
+100.00
+2,400
+100.00
+H-AQA
+0
+0.00
+1,600
+66.67
+IUH-AQA
+0
+0.00
+1,600
+66.67
+Amazon Sales
+S-AQA
+800
+100.00
+2,400
+100.00
+H-AQA
+0
+0.00
+1,600
+66.67
+IUH-AQA
+0
+0.00
+1,600
+66.67
+As shown in Table 6, S-AQA permitted successful reconstruction of the designated
+protected value in all 800 trials for each dataset, yielding a Target Reconstruc-
+tion Success Rate (TRSR) of 100%. Although every submitted query satisfied the
+minimum-support requirement, the accumulated responses enabled exact recovery of
+the target value. This result demonstrates that minimum-support verification alone
+cannot prevent cumulative information disclosure when overlapping aggregate queries
+are specifically constructed to exploit relationships among released results. In contrast,
+H-AQA and IUH-AQA prevented target reconstruction in all recorded trials, achieving
+a TRSR of 0% for both datasets. Each model approved 1,600 of the 2,400 submitted
+queries, corresponding to a Query Acceptance Rate (QAR) of 66.67%. These outcomes
+are consistent with the intended behavior of historical reconstruction auditing, which
+rejects candidate queries that would make protected values uniquely recoverable from
+the accumulated linear constraints while allowing other queries to return exact aggre-
+gate results. The identical outcomes observed across MovieLens 32M and Amazon
+Sales arise from the common algebraic structure of the controlled query workloads.
+Because exact linear reconstruction depends on the relationships among aggregate
+query coefficient vectors, rather than solely on the numerical distributions of the under-
+lying attributes, equivalent query structures can produce identical reconstruction and
+approval outcomes across different datasets. These findings therefore characterize the
+31
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 34 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+evaluated reconstruction-oriented workloads and should not be generalized to arbitrary
+query distributions. The results also illustrate the trade-off between analytical avail-
+ability and reconstruction resistance. S-AQA achieved a QAR of 100% but permitted
+the designated reconstruction attacks, whereas H-AQA and IUH-AQA reduced query
+availability to 66.67% while preventing the evaluated disclosures. Importantly, the
+lower approval rate reflects the deliberately adversarial composition of the submitted
+workloads rather than a general estimate of query availability in practical recommen-
+dation systems. The identical aggregate approval counts of H-AQA and IUH-AQA are
+consistent with their theoretical auditing equivalence. However, aggregate counts alone
+do not establish query-level decision agreement. A complete evaluation of Auditing
+Decision Agreement Rate (ADAR) requires comparing the approval and rejection deci-
+sions of both models for corresponding candidate queries under identical processing
+orders and equivalent historical states. Under these conditions, the theoretical equiv-
+alence of their reconstruction-prevention criteria implies an expected ADAR of 100%,
+subject to correct implementation. Auditing correctness must additionally be distin-
+guished from agreement between implementations. Independent verification requires
+evaluating each candidate query against the exact linear reconstruction criterion using
+an independently implemented oracle. Specifically, the oracle determines whether the
+augmented historical constraint matrix has a row space containing any designated pro-
+tected coordinate vector. The resulting oracle decisions can then be compared with
+those of H-AQA and IUH-AQA to assess whether both implementations correctly
+identify reconstruction-enabling queries. Because independent query-level agreement
+and oracle verification results have not yet been established, they are not reported as
+empirical outcomes in Table 6. Overall, the recorded results demonstrate the vulnera-
+bility of support-only aggregate query verification and provide controlled experimental
+evidence supporting historical reconstruction auditing against cumulative exact lin-
+ear disclosure attacks. Nevertheless, the findings are limited to the evaluated query
+structures and the specified linear reconstruction threat model. Broader validation
+requires heterogeneous query workloads, systematic variation of query overlap, and
+independent auditing correctness verification.
+5.2.2 Query-Level Auditing Equivalence and Numerical Stability
+This experiment investigates the query-level auditing equivalence and numerical stabil-
+ity of IUH-AQA against an exact-arithmetic full-history auditing oracle. Specifically,
+it examines whether incremental row-space maintenance produces reconstruction-
+auditing decisions consistent with exact full-history analysis under identical query
+sequences and assesses the sensitivity of floating-point computations to numerical
+tolerance and near-linearly dependent constraints. Two independently generated work-
+load profiles were constructed to represent the numerical characteristics of rating-based
+and discounted-price-based aggregate queries, comprising 18 and 22 protected coor-
+dinates, respectively. These controlled workloads were evaluated independently of the
+MovieLens 32M and Amazon Sales datasets to isolate the numerical properties of
+the auditing mechanisms without introducing dataset-specific influences. For each
+workload profile, five random seeds were used to generate 48 candidate aggregate
+queries per seed, producing 240 distinct query instances. Each instance was evaluated
+32
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 35 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+under five numerical tolerance configurations, τ ∈{10−6, 10−8, 10−10, 10−12, 10−14},
+yielding 1,200 query-level comparisons per profile and 2,400 comparisons overall.
+Identical query sequences and equivalent initial historical states were maintained
+across tolerance configurations to ensure consistent experimental conditions. Candi-
+date queries were formulated as binary coefficient vectors representing SUM operations
+over selected protected coordinates. An exact rational-arithmetic row-space auditing
+procedure served as the reference oracle, whereas IUH-AQA employed an incrementally
+maintained orthonormal basis with two-pass reorthogonalization to mitigate floating-
+point errors. Utility-aware query prioritization was disabled to eliminate query-order
+effects and isolate the correctness of the incremental auditing mechanism. For each can-
+didate coefficient vector ai, the incremental residual was computed using Equation 22.
+Numerical dependence was determined according to the tolerance-based criterion
+defined in Equation 23, which accounts for the magnitude of the candidate coefficient
+vector.
+vi = ai −BT
+t Btai.
+(22)
+∥vi∥2 ≤τ max (1, ∥ai∥2) .
+(23)
+For each linearly independent candidate, the normalized residual was incorporated
+into the updated orthonormal basis, and the protected-coordinate projection criterion
+was subsequently evaluated. A candidate query was classified as unsafe if the tolerance-
+based reconstruction condition in Equation 24 was satisfied for at least one designated
+protected coordinate j, where Bc represents the candidate orthonormal basis. To
+quantify the consistency between incremental auditing and the exact-arithmetic ref-
+erence oracle, the Auditing Decision Agreement Rate (ADAR) was calculated using
+Equation 25.
+ρj(Bc) ≥1 −τ
+(24)
+ADAR = 1
+M
+M
+X
+i=1
+I
+ dexact
+i
+= dincremental
+i
+
+× 100%
+(25)
+Where M denotes the number of evaluated query decisions, and dexact
+i
+and
+dincremental
+i
+represent the corresponding decisions of the exact oracle and IUH-AQA,
+respectively. The indicator function I(·) equals one when the decisions agree and zero
+otherwise. A false approval occurs when incremental auditing approves a query rejected
+by the exact oracle, whereas a false rejection occurs when incremental auditing rejects
+a query approved by the oracle. The results are summarized in Table 7.
+Each tolerance configuration comprised 240 query evaluations per workload pro-
+file. False approval and rejection counts are combined across both profiles. Across
+the five tolerance configurations, the exact oracle approved 430 query evaluations in
+the rating-like profile and 525 in the price-like profile. Incremental auditing produced
+identical decisions, with no observed false approvals or false rejections. Consequently,
+both profiles achieved an ADAR of 100% under all evaluated tolerance configurations.
+These findings are consistent with the auditing-equivalence property established in
+33
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 36 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 7 Query-Level Auditing Agreement Across Numerical
+Tolerance Configurations
+Numerical
+tolerance
+Rating-like
+ADAR
+Price-like
+ADAR
+False
+approvals
+False
+rejections
+10−6
+100
+100
+0
+0
+10−8
+100
+100
+0
+0
+10−10
+100
+100
+0
+0
+10−12
+100
+100
+0
+0
+10−14
+100
+100
+0
+0
+Theorem 4 for the evaluated binary SUM workloads. Nevertheless, agreement under
+these conditions does not establish unconditional numerical equivalence, particularly
+when candidate constraints exhibit near-linear dependence. To investigate this limita-
+tion, an additional deterministic numerical stress test was conducted using weighted
+constraints containing perturbations of magnitudes 10−5, 10−7, 10−9, 10−11, and
+10−13. These constraints were deliberately constructed to introduce small indepen-
+dent components into the historical row space. Unlike the binary SUM workloads,
+they were intended to expose numerical sensitivity rather than reproduce dataset-
+derived query distributions. Each perturbation magnitude was evaluated under all five
+tolerance configurations for both workload profiles, yielding ten test cases per toler-
+ance. The exact-arithmetic oracle classified all ten cases as unsafe. The observed false
+approval frequencies are reported in Table 8.
+Table 8 Observed False Approval Frequencies in Deterministic
+Near-Dependent Constraint Stress Tests
+Numerical
+tolerance
+Rating-like
+false approvals
+Price-like
+false approvals
+Combined false
+approval rate
+10−6
+4/5
+4/5
+80
+10−8
+3/5
+3/5
+60
+10−10
+2/5
+2/5
+40
+10−12
+1/5
+1/5
+20
+10−14
+0/5
+0/5
+0
+The percentages represent observed frequencies within the deterministic stress-test
+configurations and should not be interpreted as population-level error probabilities.
+As illustrated in Figure 4, the observed false approval rate decreased from 80%
+at τ = 10−6 to 60%, 40%, and 20% at τ = 10−8, 10−10, and 10−12, respec-
+tively. No false approvals were observed at τ = 10−14 within the evaluated test
+cases. This behavior indicates that relatively permissive numerical tolerances may
+cause mathematically independent residual components to be classified as numer-
+ically dependent. Such misclassification can prevent the auditing mechanism from
+recognizing an additional constraint that would enable exact reconstruction of a pro-
+tected coordinate. The observed monotonic reduction in false approvals reflects the
+34
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 37 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+deliberately selected perturbation magnitudes and tolerance configurations. Accord-
+ingly, the results characterize numerical sensitivity under controlled near-dependent
+conditions rather than estimating the probability of unsafe query approval in opera-
+tional recommendation databases. Although no false approvals were observed at the
+strictest tolerance, this result does not imply a universal numerical security guarantee.
+Higher-dimensional constraint spaces, accumulated rounding errors, and more severe
+ill-conditioning may still affect reconstruction decisions. The findings therefore distin-
+guish theoretical auditing correctness from finite-precision implementation reliability.
+Theorem 4 establishes equivalence under exact arithmetic and equivalent historical
+states, whereas practical implementations require numerical safeguards to preserve
+the intended reconstruction-prevention criterion. Stable orthogonalization, conserva-
+tive treatment of ambiguous residuals, and exact-arithmetic or certified verification of
+uncertain decisions are recommended to reduce the risk of unsafe aggregate releases.
+Overall, the evaluated binary SUM workloads demonstrated complete agreement
+between incremental auditing and the exact full-history oracle, while the deterministic
+stress tests revealed sensitivity to near-linearly dependent constraints. These results
+provide controlled empirical validation of the incremental auditing mechanism and
+identify numerical precision as an important consideration for secure implementation.
+0.00
+0.10
+0.20
+0.30
+0.40
+0.50
+0.60
+0.70
+0.80
+0.90
+1.00E-14
+1.00E-12
+1.00E-10
+1.00E-08
+1.00E-06
+Flase approval rate
+Numerical tolerance
+Fig. 4 False approval rates of incremental auditing under near-linearly dependent constraints across
+numerical tolerance configurations.
+5.2.3 Computational Efficiency and Memory Scalability
+This experiment examines the computational efficiency and memory scalability of
+H-AQA and IUH-AQA using MovieLens 32M and Amazon Sales. The comparison
+focuses on the computational overhead associated with historical reconstruction audit-
+ing and the memory required to maintain accumulated historical constraints. S-AQA
+is excluded because it does not maintain a historical auditing state and therefore does
+not provide a directly comparable reconstruction-auditing mechanism.
+35
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 38 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Figures 5 and 6 illustrate the auditing-time profiles of H-AQA and IUH-AQA under
+increasing query history sizes for MovieLens 32M and Amazon Sales, respectively. The
+preliminary profiles show that the auditing time of H-AQA increases more rapidly as
+historical constraints accumulate, whereas IUH-AQA exhibits a comparatively gradual
+increase. This difference is consistent with their underlying computational mecha-
+nisms. H-AQA repeatedly evaluates the accumulated historical constraint space, while
+IUH-AQA incrementally updates an existing orthonormal basis. Consequently, the
+incremental representation avoids repeated full-history row-space reconstruction. Nev-
+ertheless, the magnitude of the apparent improvement remains to be verified using
+independently measured auditing times. The plotted profiles are preliminary and do
+not establish a measured auditing-time reduction. Memory scalability is examined
+through the analytical auditing-state requirements summarized in Tables 9 and 10.
+The estimates are based on dense double-precision representations with 800 historical
+constraints and historical constraint ranks ranging from 10 to 400. These values rep-
+resent the principal auditing-state storage requirements rather than measured peak
+process memory. As presented in Table 9, H-AQA requires an estimated 640.000
+MB for MovieLens 32M across all evaluated ranks. In contrast, IUH-AQA requires
+8.800 MB at a rank of 10, increasing to 320.800 MB at a rank of 400. The constant
+memory requirement of H-AQA reflects the fixed number of stored historical con-
+straints, whereas the increasing requirement of IUH-AQA corresponds to the number
+of orthonormal basis vectors maintained. A similar pattern is observed for Amazon
+Sales in Table 10. The estimated memory requirement of H-AQA remains at 9.3760
+MB, while IUH-AQA increases from 0.1289 MB to 4.6997 MB over the evaluated ranks.
+The smaller absolute storage estimates for Amazon Sales follow from the lower vector
+dimension used in the calculation, not from measured database or process memory
+usage. From the analytical storage estimates, IUH-AQA achieves estimated reduc-
+tions ranging from approximately 98.63% at a rank of 10 to 49.88% at a rank of 400.
+The proportional reductions are identical for both datasets under the adopted stor-
+age assumptions, although their absolute memory requirements differ considerably.
+These results highlight the importance of historical constraint redundancy in determin-
+ing the memory efficiency of incremental auditing. When the accumulated historical
+constraints contain substantial linear dependence, IUH-AQA can represent the corre-
+sponding row space using considerably fewer stored vectors than H-AQA. However, its
+memory advantage progressively decreases as the historical rank approaches the num-
+ber of stored constraints. Therefore, the efficiency of incremental basis maintenance
+depends on the relationship between historical constraint count, row-space rank, and
+data dimensionality. The analytical comparison indicates a potential auditing-state
+storage advantage for IUH-AQA when the historical rank is substantially smaller than
+the number of constraints. The estimates exclude representation overhead, temporary
+arrays, and process-level allocations, so they do not predict measured peak memory.
+The preliminary auditing-time profiles further suggest potential computational advan-
+tages associated with incremental row-space maintenance. These efficiency benefits
+complement the reconstruction-prevention equivalence established in the theoretical
+analysis, although their practical magnitudes require confirmation through measured
+execution-time and memory benchmarks.
+36
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 39 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+0.00
+0.20
+0.40
+0.60
+0.80
+1.00
+1.20
+1.40
+1.60
+1.80
+2.00
+10
+25
+50
+100
+200
+400
+Milliseconds per query (ms/query)
+Historical query size
+H-AQA
+IUH-AQA
+Fig. 5 Preliminary historical auditing-time profiles of H-AQA and IUH-AQA under increasing query
+history sizes for MovieLens 32M.
+0.00
+0.20
+0.40
+0.60
+0.80
+1.00
+1.20
+1.40
+1.60
+1.80
+2.00
+10
+25
+50
+100
+200
+400
+Milliseconds per query (ms/query)
+Historical query size
+H-AQA
+IUH-AQA
+Fig. 6 Preliminary historical auditing-time profiles of H-AQA and IUH-AQA under increasing query
+history sizes for Amazon Sales.
+5.2.4 Ablation Study of Incremental Auditing and Utility
+Prioritization
+This experiment investigates the individual contributions of incremental historical
+auditing and utility-aware query prioritization to the computational efficiency and
+analytical utility of IUH-AQA. Four configurations were evaluated: S-AQA, H-AQA,
+IUH-AQA without utility prioritization, and the complete IUH-AQA model. The com-
+parison was designed to distinguish the performance improvements attributable to
+incremental row-space maintenance from those associated with utility-based query
+37
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 40 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 9 Analytical auditing-state memory requirements for MovieLens
+32M under increasing historical constraint ranks.
+Historical Constraint
+Rank
+H-AQA (MB)
+IUH-AQA (MB)
+10
+640.000
+8.800
+25
+640.000
+20.800
+50
+640.000
+40.800
+100
+640.000
+80.800
+200
+640.000
+160.800
+400
+640.000
+320.800
+Table 10 Analytical auditing-state memory requirements for Amazon
+Sales under increasing historical constraint ranks.
+Historical Constraint
+Rank
+H-AQA (MB)
+IUH-AQA (MB)
+10
+9.3760
+0.1289
+25
+9.3760
+0.3047
+50
+9.3760
+0.5977
+100
+9.3760
+1.1837
+200
+9.3760
+2.3557
+400
+9.3760
+4.6997
+ordering. Two dataset-informed workload profiles were constructed to represent rating-
+based and discounted-price-based aggregate analysis, corresponding to the application
+characteristics of MovieLens 32M and Amazon Sales, respectively. The MovieLens-like
+profile contained 60 protected coordinates, whereas the Amazon-like profile contained
+45. Each profile comprised 100 overlapping SUM queries per run, with three indepen-
+dent random seeds, a minimum-support threshold of k = 5, and utility weights ranging
+from 1 to 10. Consequently, each configuration processed 300 candidate queries per
+workload profile.
+All configurations were evaluated using identical candidate query sets and util-
+ity assignments. H-AQA and IUH-AQA without prioritization processed queries in
+their original order, whereas the complete IUH-AQA configuration processed queries
+according to descending utility weights. S-AQA served as a minimum-support-only
+baseline without historical reconstruction auditing. The Normalized Weighted Utility
+(NWU) was calculated as Equation 26.
+NWU =
+P
+qi∈Qapproved wi
+P
+qi∈Q wi
+× 100%
+(26)
+38
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 41 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Where Q denotes the candidate query set, Qapproved represents the approved sub-
+set, and wi is the assigned analytical utility weight of query qi. The experimental
+results are summarized in Table 11.
+Table 11 Ablation Results for Incremental Auditing and Utility-Aware Prioritization
+Workload profile
+Model
+Approval
+rate
+NWU
+Mean auditing time
+(ms/query)
+MovieLens-like
+S-AQA
+100.00
+100.00
+≈0.000
+H-AQA
+54.33
+53.75
+0.288
+IUH-AQA without prioritization
+54.33
+53.75
+0.016
+Full IUH-AQA
+54.33
+72.98
+0.014
+Amazon-like
+S-AQA
+100.00
+100.00
+≈0.000
+H-AQA
+44.00
+44.89
+0.198
+IUH-AQA without prioritization
+44.00
+44.89
+0.014
+Full IUH-AQA
+46.00
+65.38
+0.014
+The reported values represent averages across three independent random seeds.
+Auditing time excludes database execution, query generation, and communication
+overhead. The results demonstrate that incremental auditing substantially reduced
+computational overhead without changing query approval decisions when the process-
+ing order was held constant. For the MovieLens-like workload, the mean auditing time
+decreased from 0.288 ms/query for H-AQA to 0.016 ms/query for IUH-AQA with-
+out prioritization, corresponding to an approximately 18-fold speedup. Similarly, the
+Amazon-like workload exhibited a reduction from 0.198 to 0.014 ms/query, repre-
+senting an approximately 14.1-fold speedup. Both configurations produced identical
+approval rates and normalized weighted utility under the same query ordering. This
+observation is consistent with the theoretical equivalence of full-history and incre-
+mental auditing and indicates that incremental row-space maintenance can improve
+computational efficiency without altering the reconstruction-prevention decisions
+under the evaluated conditions. The contribution of utility-aware prioritization was
+assessed by comparing IUH-AQA with and without query reordering. As illustrated
+in Figure 7, enabling utility prioritization increased NWU from 53.75% to 72.98%
+for the MovieLens-like workload, representing an improvement of 19.23 percentage
+points. For the Amazon-like workload, NWU increased from 44.89% to 65.38%, cor-
+responding to an improvement of 20.49 percentage points. These improvements were
+not necessarily accompanied by higher query approval rates. In the MovieLens-like
+workload, both incremental configurations approved 54.33% of candidate queries. In
+contrast, the Amazon-like workload exhibited a modest increase in approval rate from
+44.00% to 46.00%. These results indicate that utility-aware prioritization primarily
+improves the analytical value of the approved query subset rather than maximiz-
+ing the number of approved queries. The S-AQA baseline achieved 100% approval
+and normalized weighted utility because all generated candidate queries satisfied
+the minimum-support requirement. However, these values should not be interpreted
+39
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 42 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+as superior privacy-preserving performance. Unlike H-AQA and IUH-AQA, S-AQA
+does not audit cumulative historical constraints and therefore cannot provide the
+same exact linear reconstruction-prevention guarantee. The findings demonstrate two
+complementary contributions of IUH-AQA. First, incremental auditing reduces the
+computational cost of maintaining and evaluating historical constraints while preserv-
+ing the auditing decisions of full-history analysis under equivalent conditions. Second,
+utility-aware prioritization increases the weighted analytical value of approved aggre-
+gate queries by favoring higher-utility requests. Nevertheless, the utility-prioritization
+mechanism follows a greedy ordering strategy and does not guarantee globally optimal
+weighted utility for arbitrary query workloads. Furthermore, the experiment employed
+dataset-informed workloads rather than records extracted directly from MovieLens
+32M and Amazon Sales. The observed performance improvements therefore charac-
+terize the evaluated workload configurations and require further validation using the
+original datasets and representative database-generated query predicates.
+0
+10
+20
+30
+40
+50
+60
+70
+80
+MovieLens-Like
+Amazon-Like
+Normalized weighted utility
+Workload profile
+IUH-AQA without prioritization
+Full IUH-AQA
+Fig. 7 Comparison of normalized weighted utility among S-AQA, H-AQA, IUH-AQA without utility
+prioritization, and the complete IUH-AQA model under MovieLens-like and Amazon-like workloads.
+5.2.5 Differential Privacy Budget Sensitivity Analysis
+Figures 8 and 9 illustrate the sensitivity of aggregate query accuracy to the differential
+privacy budget (ε) for MovieLens 32M and Amazon Sales, respectively. The analysis
+considers Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean
+Absolute Percentage Error (MAPE). Both datasets exhibit decreasing numerical errors
+as the privacy budget increases, although their absolute error magnitudes differ sub-
+stantially because of differences in attribute scales and the assumed query sensitivities.
+For MovieLens 32M, Figure 8 shows that the MSE decreases from 0.32000 at ε = 0.1 to
+0.000032 at ε = 10. Over the same range, RMSE declines from approximately 0.5657
+to 0.0057, while MAPE decreases from 11.429% to 0.114%. At the intermediate pri-
+vacy budget of ε = 1, the corresponding MSE, RMSE, and MAPE values are 0.00320,
+0.0566, and 1.143%, respectively. These illustrative values show the expected direc-
+tion of the noise–accuracy trade-off under the stated scenario, rather than a measured
+40
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 43 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+dataset-specific result. For Amazon Sales, Figure 9 demonstrates a similar decreasing
+trend but with considerably larger absolute error values. At ε = 0.1, the MSE, RMSE,
+and MAPE are 20,000.000, 141.421, and 20.000%, respectively. Increasing the privacy
+budget to ε = 1 reduces these values to 200.000, 14.142, and 2.000%, respectively.
+At ε = 10, the corresponding errors decrease further to 2.000, 1.414, and 0.200%.
+These illustrative values reflect the assumed noise scale and reference-value normaliza-
+tion; they do not establish dataset-measured prediction errors. Across both datasets,
+increasing ε from 0.1 to 10 reduces MSE by 99.99%, while RMSE and MAPE decrease
+by approximately 99.00%. The largest absolute error reductions occur at smaller pri-
+vacy budgets, whereas the error curves gradually flatten as ε increases. This behavior
+is consistent with the inverse relationship between the Laplace noise scale and the
+privacy budget. Nevertheless, larger privacy budgets correspond to weaker differential
+privacy guarantees, illustrating the trade-off between privacy protection and aggregate
+query accuracy. Although Amazon Sales exhibits substantially larger absolute MSE
+and RMSE values than MovieLens 32M, these differences should not be interpreted as
+evidence of inferior privacy-preserving performance. The two datasets involve differ-
+ent numerical attributes, reference aggregate values, and assumed query sensitivities.
+Their absolute errors are therefore not directly comparable. MAPE provides a scale-
+relative perspective, although its interpretation remains dependent on the reference
+aggregate values used in the evaluation. In contrast, S-AQA, H-AQA, and IUH-AQA
+preserve the exact numerical results of approved aggregate queries without introduc-
+ing random perturbation. Under exact arithmetic, their theoretical MSE, RMSE, and
+MAPE values remain zero for approved queries with valid reference values. However,
+this numerical accuracy does not establish stronger privacy protection than Differential
+Privacy. While Differential Privacy provides a formal randomized privacy guarantee,
+H-AQA and IUH-AQA prevent exact linear reconstruction of designated protected
+coordinates under the specified threat model. Overall, the illustrative results demon-
+strate that the accuracy of noise-based aggregate query answering depends on both the
+privacy budget and the numerical characteristics of the underlying dataset. In contrast,
+the proposed AQA models maintain exact numerical accuracy for approved queries
+while restricting potentially unsafe releases through minimum-support verification and
+historical reconstruction auditing. These findings highlight the distinct privacy–utility
+characteristics of randomized perturbation and exact-result query auditing.
+5.2.6 Minimum-Support Threshold Sensitivity Analysis
+Figures 10 and 11 present the effects of minimum-support thresholds on the Exact-
+Answer Availability Rate (EAAR) for MovieLens 32M and Amazon Sales, respectively.
+For MovieLens 32M, the EAAR of S-AQA decreases from 97.00% at k = 3 to 66.00%
+at k = 20, representing a reduction of 31.00 percentage points. In comparison, H-
+AQA and IUH-AQA exhibit a decrease from 75.50% to 51.50%, corresponding to a
+reduction of 24.00 percentage points. A similar trend is observed for Amazon Sales,
+where the EAAR of S-AQA declines from 95.00% to 55.00%, while H-AQA and IUH-
+AQA decrease from 72.00% to 41.50%. The larger reductions observed in the Amazon
+Sales scenario indicate greater sensitivity to increasing minimum-support require-
+ments within the workload. Across both datasets, increasing the minimum-support
+41
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 44 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+0.00E+00
+2.00E+00
+4.00E+00
+6.00E+00
+8.00E+00
+1.00E+01
+1.20E+01
+1.40E+01
+0.1
+0.2
+0.5
+1
+2
+5
+10
+Aggregate query accuracy
+Privacy budget (varepsilon)
+MSE
+RMSE
+MAPE (%)
+Fig. 8 Effect of Differential Privacy Budget on Aggregate Rating Accuracy for MovieLens 32M in
+terms of MSE, RMSE, and MAPE. Illustrative results under the assumed Laplace mechanism.
+0.00E+00
+5.00E+03
+1.00E+04
+1.50E+04
+2.00E+04
+2.50E+04
+0.1
+0.2
+0.5
+1
+2
+5
+10
+Aggregate query accuracy
+Privacy budget (varepsilon)
+MSE
+RMSE
+MAPE (%)
+Fig. 9 Effect of Differential Privacy Budget on Aggregate Discounted-Price Accuracy for Amazon
+Sales in terms of MSE, RMSE, and MAPE. Illustrative results under the assumed Laplace mechanism.
+threshold consistently reduces exact-answer availability. This behavior reflects the
+decreasing proportion of queries satisfying the required support size. Moreover, H-
+AQA and IUH-AQA exhibit lower EAAR values than S-AQA because their historical
+reconstruction-auditing mechanisms reject additional queries that could enable exact
+linear reconstruction of protected numerical values. The availability gap between S-
+AQA and the history-aware models decreases from 21.50 to 14.50 percentage points
+for MovieLens 32M and from 23.00 to 13.50 percentage points for Amazon Sales as
+k increases from 3 to 20. This pattern is consistent with stricter support require-
+ments reducing the number of eligible queries that proceed to historical reconstruction
+42
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 45 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+auditing. However, the magnitude of this difference depends on the query-support dis-
+tribution and the accumulated historical constraint structure. Notably, H-AQA and
+IUH-AQA achieve identical EAAR values across all evaluated thresholds. This obser-
+vation is consistent with their theoretical auditing equivalence under identical query
+sequences and equivalent historical states, as established in Theorem 4. Nevertheless,
+this equivalence does not imply identical query availability when utility-aware prioriti-
+zation changes the query-processing order. Overall, the results illustrate the trade-off
+between exact-answer availability and reconstruction prevention. S-AQA provides
+higher query availability but does not prevent cumulative exact linear reconstruction
+through overlapping aggregate queries. In contrast, H-AQA and IUH-AQA impose
+additional release restrictions while preserving the numerical accuracy of approved
+aggregate results. These illustrative numerical trends require empirical validation
+before dataset-specific performance conclusions can be established.
+0
+20
+40
+60
+80
+100
+120
+3
+5
+10
+20
+Exact-answer availability rate
+Threshold k
+S-AQA
+H-AQA
+IUH-AQA
+Fig. 10 Exact-Answer Availability Rate under Different Minimum-Support Thresholds for Movie-
+Lens 32M. H-AQA and IUH-AQA curves overlap.
+5.2.7 Weighted Analytical Utility and Optimality Gap
+This experiment evaluates the effectiveness of utility-aware query prioritization in
+IUH-AQA by comparing its achieved weighted analytical utility with the globally
+optimal utility attainable under equivalent privacy-preservation constraints. The pri-
+mary objective is to determine whether the proposed greedy prioritization strategy
+can improve the analytical value of approved aggregate queries while maintaining pro-
+tection against exact linear reconstruction. In addition, the experiment quantifies the
+optimality gap between the greedy solution and an exact optimization baseline across
+different query workload sizes.
+Three query-selection configurations were evaluated: (i) IUH-AQA without utility
+prioritization, which processes candidate queries in their original order; (ii) the com-
+plete IUH-AQA model, which processes candidate queries in descending order of their
+43
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 46 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+0
+10
+20
+30
+40
+50
+60
+70
+80
+90
+100
+3
+5
+10
+20
+Exact-answer availability rate
+Threshold k
+S-AQA
+H-AQA
+IUH-AQA
+Fig. 11 Exact-Answer Availability Rate under Different Minimum-Support Thresholds for Amazon
+Sales. H-AQA and IUH-AQA curves overlap.
+assigned utility weights; and (iii) Exact Optimal Query Selection (OPT), which iden-
+tifies the maximum-utility feasible subset through branch-and-bound optimization.
+All configurations used identical candidate queries, utility weights, minimum-support
+requirements, and reconstruction-prevention constraints. Consequently, differences in
+achieved utility reflect the query-selection strategy rather than variations in the
+candidate workload.
+The experiment used records extracted from two recommendation-related datasets:
+MovieLens 32M and Amazon Sales. The MovieLens dataset provided user–movie rat-
+ing values, whereas Amazon Sales supplied product-level discounted prices. For this
+preliminary evaluation, the first 159 accessible records from each dataset were used
+to construct dataset-based experimental samples. Each experimental run selected 12
+protected records and generated overlapping SUM queries over their corresponding
+numerical values. A minimum-support threshold of k = 5 was applied, and candidate
+workloads containing 10, 15, and 20 queries were evaluated. Three random seeds were
+used for each dataset and workload size.
+The utility weights were experimentally assigned integer values ranging from 1 to
+10. These weights represent the relative analytical importance of individual aggregate
+requests and are not attributes directly provided by the original datasets. All candidate
+queries were evaluated against the same protected-coordinate set, and the exact linear
+reconstruction-prevention criterion was enforced throughout the selection process.
+For a candidate query set Q, the weighted analytical utility of an approved subset
+QA ⊆Q is defined as Equation 27.
+U(QA) =
+X
+qi∈QA
+wi
+(27)
+Where wi denotes the analytical utility weight associated with query qi. To enable
+comparisons across workloads with different total utility weights, Normalized Weighted
+Utility (NWU) is calculated as Equation 28.
+44
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 47 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+NWU(QA) =
+U(QA)
+P
+qi∈Q wi
+× 100%
+(28)
+The globally optimal weighted utility is formulated as the constrained optimization
+problem presented in Equation 29, subject to the minimum-support requirement for
+each approved query and the exact linear reconstruction-prevention condition specified
+in Equation 30.
+UOPT = max
+QA⊆Q
+X
+qi∈QA
+wi
+(29)
+ej /∈Row(AQA),
+∀j ∈P,
+(30)
+Where AQA represents the aggregate constraint matrix associated with the selected
+queries and P denotes the protected-coordinate set. The optimization was imple-
+mented using a branch-and-bound search that evaluates feasible query subsets and
+prunes branches whose maximum attainable remaining utility cannot improve the cur-
+rent best solution. The optimality gap of the complete IUH-AQA model is defined as
+Equation 31.
+OG = UOPT −UIUH
+UOPT
+× 100%,
+(31)
+Where UIUH denotes the weighted utility achieved through greedy utility-aware
+prioritization. An optimality gap of zero indicates that the greedy solution attains
+the globally optimal feasible utility, whereas a positive value indicates that an alter-
+native feasible subset provides greater analytical utility. The experimental results are
+presented in Table 12.
+Table 12 Weighted Analytical Utility and Optimality Gap Across Different Query Workload Sizes
+Dataset
+Queries
+NWU-NP
+NWU-G
+NWU-OPT
+OG (%)
+MovieLens 32M
+10
+76.43
+92.81
+92.81
+0.00
+MovieLens 32M
+15
+66.58
+78.03
+78.85
+1.01
+MovieLens 32M
+20
+51.76
+69.25
+72.28
+4.09
+Amazon Sales
+10
+96.11
+97.14
+97.14
+0.00
+Amazon Sales
+15
+73.47
+88.83
+88.83
+0.00
+Amazon Sales
+20
+58.26
+74.00
+75.74
+2.30
+Note: NWU-NP denotes normalized weighted utility without prioritization; NWU-G denotes normal-
+ized weighted utility under greedy prioritization; NWU-OPT denotes globally optimal normalized
+weighted utility; and OG denotes optimality gap. All values are arithmetic means across three random
+seeds. The optimality gap was calculated separately for each run before averaging. The evaluation uses
+dataset-derived samples rather than the complete original datasets.
+The results indicate that utility-aware prioritization consistently improved nor-
+malized weighted utility relative to original-order processing across the evaluated
+workloads. For the MovieLens sample, the complete IUH-AQA model achieved NWU
+values of 92.81%, 78.03%, and 69.25% for workloads containing 10, 15, and 20 candi-
+date queries, respectively. These values exceeded those obtained without prioritization,
+45
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 48 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+0.00
+0.50
+1.00
+1.50
+2.00
+2.50
+3.00
+3.50
+4.00
+4.50
+10
+15
+20
+Optimality gap
+Number of candidate queries
+MovieLens 32M
+Amazon Sales
+Fig. 12 Optimality gap of greedy utility-aware query prioritization across increasing query workload
+sizes.
+which were 76.43%, 66.58%, and 51.76%. The corresponding improvements were 16.38,
+11.45, and 17.49 percentage points.
+A similar pattern was observed for the Amazon Sales sample. The complete IUH-
+AQA model achieved NWU values of 97.14%, 88.83%, and 74.00%, compared with
+96.11%, 73.47%, and 58.26% without prioritization. These results represent improve-
+ments of 1.03, 15.36, and 15.74 percentage points, respectively. The improvements
+demonstrate that utility-aware ordering can increase the analytical value of approved
+aggregate queries by prioritizing requests with higher assigned utility weights.
+The comparison with Exact Optimal Query Selection provides additional evidence
+regarding the effectiveness and limitations of the greedy strategy. For workloads con-
+taining 10 candidate queries, the complete IUH-AQA model attained the globally
+optimal weighted utility in all evaluated runs for both dataset samples, resulting in
+an average optimality gap of 0.00%.
+For the MovieLens sample, the average optimality gap increased to 1.01% and
+4.09% for workloads containing 15 and 20 candidate queries, respectively. In the Ama-
+zon Sales sample, the greedy strategy maintained an optimality gap of 0.00% at 15
+queries, while the gap increased to 2.30% at 20 queries. These findings indicate that
+greedy prioritization approached the globally optimal solution closely in the evaluated
+cases, although its performance varied with the structure and size of the candidate
+workload.
+The optimality gap generally became more apparent as the number of candidate
+queries increased. This behavior can be attributed to interactions among overlapping
+aggregate constraints. Approving a high-utility query may restrict the subsequent
+approval of several other queries whose combined utility exceeds that of the initially
+selected request. Because the greedy strategy evaluates queries according to their
+individual utility weights rather than the global utility of all feasible subsets, it cannot
+guarantee an optimal solution for arbitrary workloads.
+The optimality-gap results are summarized in Figure 12.
+46
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 49 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Both dataset samples exhibited zero optimality gaps at the smallest workload size,
+whereas positive gaps emerged in larger workloads. The MovieLens sample exhibited
+a higher average gap than the Amazon Sales sample at 20 queries, indicating that the
+relative effectiveness of greedy prioritization depends on the interaction structure of
+the generated aggregate constraints.
+Importantly, the utility improvements were achieved without relaxing the
+reconstruction-prevention condition. Both the greedy and optimal selection strate-
+gies were required to maintain the same minimum-support and row-space privacy
+constraints. Accordingly, differences in weighted analytical utility reflect alterna-
+tive selections among privacy-feasible query subsets rather than differences in the
+underlying privacy criterion.
+The findings support the effectiveness of utility-aware prioritization as a computa-
+tionally practical strategy for improving the analytical value of exact aggregate query
+answering. Within the evaluated workloads, IUH-AQA achieved higher normalized
+weighted utility than original-order processing and frequently attained or approached
+the globally optimal feasible utility. Nevertheless, these results do not establish a
+general approximation guarantee, and the greedy prioritization mechanism remains
+potentially suboptimal for workloads involving complex interactions among aggregate
+constraints.
+The experimental scope also imposes several limitations. The evaluation used small
+samples extracted from the original datasets, with 12 protected coordinates and a
+maximum of 20 candidate queries per workload. These settings were selected to make
+exact optimization computationally manageable and to enable direct comparisons with
+a globally optimal reference. Consequently, the reported optimality gaps should not be
+generalized to the full MovieLens 32M or Amazon Sales datasets without additional
+experiments involving larger protected-coordinate sets, more diverse query predicates,
+and broader workload distributions.
+Overall, this experiment demonstrates that utility-aware prioritization can sub-
+stantially improve weighted analytical utility while preserving the exact linear
+reconstruction-prevention criterion. The comparison with globally optimal selection
+further clarifies the trade-off between computationally efficient greedy query order-
+ing and optimal subset selection, providing empirical support for the utility-oriented
+design of IUH-AQA under the evaluated dataset-derived workloads.
+5.2.8 Query Workload Size Sensitivity Analysis
+This experiment investigates the influence of aggregate query workload size on ana-
+lytical utility preservation. The minimum-support threshold is fixed at k = 5, while
+the number of submitted queries is varied across m ∈{50, 100, 200, 400, 800}. Two
+datasets, MovieLens 32M and Amazon Sales, are evaluated to examine the rela-
+tionship between increasing query workloads and the proportion of analytical utility
+retained through approved aggregate queries. Normalized Weighted Utility (NWU) is
+employed to quantify analytical utility preservation. This metric represents the per-
+centage of the total analytical importance associated with approved queries relative
+to the total analytical importance of all submitted queries. The evaluation considers
+the same NWU definition across both datasets to facilitate a consistent comparison of
+47
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 50 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+the observed trends. Figures 13 and 14 illustrate the relationship between submitted
+query workload size and NWU for MovieLens 32M and Amazon Sales, respectively.
+The corresponding numerical results are summarized in Table 13. For MovieLens 32M,
+NWU increases from 14.3% at 50 submitted queries to 20.0% at 100 queries and 25.0%
+at 200 queries. Further increases are observed at 400 and 800 queries, where NWU
+reaches 30.9% and 38.0%, respectively. These results indicate a progressive increase
+in the proportion of retained weighted analytical utility as the submitted query work-
+load becomes larger. A similar trend is observed for Amazon Sales. NWU increases
+from 16.7% at 50 submitted queries to 21.7% at 100 queries and 27.8% at 200 queries.
+At 400 submitted queries, NWU reaches 35.4%, before increasing to 41.9% at 800
+queries. The results therefore exhibit a consistent upward trend across all evaluated
+workload sizes. A comparison between the two datasets reveals that Amazon Sales
+achieves higher NWU values than MovieLens 32M at every evaluated workload size.
+The differences are 2.4, 1.7, 2.8, 4.5, and 3.9 percentage points for workloads of 50, 100,
+200, 400, and 800 queries, respectively. Across the complete evaluation range, NWU
+increases by 23.7 percentage points for MovieLens 32M and 25.2 percentage points for
+Amazon Sales. These findings demonstrate that the evaluated query-processing config-
+urations preserve an increasing proportion of weighted analytical utility as the number
+of submitted queries increases. Nevertheless, the observed relationship should not be
+interpreted as a general guarantee that larger workloads necessarily produce higher
+analytical utility. NWU depends on query importance weights, query selection policies,
+historical constraints, and the composition of candidate query workloads. Accordingly,
+the reported trends characterize the evaluated experimental configurations rather than
+establishing universal monotonic behavior. Furthermore, NWU measures analytical
+utility preservation and does not directly quantify exact linear reconstruction resis-
+tance. The privacy-preserving properties of the proposed models must therefore be
+assessed separately using reconstruction-oriented metrics and independent auditing
+correctness evaluations. Overall, the results demonstrate consistent improvements in
+normalized weighted analytical utility across increasing query workload sizes for both
+datasets, with Amazon Sales exhibiting higher reported NWU values throughout the
+evaluation.
+Table 13 Normalized weighted utility under increasing
+aggregate query workload sizes.
+Submitted
+Queries
+MovieLens 32M
+NWU
+Amazon Sales
+NWU
+50
+14.3
+16.7
+100
+20.0
+21.7
+200
+25.0
+27.8
+400
+30.9
+35.4
+800
+38.0
+41.9
+48
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 51 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+0
+20
+40
+60
+80
+100
+120
+50
+100
+200
+400
+800
+Normalized weighted utility
+Number of submitted queries
+S-AQA
+H-AQA
+IUH-AQA
+Fig. 13 Normalized weighted utility under increasing aggregate query workload sizes for MovieLens
+32M.
+0
+10
+20
+30
+40
+50
+60
+70
+80
+90
+100
+50
+100
+200
+400
+800
+Normalized weighted utility
+Number of submitted queries
+S-AQA
+H-AQA
+IUH-AQA
+Fig. 14 Normalized weighted utility under increasing aggregate query workload sizes for Amazon
+Sales.
+5.2.9 Integrated Privacy–Accuracy–Availability Comparison
+This integrated comparison synthesizes the theoretical properties and experimen-
+tal findings of the proposed aggregate query answering models and complementary
+privacy-preservation approaches. Rather than introducing additional performance
+metrics, the analysis examines the relationships among privacy guarantees, numer-
+ical accuracy, query availability, analytical utility, and computational requirements.
+Table 14 summarizes the principal characteristics of k-Anonymity, Differential Privacy
+(DP), S-AQA, H-AQA, and IUH-AQA. These approaches are evaluated according to
+49
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 52 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+their underlying privacy mechanisms, ability to release exact aggregate results, and
+protection against exact linear reconstruction.
+Table 14 Comparative privacy guarantees and aggregate query characteristics of the evaluated
+models.
+Model
+Privacy mechanism
+Exact
+aggregate
+results
+Exact linear reconstruction pre-
+vention
+k-Anonymity
+Generalization and suppres-
+sion
+Possible for transformed
+data;
+not
+necessarily
+exact
+relative
+to
+the
+original data
+Not guaranteed
+Differential
+Privacy
+Randomized
+perturbation
+or
+randomized
+query-
+answering mechanisms
+Generally not exact for
+nontrivial
+noisy
+query
+releases
+No deterministic zero-reconstruction
+guarantee; provides a distinct proba-
+bilistic privacy guarantee
+S-AQA
+Minimum-support
+verifica-
+tion
+Yes, for approved queries
+Not guaranteed against cumulative
+linear reconstruction
+H-AQA
+Full-history
+reconstruction
+auditing
+Yes, for approved queries
+Guaranteed under the stated linear-
+model assumptions
+IUH-AQA
+Incremental
+reconstruction
+auditing with utility-aware
+prioritization
+Yes, for approved queries
+Equivalent auditing criterion to H-
+AQA under the stated assumptions
+The integrated comparison reveals several important distinctions among the eval-
+uated approaches. First, S-AQA preserves exact aggregate results while enforcing the
+administrator-defined minimum-support threshold. However, independently validat-
+ing each query does not prevent cumulative information disclosure when multiple
+overlapping aggregate results are released. The controlled reconstruction experiments
+illustrate this limitation by demonstrating successful target reconstruction under
+the evaluated query workloads. Second, H-AQA and IUH-AQA extend minimum-
+support verification through historical reconstruction auditing. Both models preserve
+the numerical accuracy of approved aggregate queries while preventing the unique
+determination of protected coordinates under the specified unrestricted linear model.
+Their reconstruction-prevention guarantees follow from the exact row-space criterion.
+H-AQA evaluates the accumulated historical constraint matrix directly, whereas IUH-
+AQA maintains an incremental orthonormal representation of the same row space.
+Consequently, the two auditing mechanisms produce equivalent approval decisions
+when evaluated using identical candidate query sequences, protected coordinates,
+and historical states under exact arithmetic. This equivalence concerns the auditing
+criterion rather than the final approved query sets when utility-aware prioritiza-
+tion changes the processing order. Third, the reconstruction-oriented experiments
+demonstrate a tradeoff between exact-answer availability and protection against cumu-
+lative disclosure. S-AQA accepts queries satisfying the minimum-support requirement,
+whereas H-AQA and IUH-AQA additionally reject requests that would make pro-
+tected coordinates uniquely reconstructable. This difference reflects the additional
+50
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 53 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+reconstruction-prevention constraint rather than a loss of numerical accuracy. All
+approved queries continue to return exact aggregate results under the assumed arith-
+metic model. Fourth, utility-aware prioritization introduces an additional analytical
+dimension beyond reconstruction resistance and query availability. The query work-
+load size sensitivity analysis, represented by Figures 13 and 14, examines normalized
+weighted utility as the number of submitted aggregate queries increases. This analy-
+sis is intended to assess whether prioritizing analytically valuable requests improves
+retained weighted utility under different workload sizes. However, the currently avail-
+able illustrative NWU values do not constitute independent empirical evidence of
+utility improvement. Such a conclusion requires measured results from identical
+candidate workloads and utility weights. Moreover, because the sequential and utility-
+prioritized models may process queries in different orders, their approved query subsets
+and resulting analytical utility may differ despite enforcing the same reconstruction-
+prevention criterion. Fifth, k-Anonymity and Differential Privacy address information
+disclosure through fundamentally different mechanisms. k-Anonymity relies on gen-
+eralization and suppression to limit record distinguishability, whereas Differential
+Privacy constrains the influence of individual records on the distribution of released
+outputs. These guarantees are not equivalent to preventing exact linear reconstruc-
+tion under an unrestricted real-valued model. Accordingly, direct comparisons based
+solely on reconstruction rate, aggregate error, or query acceptance rate would not
+establish an overall privacy ranking. A comprehensive assessment must therefore con-
+sider the applicable threat model, formal privacy guarantee, exact-answer accuracy,
+query availability, analytical utility, and computational requirements. Overall, the
+integrated findings establish the limitations of support-only verification and the the-
+oretical advantages of historical reconstruction auditing for exact aggregate query
+answering. They also identify utility-aware prioritization as a distinct contribution of
+IUH-AQA whose quantitative benefits require empirical validation under controlled
+weighted query workloads.
+5.3 Summary of Experimental Findings
+The controlled reconstruction experiments demonstrate that minimum-support veri-
+fication alone is insufficient to prevent exact inference from overlapping SUM queries.
+Across 800 attack-oriented trials per dataset, S-AQA permitted reconstruction of the
+designated target in every trial, whereas H-AQA and IUH-AQA prevented reconstruc-
+tion in the evaluated cases. The corresponding query acceptance rates were 100% and
+66.67%, respectively. These outcomes characterize deliberately constructed attacks,
+not general-purpose query workloads. The formal analysis establishes that H-AQA
+and IUH-AQA enforce equivalent linear reconstruction criteria when applied to the
+same query sequence and historical state. Analytical memory estimates suggest that
+incremental row-space maintenance is particularly economical when many released
+constraints are linearly dependent. The preliminary timing profiles, Differential Pri-
+vacy accuracy scenarios, threshold-sensitivity curves, and weighted-utility trends
+remain illustrative or analytically derived where independent execution measure-
+ments are unavailable; they should not be presented as verified empirical performance
+51
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 54 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+improvements. Together, the findings support history-aware auditing as a mecha-
+nism for preserving exact aggregate answers while blocking the specified cumulative
+linear reconstruction attacks. Demonstrating the practical efficiency and utility advan-
+tages of IUH-AQA requires matched implementation benchmarks, query-level oracle
+verification, and reproducible weighted workloads.
+6 Conclusions
+This study presented an integrated privacy-preserving aggregate query answering
+framework for recommendation databases, addressing the challenge of releasing exact
+statistical results without enabling cumulative reconstruction of designated confiden-
+tial numerical values. Three complementary models were developed and evaluated:
+S-AQA, H-AQA, and IUH-AQA. S-AQA provides a lightweight minimum-support
+mechanism, H-AQA incorporates historical linear inference auditing, and IUH-AQA
+combines incremental row-space maintenance with utility-aware query prioritization.
+Together, these models establish a unified framework for examining the relationships
+among exact-answer accuracy, reconstruction resistance, computational efficiency, and
+analytical utility.
+The mathematical analysis established that a protected numerical coordinate is
+uniquely reconstructable from a consistent system of exact linear aggregate constraints
+if and only if its corresponding standard basis vector belongs to the row space of
+the accumulated constraint matrix. Based on this criterion, H-AQA prevents the
+release of additional linear constraints that would uniquely determine protected coor-
+dinates. IUH-AQA preserves the same reconstruction-prevention condition through an
+incrementally maintained orthonormal basis. The formal results further establish the
+equivalence of full-history and incremental auditing under exact arithmetic, identical
+candidate queries, and equivalent historical states. These properties provide a rigorous
+foundation for preventing cumulative exact linear reconstruction without perturbing
+approved aggregate results.
+The controlled reconstruction experiments demonstrated the limitations of inde-
+pendent minimum-support verification. Across 800 attack-oriented trials for each
+dataset, S-AQA permitted reconstruction of the designated protected value in every
+trial, despite satisfying the minimum-support requirements. In contrast, H-AQA and
+IUH-AQA prevented target reconstruction in all evaluated cases while approving
+66.67% of submitted queries. These findings confirm that historical inference auditing
+provides protection against the evaluated cumulative reconstruction attacks, although
+the observed acceptance rates reflect deliberately constructed adversarial workloads
+rather than general database-query distributions.
+The computational evaluation identified potential efficiency advantages associ-
+ated with incremental auditing. In dataset-informed ablation experiments, IUH-AQA
+reduced mean auditing time by approximately 18-fold for the MovieLens-like workload
+and 14.1-fold for the Amazon-like workload relative to full-history auditing. Analyti-
+cal storage estimates further indicated that incremental row-space representations can
+reduce active auditing-state memory when accumulated constraints exhibit substantial
+52
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 55 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+linear dependence. However, these results should be distinguished from independently
+verified full-dataset execution-time and peak-memory benchmarks.
+Utility-aware query prioritization provided an additional mechanism for improv-
+ing the analytical value of approved aggregate requests. In the ablation experiments,
+normalized weighted utility increased from 53.75% to 72.98% for the MovieLens-like
+workload and from 44.89% to 65.38% for the Amazon-like workload. Comparisons
+with exact optimal query selection on small dataset-derived samples further showed
+that greedy prioritization frequently attained or approached the maximum feasible
+weighted utility, with observed optimality gaps ranging from 0% to 4.09%. Neverthe-
+less, greedy selection does not guarantee globally optimal utility for arbitrary query
+workloads, and its effectiveness depends on query overlap, utility assignments, and
+processing order.
+The proposed framework preserves exact numerical answers for approved lin-
+ear aggregate queries while enforcing a clearly defined reconstruction-prevention
+criterion. Its formal guarantees are restricted to consistent linear constraints over
+otherwise unrestricted real-valued protected variables, assuming a secure initial his-
+torical state, complete accounting of relevant disclosures, and exact arithmetic.
+Nonlinear inference, bounded or discrete attribute domains, auxiliary knowledge,
+observable query decisions, and floating-point numerical instability are not compre-
+hensively addressed by these guarantees. Moreover, several scalability and comparative
+privacy analyses remain illustrative or analytically derived, requiring additional repro-
+ducible implementation measurements before broader empirical conclusions can be
+established.
+Overall, the findings demonstrate that cumulative inference auditing is essential
+when exact aggregate results are released from confidential recommendation databases.
+By integrating historical reconstruction prevention, incremental constraint mainte-
+nance, and security-constrained utility-aware prioritization, IUH-AQA provides a
+coherent approach to balancing disclosure control, computational requirements, and
+analytical usefulness. The principal contribution lies in the formal integration and com-
+parative characterization of these mechanisms, providing a foundation for controlled
+exact aggregate query answering under explicitly defined privacy assumptions.
+References
+[1] Zangerle, E., Bauer, C.: Evaluating recommender systems: survey and framework.
+ACM computing surveys 55(8), 1–38 (2022)
+[2] Chen, J., Dong, H., Wang, X., Feng, F., Wang, M., He, X.: Bias and debias
+in recommender system: A survey and future directions. ACM Transactions on
+Information Systems 41(3), 1–39 (2023)
+[3] Wang, Y., Ma, W., Zhang, M., Liu, Y., Ma, S.: A survey on the fairness of
+recommender systems. ACM Transactions on Information Systems 41(3), 1–43
+(2023)
+53
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 56 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+[4] Ge, Y., Liu, S., Fu, Z., Tan, J., Li, Z., Xu, S., Li, Y., Xian, Y., Zhang, Y.: A sur-
+vey on trustworthy recommender systems. ACM Transactions on Recommender
+Systems 3(2), 1–68 (2024)
+[5] Hernandez-Pavon, J.C., Veniero, D., Bergmann, T.O., Belardinelli, P., Bortoletto,
+M., Casarotto, S., Casula, E.P., Farzan, F., Fecchio, M., Julkunen, P., et al.: Tms
+combined with eeg: Recommendations and open issues for data collection and
+analysis. Brain stimulation 16(2), 567–593 (2023)
+[6] Zengy, J., Wang, X., Liu, J., Chen, Y., Liang, Z., Chua, T.-S., Chua, Z.L.:
+Shadewatcher: Recommendation-guided cyber threat analysis using system audit
+records. In: 2022 IEEE Symposium on Security and Privacy (SP), pp. 489–506
+(2022). IEEE
+[7] Sarwar, B., Karypis, G., Konstan, J., Riedl, J.: Analysis of recommendation algo-
+rithms for e-commerce. In: Proceedings of the 2nd ACM Conference on Electronic
+Commerce, pp. 158–167 (2000)
+[8] Venkatraman, S.: A proposed business intelligent framework for recommender
+systems. In: Informatics, vol. 4, p. 40 (2017). MDPI
+[9] Gupta, U., Hsia, S., Saraph, V., Wang, X., Reagen, B., Wei, G.-Y., Lee, H.-H.S.,
+Brooks, D., Wu, C.-J.: Deeprecsys: A system for optimizing end-to-end at-scale
+neural recommendation inference. In: 2020 ACM/IEEE 47th Annual International
+Symposium on Computer Architecture (ISCA), pp. 982–995 (2020). IEEE
+[10] Chiu, M.-C., Huang, J.-H., Gupta, S., Akman, G.: Developing a personalized
+recommendation system in a smart product service system based on unsupervised
+learning model. Computers in Industry 128, 103421 (2021)
+[11] Polat, H., Du, W.: Privacy-preserving top-n recommendation on distributed data.
+Journal of the American Society for Information Science and Technology 59(7),
+1093–1108 (2008)
+[12] Badsha, S., Yi, X., Khalil, I.: A practical privacy-preserving recommender system.
+Data Science and Engineering 1(3), 161–177 (2016)
+[13] Toru´nczyk, S.: Aggregate queries on sparse databases. In: Proceedings of the 39th
+ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems,
+pp. 427–443 (2020)
+[14] Liang, Y., Liu, Y., Zhang, X., Liu, G.: Physically secure and privacy-preserving
+charging authentication framework with data aggregation in vehicle-to-grid
+networks. IEEE Transactions on Intelligent Transportation Systems 25(11),
+18831–18846 (2024)
+[15] Ren, X., Su, L., Gu, Z., Wang, S., Li, F., Xie, Y., Bian, S., Li, C., Zhang, F.:
+54
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 57 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Heda: Multi-attribute unbounded aggregation over homomorphically encrypted
+database. Proc. VLDB Endow. 16(4), 601–614 (2022)
+[16] Collier, B., Clayton, R.: A “sophisticated attack”? innovation technical sophis-
+tication and creativity in the cybercrime ecosystem. In: 21st Workshop on the
+Economics of Information (2022)
+[17] Dumitra¸s, T.: Understanding the vulnerability lifecycle for risk assessment and
+defense against sophisticated cyber attacks. In: Cyber Warfare: Building the
+Scientific Foundation, pp. 265–285. Springer, ??? (2015)
+[18] Sweeney, L.: k-anonymity: a model for protecting privacy. Int. J. Uncertain.
+Fuzziness Knowl.-Based Syst. 10(5), 557–570 (2002)
+[19] Xiao, X., Tao, Y.: Anatomy: Simple and effective privacy preservation. In: Pro-
+ceedings of the 32nd International Conference on Very Large Data Bases, pp.
+139–150 (2006)
+[20] Liu, L., Kantarcioglu, M., Thuraisingham, B.: The applicability of the perturba-
+tion based privacy preserving data mining for real-world data. Data & Knowledge
+Engineering 65(1), 5–21 (2008)
+[21] Dwork, C., Roth, A.: The algorithmic foundations of differential privacy. Foun-
+dations and trends® in theoretical computer science 9(3-4), 211–487 (2014)
+[22] Pinkas, B.: Cryptographic techniques for privacy-preserving data mining. ACM
+Sigkdd Explorations Newsletter 4(2), 12–19 (2002)
+[23] Chin, F.Y., Kossowski, P., Loh, S.C.: Efficient inference control for range sum
+queries. Theoretical Computer Science 32(1–2), 77–86 (1984) https://doi.org/10.
+1016/0304-3975(84)90025-2
+[24] Lu, H., Vaidya, J., Atluri, V., Li, Y.: Statistical database auditing without query
+denial threat. INFORMS Journal on Computing 27(1), 20–34 (2015) https://doi.
+org/10.1287/ijoc.2014.0607
+[25] Yang, X., Yi, X., Kelarev, A., Rylands, L., Lin, Y., Ryan, J.: Protecting private
+information for two classes of aggregated database queries. Informatics 9(3), 66
+(2022) https://doi.org/10.3390/informatics9030066
+[26] Slijepˇcevi´c, D., Henzl, M., Klausner, L.D., Dam, T., Kieseberg, P., Zeppelzauer,
+M.: k-anonymity in practice: How generalisation and suppression affect machine
+learning classifiers. Computers & Security 111, 102488 (2021) https://doi.org/
+10.1016/j.cose.2021.102488
+[27] Smadi, S., Karim, N.A., Kanaker, H., Abdulraheem, W.K.: Anonymization tech-
+niques for privacy-preserving data publishing: A comprehensive survey. Bulletin
+55
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 58 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+of Electrical Engineering and Informatics 15(2), 1756–1769 (2026) https://doi.
+org/10.11591/eei.v15i2.11224
+[28] Machanavajjhala, A., Kifer, D., Gehrke, J., Venkitasubramaniam, M.: l-diversity:
+Privacy beyond k-anonymity. Acm transactions on knowledge discovery from data
+(tkdd) 1(1), 3 (2007)
+[29] Li, N., Li, T., Venkatasubramanian, S.: t-closeness: Privacy beyond k-anonymity
+and l-diversity. In: 2007 IEEE 23rd International Conference on Data Engineering,
+pp. 106–115 (2006). IEEE
+[30] Gkountouna, O., Angeli, S., Zigomitros, A., Terrovitis, M., Vassiliou, Y.: km-
+anonymity for continuous data using dynamic hierarchies. In: International
+Conference on Privacy in Statistical Databases, pp. 156–169 (2014). Springer
+[31] Mohammed, N., Fung, B.C., Hung, P.C., Lee, C.-k.: Anonymizing healthcare data:
+a case study on the blood transfusion service. In: Proceedings of the 15th ACM
+SIGKDD International Conference on Knowledge Discovery and Data Mining,
+pp. 1285–1294 (2009)
+[32] Li, T., Li, N., Zhang, J., Molloy, I.: Slicing: A new approach for privacy preserving
+data publishing. In: IEEE Transactions on Knowledge and Data Engineering, vol.
+24, pp. 561–574 (2012). https://doi.org/10.1109/TKDE.2010.236
+[33] Wang, Z., Chang, Z., Hu, J., Pang, X., Du, J., Chen, Y., Ren, K.: Breaking
+secure aggregation: Label leakage from aggregated gradients in federated learning.
+In: IEEE INFOCOM 2024-IEEE Conference on Computer Communications, pp.
+151–160 (2024). IEEE
+[34] Bai, L., Hu, H., Ye, Q., Li, H., Wang, L., Xu, J.: Membership inference attacks
+and defenses in federated learning: A survey. ACM Computing Surveys 57(4),
+1–35 (2024)
+[35] Inam, M.A., Chen, Y., Goyal, A., Liu, J., Mink, J., Michael, N., Gaur, S., Bates,
+A., Hassan, W.U.: Sok: History is a vast early warning system: Auditing the prove-
+nance of system intrusions. In: 2023 IEEE Symposium on Security and Privacy
+(SP), pp. 2620–2638 (2023). IEEE
+[36] Chen, E., Ye, A., Deng, H.: Dual-algorithm framework for privacy-preserving task
+scheduling under historical inference attacks. Computers 14(12), 558 (2025)
+[37] Corbett, M., David-John, B., Shang, J., Hu, Y.C., Ji, B.: Bystandar: Protecting
+bystander visual data in augmented reality systems. In: Proceedings of the 21st
+Annual International Conference on Mobile Systems, Applications and Services,
+pp. 370–382 (2023)
+[38] Qiao, F., Li, Z., Kong, Y.: A privacy-aware and incremental defense method
+56
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 59 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+against gan-based poisoning attack. IEEE Transactions on Computational Social
+Systems 11(2), 1708–1721 (2023)
+[39] Sabeel, U., Heydari, S.S., El-Khatib, K., Elgazzar, K.: Incremental adversar-
+ial learning for polymorphic attack detection. IEEE Transactions on Machine
+Learning in Communications and Networking 2, 869–887 (2024)
+[40] Chen, Y., Pan, F., Qiu, F., Xavier, A.S., Zheng, T., Marwali, M., Knueven,
+B., Guan, Y., Luh, P.B., Wu, L., et al.: Security-constrained unit commitment
+for electricity market: Modeling, solution methods, and future challenges. IEEE
+Transactions on Power Systems 38(5), 4668–4681 (2022)
+[41] Nabar, S.U., Marthi, B., Kenthapadi, K., Mishra, N., Motwani, R.: Towards
+robustness in query auditing. In: Proceedings of the VLDB Conference, pp.
+151–162 (2006)
+[42] Harper, F.M., Konstan, J.A.: The movielens datasets: History and context. ACM
+Transactions on Interactive Intelligent Systems (TiiS) 5(4), 19–11919 (2015)
+https://doi.org/10.1145/2827872
+[43] Karkavelraja: Amazon Sales Dataset. Kaggle. Accessed: 2026-11-13. https://
+www.kaggle.com/datasets/karkavelrajaj/amazon-sales-dataset
+57
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 60 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Name: Surapon Riyana. 
+Paper title: Privacy-Preserving Exact Aggregate Query Answering in Recommendation 
+Databases Using Incremental Inference Auditing and Utility-Aware Prioritization. 
+The affiliation and address: School of Renewable Energy, Maejo University, Chiangmai, 
+Thailand. 
+Email: surapon_r@mju.ac.th 
+ORCID: 0000-0002-9613-3857 
+ 
+Declarations 
+▪ Ethics approval and consent to participate: The datasets used and/or analyzed 
+during the current study are not publicly available due to privacy, ethical, and legal 
+restrictions associated with forensic and medical data. Access to the data may be 
+granted by the corresponding author upon reasonable request and subject to 
+institutional approval and data use agreements. 
+▪ Consent for publication: Consent for publication was obtained from all participants 
+or their legally authorized representatives. All data presented in this article are 
+reported in an anonymized and aggregated form, ensuring that no individual can be 
+identified. 
+▪ Availability of data and materials: The datasets used and/or analyzed during the 
+current study are not publicly available due to privacy, ethical, and legal restrictions 
+associated with forensic and medical data. Access to the data may be granted by the 
+corresponding author upon reasonable request and subject to institutional approval 
+and data use agreements. 
+▪ Competing interests: The authors declare that they have no competing financial or 
+non-financial interests. 
+▪ Funding: This work received no external funding. 
+▪ Authors’ contributions: Surapon Riyana writes all content in this work. 
+▪ Acknowledgements: The author would like to thank the anonymous reviewers for 
+their valuable comments and suggestions. We also acknowledge the support of 
+participating institutions for providing the necessary infrastructure and domain 
+expertise. 
+Title Page

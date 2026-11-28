@@ -1,0 +1,105 @@
+### SOURCE FRAGMENTS 00552 47
+S0008 DSE-2026 行13 [] | 5 | `DSEJ-D-26-00552` | 32 | SCETRA: Support-Conditioned Class Evidence for Gradient-Free Heterogeneous Node Classification | ✅ 继续送审 | 契合DSE图挖掘 + 数学推导严密 + 2026前沿基线 + 低显存高竞争力 |
+S0169 DSE-2026 行191 [] - **页数 / 稿件类型**：32 页 / Research Papers
+S0172 DSE-2026 行194 [00552-36] - **可复现与基线信号**：代码/数据链接 `无` ｜ 消融实验 `有` ｜ 统计方差/显著性 `有` ｜ 局限性讨论 `有` ｜ 最新基线年份 `2026 (few-shot: MUG, CHoE; full-budget latest: 2023 SeHGNN)` ｜ 最新文献年份 `2026`
+S0177 DSE-2026 行203 [] 如何在不进行编码器预训练与任何梯度更新的条件下，仅基于异构图公开拓扑/特征与当前任务的支持集标签，统一构建属性原型与共享实体两类显式类别证据，并通过无自标签泄露的精确支持集留一法（exact support LOO）自适应选择最优预测规则，以在全监督与严格少样本（1/3/5/10/20-shot）直推式异构节点分类任务中实现具竞争力的预测精度与低显存开销。
+S0178 DSE-2026 行206 [] (1) 属性证据与实体标签证据在不同图结构与任务下有效性差异显著，且可能对同一查询节点给出冲突预测（如 Fig. 1a 所示），缺乏统一的概率表示与自适应选择机制；
+S0179 DSE-2026 行206 [] (2) 共享实体往往面临支持标签稀疏或关联多类别的问题，直接传播易受低支持度噪声干扰；
+S0180 DSE-2026 行206 [] (3) 在基于当前支持集自适应选择预测规则时，支持节点自身会同时参与类原型、距离尺度、实体类别质量与专家可用性的统计构建，若不彻底消除自标签泄露（self-label influence），会导致评估严重偏乐观；
+S0181 DSE-2026 行206 [] (4) 需在不显式物化稠密目标节点核矩阵（n_t × n_t）的前提下，兼顾精确留一法（exact LOO）计算效率与 1-shot 极低标签预算下的退化处理。
+S0182 DSE-2026 行209 [] 提出无梯度推理框架 SCETRA（Support-Conditioned Evidence from Typed Relations and Attributes），由三大核心模块构成：(1) 统一类型化半路径算子与固定特征视图（Sect. 4.1, Appendix B）：显式构建逆关系转置矩阵，枚举满足 schema 的 1–2 跳半路径（含回溯；
+S0183 DSE-2026 行209 [] 若 2 跳路径数≤512 则保留，否则仅用 1 跳），对完整乘积 B_p = A_{r_L}⋯A_{r_1} 做稀疏因子化行归一化得到 P_p = diag(d_p^†)B_p（Eq. 2），避免物化 B_p。
+S0184 DSE-2026 行209 [] 对各类型节点无标签预处理（稠密列中位数/IQR 截断、稀疏列 RMS 缩放、无属性节点构造 8 维对数度统计、固定种子 1729 随机 SVD 降维至 d∈{8,32}），构建原始与行 L2 归一化属性视图 H_d = {Z_t^(d)} ∪ {P_p Z_{a(p)}^(d)}（Eqs. 3–4）。
+S0185 DSE-2026 行209 [] (2) 双分支显式类别证据（Sect. 4.2–4.3）：① 属性原型分支：在每个有效视图 j 中计算类原型 μ_{jc} 与全局池化方差尺度 σ_j^2 = max((1/(|S_j|d_j))∑‖H_j(s)-h̄_j‖_2^2, 0.01)，经高斯核 softmax 输出类概率 a_j(v,c) 并对 n_A(v) 个可用专家求均值得到 a(v)（Eqs. 5–8）；
+S0186 DSE-2026 行209 [] ② 实体标签证据分支：利用同一算子的转置将支持集 one-hot 标签与指示向量累积至源实体 N_p = P_p^⊤ Y、m_p = P_p^⊤ b（Eq. 9），在实体级施加均匀先验平滑 θ_p(e,c) = (N_p(e,c)+α/C)/(m_p(e)+α)（α∈{1,4}），再经 P_p 传回目标节点 e_p(v,c)=∑_e P_p(v,e)θ_p(e,c)（Eq. 10），给出覆盖率 κ_p(v)、证据强度 r_p(v) 及 L1 置信度上界 ‖e_p(v)-u_C‖_1 ≤ 2(1-1/C)r_p(v)（Eqs. 11–15），对 n_E(v) 个可用路径求均值得到 e(v)。
+S0187 DSE-2026 行209 [00552-26] (3) 预设 44 规则族与精确支持集 LOO 选择（Sect. 4.4–4.5）：经分支后温度缩放 T∈{0.25,1}（Eq. 16），构造含纯属性（8）、纯实体（4）、均衡融合 q_bal（16）与专家数加权融合 q_cnt（16）的固定 44 条候选规则（Table 3）。
+S0188 DSE-2026 行209 [] 推导移除单个支持样本 s 后类原型 μ_{jc}^(-s)、中心矩恒等式方差 (σ_j^2)^(-s)、实体质量 N_p^(-s)/m_p^(-s) 及专家可用性的精确删除公式（Eqs. 19–22），保留节点拓扑仅移除其标签影响，按 LOO Macro-F1（平局分数化处理）、类均衡 Brier 损失与固定索引字典序择优（Eqs. 23–24）；
+S0189 DSE-2026 行209 [] 1-shot 时退化为固定组合 q_low（Eq. 25）。
+S0190 DSE-2026 行209 [] 稀疏实现下精确 LOO 实体删除复杂度为 O(∑_p[E_p|S|+n_{a(p)}|S|C])（Eq. 26）。
+S0191 DSE-2026 行212 [00552-39、00552-40、00552-41、00552-42] 数据集：4 个公开直推式单标签异构图基准（Table 4）——ACM（10,942 节点，1,095,744 边，4 类型，16 关系，3 类，Train 907 / Test 2,118）、DBLP（26,128 节点，479,132 边，4 类型，12 关系，4 类，Train 1,217 / Test 2,840）、Freebase（180,098 节点，2,115,376 边，8 类型，72 关系，7 类，Train 2,386 / Test 5,568）、RDF-MUTAG（23,644 节点，148,454 边，1 类型，46 关系，2 类，Train 272 / Test 68）。
+S0192 DSE-2026 行212 [00552-44] 协议与指标：全监督（固定划分，学习型基线 5 随机种子均值±标准差）与严格 K-shot（K∈{1,3,5,10,20}，20 固定嵌套支持集采样，无额外验证标签，CHoE 仅 5 种子），指标为 Macro-F1 (%)、Micro-F1 (%) 及平均排名。
+S0193 DSE-2026 行212 [] 基线：全监督含 HetSAGE、HetGCN、HAN、HGT、R-GCN、Simple-HGN、SeHGNN（2023，禁用标签传播）；
+S0194 DSE-2026 行212 [00552-54] 少样本含 HeCo、HGMAE、HGPrompt、MUG（AAAI 2026）、CHoE（IJCAI 2026），均在目标无标签图上预训练。
+S0195 DSE-2026 行212 [] 机制消融与对照：单分支/固定规则/均匀平均对照（Tables 7–8）、同路径下直接类型化标签传播（LP）与实体平滑统计量对照（Table 9）、实体统计量×LOO 选择的 2×2 交互实验（Table 10）、基于支持集 LOO 拟合 3 个融合标量的 learned-fusion 对照（Table 11），以及单卡 RTX 3090 分阶段耗时与峰值 CUDA 显存评测（Figs. 4–5, Table E1–E2）。
+S0196 DSE-2026 行215 [00552-01、00552-02、00552-45] (1) 全监督性能（Table 5）：SCETRA 在 4 图平均 Macro-F1 达 76.00%（优于 SeHGNN 75.09%、Simple-HGN 74.34%），平均排名 1.88 居首；
+S0197 DSE-2026 行215 [00552-38] 分图 Macro/Micro-F1 为 ACM 93.44/93.39、DBLP 94.35/94.79（略低于 SeHGNN 94.84/95.23）、Freebase 46.26/63.67（低于 Simple-HGN 47.60/66.39 与 SeHGNN Macro 47.01）、RDF-MUTAG 69.94/70.59（Macro 居首，Micro 低于 Simple-HGN 72.35）。
+S0198 DSE-2026 行215 [00552-51、00552-52] (2) 少样本性能（Table 6, Fig. 3）：在所有基线均可运行的 ACM+DBLP 上，SCETRA 的 2 图平均 Macro/Micro-F1 达 5-shot 88.80/89.20（Rank 1.50，优于 HeCo 79.83、HGPrompt 78.32、MUG 69.77、HGMAE 64.34、CHoE 57.26）与 10-shot 91.17/91.44（Rank 1.50，优于 HeCo 82.23、HGPrompt 80.38、MUG 72.71）；
+S0199 DSE-2026 行215 [] 但在 ACM 5/10-shot 仍略低于 HeCo（87.15 vs 89.98；
+S0200 DSE-2026 行215 [00552-50] 90.55 vs 91.05），而 HGMAE、MUG、CHoE 在 Freebase 与 RDF-MUTAG 上均 OOM。
+S0201 DSE-2026 行215 [00552-46] (3) 机制对照（Tables 7–11）：全监督下 SCETRA（76.00）显著优于纯属性（69.11）、纯实体（66.63）、固定规则（69.15）与均匀平均（68.89）；
+S0202 DSE-2026 行215 [00552-53] 但 5-shot 下每张图均存在事后最优单分支略高于 SCETRA；
+S0203 DSE-2026 行215 [00552-12、00552-14] 2×2 交互实验（Table 10）显示在 DBLP 5-shot 上，实体平滑相对直接 LP 在固定融合下为 -9.79 pp，但在 LOO 选择下反转为 +2.05 pp（交互项 I=+11.84±5.43 pp），而在 Freebase 5-shot 上非自适应直接 LP（27.86）优于平滑+LOO（24.64）与完整 SCETRA（24.37）。
+S0204 DSE-2026 行215 [00552-24、00552-32、00552-43] (4) 计算特性（Figs. 4–5, Table E1）：全监督不含预处理时，SCETRA 在 ACM/DBLP/Freebase/RDF-MUTAG 的适配耗时分别为 3.47s / 1.14s / 18.8s / 0.858s，峰值显存为 0.151 / 0.114 / 0.788 / 0.0919 GiB（显著低于多数 HGNN 显存，但 Freebase 适配慢于 R-GCN 14.9s 与 HetGCN 17.2s）。
+S0206 DSE-2026 行219 [] - 统一且数学严谨的无梯度双证据框架（Sect. 4.1–4.5, Eqs. 2–22）：利用同一族稀疏因子化行归一化半路径算子 P_p 及其转置 P_p^⊤，在不物化稠密目标核的前提下统一构建属性原型与平滑共享实体两类概率证据；
+S0207 DSE-2026 行219 [00552-29] 完整推导出 L1 置信度上界（Eq. 15）及包含类原型、中心矩池化方差、实体类质量与专家可用性在内的精确支持集删除公式（Eqs. 19–22，经核验代数推导准确无误）。
+S0208 DSE-2026 行220 [00552-01、00552-02、00552-04] - 无需预训练与梯度更新即在全监督与少样本基准上取得强竞争表现（Tables 5–6, Fig. 3）：在 4 图全监督上实现 76.00% 平均 Macro-F1 与 1.88 平均排名，显著低于多数 HGNN 显存（ACM 0.151 GiB、DBLP 0.114 GiB，Fig. 4）；
+S0209 DSE-2026 行220 [] 在严格 5/10-shot 下无需目标图预训练即在 ACM+DBLP 上超越 HeCo、HGMAE、HGPrompt 及 2026 年预训练/提示基线 MUG 与 CHoE，且能在后三者全部 OOM 的 Freebase 与 RDF-MUTAG 上稳定完成推理。
+S0210 DSE-2026 行221 [00552-12、00552-13] - 机制导向的受控消融与交互分析深入且立论诚实（Tables 7–11, Sect. 6.3–6.5, Sect. 7）：不仅拆分验证了属性/实体证据与自适应规则选择的贡献，还通过 2×2 匹配实验（Table 10）揭示了实体平滑统计量与精确 LOO 选择在 DBLP 上存在显著正向交互（I=+11.84±5.43 pp）而在 Freebase 上呈图依赖分化；
+S0211 DSE-2026 行221 [] 全文客观呈现失败场景（如 Freebase、ACM 少样本与 1-shot 回退局限），无夸大宣传。
+S0213 DSE-2026 行223 [00552-15、00552-16] - 主文与附录存在直接事实矛盾（Sect. 5 Page 13 L1529, Sect. 6.5 Page 19 L2829-2830/L2837-2838, Sect. 7 Page 22 L3352-3353 vs. Appendix A.3 Page 23 L3486-3491）：主文多处声称 learned-fusion 对照组使用了验证集做 checkpoint 选择并据此强调二者选择信息不同，但 Appendix A.3 明确写出其支持集为 Train ∪ Val 且直接使用最终迭代点（no separate validation set for checkpoint selection），严重损害实验可信度。
+S0214 DSE-2026 行224 [] - 全监督对比存在潜在标注预算与基线削弱不对称（Table 4–5, Sect. 5 Page 13 L1575, Appendix D Page 24 L3598）：Table 4 未交代验证集大小，SCETRA 在全监督中疑似直接将验证集并入支持集，而监督基线须留出验证集早停；
+S0215 DSE-2026 行224 [] 同时 SeHGNN 被显式禁用了其核心标签传播机制（'without propagated labels'），且缺少与'固定视图线性/MLP + C&S/LP'及 2024–2026 监督基线的对比。
+S0216 DSE-2026 行225 [00552-19、00552-20、00552-21、00552-22、00552-23] - 全监督平均第一高度依赖仅 68 个测试节点的 RDF-MUTAG（Table 4 Page 13, Table 5 Page 15）：在 3 个标准 HGB 图（ACM、DBLP、Freebase）上，SCETRA 平均 Macro-F1 为 78.02%，实际低于 SeHGNN（78.38%）与 Simple-HGN（78.15%）；
+S0217 DSE-2026 行225 [00552-33] 整体领先仅靠测试集极小、方差极大（±4.85%–12.23%）的 RDF-MUTAG 支撑，且全监督 SCETRA 缺多划分方差与统计显著性检验。
+S0218 DSE-2026 行226 [] - 预处理耗时全程缺失且精确 LOO 缺乏大图可扩展性验证（Sect. 4.6 Eq. 26, Sect. 5 Page 14, Figs. 4–5, Table E1）：全文多处宣称预处理耗时已单独测量却未在任何表/图中给出数值；
+S0219 DSE-2026 行226 [00552-24] 主文效率图略去表现较弱的 Freebase（Table E1 显示 Freebase 全监督 SCETRA 适配 18.8s 慢于 R-GCN 14.9s 与 HetGCN 17.2s）；
+S0220 DSE-2026 行226 [] Eq. (26) 的 O(∑_p[E_p|S|+n_{a(p)}|S|C]) 复杂度在百万级节点/十万级支持集（如 OGBN-MAG）上可能面临严重瓶颈，却缺乏实证评测。
+S0441 DSE-2026 行14 [00552-49] | **`DSEJ-D-26-00552`** | **SCETRA**（无梯度异构图节点分类） | **MEETS** | **MEETS** | PARTLY_MEETS | PARTLY_MEETS | **MEETS** | **MEETS** | **✅ 继续送审** | 紧扣 DSE 图数据挖掘核心，数学推导严密，2026 基线完整，问题属典型大修可核验范畴 |
+S0530 Decision 段2 [] DSEJ-D-26-00552.
+
+### LEDGER 00552
+00552-01 CONFIRMED 76.00%  ->  Table 5 的四图等权 Macro-F1，为稿件报告值。
+00552-02 CONFIRMED 1.88  ->  Table 5 的排名跨图且跨 Macro/Micro 两个指标计算。
+00552-03 CONFIRMED 0.09–0.79 GiB  ->  限全监督目标阶段峰值并四舍五入；不能泛化为所有预算或端到端峰值。
+00552-04 CONFIRMED ACM 0.151 GiB、DBLP 0.114 GiB  ->  按原文限定全监督目标阶段。
+00552-05 CONFIRMED Freebase 0.788 GiB  ->  Table E1 对应 SCETRA/48、Freebase 全监督目标阶段。
+00552-06 CONFIRMED 88.80%（5-shot）  ->  仅 ACM 与 DBLP 的平均 Macro-F1；并非四图均值。
+00552-07 CONFIRMED 91.17%（10-shot）  ->  仅 ACM 与 DBLP 的平均 Macro-F1；表格值未经复现实验。
+00552-08 CONFIRMED HeCo（79.83% / 82.23%）  ->  对应 ACM+DBLP 5/10-shot 的 Macro 均值。
+00552-09 CONFIRMED HGPrompt（78.32% / 80.38%）  ->  对应 ACM+DBLP 5/10-shot 的 Macro 均值。
+00552-10 CONFIRMED MUG（69.77% / 72.71%）  ->  对应 ACM+DBLP 5/10-shot 的 Macro 均值。
+00552-11 CONFIRMED HGMAE（64.34%）与 CHoE（57.26%）  ->  这是 5-shot 而非两个 shot 的共同值。
+00552-12 CONFIRMED I=+11.84±5.43 pp  ->  Table 10 的 DBLP 5-shot 配对交互效应均值及样本标准差。
+00552-13 OVERSTATED 显著正向交互  ->  ± 是样本标准差；不能单凭该写法称已报告统计显著性。
+00552-14 CONFIRMED -9.79  ->  DBLP 5-shot 的固定融合与 LOO 交互对比；数值为百分点。
+00552-15 CONFIRMED checkpoint 选择  ->  主文与附录文字存在实质不一致，需代码及具体协议澄清。
+00552-16 CONFIRMED Train ∪ Val  ->  这是 Appendix A.3 的 initial/learned fusion；不能据此直接代入 Table 5 的 SCETRA。
+00552-17 CONFIRMED Table 4 未标明各图验证集规模  ->  列仅报告 Train/Test；比较方法实际可用标签尚需进一步对照。
+00552-18 IMPRECISE 禁用了其标签传播模块  ->  原文只说明该运行使用未传播标签的属性；是否违背官方基线配置需外部证据。
+00552-19 CONFIRMED 68 个测试节点  ->  Table 4 的 RDF-MUTAG 测试集规模。
+00552-20 CONFIRMED 78.02%  ->  用 ACM、DBLP、Freebase 表中 Macro-F1 推算 78.0167%，为额外的三图描述。
+00552-21 CONFIRMED 78.38%  ->  SeHGNN 三图报告均值按显示值算为 78.3767%。
+00552-22 CONFIRMED 78.15%  ->  Simple-HGN 三图报告均值按显示值算为 78.1467%。
+00552-23 CONFIRMED 仅 68 个测试节点  ->  强调小测试集及同一划分，不能把随机种子 SD 当作划分间 SD。
+00552-24 CONFIRMED 18.8s  ->  SCETRA、R-GCN、HetGCN 只比较 Freebase 目标适配阶段，尚未计入端到端其他步骤。
+00552-25 UNVERIFIABLE 预处理耗时缺报  ->  正文表示单独测量但已查看的表中无预处理数值；尚不能证明附件或全文所有位置均缺失。
+00552-26 CONFIRMED 44 规则  ->  固定规则库存在；网格敏感性及选择稳定性仍需评估。
+00552-27 IMPRECISE 最多 512 条半路径  ->  独立短语有歧义；速览卡已写明超出阈值退回单跳，不能误称截取前 512 条。
+00552-28 CONFIRMED upon reasonable request  ->  要求可获取代码以核查协议，而非视为已公开。
+00552-29 OVERSTATED Eqs. 19–22，经核验代数推导准确无误  ->  已抽核 Eq.15 的上界及 Eq.20 的中心矩删除恒等式；本复审未能逐项验证 Eqs.19–22 的全部边界条件及实现，不应给出整组公式无误的保证。
+00552-30 OVERSTATED 具备扎实、经逐项核验无误的数学构造与工程思路  ->  原稿提出删除机制及数学构造；本复审仅抽核部分公式，不能保证所有公式和工程实现无误。
+00552-31 UNVERIFIABLE 不存在科研诚信红线或导致核心结论坍塌的结构性造假/混杂缺陷  ->  没有原始日志、实现及全量标签预算，不能证明不存在关键混杂；暂未发现足以直接推翻送审的证据。
+00552-32 CONFIRMED SCETRA 在 ACM/DBLP/Freebase/RDF-MUTAG 的适配耗时分别为 3.47s / 1.14s / 18.8s / 0.858s  ->  Table E1 中 A 为目标适配秒数；时间不含另测预处理。
+00552-33 IMPRECISE ±4.85%–12.23%  ->  4.85 和 12.23 是两个基线的标准差，但并非所有学习型基线的完整范围：Table 5 的 RDF-MUTAG Macro-F1 标准差为 3.62–12.23 个百分点，且是固定划分的跨随机种子标准差，不是方差或跨划分波动。
+00552-34 CONFIRMED 在 ACM 5/10-shot 略低于 HeCo  ->  5-shot：87.15 对 89.98；10-shot：90.55 对 91.05，均为 ACM Macro-F1。
+00552-35 CONFIRMED Freebase 5-shot 上劣于更简单的直接标签传播  ->  完整 SCETRA 为 24.37，Table 10 固定融合直接 LP 为 27.86；方法配置以表格说明为准。
+00552-36 CONFIRMED few-shot: MUG, CHoE; full-budget latest: 2023 SeHGNN  ->  这里只核实稿件正文给出的引用年份，不等于外部核实文献发表情况或前沿覆盖完整。
+00552-37 CONFIRMED 1–2 跳类型化半路径  ->  阈值按 schema 的合格路径数判断；超过 512 则只用单跳。
+00552-38 CONFIRMED 分图 Macro/Micro-F1 为 ACM 93.44/93.39  ->  SCETRA 四图 Macro/Micro 为 93.44/93.39、94.35/94.79、46.26/63.67、69.94/70.59；逐图比较以 Table 5 表头为准。
+00552-39 CONFIRMED ACM（10,942 节点，1,095,744 边，4 类型，16 关系，3 类，Train 907 / Test 2,118）  ->  Table 4，按图节点、边、类型、关系、类别、训练、测试的列顺序；仅核对文稿自报值。
+00552-40 CONFIRMED DBLP（26,128 节点，479,132 边，4 类型，12 关系，4 类，Train 1,217 / Test 2,840）  ->  Table 4，按表头解释列。
+00552-41 CONFIRMED Freebase（180,098 节点，2,115,376 边，8 类型，72 关系，7 类，Train 2,386 / Test 5,568）  ->  Table 4，按表头解释列。
+00552-42 CONFIRMED RDF-MUTAG（23,644 节点，148,454 边，1 类型，46 关系，2 类，Train 272 / Test 68）  ->  Table 4，按表头解释列；68 是测试节点数。
+00552-43 IMPRECISE 全监督不含预处理时，SCETRA  ->  表 E1 仅明确时间排除单独测量的预处理；峰值显存维持记录范围，可能包含预处理。
+00552-44 CONFIRMED 20 固定嵌套支持集采样，无额外验证标签，CHoE 仅 5 种子  ->  原卡已区分 CHoE 的五个 support/head seeds；不同方法实际预算、随机种子的对应方式仍需核实。
+00552-45 CONFIRMED 75.09%、Simple-HGN 74.34%  ->  Table 5 四图平均 Macro-F1；这是稿件自报的两个数值，不代表已复现。
+00552-46 CONFIRMED 纯属性（69.11）、纯实体（66.63）、固定规则（69.15）与均匀平均（68.89）  ->  Table 7 的四图平均 Macro-F1；不同控制组的选择范围也不同。
+00552-47 OVERSTATED 彻底消除了自适应规则选择中极易发生的自标签泄露问题  ->  稿件给出每一留一折中移除自身标签贡献、再以该标签评分的协议；不能仅据公式断言实现完全无误或排除其他形式的数据泄漏。
+00552-48 OVERSTATED 显著超越 HeCo  ->  Table 6 的跨图平均数更高；未凭所引数字核实显著性检验，且 ACM 上 HeCo 在 5/10-shot 高于 SCETRA。
+00552-49 UNVERIFIABLE 2026 基线完整  ->  原稿报告了 2026 年引用，但离线无法据此穷尽同领域 2026 年基线并证明覆盖完整。
+00552-50 CONFIRMED 而 HGMAE、MUG、CHoE 在 Freebase 与 RDF-MUTAG 上均 OOM  ->  Table 6 五样本结果注明 OOM；应结合所用硬件、方法实现及资源测量解释，不作普遍不可运行的推论。
+00552-51 CONFIRMED 5-shot 88.80/89.20（Rank 1.50  ->  Table 6 的 SCETRA ACM+DBLP 平均 Macro-F1、Micro-F1 与平均排名；不是四图平均。
+00552-52 CONFIRMED 10-shot 91.17/91.44（Rank 1.50  ->  Table 6 的 SCETRA ACM+DBLP 平均 Macro-F1、Micro-F1 与平均排名。
+00552-53 CONFIRMED 5-shot 下每张图均存在事后最优单分支略高于 SCETRA  ->  Table 8 中 ACM/RDF 的属性分支及 DBLP/Freebase 的实体分支均高于 SCETRA 的 Macro-F1；事后选优不能当作无代价的可部署选择。
+00552-54 CONFIRMED HeCo、HGMAE、HGPrompt、MUG（AAAI 2026）、CHoE（IJCAI 2026），均在目标无标签图上预训练  ->  目标图预训练、年份与会议名取自原稿；离线未独立验证出版真实性及全面性。
+00552-55 CONFIRMED 32 页 / Research Papers  ->  以 PDF 物理页对象计数为 32；首页标示稿件类型。物理页可能含投稿信息页或独立声明页，不能一概视为正文页数。

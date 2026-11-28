@@ -1,0 +1,49 @@
+{
+  "dataset_version": "0.6.0",
+  "downstream_fanout_stratification": {
+    "0": {
+      "requests": 434,
+      "share_pct": 22.56,
+      "total_act_cost_units": 94.59
+    },
+    "1": {
+      "requests": 645,
+      "share_pct": 33.52,
+      "total_act_cost_units": 207.63
+    },
+    "2": {
+      "requests": 0,
+      "share_pct": 0.0,
+      "total_act_cost_units": 0.0
+    },
+    "3+": {
+      "requests": 845,
+      "share_pct": 43.92,
+      "total_act_cost_units": 487.7
+    }
+  },
+  "reuse_and_db_qps_reduction": {
+    "act_involved_requests": 1924,
+    "acts_shared_across_multiple_queries": 46,
+    "acts_shared_across_multiple_tasks": 32,
+    "db_query_reduction_upper_bound_pct": 93.09,
+    "exact_resp_misses_in_act_reqs": 939,
+    "residual_act_hit_rate_on_exact_resp_miss_pct": 85.84,
+    "residual_act_reuses_when_exact_resp_misses": 806,
+    "total_requests": 3000,
+    "unique_act_keys_used": 46,
+    "unique_act_snapshot_pairs": 133,
+    "version_safe_act_reuses": 1791
+  },
+  "snapshot_numerical_drift": {
+    "any_snapshot_changed": 42,
+    "any_snapshot_changed_pct": 21.0,
+    "total_tasks": 200,
+    "v0_to_v1_changed": 30,
+    "v0_to_v1_pct": 15.0,
+    "v0_to_v2_changed": 42,
+    "v0_to_v2_pct": 21.0,
+    "v1_to_v2_changed": 12,
+    "v1_to_v2_pct": 6.0
+  }
+}

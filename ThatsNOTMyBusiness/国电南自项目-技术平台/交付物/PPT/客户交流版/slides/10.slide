@@ -72,8 +72,13 @@
         </Box>
     </Box>
 
-    <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
-        <Text style={{ fontSize: 14, color: '#7A8699' }}>10 / 20</Text>
+    <Box style={{ flexDirection: 'column', gap: 6 }}>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [C-1]</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>集团级多租户技术平台架构设计方案 · v0.1</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>10 / 21</Text>
+        </Box>
     </Box>
 </Slide>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多租户平台 · 基础认知</title>
+<style>
+  :root{
+    --navy:#1F3864; --blue:#2E6DA4; --red:#B3261E;
+    --ink:#3D4C63; --grey:#7A8699; --line:#D9DEE7;
+    --soft:#F2F5F9; --soft2:#EEF3F9; --bg:#F7F9FC;
+    --maxw:1040px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:70px}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.8 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* Hero */
+  .hero{background:var(--navy);color:#fff;padding:58px 0 0}
+  .hero .kicker{font-size:13px;letter-spacing:.12em;color:#9DB0CC}
+  .hero h1{font-size:38px;line-height:1.26;font-weight:700;margin:14px 0 0;text-wrap:balance}
+  .hero .sub{margin-top:16px;font-size:16.5px;line-height:1.75;color:#C9D4E4;max-width:720px}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#3A5480;border:1px solid #3A5480;margin-top:32px}
+  .fact{background:var(--navy);padding:16px 20px}
+  .fact b{display:block;font-size:26px;font-weight:700;color:#fff;line-height:1.2;font-variant-numeric:tabular-nums}
+  .fact span{display:block;font-size:12.5px;color:#9DB0CC;margin-top:4px}
+
+  /* TOC */
+  .toc{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .toc-in{max-width:var(--maxw);margin:0 auto;padding:0 24px;display:flex;gap:22px;overflow-x:auto}
+  .toc a{display:block;padding:13px 0 11px;font-size:13px;color:var(--grey);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent}
+  .toc a:hover{color:var(--navy);border-bottom-color:var(--line)}
+  .toc a b{font-weight:700;color:var(--navy);margin-right:4px;font-variant-numeric:tabular-nums}
+
+  main{padding:34px 0 60px}
+  .sec{background:#fff;border:1px solid var(--line);padding:36px 38px;margin-bottom:22px}
+  .sec-head{padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  .sec-head .tag{display:inline-block;font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.12em}
+  .sec-head h2{font-size:24px;line-height:1.35;color:var(--navy);font-weight:700;margin-top:6px;text-wrap:balance}
+  .sec-head p{font-size:14.5px;color:var(--grey);margin-top:8px}
+
+  h3{font-size:17px;color:var(--navy);font-weight:700;margin:34px 0 10px;line-height:1.5;text-wrap:balance}
+  h3 .n{color:var(--blue);font-variant-numeric:tabular-nums;margin-right:8px}
+  p.body{font-size:15px;margin-bottom:12px}
+  .hl{color:var(--navy);font-weight:700}
+
+  /* 大定义 */
+  .def{border-left:3px solid var(--navy);background:var(--soft);padding:20px 22px;font-size:16.5px;line-height:1.85}
+  .def b{color:var(--navy)}
+
+  /* 四个是/不是 */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .vs div{border:1px solid var(--line);padding:16px 18px}
+  .vs em{display:block;font-style:normal;font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--grey);margin-bottom:6px}
+  .vs b{display:block;font-size:15.5px;color:var(--navy);font-weight:700;line-height:1.5}
+  .vs p{font-size:13.5px;color:var(--ink);margin-top:6px;line-height:1.65}
+
+  /* 概念卡 */
+  .concepts{display:flex;flex-direction:column;gap:14px}
+  .con{border:1px solid var(--line);display:grid;grid-template-columns:150px 1fr}
+  .con .name{background:var(--soft);padding:18px 16px;border-right:1px solid var(--line)}
+  .con .name b{display:block;font-size:15.5px;color:var(--navy);font-weight:700;line-height:1.4}
+  .con .name i{display:block;font-style:normal;font-size:11.5px;color:var(--blue);margin-top:4px;letter-spacing:.04em}
+  .con .body{padding:16px 20px 16px}
+  .con .body p{font-size:14.5px;line-height:1.75}
+  .con .body p + p{margin-top:8px}
+  .con .eg{color:var(--grey);font-size:13.5px;border-left:2px solid var(--line);padding-left:10px;margin-top:10px;line-height:1.7}
+  .con .eg b{color:var(--ink);font-weight:600}
+
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 4px}
+  .tbl th{background:var(--navy);color:#fff;font-weight:600;text-align:left;padding:11px 14px;font-size:13px}
+  .tbl td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.65}
+  .tbl tr:nth-child(even) td{background:#FAFBFC}
+  .tbl td.k{font-weight:600;color:var(--navy)}
+  .tbl td.c{text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tbl .muted{color:var(--grey)}
+
+  /* 图 */
+  figure{margin:20px 0 22px}
+  .fig-frame{border:1px solid var(--line);background:#fff;padding:18px;overflow-x:auto}
+  .fig-frame > svg{display:block;width:100%;min-width:640px;height:auto;font-family:inherit}
+  .fig-swipe{display:none;font-size:12px;color:var(--blue);margin-top:8px;text-align:center;background:var(--soft2);border:1px solid #C9D8E8;padding:4px 8px}
+  figcaption{display:flex;gap:10px;align-items:baseline;font-size:13px;color:var(--grey);margin-top:10px;line-height:1.6}
+  figcaption .no{flex:none;font-weight:700;color:var(--blue);font-size:12px;letter-spacing:.04em}
+
+  /* 提示条 */
+  .note{background:var(--soft2);border-left:3px solid var(--blue);padding:13px 18px;font-size:14px;line-height:1.75;margin-top:16px}
+  .note b{color:var(--navy)}
+  .warn{background:#FBEDEB;border-left-color:var(--red)}
+  .warn b{color:var(--red)}
+
+  /* 辨析表 */
+  .clarify{display:flex;flex-direction:column;border:1px solid var(--line)}
+  .cl{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+  .cl:last-child{border-bottom:none}
+  .cl .no{display:none}
+  .cl div{padding:14px 18px;font-size:14px;line-height:1.7}
+  .cl .a{background:#FBEDEB;color:var(--red)}
+  .cl .a::before{content:"容易误认为";display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:#B3261E;opacity:.75;margin-bottom:3px}
+  .cl .b{background:#F3F7FB;color:var(--ink);border-left:1px solid var(--line)}
+  .cl .b::before{content:"实际上是";display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--blue);margin-bottom:3px}
+
+  /* 术语 */
+  .gloss{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .gl{background:#fff;padding:13px 16px}
+  .gl b{display:block;font-size:14px;color:var(--navy);font-weight:700}
+  .gl span{display:block;font-size:13px;color:var(--ink);margin-top:3px;line-height:1.6}
+
+  footer{border-top:1px solid var(--line);background:#fff;padding:28px 0 48px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:flex-start}
+  footer p{font-size:12.5px;color:var(--grey);line-height:1.8;max-width:620px}
+  footer .mark{font-size:12.5px;color:var(--grey);text-align:right}
+
+  @media (max-width:960px){
+    .hero h1{font-size:31px}
+    .facts{grid-template-columns:repeat(3,1fr)}
+    .con{grid-template-columns:1fr}
+    .con .name{border-right:none;border-bottom:1px solid var(--line);padding:14px 18px}
+    .gloss{grid-template-columns:1fr}
+    .sec{padding:28px 26px}
+  }
+  @media (max-width:920px){
+    .fig-frame > svg{min-width:760px}
+    .fig-swipe{display:block}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 18px}
+    .hero{padding:40px 0 0}
+    .hero h1{font-size:25px}
+    .hero .sub{font-size:15px}
+    .fact{padding:13px 14px}
+    .fact b{font-size:21px}
+    .toc-in{gap:0 14px;flex-wrap:wrap;padding:0 18px;overflow-x:visible}
+    .toc a{font-size:12px;padding:9px 0 8px}
+    .sec{padding:22px 18px;margin-bottom:16px}
+    .sec-head h2{font-size:20px}
+    .vs{grid-template-columns:1fr}
+    .cl{grid-template-columns:1fr}
+    .cl .b{border-left:none;border-top:1px solid var(--line)}
+    figure .fig-frame{padding:8px 10px 10px}
+    .fig-frame > svg{min-width:760px}
+    .fig-swipe{display:block}
+    /* 表格卡片化 */
+    .tbl,.tbl tbody,.tbl tr{display:block;width:100%}
+    .tbl thead{display:none}
+    .tbl{font-size:14px;margin:16px 0 4px}
+    .tbl tr{border:1px solid var(--line);margin-bottom:12px;padding:0 0 7px}
+    .tbl td,.tbl td.k,.tbl td.c,.tbl tr:nth-child(even) td{display:block;background:transparent;border:none;padding:8px 14px 0;text-align:left;white-space:normal;word-break:normal}
+    .tbl td::before{content:attr(data-label);display:block;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.06em;margin-bottom:1px}
+    .tbl td.hd{display:block;background:var(--soft);padding:11px 14px;margin-bottom:8px;font-size:15px;font-weight:700;color:var(--navy)}
+    .tbl td.hd::before{display:inline-block;float:right;margin:3px 0 0 10px;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--grey);background:#fff;border:1px solid var(--line);padding:1px 6px}
+    footer .wrap{flex-direction:column}
+    footer .mark{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">华电睿思数智底座 · 多租户平台</div>
+    <h1>先搞清楚这几个词，再谈架构</h1>
+    <p class="sub">这一页不讲方案，只解释基础概念：什么是租户、一级和二级差在哪、四档隔离到底差什么、谁在平台上干什么。读完再看架构图，会顺很多。</p>
+    <div class="facts">
+      <div class="fact"><b>约 900</b><span>规划租户数（推算值）</span></div>
+      <div class="fact"><b>4 档</b><span>隔离强度，按打分定，不是按规模</span></div>
+      <div class="fact"><b>3 层</b><span>配额执行点，各管一段</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-in">
+    <a href="#what"><b>01</b>是什么</a>
+    <a href="#concepts"><b>02</b>五个概念</a>
+    <a href="#tenants"><b>03</b>租户分类</a>
+    <a href="#levels"><b>04</b>四档隔离</a>
+    <a href="#life"><b>05</b>租户的一生</a>
+    <a href="#roles"><b>06</b>谁在操作</a>
+    <a href="#confuse"><b>07</b>易混淆</a>
+    <a href="#glossary"><b>08</b>术语表</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- 01 -->
+  <section class="sec" id="what">
+    <div class="sec-head">
+      <div class="tag">01 是什么</div>
+      <h2>用一句话说清多租户平台在干什么</h2>
+      <p>不是「把系统做得更花」，而是「让一套平台能被很多单位分开用，并且说得清每一块给了多少」。</p>
+    </div>
+
+    <div class="def">
+      多租户平台 = <b>一套平台底座</b>　+　<b>多个互相看得见边界的使用空间</b>　+　<b>一套能判定「每块给多大、隔多严、用了多少」的规则</b>。<br>
+      平台上每个单位占的那块空间，就叫一个<span class="hl">租户</span>。
+    </div>
+
+    <div class="vs">
+      <div>
+        <em>它不是</em>
+        <b>给每个单位各装一套系统</b>
+        <p>那就回到「一人一套」的老路，成本和运维都撑不住，也不算多租户。</p>
+      </div>
+      <div>
+        <em>它也不是</em>
+        <b>把所有人塞进同一个环境，靠打标签分开</b>
+        <p>标签挡得住误操作，挡不住故意越权。所以要分档，而不是只分标签。</p>
+      </div>
+      <div>
+        <em>它的关键在</em>
+        <b>「分得开」之后还能「管得住」</b>
+        <p>能建租户只是第一步；给多少、隔多严、超了怎么办、出事怎么查，才是主体工作。</p>
+      </div>
+      <div>
+        <em>它的难点在</em>
+        <b>平台方自己也要被管</b>
+        <p>平台管理员能进所有租户，所以他的每一次进入都要留痕，并且租户看得见。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="concepts">
+    <div class="sec-head">
+      <div class="tag">02 五个概念</div>
+      <h2>先建立这五个概念，后面全通</h2>
+      <p>这五个词在方案里反复出现。每个词给一句话定义、一个具体例子，和最容易误解的地方。</p>
+    </div>
+
+    <div class="concepts">
+
+      <div class="con">
+        <div class="name"><b>租户</b><i>Tenant</i></div>
+        <div class="body">
+          <p>租户是<span class="hl">资源、配额、身份、账单、审计五类事实的归属单元</span>。它不是一个部门、也不是一个人，而是「这些东西算在谁头上」的那本账。</p>
+          <div class="eg"><b>例子：</b>「某水电厂」是一个二级租户。它的 CPU 配额、它的用户、它的用量、它的审计日志，都挂在这个租户下，不挂在某个具体的人身上。</div>
+          <p><span class="hl">最容易误解：</span>把租户当成用户组。一个人可以同时属于多个租户（集团专家跨厂支持），一个租户里也有很多种角色。租户和用户是多对多。</p>
+        </div>
+      </div>
+
+      <div class="con">
+        <div class="name"><b>隔离等级</b><i>L0 – L3</i></div>
+        <div class="body">
+          <p>租户之间「隔开多少」不是开关，而是四档：L0 共享、L1 逻辑隔离、L2 强化隔离、L3 物理隔离。给哪个租户哪一档，由打分决定，不由规模或行政级别决定。</p>
+          <div class="eg"><b>例子：</b>一个厂站上线内部检修应用，四维打分 9 分 → 落 L1；同一个厂站如果要对外提供一份主数据，数据敏感度抬高，总分到 11 分 → 必须升到 L2。</div>
+          <p><span class="hl">最容易误解：</span>以为租户越大档位越高。不是——档位看的是「这个租户碰不碰敏感数据、要不要对外供数」，跟它有多少人、多大投资无关。</p>
+        </div>
+      </div>
+
+      <div class="con">
+        <div class="name"><b>配额</b><i>Quota</i></div>
+        <div class="body">
+          <p>配额是给每个租户的用量上限，共 15 项（CPU、内存、存储、接口调用量、Token 等）。它必须能<span class="hl">在写入之前拦住</span>，而不是事后从监控里看到。</p>
+          <div class="eg"><b>例子：</b>某租户的 API 调用量到 100% 时，网关拒绝新请求，但已经跑着的业务不中断——拒绝增量、保住存量。</div>
+          <p><span class="hl">最容易误解：</span>以为配额就是一个配置数字。没有执行点的配额只是建议值。所以要三层同时生效：K8s 管资源、准入管对象、网关管调用。</p>
+        </div>
+      </div>
+
+      <div class="con">
+        <div class="name"><b>控制面 / 数据面</b><i>Control / Data Plane</i></div>
+        <div class="body">
+          <p><span class="hl">控制面</span>管「应该怎样」：租户档案、配额、隔离档位、授权、开通编排、审计策略。<span class="hl">数据面</span>是真正跑业务的地方：各租户的应用、数据库、中间件。</p>
+          <div class="eg"><b>例子：</b>控制面下发「这个租户 32 核」→ 数据面按这个配置运行。控制面挂了，已开通租户的业务照最后下发的配置继续跑，这就是两者分开的意义。</div>
+          <p><span class="hl">最容易误解：</span>以为分开是为了性能。真正的目的是限制故障影响范围：一次错误下发会同时打到所有租户，所以控制面的变更要按生产发布管。</p>
+        </div>
+      </div>
+
+      <div class="con">
+        <div class="name"><b>三道闸</b><i>越权防护</i></div>
+        <div class="body">
+          <p>一个请求要跨到别的租户，路上有三道拦截：① 网关校验令牌里的租户和目标是否一致；② 服务端只认网关注入的租户身份，不认前端自己报的；③ 数据层强制拼租户条件。</p>
+          <div class="eg"><b>例子：</b>有人把请求里的租户号改成别人家的——网关第一道就拒了。假设他绕过了网关直连服务——服务端不采信前端，还是拒。再假设业务代码漏写条件——数据层兜住。</div>
+          <p><span class="hl">最容易误解：</span>以为做一道就够。三道对应三种不同的失效方式，任缺一道，都有一个能被绕开的口子。</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="tenants">
+    <div class="sec-head">
+      <div class="tag">03 租户分类</div>
+      <h2>平台上有四种租户，两种分法要同时看</h2>
+      <p>一种是按层级（谁管谁），一种是按信任（隔多严）。这两件事不重合，必须分开记。</p>
+    </div>
+
+    <h3><span class="n">3.1</span>按层级：一级管二级，二级干活</h3>
+    <table class="tbl">
+      <thead>
+        <tr><th style="width:15%">层级</th><th style="width:24%">是谁</th><th style="width:10%">数量</th><th>自理程度</th><th style="width:30%">典型动作</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="k hd" data-label="层级">一级租户</td>
+          <td data-label="是谁">集团总部、区域/省公司</td>
+          <td class="c" data-label="数量">≤ 50</td>
+          <td data-label="自理程度">完全自理：独立门户、独立登录、独立管理员</td>
+          <td data-label="典型动作">开通二级租户、分配配额、下发模板、代登录并接受审计</td>
+        </tr>
+        <tr>
+          <td class="k hd" data-label="层级">二级 · 业态</td>
+          <td data-label="是谁">集团水电、新能源、煤电、燃机</td>
+          <td class="c" data-label="数量">≤ 20</td>
+          <td data-label="自理程度">业务自治，但不单独建门户</td>
+          <td data-label="典型动作">按业态统一配额口径与适配优先级</td>
+        </tr>
+        <tr>
+          <td class="k hd" data-label="层级">二级 · 厂站</td>
+          <td data-label="是谁">电厂、风电场、光伏站、水电站</td>
+          <td class="c" data-label="数量">≤ 800</td>
+          <td data-label="自理程度">业务自治，但不单独建门户、不自建身份源</td>
+          <td data-label="典型动作">自助建低代码应用、接入场站数据、申请扩容</td>
+        </tr>
+        <tr>
+          <td class="k hd" data-label="层级">第三方</td>
+          <td data-label="是谁">外部开发商（如中电金信、南京圣唯思）</td>
+          <td class="c" data-label="数量">按项目</td>
+          <td data-label="自理程度">不能：没有独立门户，账号另立域（强制 MFA、≤90 天）</td>
+          <td data-label="典型动作">在专属隔离环境里开发与交付，不得进共享环境</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <b>「二级不自管」要读准。</b>不自管指的是<b>不单独建门户、不单独运维平台、不自建身份源</b>，不是说二级被降级。二级租户仍然保留完整的租户内自治：自己建应用、自己配角色和数据权限、自己申请配额（不超上限）、自己看本租户的用量与审计。
+    </div>
+
+    <h3><span class="n">3.2</span>按信任：A 类自己人，B 类外部方</h3>
+    <p class="body">同样数量、同样规模的租户，因为「是不是自己人」，隔离方式完全不同。原因是命名空间只能挡误操作，挡不住故意越权。</p>
+    <table class="tbl">
+      <thead>
+        <tr><th style="width:14%">类别</th><th style="width:26%">是谁</th><th style="width:30%">怎么隔</th><th>为什么</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="k hd" data-label="类别">A 类</td>
+          <td data-label="是谁">内部租户（集团、区域、厂站）</td>
+          <td data-label="怎么隔">独立命名空间 + 资源配额 + 网络策略</td>
+          <td data-label="为什么">内部人是「防止误操作」，不是「防止恶意」</td>
+        </tr>
+        <tr>
+          <td class="k hd" data-label="类别">B 类</td>
+          <td data-label="是谁">第三方开发商</td>
+          <td data-label="怎么隔">强制虚拟集群或独立集群</td>
+          <td data-label="为什么">外部方有能力且有机会做越权尝试，必须硬隔离</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="levels">
+    <div class="sec-head">
+      <div class="tag">04 四档隔离</div>
+      <h2>四档隔离，到底差在什么地方</h2>
+      <p>差的不是「有没有隔离」，而是每一个隔离对象上，是共享、是分开配、还是彻底独立。</p>
+    </div>
+
+    <figure>
+      <div class="fig-frame">
+<svg viewBox="0 0 1000 330" role="img" aria-label="四档隔离在五个隔离对象上的差异">
+<text x="0" y="16" font-size="11.5" fill="#7A8699" font-family="Microsoft YaHei">同一套集群、同一个安全Ⅲ区，四种"切法"。颜色越深，隔离越强，代价也越高。</text>
+
+<text x="90" y="46" font-size="13" font-weight="bold" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">L0 共享</text>
+<text x="320" y="46" font-size="13" font-weight="bold" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">L1 逻辑隔离（默认）</text>
+<text x="550" y="46" font-size="13" font-weight="bold" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">L2 强化隔离</text>
+<text x="780" y="46" font-size="13" font-weight="bold" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">L3 物理隔离</text>
+<text x="90" y="64" font-size="10.5" fill="#7A8699" text-anchor="middle" font-family="Microsoft YaHei">不推荐</text>
+<text x="320" y="64" font-size="10.5" fill="#2E6DA4" text-anchor="middle" font-family="Microsoft YaHei">约 80% 的二级租户</text>
+<text x="550" y="64" font-size="10.5" fill="#7A8699" text-anchor="middle" font-family="Microsoft YaHei">对外供数 / 重要数据</text>
+<text x="780" y="64" font-size="10.5" fill="#7A8699" text-anchor="middle" font-family="Microsoft YaHei">目标 ≤ 5 个集群</text>
+
+<text x="0" y="103" font-size="11" fill="#3D4C63" font-family="Microsoft YaHei">计算</text>
+<rect x="90" y="84" width="218" height="30" fill="#EEF1F5"/>
+<rect x="320" y="84" width="218" height="30" fill="#C9D8E8"/>
+<rect x="550" y="84" width="218" height="30" fill="#7FA3C8"/>
+<rect x="780" y="84" width="218" height="30" fill="#1F3864"/>
+<text x="199" y="103" font-size="10.5" fill="#3D4C63" text-anchor="middle" font-family="Microsoft YaHei">同命名空间共享工作负载</text>
+<text x="429" y="103" font-size="10.5" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">独立命名空间 + 资源配额</text>
+<text x="659" y="103" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">再加独立节点池</text>
+<text x="889" y="103" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立集群 + 独立控制面</text>
+
+<text x="0" y="149" font-size="11" fill="#3D4C63" font-family="Microsoft YaHei">网络</text>
+<rect x="90" y="130" width="218" height="30" fill="#EEF1F5"/>
+<rect x="320" y="130" width="218" height="30" fill="#C9D8E8"/>
+<rect x="550" y="130" width="218" height="30" fill="#7FA3C8"/>
+<rect x="780" y="130" width="218" height="30" fill="#1F3864"/>
+<text x="199" y="149" font-size="10.5" fill="#3D4C63" text-anchor="middle" font-family="Microsoft YaHei">同 Service、同入口，靠路径分流</text>
+<text x="429" y="149" font-size="10.5" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">独立域名 + 默认拒绝的网络策略</text>
+<text x="659" y="149" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立子网 + 独立入口 IP</text>
+<text x="889" y="149" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立网络平面与防火墙</text>
+
+<text x="0" y="195" font-size="11" fill="#3D4C63" font-family="Microsoft YaHei">数据</text>
+<rect x="90" y="176" width="218" height="30" fill="#EEF1F5"/>
+<rect x="320" y="176" width="218" height="30" fill="#C9D8E8"/>
+<rect x="550" y="176" width="218" height="30" fill="#7FA3C8"/>
+<rect x="780" y="176" width="218" height="30" fill="#1F3864"/>
+<text x="199" y="195" font-size="10.5" fill="#3D4C63" text-anchor="middle" font-family="Microsoft YaHei">共享表 + 行级过滤（不建议）</text>
+<text x="429" y="195" font-size="10.5" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">独立 schema + 行级安全</text>
+<text x="659" y="195" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立数据库实例</text>
+<text x="889" y="195" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立数据库集群 + 独立备份</text>
+
+<text x="0" y="241" font-size="11" fill="#3D4C63" font-family="Microsoft YaHei">中间件</text>
+<rect x="90" y="222" width="218" height="30" fill="#EEF1F5"/>
+<rect x="320" y="222" width="218" height="30" fill="#C9D8E8"/>
+<rect x="550" y="222" width="218" height="30" fill="#7FA3C8"/>
+<rect x="780" y="222" width="218" height="30" fill="#1F3864"/>
+<text x="199" y="241" font-size="10.5" fill="#3D4C63" text-anchor="middle" font-family="Microsoft YaHei">同实例，靠 key / topic 前缀</text>
+<text x="429" y="241" font-size="10.5" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">独立逻辑库 / vhost + ACL</text>
+<text x="659" y="241" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立中间件实例</text>
+<text x="889" y="241" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立中间件集群</text>
+
+<text x="0" y="287" font-size="11" fill="#3D4C63" font-family="Microsoft YaHei">存储</text>
+<rect x="90" y="268" width="218" height="30" fill="#EEF1F5"/>
+<rect x="320" y="268" width="218" height="30" fill="#C9D8E8"/>
+<rect x="550" y="268" width="218" height="30" fill="#7FA3C8"/>
+<rect x="780" y="268" width="218" height="30" fill="#1F3864"/>
+<text x="199" y="287" font-size="10.5" fill="#3D4C63" text-anchor="middle" font-family="Microsoft YaHei">同 bucket 前缀（不建议）</text>
+<text x="429" y="287" font-size="10.5" fill="#1F3864" text-anchor="middle" font-family="Microsoft YaHei">独立卷 / bucket + 独立配额</text>
+<text x="659" y="287" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立存储池 + 自有密钥</text>
+<text x="889" y="287" font-size="10.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">独立存储池</text>
+
+<text x="0" y="322" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">四档都在管理信息区（安全Ⅲ区）内。L3 的"物理隔离"指独立集群与独立资源池，不等于可以进入生产控制区。</text>
+</svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 1</span>四档隔离在计算、网络、数据、中间件、存储五个对象上的具体差别。读法是从左到右：越往右越独立，代价也越高。</figcaption>
+    </figure>
+
+    <h3><span class="n">4.1</span>为什么分四档，而不是「隔离 / 不隔离」</h3>
+    <p class="body">因为成本曲线很陡。独立集群的成本是共享方案的 5–8 倍，如果所有租户都做物理隔离，900 个租户根本不可能。反过来全都共享，外部开发商和数据供给方又不满足合规要求。所以中间必须有档位。</p>
+
+    <div class="note">
+      <b>档位是怎么定下来的？</b>看四个维度各打 1–5 分——业务类型、数据敏感度、监管要求、SLA——合计 4 到 20 分：4–6 分落 L0，7–9 分落 L1，10–13 分落 L2，14 分以上落 L3。另有五条一票否决（比如数据源自生产控制区），命中就直接进最高档，不参与加权。
+    </div>
+
+    <div class="note warn">
+      <b>一票否决为什么不参与打分？</b>因为合规项不能用别的分数换。SLA 再高、预算再多，也换不来「可以接收生产控制区的实时数据」。
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="life">
+    <div class="sec-head">
+      <div class="tag">05 租户的一生</div>
+      <h2>一个租户从申请到注销，会经过这些状态</h2>
+      <p>每个状态都有准入条件、准出条件和责任角色。这张图看清楚，「多租户」就不只是「建个账号」。</p>
+    </div>
+
+    <figure>
+      <div class="fig-frame">
+<svg viewBox="0 0 1000 212" role="img" aria-label="租户生命周期状态机">
+<rect x="10" y="14" width="11" height="11" fill="#1F3864"/>
+<text x="28" y="24" font-size="11.5" fill="#7A8699" font-family="Microsoft YaHei">正常路径</text>
+<rect x="106" y="14" width="11" height="11" fill="#8FA3B8"/>
+<text x="124" y="24" font-size="11.5" fill="#7A8699" font-family="Microsoft YaHei">退出路径</text>
+<rect x="202" y="14" width="11" height="11" fill="#B3261E"/>
+<text x="220" y="24" font-size="11.5" fill="#7A8699" font-family="Microsoft YaHei">终态</text>
+<rect x="276" y="14" width="11" height="11" fill="#EEF3F9" stroke="#8FA3B8" stroke-width="1"/>
+<text x="294" y="24" font-size="11.5" fill="#7A8699" font-family="Microsoft YaHei">挂在运行上的临时态</text>
+
+<rect x="10" y="56" width="105" height="44" fill="#1F3864"/>
+<text x="62" y="83" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">申请</text>
+<rect x="135" y="56" width="105" height="44" fill="#1F3864"/>
+<text x="187" y="83" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">审批 · 落档</text>
+<rect x="260" y="56" width="105" height="44" fill="#1F3864"/>
+<text x="312" y="83" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">开通中</text>
+<rect x="385" y="56" width="105" height="44" fill="#1F3864"/>
+<text x="437" y="83" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">运行</text>
+<rect x="560" y="56" width="105" height="44" fill="#8FA3B8"/>
+<text x="612" y="83" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">注销中</text>
+<rect x="685" y="56" width="105" height="44" fill="#8FA3B8"/>
+<text x="737" y="83" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">数据处置</text>
+<rect x="810" y="56" width="105" height="44" fill="#B3261E"/>
+<text x="862" y="83" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-family="Microsoft YaHei">已注销</text>
+
+<line x1="115" y1="78" x2="130" y2="78" stroke="#7A8699" stroke-width="1.25"/>
+<line x1="240" y1="78" x2="255" y2="78" stroke="#7A8699" stroke-width="1.25"/>
+<line x1="365" y1="78" x2="380" y2="78" stroke="#7A8699" stroke-width="1.25"/>
+<line x1="490" y1="78" x2="555" y2="78" stroke="#7A8699" stroke-width="1.25"/>
+<line x1="665" y1="78" x2="680" y2="78" stroke="#7A8699" stroke-width="1.25"/>
+<line x1="790" y1="78" x2="805" y2="78" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M130 75 L135 78 L130 81" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M255 75 L260 78 L255 81" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M380 75 L385 78 L380 81" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M555 75 L560 78 L555 81" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M680 75 L685 78 L680 81" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M805 75 L810 78 L805 81" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+
+<path d="M437 100 V116" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M335 116 H472" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M335 116 V130" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M472 116 V130" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<rect x="280" y="130" width="110" height="34" fill="#EEF3F9" stroke="#2E6DA4" stroke-width="1.2"/>
+<text x="335" y="151" font-size="11.5" fill="#2E6DA4" text-anchor="middle" font-family="Microsoft YaHei">变更中</text>
+<rect x="420" y="130" width="105" height="34" fill="#EEF3F9" stroke="#8FA3B8" stroke-width="1.2"/>
+<text x="472" y="151" font-size="11.5" fill="#4A5B70" text-anchor="middle" font-family="Microsoft YaHei">冻结</text>
+
+<text x="737" y="44" font-size="10.5" fill="#B3261E" text-anchor="middle" font-family="Microsoft YaHei">冷静期 ≥ 30 天</text>
+<line x1="737" y1="48" x2="737" y2="56" stroke="#B3261E" stroke-width="1"/>
+
+<text x="10" y="196" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">变更中与冻结都是挂在运行上的临时态，办完或解冻后回到运行；冻结后也可直接进入注销，注销不等于删数据。</text>
+</svg>
+      </div>
+      <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+      <figcaption><span class="no">图 2</span>租户生命周期。前四态是正常路径；变更中与冻结挂在运行上，是临时态而非必经步骤；注销中 → 数据处置 → 已注销是退出路径，越往后越不可逆。</figcaption>
+    </figure>
+
+    <h3><span class="n">5.1</span>三个容易被忽略的点</h3>
+    <p class="body"><span class="hl">第一，审批里包含「落档」。</span>开通不是填个表就完了，要在审批环节就把四维打分算出来、把隔离档位定下来、把默认配额领走。档位和配额是开通的一部分，不是后续再补。</p>
+    <p class="body"><span class="hl">第二，冻结不是注销。</span>冻结只是停用（欠费、违规、安全事件、主动申请），可以解冻回到运行。注销要走完整流程，两者不能混。</p>
+    <p class="body"><span class="hl">第三，注销不等于马上删数据。</span>先冻结只读，再按租户级清单导出数据、交接确认，冷静期不少于 30 天后，才由平台、租户、审计三方复核销毁。数据要还回去，这是等保「可迁出、可交还」的要求。</p>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="roles">
+    <div class="sec-head">
+      <div class="tag">06 谁在操作</div>
+      <h2>平台上有七种人，各自能看到的地方不一样</h2>
+      <p>搞清楚这张表，就能理解为什么方案里反复强调「权限边界」——不是不信任谁，是每条边界都对应一个会断掉的审计链。</p>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr><th style="width:22%">角色</th><th style="width:26%">主要关心什么</th><th>越不过去的边界</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="k hd" data-label="角色">集团信息化主管部门</td><td data-label="主要关心什么">统一标准、投资效益、合规</td><td data-label="越不过去的边界">不进入租户数据面做业务操作</td></tr>
+        <tr><td class="k hd" data-label="角色">区域/省公司平台管理员</td><td data-label="主要关心什么">本区域租户开通与代管</td><td data-label="越不过去的边界">不跨区域操作；不得设定超过集团上限的配额</td></tr>
+        <tr><td class="k hd" data-label="角色">厂级租户管理员</td><td data-label="主要关心什么">本租户的用户与角色</td><td data-label="越不过去的边界">不改平台级策略；不申请超出本租户上限的配额</td></tr>
+        <tr><td class="k hd" data-label="角色">厂级业务人员</td><td data-label="主要关心什么">低代码配置、报表</td><td data-label="越不过去的边界">不能直接发布到生产（需审批）；不能跨租户取数</td></tr>
+        <tr><td class="k hd" data-label="角色">专业开发人员</td><td data-label="主要关心什么">微服务、集成、算力</td><td data-label="越不过去的边界">禁止直连平台数据库；不能创建集群级资源</td></tr>
+        <tr><td class="k hd" data-label="角色">平台运维人员</td><td data-label="主要关心什么">稳定性、容量</td><td data-label="越不过去的边界">进入租户数据面属于高危动作：限时、双人、录屏、租户可见</td></tr>
+        <tr><td class="k hd" data-label="角色">安全审计员</td><td data-label="主要关心什么">合规举证</td><td data-label="越不过去的边界">只能读不能改审计配置；不得兼任平台管理员</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note warn">
+      <b>三个角色必须由不同的人担任。</b>平台管理员、租户管理员、安全审计员一旦由同一人兼任，租户冻结注销、审计配置变更这些控制就全部失效——因为被监督的人和监督的人是同一个。
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec" id="confuse">
+    <div class="sec-head">
+      <div class="tag">07 易混淆</div>
+      <h2>六组最容易搞混的说法</h2>
+      <p>评审会上被追问最多的就是这几处。记住「实际上是」那一列，基本可以不被动。</p>
+    </div>
+
+    <div class="clarify">
+      <div class="cl"><div class="a">租户 = 一个单位 / 一个用户组</div><div class="b">租户是五类事实的归属单元。人和租户是多对多，一个人可以同时属于多个租户。</div></div>
+      <div class="cl"><div class="a">租户越多，隔离等级越高</div><div class="b">档位由四维打分决定，看的是数据敏感度、监管要求，与租户规模和行政级别无关。</div></div>
+      <div class="cl"><div class="a">命名空间就是安全边界</div><div class="b">命名空间只是名称作用域，挡误操作、不挡故意越权。所以第三方必须走虚拟集群或独立集群。</div></div>
+      <div class="cl"><div class="a">隔离就是分区，L3 可以进生产控制区</div><div class="b">分区是法规约束，隔离是技术手段。四档全在管理信息区，L3 的「物理隔离」指独立集群，不跨区。</div></div>
+      <div class="cl"><div class="a">二级不自管 = 二级没有权限</div><div class="b">不自管只针对「建门户、运维平台、自建身份源」，业务权限完整保留，另留可升级为自管的开关。</div></div>
+      <div class="cl"><div class="a">配额配好了就会生效</div><div class="b">配额可能「配了但没生效」。所以要三层执行点加定期全量比对，专门抓这种漂移。</div></div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="glossary">
+    <div class="sec-head">
+      <div class="tag">08 术语表</div>
+      <h2>看方案时会遇到的词，一句话解释</h2>
+      <p>不用背，遇到时回来查。</p>
+    </div>
+
+    <div class="gloss">
+      <div class="gl"><b>tenant_id</b><span>租户在系统里的唯一标识。它要出现在令牌里、请求上下文里、数据表里、日志里、监控标签里。</span></div>
+      <div class="gl"><b>落档</b><span>把打分结果转成隔离等级的动作。评审时问「这个厂为什么独立部署」，答案就在落档台账上。</span></div>
+      <div class="gl"><b>一票否决</b><span>五条硬约束，命中即进最高档，不参与总分计算。用于合规类要求。</span></div>
+      <div class="gl"><b>4A</b><span>集团统一的身份与权限系统，是人员的唯一权威来源。平台不建第二套，只做对接。</span></div>
+      <div class="gl"><b>联邦（SP）</b><span>平台不存密码，只信集团身份系统发来的断言。即「登录由 4A 做，平台认它给的凭证」。</span></div>
+      <div class="gl"><b>激活租户</b><span>一个人同时属于多个租户时，登录后要先选「这次以哪个租户的身份操作」，这个选择就是激活租户。</span></div>
+      <div class="gl"><b>资源域</b><span>一组可分配的资源（集群、节点池、实例、存储池）。配额从这个池子里扣。</span></div>
+      <div class="gl"><b>准入控制</b><span>资源创建前的检查关卡。不合规的配置（缺标签、镜像来源不明、跨租户引用）在这里被拒。</span></div>
+      <div class="gl"><b>漂移检测</b><span>定期比对「配置成什么样」和「实际是什么样」，防止策略配了却没生效。</span></div>
+      <div class="gl"><b>受控通道</b><span>两个租户共享数据时走的正规路径：走数据服务接口、双向授权、限期有效、全程留痕，不允许直连数据库。</span></div>
+      <div class="gl"><b>高危动作</b><span>平台方进入租户空间的操作。规则是限时、双人复核、录屏、租户可见。</span></div>
+      <div class="gl"><b>虚拟集群</b><span>在一个物理集群里切出「看起来像独立集群」的空间，用于隔离外部开发商。</span></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>本页为《集团级多租户技术平台架构设计方案》v0.1 的概念说明，不含方案论证与取舍理由。<br>文中「约 900 个租户」为推算值，档位比例与成本当量随客户待确认项回填后校准。</p>
+    <div class="mark">多租户平台 · 基础认知<br>2026 年 11 月</div>
+  </div>
+</footer>
+
+</body>
+</html>

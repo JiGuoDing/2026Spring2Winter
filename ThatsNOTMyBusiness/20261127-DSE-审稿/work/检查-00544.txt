@@ -1,0 +1,11 @@
+00544-01 CONFIRMED | 攻击集仅5,000条轨迹 | 这是 4.7 对 CHES 攻击集的描述。 | p26 “It includes 45,000 profiling traces and 5,000 attack traces”
+00544-02 CONFIRMED | 10,000条测试轨迹 | 同一节中测试集较前述攻击集更大，需解释拆分及重采样。 | p27 “A total of 20,000 traces were used for training and 10,000 traces were used for testing”
+00544-03 OVERSTATED | 存在数据泄露或复制粘贴错误 | 只能确认划分说明有差异；不能据此判定泄露或文本来源。 | p26 “It includes 45,000 profiling traces and 5,000 attack traces” p27 “A total of 20,000 traces were used for training and 10,000 traces were used for testing”
+00544-04 OVERSTATED | 确定性均值轨迹与标签 | 均值输入得到支持，但生成器还有 Dropout；训练/采样模式和随机性未明确，不能直接认定确定性。 | p13 “this paper uses the average trace as the generator input” p13 “BatchNorm, LeakyReLU, and Dropout”
+00544-05 CONFIRMED | 随机采样数百至数千条合成轨迹 | 应进一步解释固定输入下采样的随机来源。 | p21 “400 generated traces were randomly sampled”
+00544-06 CONFIRMED | 3,000条剖析轨迹 | 这是论文对 CW 剖析轨迹来源的描述。 | p21 “3,000 traces were used for trace generation and template construction”
+00544-07 CONFIRMED | 1,600条原始轨迹 | 核对生成器训练所使用的 3,000 原始轨迹与控制组信息预算。 | p21 “400 generated traces were randomly sampled and combined with 1,600 original traces”
+00544-08 CONFIRMED | 70:1 | 这是论文宣称的类别比例变化。 | p16 “from 70:1 to 4:1”
+00544-09 UNVERIFIABLE | inconsistent network architectures and training schedules across the text and Table 1 | 架构与训练日程各自需要逐项对照；不要以此笼统断言完全矛盾。 | p13 “fully connected layers, BatchNorm, LeakyReLU, and Dropout”
+00544-10 UNVERIFIABLE | 严重超出DSE期刊核心范围 | 论文主题可核实，现行范围需编辑依据期刊政策裁决。 | p26 “a 32-bit STM microcontroller running a masked AES implementation”
+00544-11 OVERSTATED | an unfair profiling budget on CW | 生成模型利用的剖析轨迹与对照组建模样本数需清楚对齐；单凭数量不足以裁定全部比较不公平。 | p21 “3,000 traces were used for trace generation and template construction” p21 “combined with 1,600 original traces”

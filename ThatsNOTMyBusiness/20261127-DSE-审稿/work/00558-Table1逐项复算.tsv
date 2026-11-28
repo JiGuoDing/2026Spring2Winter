@@ -1,0 +1,19 @@
+﻿模型	基准	原分数%	清洗后%	所报增加pp	复算增加pp
+Qwen3-8B	MuSiQue	20.6	35.8	15.2	15.2
+Qwen3-8B	2WikiMHQA	29.5	34.8	5.3	5.3
+Qwen3-8B	HotpotQA	26.0	34.3	8.3	8.3
+Qwen3-235B-A22B	MuSiQue	39.6	52.2	12.6	12.6
+Qwen3-235B-A22B	2WikiMHQA	55.5	74.5	19.0	19.0
+Qwen3-235B-A22B	HotpotQA	56.8	69.4	12.6	12.6
+Llama 3.1 8B	MuSiQue	14.5	35.3	20.8	20.8
+Llama 3.1 8B	2WikiMHQA	16.2	47.3	31.1	31.1
+Llama 3.1 8B	HotpotQA	28.8	44.0	15.2	15.2
+Llama 3.3 70B	MuSiQue	32.5	49.6	17.1	17.1
+Llama 3.3 70B	2WikiMHQA	49.7	69.5	19.8	19.8
+Llama 3.3 70B	HotpotQA	54.1	63.3	9.2	9.2
+DeepSeek-Flash	MuSiQue	46.2	63.8	17.6	17.6
+DeepSeek-Flash	2WikiMHQA	69.5	81.2	11.7	11.7
+DeepSeek-Flash	HotpotQA	61.9	76.6	14.7	14.7
+GPT-5-mini	MuSiQue	43.9	51.7	7.8	7.8
+GPT-5-mini	2WikiMHQA	47.6	57.9	10.3	10.3
+GPT-5-mini	HotpotQA	68.1	72.0	3.9	3.9

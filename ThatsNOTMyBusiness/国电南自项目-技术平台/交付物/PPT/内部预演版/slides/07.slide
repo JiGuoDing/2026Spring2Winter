@@ -29,9 +29,12 @@
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>L1 覆盖约 80% 的二级租户，L3 目标 ≤ 5 个集群——超出就说明判据没守住。</Text>
         </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [C-1] [G-04]</Text>
+        </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>当量为相对资源占用与人力投入的经验估算，仅用于横向比较；L0 = 1.0</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>07 / 12</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>07 / 13</Text>
         </Box>
     </Box>
 </Slide>

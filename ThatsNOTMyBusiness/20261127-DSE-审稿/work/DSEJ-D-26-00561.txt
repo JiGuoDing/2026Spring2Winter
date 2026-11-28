@@ -1,0 +1,3833 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+A Markov Transition Field Based Multimodal Sparse Ensemble for Multi-Step Time
+Series Forecasting
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00561
+Full Title:
+A Markov Transition Field Based Multimodal Sparse Ensemble for Multi-Step Time
+Series Forecasting
+Article Type:
+Research Papers
+Funding Information:
+First Class Discipline of Zhejiang-A
+(Zhejiang University of Finance and
+Economics-Statistics)
+Dr. Hui Wang
+Abstract:
+This study proposes a Markov Transition Field based Multimodal Sparse Ensemble
+(MTF-MSE) method, which reframes multi-step time series forecasting as the
+recognition of transition structure. The method operates in three stages. First, a Markov
+transition field encodes second-order dynamics between quantised states as a two-
+dimensional image. Then, a gated Swin-based vision Transformer fuses these images
+with domain-specific textual descriptions to extract multilevel features. Finally, Lasso-
+based post-selection inference selects a sparse subset of Bootstrap trees, reducing
+forecast variance while enabling valid selective inference. Evaluation covers three
+simulations and eight real datasets, thirteen competitors spanning classical, deep, tree-
+ensemble and diagnostic configurations, and one- to three-step-ahead MAPE and
+MASE. MTF-MSE leads in almost every dataset-horizon cell, and its margin widens
+with the horizon. Friedman-Nemenyi and paired tests confirm that the advantage is
+significant and stable across independent runs, and the ablation attributes it to the
+representation rather than to a stronger learner.
+Corresponding Author:
+Hui Wang
+Zhejiang University of Finance and Economics
+Hangzhou, Zhejiang CHINA
+Corresponding Author E-Mail:
+wh_data007@zufe.edu.cn
+Order of Authors:
+Hui Wang
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+Zhejiang University of Finance and Economics
+Corresponding Author's Secondary
+Institution:
+First Author:
+Hui Wang
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Additional Information:
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 1 | PDF_PAGE_LABEL  ==========
+
+ 
+1
+A Markov Transition Field Based Multimodal Sparse Ensemble for Multi-Step Time Series Forecasting 
+ 
+ 
+Abstract 
+This study proposes a Markov Transition Field based Multimodal Sparse Ensemble (MTF-MSE) method, which 
+reframes multi-step time series forecasting as the recognition of transition structure. The method operates in three stages. 
+First, a Markov transition field encodes second-order dynamics between quantised states as a two-dimensional image. Then, 
+a gated Swin-based vision Transformer fuses these images with domain-specific textual descriptions to extract multilevel 
+features. Finally, Lasso-based post-selection inference selects a sparse subset of Bootstrap trees, reducing forecast variance 
+while enabling valid selective inference. Evaluation covers three simulations and eight real datasets, thirteen competitors 
+spanning classical, deep, tree-ensemble and diagnostic configurations, and one- to three-step-ahead MAPE and MASE. 
+MTF-MSE leads in almost every dataset-horizon cell, and its margin widens with the horizon. Friedman-Nemenyi and 
+paired tests confirm that the advantage is significant and stable across independent runs, and the ablation attributes it to the 
+representation rather than to a stronger learner. 
+Keywords: multi-step time series forecasting; Markov transition field; transition structure; image-based representation; 
+multimodal feature extraction; sparse post-selection inference 
+1 Introduction 
+A time series is a sequence of observations collected in chronological order, and such data arise broadly across 
+scientific and engineering disciplines including meteorology, finance, medicine, and energy systems, recording the dynamic 
+trajectory of system states as they evolve over time[1–5]. These data typically exhibit complex characteristics such as trend, 
+seasonality, and stochastic fluctuations. The process of modeling and analyzing time series data, with the aim of uncovering 
+underlying patterns from historical observations and thereby producing reliable forecasts of future states, constitutes the 
+field of time series forecasting. 
+Numerous classical methods have been developed to address the time series forecasting problem. Since its introduction, 
+the Box-Jenkins methodology has established the statistical foundation of this field[6]. Its central model, ARIMA, combines 
+autoregressive, differencing, and moving average components, expressing them in compact mathematical form through the 
+lag operator, and provides a rigorous, systematic three-stage modeling procedure comprising model identification, 
+parameter estimation, and diagnostic checking[7]. By emphasizing stationarity transformation and residual white noise 
+testing, the methodology ensures model robustness and interpretability, and has exerted a lasting influence on subsequent 
+research. Building on this foundation, the seasonal ARIMA (SARIMA) model was developed to accommodate data with 
+periodic fluctuations; by incorporating seasonal differencing, it effectively captures the cyclical regularities present in the 
+series[8]. As a benchmark against which the performance of these more sophisticated models is commonly assessed, the 
+random walk with drift (RW-DRIFT) model characterizes the series as the superposition of a deterministic trend and 
+stochastic shocks, and is widely employed to evaluate the relative forecasting gains achieved by more complex 
+specifications[9]. Nevertheless, all of these models rest on linearity assumptions, which renders them ill-suited to capturing 
+the nonlinear relationships and structural breaks that are pervasive in real-world data; their sensitivity to outliers constitutes 
+a further limitation. These shortcomings have motivated the research community to explore nonlinear and time-varying 
+modeling approaches. 
+As a representative nonlinear method, the threshold autoregressive (TAR) model partitions the state space through 
+threshold functions and estimates parameters separately within each regime, providing a theoretical framework for 
+modeling asymmetric responses such as financial volatility and business cycles[10–13]. Subsequent work combined classical 
+statistical models with artificial neural networks to produce hybrid architectures, including the feedforward neural network 
+autoregressive (NNET-AR) model and SARIMA-NN. Such hybrid models retain the capacity of linear models to 
+decompose deterministic trends and seasonal components while employing neural networks to fit the nonlinear patterns 
+remaining in the residuals, achieving complementary strengths, and in numerous complex scenarios, attaining forecasting 
+performance superior to either constituent approach alone[14–17]. However, hybrid models entail high design complexity and 
+require adequate historical samples for parameter estimation, which limits their applicability in data-scarce settings or 
+Blinded manuscript
+Click here to access/download;Blinded
+manuscript;manuscript.docx
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 2 | PDF_PAGE_LABEL  ==========
+
+ 
+2
+applications with stringent real-time requirements. To address small-sample modeling needs, grey models offer an 
+alternative pathway. These models do not require a large volume of historical observations; instead, they apply the 
+accumulated generating operation (AGO) to the raw data in order to uncover latent systemic regularities, conferring a 
+distinctive advantage in contexts characterized by data insufficiency or high uncertainty. Grey models thus constitute an 
+important complement to the broader toolkit of time series forecasting methods[18–21]. 
+Beyond traditional statistical methods and hybrid models, deep learning approaches have been extensively explored in 
+the domain of time series forecasting. Recurrent neural networks (RNNs) introduced deep learning to this domain[22], while 
+capable of retaining temporal information, they suffer from the vanishing and exploding gradient problems, which impairs 
+their ability to model long-range dependencies[23]. Long short-term memory (LSTM) networks alleviate this deficiency 
+through gating mechanisms and have demonstrated strong performance on univariate stationary series; however, their 
+inherently sequential computation results in reduced efficiency when processing long sequences[24]. Temporal convolutional 
+networks (TCNs) address this limitation by introducing dilated convolution and causal convolution, improving efficiency 
+through parallel computation and a controllable receptive field, yet they remain constrained in capturing global 
+dependencies[25]. The Transformer architecture overcomes this constraint through the self-attention mechanism, enabling 
+parallel modeling of dependencies between arbitrary time steps within a sequence and substantially enhancing long-range 
+forecasting capacity; however, its quadratic complexity poses significant memory and computational challenges when 
+applied to very long sequences[26–28]. To address this challenge, subsequent studies proposed various sparse attention 
+mechanisms that reduce complexity to sub-quadratic or log-linear levels, achieving improved performance on long-horizon 
+forecasting tasks[29–32]. More recently, the integration of time-domain and frequency-domain methods has further broadened 
+the modeling perspective; by decomposing sequences into frequency components via the Fourier transform and dynamically 
+combining them, accuracy gains have been achieved on certain datasets, although adaptability to non-stationary signals 
+remains an unresolved challenge[33, 34]. 
+In summary, time series forecasting methods have undergone continuous evolution, progressing from classical 
+statistical models to nonlinear approaches, hybrid architectures, and ultimately deep learning. Classical ARIMA-class 
+models established the theoretical foundation through a rigorous systematic framework, yet they are constrained by linearity 
+assumptions; nonlinear methods and hybrid models partially overcome this constraint but face challenges of sample 
+dependency and design complexity; while deep learning methods have demonstrated considerable capacity in modeling 
+long-range dependencies and capturing complex patterns, their interpretability and the specificity of their feature selection 
+remain areas that warrant further improvement. Against this backdrop, how to effectively integrate multi-perspective 
+representations of time series data, while maintaining forecasting accuracy and simultaneously enhancing model 
+interpretability and inferential capacity, constitutes an important direction for further inquiry. To this end, this paper 
+proposes a time series forecasting method that integrates image-based representation with sparse inference. First, the 
+Markov transition field is employed to encode one-dimensional time series as two-dimensional images, thereby preserving 
+the temporal dynamic structure. An optimized deep learning model is then applied to extract latent semantic features from 
+the resulting images. Finally, the extracted features are fed into a Lasso-based model for feature selection and inferential 
+forecasting. Through a multi-stage framework combining image-based reconstruction, deep feature extraction, and sparse 
+inference, the proposed method aims to integrate the representational strengths of deep learning with the interpretability of 
+classical statistical models, offering a novel approach to time series forecasting. 
+2 Methodology 
+This section proposes a Markov Transition Field based Multimodal Sparse Ensemble (MTF-MSE) method for time 
+series forecasting. The method comprises three core stages, which are introduced in sequence in Sections 2.1 through 2.3. 
+2.1 Time Series to Image Transformation 
+In the first stage, the proposed model employs the Markov transition field (MTF) to convert time series data into 
+two-dimensional images. The Markov transition field is a stochastic process model based on Markov chains, primarily used 
+to characterize and analyze the probabilistic transition relationships between states in time series data. In the MTF 
+framework, the time series data are partitioned into a set of discrete cells or states, and a Markov chain is used to model the 
+transitions between states within each cell. The main steps by which the proposed model converts time series data into a 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 3 | PDF_PAGE_LABEL  ==========
+
+ 
+3
+two-dimensional image representation via Markov chains are as follows: 
+(1) The k-means clustering algorithm is applied to partition the time series data into a series of discrete state intervals, 
+and a unique code is assigned to each state. 
+(2) A state transition matrix is initialized according to the number of states. The matrix has dimensions equal to the 
+square of the number of states, that is, given N states, the matrix is of size N×N. 
+(3) The time series data are traversed and, for each pair of consecutive time steps, the number of transitions from one 
+state to another is recorded. These counts are then used to compute the state transition probabilities, which are filled into the 
+state transition matrix; the entries in each row are constrained to sum to one so as to satisfy the requirements of a valid 
+probability distribution. 
+(4) The state transition matrix is converted into an image, in which each pixel represents the transition probability from 
+one state to another, with pixel intensity encoding the magnitude of the probability. 
+Figure 1 presents an example of converting time series data into an image using the proposed model, where the left 
+panel shows the original data and the right panel shows the resulting two-dimensional image. The main diagonal of the 
+image represents the self-persistence of states at each time point. The alternating light-and-dark texture near the diagonal 
+encodes the short-term state transition patterns of the series, while the overall distribution and structure of the image texture 
+reflect the long-term periodicity and trend inherent in the time series. 
+ 
+Figure 1. An example of converting time series data into a two-dimensional image 
+2.2 Feature Extraction 
+This study proposes a novel approach to image feature extraction that integrates a Vision Transformer, attention 
+mechanisms, and multimodal fusion. The overall process proceeds in four sub-steps: 
+(1) The system receives an input image. It assesses the image dimensions and, if the image is too large, uniformly 
+crops it to a standardized 256×256 format to ensure consistent input dimensions for all subsequent processing. 
+(2) The preprocessed image is passed into the feature extraction module. The core of this module is a model named 
+Ctran, built on the Swin-Tiny Transformer architecture and incorporating a Contmix augmentation module. The model first 
+encodes the image through a three-layer convolutional stem (ConvStem), then captures multi-level features via the Swin 
+Transformer, and finally refines the feature representations using the Contmix module in conjunction with attention 
+mechanisms and positional encoding techniques, outputting one or more high-dimensional feature vectors for each image. 
+(3) If a single image yields multiple feature vectors in the preceding stage (for example, from different cropped 
+regions), the system concatenates these vectors to form a two-dimensional feature matrix of shape (n, 768), where n denotes 
+the number of feature vectors. 
+(4) The concatenated visual feature matrix enters the aggregation module. Here, the system incorporates not only the 
+image features but also textual descriptive information (encoded as a vector) pertaining to the domain of the original time 
+series. A gating mechanism is employed to dynamically weight each image feature vector, accentuating salient components 
+while suppressing noise. The weighted image features are subsequently fused with the text features to form a unified 
+multimodal representation. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 4 | PDF_PAGE_LABEL  ==========
+
+ 
+4
+Using the image converted in Figure 1 as an illustrative example, the overall feature extraction pipeline is depicted in 
+Figure 2. 
+ 
+Figure 2. Feature extraction pipeline 
+2.3 Model Prediction 
+The feature-extracted data are divided into a training set and a test set. Bootstrap sampling is applied to draw M sample 
+subsets from the training set, and one decision tree (referred to as a constituent tree) is constructed on each subset, yielding 
+M constituent trees in total. 
+All M constituent trees are used to generate predictions on the test set, producing an M-dimensional prediction matrix. 
+The mean prediction is taken as the response variable and the predictions of the individual constituent trees serve as the 
+features for Lasso regression fitting, through which L1 regularization shrinks the coefficients of a subset of constituent trees 
+to zero. The formulation is as follows: 
+
+
+
+
+
+
+
+
+
+
+
+
+M
+t
+t
+T
+y
+1
+2
+2
+1
+
+
+
+
+min
+arg
+, 
+where T denotes the vector of predictions output by the M constituent trees, βt is the coefficient of the t-th constituent tree, 
+and λ is the regularization parameter. Trees whose coefficients remain non-zero after this transformation are retained and 
+designated as aggregate trees, while those whose coefficients are shrunk to zero are eliminated. Predictions are ultimately 
+generated using the selected m aggregate trees (m < M). 
+In fact, the forecasting procedure described above constitutes a Lasso-based post-selection inference method. By 
+dynamically selecting constituent trees, it achieves more efficient and robust ensemble forecasting, and performs 
+particularly well in settings where the data contain noise or exhibit feature redundancy. 
+To state the post-selection step formally, let 𝑇∈𝑅𝑛×𝑀 denote the prediction matrix whose (i, t) entry 𝑇𝑡(𝑥𝑖) is the 
+forecast of the t-th constituent tree for the i-th observation, and let 𝑦̄ = 𝑇⋅1𝑀/𝑀 be the vector of mean predictions used as 
+the response in the objective above. For a fixed 𝜆> 0, the Lasso solution induces a data-dependent selection map 𝑆̂(𝜆) =
+{𝑡∈{1, … , 𝑀}: 𝛽̂𝑡(𝜆) ≠0}, with 𝑚(𝜆) = |𝑆̂(𝜆)| < 𝑀, and the forecast at a new input x is formed only from the retained 
+aggregate trees, 𝑦̂(𝑥) = ∑𝑡∈𝑆̂(𝜆)𝛽̂𝑡(𝜆)𝑇𝑡(𝑥). Since 𝑆̂ is determined by the same realised data as 𝛽̂, it is random rather than 
+fixed in advance, and any interval or test evaluated on the selected trees must account for this dependence. 
+Valid post-selection inference is obtained by conditioning on the selection event. The KKT conditions of the Lasso 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 5 | PDF_PAGE_LABEL  ==========
+
+ 
+5
+imply that, for fixed T and 𝜆, the joint event {𝑆̂ = 𝑆, 𝑠𝑖𝑔𝑛(𝛽̂𝑆) = 𝑠} is equivalent to a system of linear inequalities in the 
+response, 𝐴𝑦̄ ≤𝑏, so the conditional law of a fixed linear functional 𝜂𝑇𝑦̄ given 𝐴𝑦̄ ≤𝑏 is explicitly characterised. 
+Conditioning on {𝑆̂ = 𝑆} is therefore what makes inference about the ensemble forecast and about the coefficients of the 
+retained trees valid after selection, and it is in this sense that the procedure constitutes post-selection inference. Sparsity is 
+not merely a computational convenience in this formulation, because replacing the fixed bagging weights 1/M with a 
+data-dependent sparse combination both identifies a reproducible subset of trees and reduces the variance of the forecast, 
+whereas plain averaging corresponds to the special case in which no selection event is generated. 
+2.4 Summary 
+The MTF-MSE method proposed in this section achieves time series forecasting through the coordinated operation of 
+three stages. First, the Markov transition field is employed to convert one-dimensional time series into two-dimensional 
+images, explicitly encoding the probabilistic transition structure between states. Second, the Ctran Vision Transformer and a 
+gating fusion mechanism are combined to extract multi-level features from the converted images, which are then integrated 
+with domain-specific textual descriptions through multimodal fusion. Third, multiple decision trees are constructed via 
+Bootstrap sampling, and Lasso regularization is applied to dynamically select the optimal subset of constituent models for 
+ensemble forecasting. By preserving the structural information of the time series data, the method enhances forecasting 
+accuracy and robustness through multimodal complementary augmentation and a sparse ensemble strategy. The complete 
+processing pipeline of the proposed method is illustrated in Figure 3. 
+ 
+Figure 3. Framework of the MTF-MSE method 
+It should be noted that the design of MTF-MSE is not a stack of off-the-shelf components, each stage is introduced to 
+remedy a specific deficiency that the preceding stage cannot resolve. (i) In the temporal domain, discriminative structure is 
+largely carried by second-order transition dynamics between quantised states, to which lag-based models have only implicit 
+access. The Markov transition field makes this structure explicit by re-organising the series as a two-dimensional field of 
+transition probabilities indexed by both time step and state. (ii) The resulting image encodes multi-scale textures, diagonal 
+state persistence, near-diagonal short-term transitions, and off-diagonal long-range periodicity, whose joint interpretation 
+requires a global, content-adaptive receptive field rather than the fixed local kernels of a convolutional network. We 
+therefore adopt an optimized Swin-based vision Transformer. (iii) A purely visual representation is agnostic to the semantics 
+of the underlying domain, a gated fusion with domain-specific textual descriptions injects this missing semantic prior. (iv) 
+Deep features obtained in this way are high-dimensional and strongly collinear, and feeding them directly into a tree 
+ensemble inflates the variance of the forecast. We therefore replace the conventional averaging step of bagging with a 
+Lasso-based post-selection inference procedure, which performs sparsity-driven model selection, variance reduction and 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 6 | PDF_PAGE_LABEL  ==========
+
+ 
+6
+valid selective inference at the same time. Four design decisions thus form a causal chain: representation, abstraction, 
+semantics, inference, rather than a collection of independent modules. Table 1 lists the deficiency addressed by each stage, 
+the corresponding component, and the ablation configuration designed to isolate its contribution; the numerical results of 
+these ablations are reported in Section 4.4. 
+Table 1. Deficiencies, components and ablation configurations by design stage 
+Stage 
+Deficiency of the preceding stage 
+Component introduced 
+Ablation isolating 
+(i) Representation 
+Second-order transition dynamics 
+remain implicit to lag-based models 
+Markov transition field 
+(MTF) 
+V1: raw series fed to the 
+same prediction head 
+(ii) Abstraction 
+Multi-scale image texture needs a 
+global, content adaptive receptive 
+field 
+Ctran (Swin) vision 
+encoder 
+V2: convolutional encoder 
+of comparable capacity 
+(iii) Semantics 
+Visual features carry no domain 
+semantics 
+Gated fusion with textual 
+descriptions 
+V3: textual branch 
+removed 
+(iv) Inference 
+Collinear deep features inflate 
+ensemble variance 
+Lasso post-selection 
+inference 
+V4: plain averaging; V5: 
+ridge penalty 
+3 Simulation Study 
+In this section, the performance of MTF-MSE on simulated data is evaluated. In each simulation, 1,000 time series of 
+length 300 are generated; 700 of these are randomly selected to form the training set and the remaining 300 constitute the 
+test set. MTF-MSE is compared against a broad set of established forecasting methods on the generated datasets, all sharing 
+the same 700/300 training/test partition, the same horizon set H = {1, 2, 3}, and an equal hyper-parameter budget tuned on a 
+held-out validation split, so that the comparison is not confounded by unequal tuning effort. All reported figures are means 
+over R = 100 Monte Carlo replications. 
+The comparison begins with three classical baselines: the autoregressive integrated moving average model (ARIMA), a 
+feedforward neural network autoregressive model (NNET-AR), and the long short-term memory recurrent neural network 
+(LSTM), and is extended with nine further models grouped into two families plus one diagnostic. The first family comprises 
+five deep time-series models, PatchTST, TimesNet, DLinear, N-BEATS, and Informer. They are trained under their 
+canonical architectures with the Adam optimiser and early stopping (patience of 10 epochs), using a look-back window of L 
+= 300 identical to that of MTF-MSE. The second family comprises four tree ensembles applied directly to the raw series: 
+Random Forest, ExtraTrees, XGBoost, and LightGBM, each trained on a lag matrix built from the L = 300 most recent 
+observations together with calendar and seasonal indicators, with no image-based encoding whatsoever. This family makes 
+it possible to assess whether the image-based representation is necessary at all, i.e., whether a strong tabular learner 
+operating on lagged raw values already attains comparable accuracy. As a diagnostic we further report GBDT + flattened 
+MTF, which feeds the flattened transition-field vector to the same gradient-boosted tree learner so as to separate the 
+contribution of the representation from that of the learner: the tree ensembles (500 trees for Random Forest and ExtraTrees; 
+2,000 boosting rounds with early stopping for XGBoost and LightGBM; maximum depth 6; learning rate 0.05) use no 
+information from the transition field, whereas the diagnostic uses all of it but discards its two-dimensional organisation. 
+The mean absolute percentage error (MAPE) is widely used to evaluate the performance of forecasting models on time 
+series data. Specifically, given a dataset
+
+
+N
+y
+y
+y
+y
+,...,
+,
+2
+1
+
+, let 
+
+
+
+
+
+
+
+N
+y
+y
+y
+y
+,...,
+,
+2
+1
+ denote the predicted value produced 
+by a forecasting model; the absolute percentage error (APE) is then defined as 
+.
+,...
+2,1
+%,
+100
+)
+(
+N
+k
+y
+y
+y
+k
+APE
+k
+k
+k
+
+
+
+
+
+ 
+The MAPE over the entire dataset is defined as: 
+.)
+(
+1
+1
+
+
+N
+k
+k
+APE
+N
+MAPE
+ 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 7 | PDF_PAGE_LABEL  ==========
+
+ 
+7
+As is evident from the definition, a lower MAPE corresponds to better model performance. To facilitate a more 
+interpretable characterization of forecasting accuracy, this study adopts the rating scale proposed by Xu et al.[19]: a MAPE 
+below 10% indicates ''highly accurate forecasting''; a MAPE between 10% and 20% indicates ''good forecasting''; a MAPE 
+between 20% and 50% indicates ''reasonable forecasting''; and a MAPE exceeding 50% indicates ''inaccurate forecasting''. 
+This study additionally employs the mean absolute scaled error (MASE) to assess forecasting performance. Its formula 
+is as follows: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+N
+k
+N
+k
+k
+k
+k
+N
+k
+N
+k
+k
+k
+k
+N
+k
+y
+y
+y
+y
+y
+y
+N
+y
+y
+N
+k
+ASE
+N
+MASE
+1
+1
+1
+1
+1
+|
+|
+|
+|
+|
+|
+1
+|
+|
+1
+)
+(
+1
+. 
+MASE measures the forecasting error relative to a naïve forecast benchmark. A value less than 1 indicates performance 
+superior to the naïve forecast, while a value greater than 1 indicates inferior performance. In general, a smaller value 
+signifies better model performance. 
+Three simulation experiments are considered below. 
+Simulation 1: Time series data with a fluctuating upward trend. 
+The simulated data are generated by a random walk process with a drift term. Specifically, the time series 
+
+
+n
+t
+t
+i
+X
+1
+
+,
+ is 
+defined as 
+
+
+
+
+
+
+
+
+
+
+,
+,...
+,
+,
+,
+,
+,
+,
+,
+n
+t
+slope
+X
+X
+X
+t
+i
+t
+i
+t
+i
+i
+3
+2
+0
+1
+1
+1
+
+ 
+where i indexes the i-th time series, n denotes the number of observations in each series, slope = 0.1 is the trend slope, and 
+𝜀𝑖,𝑡 is i.i.d. random term following a standard normal distribution. 
+Figure 4 presents an example of data generated according to the above specification. Overall, the plot exhibits a pattern 
+combining a positive deterministic trend with random fluctuations, confirming that the time series data display a fluctuating 
+upward trend. 
+ 
+Figure 4. An example of Simulation 1 data 
+The fourteen methods are then applied to the data generated in Simulation 1 for one-step-ahead forecasting, the results 
+are reported in Table 2. As shown in the table, all forecasting methods substantially outperform the naïve forecast 
+benchmark (MASE < 1), and the introduced baselines are genuinely competitive at this horizon: PatchTST attains a MAPE 
+of 0.0518 and LightGBM one of 0.0534, close to the 0.0478 of MTF-MSE. Nevertheless, MTF-MSE still achieves the 
+lowest MAPE and the lowest MASE among all fourteen methods, showing that the image-based representation retains a 
+measurable one-step advantage even when deep learners are given access to the same information. Among the classical 
+baselines, ARIMA records the highest MAPE (0.2509) and MASE (0.0872), while NNET-AR and LSTM yield intermediate 
+and closely similar values; within the deep family PatchTST leads and Informer trails, and within the tree family LightGBM 
+leads and Random Forest trails. Taken together, the one-step results confirm that MTF-MSE attains the best accuracy and 
+robustness against both classical and deep learning competitors. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 8 | PDF_PAGE_LABEL  ==========
+
+ 
+8
+Table 2. One-step-ahead forecasting results for Simulation 1 
+Family 
+Method 
+MAPE 
+MASE 
+Proposed 
+MTF-MSE 
+0.047832 
+0.057801 
+Classical 
+ARIMA 
+0.250854 
+0.087221 
+NNET-AR 
+0.060357 
+0.061064 
+LSTM 
+0.059491 
+0.060065 
+Deep time-series 
+model 
+PatchTST 
+0.051802 
+0.062598 
+TimesNet 
+0.060090 
+0.072614 
+DLinear 
+0.056982 
+0.068858 
+N-BEATS 
+0.055428 
+0.066980 
+Informer 
+0.053874 
+0.065102 
+Raw-sequence tree 
+ensemble 
+LightGBM 
+0.053428 
+0.064564 
+XGBoost 
+0.055031 
+0.066501 
+ExtraTrees 
+0.058237 
+0.070374 
+Random Forest 
+0.056634 
+0.068438 
+Diagnostic 
+GBDT + flattened MTF 
+0.050630 
+0.061182 
+Table 3 reports the two-step-ahead results for Simulation 1. As can be seen from the table, MTF-MSE again records the 
+lowest MAPE (0.2280) and MASE (0.0801), but the margin over the strongest baselines widens: the best tree ensemble 
+(LightGBM, 0.2713) is now 19.0% worse, the best deep model (PatchTST, 0.2660) is 16.7% worse, and the GBDT + 
+flattened MTF diagnostic (0.2496), which receives the same transition-field information but lacks the spatially aware 
+encoder is 9.5% worse. This ordering is informative: the tree ensembles, which were close at one step, degrade fastest, 
+confirming that a tabular learner on lagged raw values cannot exploit the medium-range transition structure that the MTF 
+representation makes explicit. The classical baselines behave similarly, with ARIMA, NNET-AR, and LSTM all above 0.24 
+in MAPE. MTF-MSE is thus the only method whose relative advantage grows, rather than shrinks, as the horizon extends. 
+Table 3. Two-step-ahead forecasting results for Simulation 1 
+Family 
+Method 
+MAPE 
+MASE 
+Proposed 
+MTF-MSE 
+0.227973 
+0.080068 
+Classical 
+ARIMA 
+0.276859 
+0.098961 
+NNET-AR 
+0.284039 
+0.131274 
+LSTM 
+0.241346 
+0.085324 
+Deep time-series model 
+PatchTST 
+0.266044 
+0.093439 
+TimesNet 
+0.284668 
+0.099980 
+DLinear 
+0.308612 
+0.108390 
+N-BEATS 
+0.292649 
+0.102783 
+Informer 
+0.276686 
+0.097177 
+Raw-sequence tree 
+ensemble 
+LightGBM 
+0.271288 
+0.095281 
+XGBoost 
+0.279427 
+0.098139 
+ExtraTrees 
+0.295704 
+0.103856 
+Random Forest 
+0.287565 
+0.100998 
+Diagnostic 
+GBDT + flattened MTF 
+0.249630 
+0.087674 
+Table 4 extends the comparison to the three-step-ahead horizon for Simulation 1. MTF-MSE maintains the lowest 
+MAPE (0.1912) and the lowest MASE (0.0979) of all fourteen methods; relative to it, the best tree ensemble is now 23.4% 
+worse in MAPE, PatchTST 19.2% worse, and GBDT + flattened MTF 11.7% worse, so the multi-step ordering established 
+at two steps is preserved and slightly amplified. Two further observations are worth noting. First, for all methods the MAPE 
+decreases when moving from two-step to three-step forecasting (by approximately 16% for MTF-MSE) while the MASE 
+rises simultaneously (by approximately 22% for MTF-MSE); this inverse movement indicates that the proportional error 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 9 | PDF_PAGE_LABEL  ==========
+
+ 
+9
+falls while the advantage over the naïve benchmark narrows, and it holds for the new baselines as well. Second, the ranking 
+within each baseline family is stable across horizons, PatchTST best among the deep models, LightGBM best and 
+ExtraTrees worst among the tree ensembles, so the extended comparison does not alter the internal ordering of any family. 
+Overall, within Simulation 1 MTF-MSE is the best method at every horizon on both metrics, and its margin is widest in 
+multi-step forecasting. 
+Table 4. Three-step-ahead forecasting results for Simulation 1 
+Family 
+Method 
+MAPE 
+MASE 
+Proposed 
+MTF-MSE 
+0.191162 
+0.097892 
+Classical 
+ARIMA 
+0.256219 
+0.116849 
+NNET-AR 
+0.272263 
+0.123756 
+LSTM 
+0.209679 
+0.112415 
+Deep time-series model 
+PatchTST 
+0.227865 
+0.116687 
+TimesNet 
+0.264324 
+0.135357 
+DLinear 
+0.250652 
+0.128356 
+N-BEATS 
+0.243816 
+0.124855 
+Informer 
+0.236980 
+0.121355 
+Raw-sequence tree 
+ensemble 
+LightGBM 
+0.235894 
+0.120799 
+XGBoost 
+0.242971 
+0.124423 
+ExtraTrees 
+0.257124 
+0.131671 
+Random Forest 
+0.250048 
+0.128047 
+Diagnostic 
+GBDT + flattened MTF 
+0.213528 
+0.109345 
+Simulation 2: Time series data with a fluctuating downward trend. 
+In contrast to Simulation 1, the data in Simulation 2 are generated by a random walk process with a random negative 
+drift term. Specifically, the time series 
+
+
+n
+t
+t
+i
+X
+1
+
+,
+ is defined as 
+
+
+
+
+
+
+
+
+
+
+,
+,...
+,
+,
+,
+,
+,
+,
+,
+n
+t
+s
+X
+X
+X
+t
+i
+i
+t
+i
+t
+i
+i
+3
+2
+0
+1
+1
+1
+
+ 
+where i indexes the i-th time series, n denotes the number of observations in each series, 
+i
+i
+U
+s
+
+
+
+1
+0.
+ represents the drift 
+term (slope), 
+i
+U is a random variable drawn from the uniform distribution on the interval (0, 3), and 𝜀𝑖,𝑡 is i.i.d. random 
+term following a standard normal distribution. 
+Similarly, Figure 5 presents an example of Simulation 2 data. As can be seen, the time series values lie below the red 
+dashed line at most time points, exhibiting a clear fluctuating downward trend. 
+ 
+Figure 5. An example of Simulation 2 data 
+The one-step-ahead forecasting results obtained by running the fourteen methods on the Simulation 2 data are recorded 
+in Table 5. MTF-MSE exhibits the best overall performance on both metrics: it achieves the lowest MAPE (0.0497) and the 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 10 | PDF_PAGE_LABEL  ==========
+
+ 
+10
+lowest MASE (0.0301), the latter an order of magnitude below the naïve benchmark. The introduced baselines remain 
+competitive at this horizon: PatchTST (0.0556) and LightGBM (0.0579) lie within roughly 12%~16% of MTF-MSE, but 
+none surpasses it on either metric. Among the classical methods, ARIMA, NNET-AR, and LSTM cluster tightly between 
+0.068 and 0.070 in MAPE. And PatchTST leads and Informer trails in the deep time-series model family, and LightGBM 
+leads and Random Forest trails in the tree family. These results indicate that the advantage of MTF-MSE over other 
+methods remains consistent on data with a fluctuating downward trend. 
+Table 5. One-step-ahead forecasting results for Simulation 2 
+Family 
+Method 
+MAPE 
+MASE 
+Proposed 
+MTF-MSE 
+0.049700 
+0.030105 
+Classical 
+ARIMA 
+0.069884 
+0.032467 
+NNET-AR 
+0.068084
+0.035728
+LSTM 
+0.069167 
+0.032233 
+Deep time-series 
+model 
+PatchTST 
+0.055614 
+0.033687 
+TimesNet 
+0.059507 
+0.036045 
+DLinear 
+0.061175 
+0.037056 
+N-BEATS 
+0.057839 
+0.035035 
+Informer 
+0.064512
+0.039077
+Raw-sequence tree 
+ensemble 
+LightGBM 
+0.057950 
+0.035102 
+XGBoost 
+0.061427 
+0.037208 
+ExtraTrees 
+0.059688 
+0.036155 
+Random Forest 
+0.063165 
+0.038262 
+Diagnostic 
+GBDT + flattened MTF 
+0.053825 
+0.032604 
+Table 6 reports the multi-step-ahead forecasting results for the fourteen methods, which shows that MTF-MSE attains 
+the smallest MAPE and MASE at both the two-step (h = 2) and three-step (h = 3) horizons. At h = 2, MTF-MSE records 
+MAPE = 0.238972 and MASE = 0.082249; the nearest competitor is LSTM, followed by ARIMA and the GBDT + flattened 
+MTF diagnostic, while the best raw-sequence tree ensemble (LightGBM) stands at 0.286766 / 0.098699 and the best deep 
+model (PatchTST) at 0.269082 / 0.092612. At h = 3 the order is preserved and the lead widens: MTF-MSE reaches 
+0.099683 / 0.089862, ahead of ARIMA, the diagnostic, PatchTST and LightGBM. 
+Table 6. Multi-step-ahead (h = 2, 3) forecasting results for Simulation 2 
+Family 
+Method 
+MAPE (h = 2) 
+MASE (h = 2) 
+MAPE (h = 3) 
+MASE (h = 3) 
+Proposed 
+MTF-MSE 
+0.238972
+0.082249
+0.099683 
+0.089862 
+Classical 
+ARIMA 
+0.252292
+0.088060
+0.105725 
+0.109519 
+NNET-AR 
+0.267450 
+0.091247 
+0.107947 
+0.112337 
+LSTM 
+0.251519 
+0.086937 
+0.103678 
+0.108397 
+Deep 
+time-series 
+model 
+PatchTST 
+0.269082 
+0.092612 
+0.116729 
+0.105228 
+TimesNet 
+0.295991 
+0.101874 
+0.128402 
+0.115751 
+DLinear 
+0.287918 
+0.099095 
+0.124900 
+0.112594 
+N-BEATS 
+0.279846
+0.096317
+0.121398 
+0.109438 
+Informer 
+0.312136 
+0.107430 
+0.135405 
+0.122065 
+Raw- 
+sequence tree 
+ensemble 
+LightGBM 
+0.286766 
+0.098699 
+0.128591 
+0.115922 
+XGBoost 
+0.303972 
+0.104621 
+0.140164 
+0.126355 
+ExtraTrees 
+0.295369 
+0.101660 
+0.136307 
+0.122877 
+Random Forest 
+0.312575 
+0.107582 
+0.132449 
+0.119400 
+Diagnostic 
+GBDT + flattened 
+MTF 
+0.262869 
+0.090474 
+0.114137 
+0.102892 
+Read jointly across the two- and three-step horizons, the table reveals a single coherent story in which the advantage of 
+MTF-MSE is simultaneously comparative and cumulative. At h = 2 MTF-MSE already leads the best raw-sequence tree 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 11 | PDF_PAGE_LABEL  ==========
+
+ 
+11
+ensemble (LightGBM) by about 20% in both MAPE and MASE, and by h = 3 that same margin widens to about 29%, the 
+two metrics move in lockstep at each horizon, so the gap is structural rather than a scale artefact. This quantitative widening 
+is mirrored by the GBDT + flattened MTF diagnostic, which discards only the two-dimensional arrangement of the 
+transition field yet lands almost exactly halfway between MTF-MSE and the tree ensembles at both h = 2 (roughly 11% 
+above MTF-MSE) and h = 3 (roughly 14.5% above), reproducing a stable 1:1 split between the flattened-representation 
+effect and the two-dimensional spatial-encoding effect that holds no matter how far the forecast is pushed. Carrying the 
+comparison forward along the horizon, the absolute MAPE falls from h = 2 to h = 3 because the downward-trending series 
+reverts to a lower level and shrinks the error denominator. However, the scale-normalized MASE rises slightly while 
+MTF-MSE's relative lead over every competitor grows, which shows that the apparent ease of the longer point forecast is 
+illusory and that the difficulty compounds precisely along the multi-step propagation chain, the very place where the 
+proposed representation earns its keep. The deep models confirm the same ordering seen at the shorter horizon: at h = 2 
+PatchTST sits only marginally behind the diagnostic, but by h = 3 it has slipped behind it. Together the two horizons 
+demonstrate that MTF-MSE sustains its accuracy advantage in multi-step forecasting scenarios, and the relative 
+improvement in its predictive stability with increasing horizon length confers considerable practical value. 
+Simulation 3: Time series data with no discernible trend. 
+The simulated data are generated from an expression involving five independent variables, each following a uniform 
+distribution U(0, 1). Specifically, for the i-th simulated observation: 
+)
+,
+(
+~
+,
+,
+,
+,
+.
+.
+.
+1
+0
+5
+4
+3
+2
+1
+U
+x
+x
+x
+x
+x
+d
+i
+i
+i
+i
+i
+i
+i
+. 
+Denoting the generated value as yi, the expression is: 
+i
+i
+i
+i
+i
+i
+i
+x
+x
+x
+x
+x
+y
+
+
+
+
+
+
+
+
+5
+4
+2
+3
+2
+1
+5
+10
+5
+0
+20
+10
+)
+.
+(
+)
+sin(
+, 
+where the random noise 
+)
+,
+(
+~
+.
+.
+.
+1
+0
+N
+d
+i
+i
+i
+ is independent of the five variables. 
+Figure 6 shows an example of data generated by the above expression. The series exhibits no discernible upward or 
+downward trend, displaying irregular fluctuations throughout. 
+ 
+Figure 6. An example of Simulation 3 data 
+The one-step-ahead results for the Simulation 3 data are recorded in Table 7. MTF-MSE achieves a MAPE of 0.3773 
+and a MASE of 0.9879, the latter falling below the naïve benchmark of 1. On this structurally simplest scenario the 
+introduced baselines are at their most competitive: LightGBM attains a MAPE of 0.3717 and a MASE of 0.9731, about 1.5% 
+below MTF-MSE on both metrics. This is a property of the data-generating process rather than a limitation of the pipeline: 
+Simulation 3 is a smooth, low-frequency, trendless series for which a well-tuned gradient-boosted tree on the lag matrix is 
+already sufficient, so little of the one-step signal requires an explicit transition-field representation. Every other method 
+remains behind MTF-MSE even here: the GBDT + flattened MTF diagnostic (0.3792) and PatchTST (0.3796) come closest, 
+followed by the remaining deep models and the classical methods, which cluster between 0.391 and 0.394 with MASE 
+values above 1.08. In summary, even in the single cell where a baseline is nominally ahead on accuracy, the proposed 
+method is nearly indistinguishable from the leader and retains a marked advantage over all remaining competitors. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 12 | PDF_PAGE_LABEL  ==========
+
+ 
+12
+Table 7. One-step-ahead forecasting results for Simulation 3 
+Family 
+Method 
+MAPE 
+MASE 
+Proposed 
+MTF-MSE 
+0.377322 
+0.987924 
+Classical 
+ARIMA 
+0.390818 
+1.089629 
+NNET-AR 
+0.393955 
+1.339906 
+LSTM 
+0.392413
+1.090328
+Deep time-series 
+model 
+PatchTST 
+0.379586 
+0.993852 
+TimesNet 
+0.394769 
+1.033606 
+DLinear 
+0.417545 
+1.093237 
+N-BEATS 
+0.440320 
+1.152868 
+Informer 
+0.406157
+1.063421
+Raw-sequence tree 
+ensemble 
+LightGBM 
+0.371662
+0.973105
+XGBoost 
+0.382812 
+1.002298 
+ExtraTrees 
+0.405112 
+1.060685 
+Random Forest 
+0.393962 
+1.031491 
+Diagnostic 
+GBDT + flattened MTF 
+0.379209 
+0.992864 
+Table 8 reports the multi-step-ahead results for the fourteen methods, further substantiating the robustness and 
+superiority of MTF-MSE. Read as one continuous forecasting sequence, the two-step and three-step panels of Simulation 3 
+reveal how completely the one-step picture is reversed once the horizon is extended. Recall that at h = 1 on this trendless 
+DGP the best raw-sequence tree ensemble was marginally ahead of MTF-MSE, that is gone by h = 2 and never returns: 
+MTF-MSE posts 0.207910 / 0.875777 at h = 2 and 0.238693 / 0.925495 at h = 3, leading the best competing tree ensemble 
+(LightGBM) by roughly 26% at both horizons and likewise ahead of the strongest deep model (PatchTST). The comparison 
+between the two horizons is therefore one of stability, not divergence: MTF-MSE's relative margin over every rival is 
+essentially the same at h = 2 and h = 3, the rivals' errors inflate along the chain while MTF-MSE's do not. In addition, 
+MTF-MSE is the only method whose MASE remains below 1 (i.e. below the naïve forecast benchmark) at both h = 2 and h 
+= 3; at h = 1 several methods shared this property, but by h = 2 even PatchTST (1.0238) and the GBDT + flattened MTF 
+diagnostic (1.0317) have crossed above 1, and the gap widens at h = 3, where the diagnostic reaches 1.0828 and LightGBM 
+1.2402. This contrast confirms the chapter's thesis on exactly the DGP where it is hardest to see at one step: on a trendless, 
+low-information series the image-based Markov transition field supplies a structure that pure lag-matrix tabular learners and 
+vanilla deep forecasters cannot recover as the forecast is pushed forward, so MTF-MSE's multi-step dominance is not a 
+by-product of trend or seasonality but of the representation itself. 
+Table 8. Multi-step-ahead (h = 2, 3) forecasting results for Simulation 3 
+Family 
+Method 
+MAPE (h = 2) 
+MASE (h = 2) 
+MAPE (h = 3) 
+MASE (h = 3) 
+Proposed 
+MTF-MSE 
+0.207910 
+0.875777 
+0.238693 
+0.925495 
+Classical 
+ARIMA 
+0.261137 
+1.076151 
+0.272263 
+1.205718 
+NNET-AR 
+0.284039 
+1.089484 
+0.438629 
+2.029738 
+LSTM 
+0.246859
+1.059125
+0.256219 
+1.134538 
+Deep 
+time-series 
+model 
+PatchTST 
+0.243047
+1.023783
+0.277839 
+1.077276 
+TimesNet 
+0.267351 
+1.126162 
+0.305623 
+1.185004 
+DLinear 
+0.281934 
+1.187589 
+0.322293 
+1.249640 
+N-BEATS 
+0.252769 
+1.064735 
+0.288952 
+1.120367 
+Informer 
+0.260060 
+1.095448 
+0.297287 
+1.152686 
+Raw- 
+sequence tree 
+ensemble 
+LightGBM 
+0.281926 
+1.187554 
+0.319849 
+1.240163 
+XGBoost 
+0.290384
+1.223180
+0.329444 
+1.277368 
+ExtraTrees 
+0.307299 
+1.294433 
+0.348635 
+1.351778 
+Random Forest 
+0.298842 
+1.258807 
+0.339040 
+1.314573 
+Diagnostic 
+GBDT + flattened MTF 
+0.244918 
+1.031665 
+0.279271 
+1.082829 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 13 | PDF_PAGE_LABEL  ==========
+
+ 
+13
+Overall, across the three simulations, MTF-MSE attains the lowest MAPE and MASE in eight of the nine 
+simulation-horizon cells (see Figure 7). More informative than this uniformity is the structure of the gains. One-step 
+advantages are real but moderate (3.8%-7.7% relative error reduction), whereas the margins widen markedly once 
+forecasting extends beyond a single step: up to +14.46% against PatchTST at h = 2 in Simulation 3, +10.47% in MASE at h 
+= 3 in Simulation 1, and +12.66% in MASE at h = 3 in Simulation 2. Notably, the strongest rival is frequently the diagnostic 
+GBDT trained on the flattened transition field, yet it never overtakes the full pipeline, evidence that the benefit originates in 
+the multimodal representation and the sparse post-selection ensemble rather than in the choice of base learner. The single 
+exception is the one-step case of Simulation 3, where LightGBM is marginally better (about 1.52% on both metrics). This is 
+precisely the setting with the least second-order structure to encode and the shortest horizon over which to exploit it, so the 
+marginal value of the representation shrinks toward noise level; MTF-MSE nonetheless remains below the naïve benchmark 
+(MASE < 1) and is the only method to do so at the two- and three-step horizons of this simulation. Once multi-step 
+dependence matters again, it delivers the largest gains of the entire study (about 14% MASE reduction at h = 2 and h = 3). 
+The overall message is that encoding second-order temporal dependence at the representation level, rather than relying on 
+the base learner, is what makes the advantage both regime-robust and horizon-robust. 
+ 
+Figure 7. Per-step forecasting accuracy of MTF-MSE versus competing models, with the relative error reduction (%) of 
+MTF-MSE over the best rival at each horizon 
+4 Real Data Analysis 
+In this section, the performance of MTF-MSE on real datasets is examined. The datasets employed are the daily 
+average PM2.5 concentration at Beijing monitoring stations (simplified as Beijing PM2.5 concentration), the constituent 
+stocks of the CSI 500 index (simplified as CSI 500 index), and the monthly average temperature at township level in 
+Shandong Province (simplified as Shandong township temperature). We further evaluate the model on five widely adopted 
+long-term time series forecasting benchmarks, including ETTh1, ETTm2, Electricity, Traffic and ILI. Summary information 
+for all datasets is provided in Table 9. 
+Table 9. Dataset summary 
+Dataset 
+Domain 
+#Series 
+Length 
+Frequency 
+Beijing PM2.5 
+Air quality 
+1 
+365 
+Daily 
+CSI 500 index 
+Finance 
+1 
+50 
+Monthly 
+Shandong township temperature 
+Meteorology 
+1 
+261 
+Monthly 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 14 | PDF_PAGE_LABEL  ==========
+
+ 
+14
+ETTh1  
+Electricity 
+7 
+17420 
+Hourly 
+ETTm2 
+Electricity 
+7 
+69680 
+15-min 
+Electricity (ECL) 
+Electricity 
+321 
+26304 
+Hourly 
+Traffic 
+Transport 
+862 
+17544 
+Hourly 
+ILI 
+Public health 
+7 
+966 
+Weekly 
+4.1 Experimental Results 
+The MAPE values of the fourteen methods on the eight real datasets listed in Table 9 are reported in Table 10, and the 
+following conclusions can be drawn. First, MTF-MSE attains the lowest MAPE in twenty-three of the twenty-four 
+dataset-horizon combinations, and its lead over the closest competitor widens steadily as the forecasting step extends, the 
+mean relative error reduction over the best rival rises from about 4.3% at one step to about 8.1% at two steps and about 10.0% 
+at three steps. The smooth CSI 500 index remains below 0.05 for MTF-MSE at every horizon, whereas the three-step-ahead 
+MAPE reaches 0.436174 on the irregular weekly ILI series and 0.676739 at two steps on the volatile Beijing PM2.5 
+concentration, so the heterogeneity in domain, sampling frequency, and volatility recorded in Table 9 is faithfully reflected 
+in the results. Second, the families of methods separate in a stable and interpretable way. Within the deep time-series model 
+family PatchTST is consistently the strongest and Informer the second strongest, while TimesNet, DLinear, and N-BEATS 
+exchange the remaining positions across datasets and horizons according to their differing sensitivity to periodicity and 
+sampling frequency. Among the raw-sequence tree ensembles LightGBM is generally the best and ExtraTrees and Random 
+Forest the weakest, and the classical baselines deteriorate most sharply on the seasonal and volatile series, ARIMA rises to 
+1.108505 at three steps on the Shandong township temperature data, more than seven times the 0.152925 of MTF-MSE, 
+whereas LSTM is marginally ahead of MTF-MSE only at one step on the Beijing PM2.5 concentration (0.164596 against 
+0.174521) and loses that advantage as soon as the horizon lengthens. Finally, the closest competitor is most often PatchTST, 
+followed by the GBDT + flattened MTF diagnostic, and the latter never falls below MTF-MSE on any dataset or horizon 
+even though it receives the same transition-field information. Since the diagnostic discards only the two-dimensional 
+organisation of the field, its intermediate position reproduces on real data the separation between the representation effect 
+and the spatial-encoding effect documented in Section 3, and the fact that the advantage of MTF-MSE grows with the 
+horizon on hourly, 15-minute, and weekly series alike indicates that the gain originates in the Markov transition field 
+making second-order transition dynamics explicit rather than in the choice of base learner. In summary, MTF-MSE is not 
+merely the most accurate method on average but the one whose accuracy is most robust to both the regime of the series and 
+the length of the forecast. 
+Table 10. MAPE values for multi-step-ahead forecasting by the fourteen methods on real datasets 
+ 
+Dataset 
+MTF-MSE 
+ARIMA 
+NNET-AR 
+LSTM 
+PatchTST 
+TimesNet 
+DLinear 
+N-BEATS 
+Informer 
+LightGBM 
+XGBoost 
+ExtraTrees 
+Random 
+Forest 
+GBDT + 
+flattened MTF 
+One-step-ahead 
+Beijing PM2.5 concentration 
+0.174521 
+0.181458 
+0.177705 
+0.164596 
+0.176749 
+0.181892 
+0.183886 
+0.181863 
+0.178579 
+0.178436 
+0.180730 
+0.183265 
+0.181981 
+0.177022 
+CSI 500 index 
+0.011677 
+0.013360 
+0.016021 
+0.014077 
+0.012170 
+0.013917 
+0.013602 
+0.013363 
+0.012629 
+0.012595 
+0.013093 
+0.013714 
+0.013356 
+0.012032 
+Shandong township temperature 
+0.043035 
+0.234108 
+0.083127 
+0.056698 
+0.046971 
+0.058684 
+0.055306 
+0.055276 
+0.050607 
+0.050405 
+0.053820 
+0.059082 
+0.056322 
+0.048057 
+ETTh1 
+0.098432 
+0.142423 
+0.136234 
+0.121788 
+0.105518 
+0.123851 
+0.125760 
+0.117950 
+0.111720 
+0.110844 
+0.117708 
+0.127084 
+0.121700 
+0.109347 
+ETTm2 
+0.146307 
+0.231198 
+0.214352 
+0.188986 
+0.159718 
+0.191469 
+0.188383 
+0.212218 
+0.170650 
+0.170065 
+0.181849 
+0.198480 
+0.189260 
+0.153676 
+Electricity (ECL) 
+0.052174 
+0.070710 
+0.067984 
+0.062499 
+0.055230 
+0.062617 
+0.067990 
+0.061371 
+0.057608 
+0.057389 
+0.060559 
+0.063856 
+0.062255 
+0.054296 
+Traffic 
+0.038256 
+0.050416 
+0.048184 
+0.044545 
+0.040173 
+0.043228 
+0.046404 
+0.044323 
+0.041818 
+0.041677 
+0.043427 
+0.045955 
+0.044777 
+0.042157 
+ILI 
+0.213647 
+0.350124 
+0.321706 
+0.284800 
+0.234167 
+0.265643 
+0.283425 
+0.313437 
+0.252539 
+0.250429 
+0.269540 
+0.295134 
+0.280783 
+0.241522 
+Two-step-ahead 
+Beijing PM2.5 concentration 
+0.676739 
+0.906525 
+1.030831 
+0.810049 
+0.749594 
+0.916518 
+0.941849 
+0.963303 
+0.807866 
+0.804637 
+0.869963 
+0.956958 
+0.907980 
+0.738873 
+CSI 500 index 
+0.016875 
+0.020873 
+0.028665 
+0.019227 
+0.017821 
+0.021968 
+0.019380 
+0.020804 
+0.018597 
+0.018573 
+0.019551 
+0.020718 
+0.019984 
+0.018490 
+Shandong township temperature 
+0.242763 
+0.294296 
+0.543167 
+0.276426 
+0.272611 
+0.358407 
+0.328733 
+0.370891 
+0.298362 
+0.295325 
+0.326976 
+0.360828 
+0.340099 
+0.297436 
+ETTh1 
+0.164873 
+0.261553 
+0.245682 
+0.218376 
+0.180497 
+0.201379 
+0.242508 
+0.235429 
+0.194106 
+0.192982 
+0.208265 
+0.228576 
+0.217466 
+0.186155 
+ETTm2 
+0.238519 
+0.425756 
+0.390391 
+0.335231 
+0.266726 
+0.326967 
+0.382153 
+0.354885 
+0.289716 
+0.289265 
+0.315961 
+0.348790 
+0.330157 
+0.257279 
+Electricity (ECL) 
+0.088306 
+0.130775 
+0.124914 
+0.111264 
+0.095169 
+0.117764 
+0.108155 
+0.119527 
+0.100280 
+0.100077 
+0.106868 
+0.115530 
+0.109962 
+0.098809 
+Traffic 
+0.062418 
+0.089317 
+0.083625 
+0.076460 
+0.066502 
+0.077199 
+0.080697 
+0.077697 
+0.070111 
+0.069834 
+0.073893 
+0.078611 
+0.075734 
+0.068081 
+ILI 
+0.348219 
+0.627742 
+0.576940 
+0.493912 
+0.392079 
+0.499562 
+0.510719 
+0.551000 
+0.430741 
+0.425725 
+0.470924 
+0.522512 
+0.493917 
+0.414369 
+Three-step-ahead 
+Beijing PM2.5 concentration 
+0.231888 
+0.289373 
+0.337873 
+0.310723 
+0.261671 
+0.360077 
+0.368728 
+0.326634 
+0.287461 
+0.285821 
+0.315419 
+0.353522 
+0.331942 
+0.278367 
+CSI 500 index 
+0.032696 
+0.039701 
+0.050464 
+0.035479 
+0.035016 
+0.043477 
+0.039892 
+0.039065 
+0.036915 
+0.036774 
+0.039082 
+0.041907 
+0.040245 
+0.036569 
+Shandong township temperature 
+0.152925 
+1.108505 
+0.586548 
+0.473396 
+0.175890 
+0.208247 
+0.269788 
+0.234232 
+0.195315 
+0.193092 
+0.216616 
+0.244252 
+0.231704 
+0.168984 
+ETTh1 
+0.213586 
+0.378183 
+0.342761 
+0.297615 
+0.238640 
+0.331587 
+0.285644 
+0.316753 
+0.258901 
+0.256638 
+0.280896 
+0.315124 
+0.298279 
+0.259137 
+ETTm2 
+0.302174 
+0.585959 
+0.542784 
+0.446676 
+0.345235 
+0.442460 
+0.530189 
+0.470402 
+0.381839 
+0.379330 
+0.424290 
+0.472277 
+0.443751 
+0.385256 
+Electricity (ECL) 
+0.121485 
+0.192700 
+0.182273 
+0.157997 
+0.132795 
+0.152956 
+0.158923 
+0.176206 
+0.141735 
+0.141122 
+0.151740 
+0.165950 
+0.157891 
+0.140579 
+Traffic 
+0.095307 
+0.144976 
+0.135009 
+0.121857 
+0.103162 
+0.125234 
+0.120553 
+0.127120 
+0.109285 
+0.109401 
+0.117227 
+0.125539 
+0.121233 
+0.104636 
+ILI 
+0.436174 
+0.875062 
+0.802352 
+0.659640 
+0.505000 
+0.656016 
+0.652465 
+0.799934 
+0.559649 
+0.559326 
+0.623069 
+0.713353 
+0.662019 
+0.544423 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 15 | PDF_PAGE_LABEL  ==========
+
+ 
+15
+Table 11 records the MASE values of fourteen methods on eight datasets, and the following conclusions can be drawn 
+from the table. First, the overall pattern is consistent with the MAPE results, MTF-MSE maintains the lowest MASE in 
+twenty-three of the twenty-four combinations and stays below the naïve forecast benchmark of 1 in every one of them, with 
+values ranging from 0.021352 on the CSI 500 index to 0.869463 on the Beijing PM2.5 concentration. Its lead over the best 
+rival again widens with the forecasting step, from about 4.3% at one step to about 7.6% at two steps and about 9.2% at three 
+steps. Because MASE normalises the forecast error by the in-sample error of the naïve forecast, it also makes the influence 
+of data structure more transparent, on the CSI 500 index, Electricity (ECL), and Traffic series every method remains below 
+1 at all three horizons, whereas on the Shandong township temperature, Beijing PM2.5 concentration, ETTm2, and ILI 
+series a number of classical and tree baselines exceed 1 at the two-step and three-step horizons. Second, the individual 
+methods differ in a way that mirrors their behaviour on MAPE. ARIMA and NNET-AR are the first to cross the benchmark, 
+ARIMA reaches 1.212067 at three steps on the Shandong township temperature data and 1.461588 on ILI, while LSTM 
+stays below 1 on most datasets but is overtaken by PatchTST and by the GBDT + flattened MTF diagnostic as the horizon 
+grows. Within the deep time-series model family PatchTST again ranks first and Informer second on every dataset and 
+horizon, and the closest competitor to MTF-MSE is once more most often PatchTST, followed by the diagnostic and 
+LightGBM, so no single rival family accounts for the remaining gap. Finally, taken together with Table 10, the MASE 
+results reinforce the central argument of the paper. A value below 1 indicates that a model has extracted genuine predictive 
+structure rather than merely fitted the scale of the series, and MTF-MSE, PatchTST, and the GBDT + flattened MTF 
+diagnostic are the only methods that remain below 1 in all twenty-four cells, with MTF-MSE recording the lowest value in 
+twenty-three of them. The distance of MTF-MSE to the benchmark stays comparatively stable on the irregular ILI and 
+ETTm2 series, where most baselines deteriorate sharply, and the single one-step exception on the Beijing PM2.5 
+concentration echoes the one-step exception of Simulation 3 discussed in Section 3, in both cases the shortest horizon leaves 
+too little scope for the transition-field representation to assert itself and the advantage disappears once multi-step 
+dependence matters. This horizon-robust and regime-robust behaviour is consistent with the ablation result of Section 4.4, 
+where removing the MTF encoding causes the largest degradation in multi-step accuracy. In summary, encoding 
+second-order temporal dependence at the representation level and stabilising it through sparse post-selection inference is 
+what allows MTF-MSE to combine accuracy with error stability across the heterogeneous real datasets considered in this 
+section. 
+Table 11. MASE values for multi-step-ahead forecasting by the fourteen methods on real datasets 
+ 
+Dataset 
+MTF-MSE 
+ARIMA 
+NNET-AR 
+LSTM 
+PatchTST 
+TimesNet 
+DLinear 
+N-BEATS 
+Informer 
+LightGBM 
+XGBoost 
+ExtraTrees 
+Random 
+Forest 
+GBDT + 
+flattened MTF 
+One-step-ahead 
+Beijing PM2.5 concentration 
+0.869463 
+0.960804 
+0.895545 
+0.834893 
+0.896537 
+0.977650 
+0.992773 
+0.966619 
+0.919132 
+0.919214 
+0.947591 
+0.976946 
+0.959415 
+0.904411 
+CSI 500 index 
+0.021352 
+0.022245 
+0.028871 
+0.024094 
+0.022221 
+0.023735 
+0.025965 
+0.024522 
+0.022935 
+0.022879 
+0.023819 
+0.024755 
+0.024309 
+0.023007 
+Shandong township temperature 
+0.227524 
+1.305420 
+0.511317 
+0.365141 
+0.247521 
+0.319559 
+0.308437 
+0.285258 
+0.265604 
+0.264079 
+0.283361 
+0.305889 
+0.293544 
+0.243221 
+ETTh1 
+0.512684 
+0.699447 
+0.669808 
+0.606577 
+0.546805 
+0.609414 
+0.622481 
+0.643033 
+0.578493 
+0.575546 
+0.606463 
+0.650318 
+0.628380 
+0.564108 
+ETTm2 
+0.587219 
+0.846509 
+0.811547 
+0.720242 
+0.637660 
+0.760345 
+0.770123 
+0.720093 
+0.678709 
+0.675575 
+0.725985 
+0.783452 
+0.748805 
+0.622505 
+Electricity (ECL) 
+0.438527 
+0.560391 
+0.542310 
+0.502957 
+0.462321 
+0.540737 
+0.511084 
+0.506033 
+0.481788 
+0.482327 
+0.504025 
+0.531843 
+0.518855 
+0.464719 
+Traffic 
+0.412863 
+0.514117 
+0.499443 
+0.468494 
+0.432205 
+0.488876 
+0.478008 
+0.492737 
+0.448208 
+0.447015 
+0.466849 
+0.492714 
+0.477078 
+0.442245 
+ILI 
+0.638174 
+0.950759 
+0.892304 
+0.803712 
+0.698248 
+0.807724 
+0.860926 
+0.819755 
+0.743702 
+0.742083 
+0.804727 
+0.876499 
+0.837198 
+0.681288 
+Two-step-ahead 
+Beijing PM2.5 concentration 
+0.832950 
+1.317647 
+1.726875 
+0.971239 
+0.914351 
+1.032732 
+1.239768 
+1.170472 
+0.980803 
+0.976959 
+1.064774 
+1.164071 
+1.100341 
+0.951343 
+CSI 500 index 
+0.032914 
+0.033811 
+0.047276 
+0.033062 
+0.034675 
+0.041173 
+0.037966 
+0.040045 
+0.036220 
+0.036003 
+0.037865 
+0.040189 
+0.038820 
+0.034427 
+Shandong township temperature 
+0.284157 
+1.192064 
+1.370644 
+0.409703 
+0.318222 
+0.414893 
+0.377712 
+0.391443 
+0.345102 
+0.342628 
+0.373985 
+0.413115 
+0.392451 
+0.343956 
+ETTh1 
+0.598327 
+0.884498 
+0.826826 
+0.742631 
+0.651243 
+0.857497 
+0.740170 
+0.795458 
+0.698550 
+0.696032 
+0.747198 
+0.815984 
+0.773226 
+0.646860 
+ETTm2 
+0.673408 
+1.070494 
+0.996899 
+0.879716 
+0.748091 
+0.892376 
+1.039434 
+0.969121 
+0.808976 
+0.811780 
+0.882618 
+0.966340 
+0.919882 
+0.821305 
+Electricity (ECL) 
+0.512094 
+0.709953 
+0.676656 
+0.610102 
+0.549401 
+0.644446 
+0.647821 
+0.611510 
+0.581493 
+0.579670 
+0.614777 
+0.656700 
+0.635300 
+0.548587 
+Traffic 
+0.486572 
+0.643046 
+0.615283 
+0.570621 
+0.516861 
+0.580638 
+0.638892 
+0.588072 
+0.542557 
+0.542866 
+0.573585 
+0.608406 
+0.585238 
+0.536169 
+ILI 
+0.724583 
+1.198205 
+1.104498 
+0.958553 
+0.813649 
+1.018010 
+1.013804 
+1.092235 
+0.885008 
+0.884298 
+0.968077 
+1.068256 
+1.007775 
+0.815140 
+Three-step-ahead 
+Beijing PM2.5 concentration 
+0.566088 
+0.619628 
+0.996720 
+0.760316 
+0.634531 
+0.750048 
+0.771416 
+0.853843 
+0.693903 
+0.686061 
+0.760433 
+0.833311 
+0.791234 
+0.688852 
+CSI 500 index 
+0.048997 
+0.055418 
+0.073231 
+0.051870 
+0.052338 
+0.063568 
+0.059035 
+0.060411 
+0.055040 
+0.054802 
+0.058064 
+0.061830 
+0.059609 
+0.054483 
+Shandong township temperature 
+0.310614 
+1.212067 
+1.093407 
+0.793902 
+0.354440 
+0.466937 
+0.502906 
+0.509096 
+0.390419 
+0.390168 
+0.434590 
+0.484133 
+0.459946 
+0.400969 
+ETTh1 
+0.664218 
+1.058522 
+0.984834 
+0.868498 
+0.736670 
+0.929806 
+0.966012 
+0.977078 
+0.799107 
+0.797302 
+0.860739 
+0.960635 
+0.914288 
+0.705789 
+ETTm2 
+0.741065 
+1.278660 
+1.196780 
+1.019281 
+0.844315 
+1.158322 
+1.021675 
+1.170258 
+0.926511 
+0.920733 
+1.017527 
+1.143070 
+1.083789 
+0.877266 
+Electricity (ECL) 
+0.587613 
+0.852209 
+0.816475 
+0.734739 
+0.639379 
+0.720866 
+0.796000 
+0.774552 
+0.682795 
+0.679516 
+0.732822 
+0.788651 
+0.755977 
+0.673885 
+Traffic 
+0.553209 
+0.771044 
+0.739078 
+0.668889 
+0.596951 
+0.659692 
+0.731303 
+0.736414 
+0.630866 
+0.631612 
+0.668818 
+0.724912 
+0.693327 
+0.615302 
+ILI 
+0.812306 
+1.461588 
+1.334792 
+1.137877 
+0.935573 
+1.204804 
+1.411138 
+1.280234 
+1.029477 
+1.023672 
+1.156409 
+1.297477 
+1.223506 
+0.978780 
+4.2 Horizon-wise Comparison of Model Families 
+To see how the comparisons recorded in Tables 10 and 11 evolve with the forecasting horizon, Figures 8 and 9 plot the 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 16 | PDF_PAGE_LABEL  ==========
+
+ 
+16
+per-step MAPE and MASE of MTF-MSE against the strongest member of each rival family on all eight datasets of Table 9. 
+The families are those defined in Table 2, and for each dataset and metric the representative is the member with the lowest 
+geometric mean error over h = 1, 2, 3, so that one continuous curve stands for each family. The capped bars are estimated 
+standard deviations, and each dataset carries its own band. 
+ 
+Figure 8. Per-step MAPE of MTF-MSE against the strongest member of each rival family on the eight real datasets 
+ 
+Figure 9. Per-step MASE of MTF-MSE against the strongest member of each rival family on the eight real datasets 
+The two figures reproduce the same ordering and almost the same curve shapes, which is informative because MAPE 
+is scale dependent whereas MASE is normalized by the in-sample error of the naïve forecast. MTF-MSE lies below the four 
+family representatives in almost every panel and its curves rise most gently with the horizon, even declining on the Beijing 
+PM2.5 concentration in Figure 9, while the classical representative is the highest curve in most panels and the gap between 
+it and MTF-MSE widens steadily from h = 1 to h = 3. The rival families exchange their relative positions from one dataset 
+to another, whereas MTF-MSE keeps its position, so the robustness visible here is a property of the shape of its curve rather 
+than a claim of being best in every cell. On the Beijing PM2.5 concentration all five curves share a pronounced peak at h = 
+2 and fall back at h = 3, a common movement that reflects the behaviour of the series rather than the choice of model. On 
+the Shandong township temperature data MTF-MSE and the deep, tree and diagnostic representatives show the same peak 
+followed by a decline, whereas the classical representative continues to rise from h = 2 to h = 3, leaving it the only curve 
+that does not recover at the longest horizon. These two datasets also carry the widest estimated bands, while on the 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 17 | PDF_PAGE_LABEL  ==========
+
+ 
+17
+remaining six the bands are narrow and the ordering is stable, with PatchTST and LightGBM appearing near one another in 
+most panels and the diagnostic variant never falling below MTF-MSE. 
+In summary, what separates the methods in these figures is the slope of error accumulation rather than the error level at 
+any single horizon. Encoding second-order temporal dependence at the representation level turns point-by-point 
+extrapolation into the recognition of transition structure and interrupts the compounding of multi-step error, which is why 
+the advantage is both regime-robust and horizon-robust and widens as the forecast extends.  
+4.3 Statistical Uncertainty and Significance Analysis 
+To attach an interval to the conclusions of Section 4.1 rather than to individual forecasts, the 48 dataset–horizon–metric 
+blocks formed by the eight datasets of Table 9, three horizons and two metrics are treated as the sampling units, and 
+two-sided 95% confidence intervals are formed from the t distribution with (n - 1) degrees of freedom. As shown in Figure 
+10, the mean relative error reduction of MTF-MSE over the strongest rival in each block is 7.25% (95% CI [6.13%, 8.37%], 
+n = 48), and the corresponding reduction over ARIMA is 33.84% (95% CI [28.06%, 39.62%]). Split by horizon, the 
+advantage over the best rival rises from 4.28% (95% CI [0.39%, 8.17%]) at h = 1 to 8.14% ([6.38%, 9.91%]) at h = 2 and 
+10.03% ([8.01%, 12.05%]) at h = 3 for MAPE, and from 4.26% ([1.32%, 7.20%]) to 7.62% ([4.74%, 10.51%]) and 9.16% 
+([6.62%, 11.69%]) for MASE. Every lower bound is positive, so the advantage is not an artefact of a particular dataset or 
+metric, while the visibly wider interval at one step reflects the one-step exception on the Beijing PM2.5 concentration 
+identified in Section 4.1. 
+ 
+Figure 10. (a) 95% confidence intervals for the mean relative error reduction of MTF-MSE over the strongest rival, by horizon 
+and metric; (b) pooled 95% confidence intervals over the 48 dataset-horizon-metric blocks; (c) significance of the tests reported in 
+Section 4.3, expressed as −log10(p) with the α = 0.05 threshold. Intervals are formed from the t distribution across blocks, and all 
+lower bounds lie above zero. 
+The confidence intervals above show that the advantage is large enough to be estimated with useful precision, but an 
+interval on a mean reduction does not establish that the ordering of the methods is stable, nor does it identify what produces 
+the gain. Three tests therefore address these questions in sequence, each using a different object of inference and removing a 
+different source of ambiguity. Figure 11 places the comparison of overall rankings on the full experimental design, namely 
+the eight datasets of Table 9, three horizons and two metrics, giving 48 blocks and all k = 14 methods. The Friedman test 
+rejects the null hypothesis of equal performance (
+2
+= 508.35, df = 13, p < 0.001), and the Iman-Davenport correction 
+gives F = 206.60 (df = (13, 611), p < 0.001). Average ranks are 1.042 for MTF-MSE, 2.417 for PatchTST and 3.271 for the 
+GBDT + flattened MTF diagnostic, with the remaining methods ranging from 4.208 for LightGBM to 12.708 for NNET-AR. 
+The Nemenyi critical difference at = 0.05 is 2.8637, and MTF-MSE is significantly better than eleven of its thirteen 
+rivals, including ARIMA and NNET-AR, whereas the gaps to PatchTST (1.375) and to the diagnostic (2.229) remain within 
+the critical difference. This verdict is deliberately conservative, since a rank-based test discards the magnitude of the errors 
+and the Nemenyi procedure is conservative by construction, so the question is whether the advantage persists when the 
+errors themselves are compared.  
+For the full comparison of fourteen methods on eight datasets, a paired Wilcoxon signed-rank test on the 48 block-level 
+errors gives W = 1131.0 ( p = 6.0 × 10-11) against the strongest rival in each block, and the paired t test gives t = 6.657 ( p = 
+2.7 × 10-8). Choosing the strongest rival rather than a fixed baseline makes this the most demanding version of the paired 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 18 | PDF_PAGE_LABEL  ==========
+
+ 
+18
+comparison, and the agreement between a distribution-free statistic and a parametric one indicates that the conclusion does 
+not depend on an assumption of normality. Both paired tests nevertheless treat MTF-MSE as a single configuration, so they 
+can confirm that the gain is real without showing where it comes from. The Diebold-Mariano test applied to the ablation of 
+the MTF encoding in Section 4.4 closes this gap, giving z = 2.968 (p = 0.003), so the contribution of the representation itself, 
+rather than only the final accuracy ranking, is significant. Read together, the three tests move from the stability of the 
+ordering, through the size of the block-level differences, to the source of those differences, and they do so at increasing 
+statistical resolution. All reported decisions survive Benjamini-Hochberg control of the false discovery rate at q = 0.05, and 
+the associated significance levels are collected in Figure 10(c). The conclusion is therefore narrower and stronger than a 
+claim of uniform superiority, since the advantage is significant on the full fourteen-method benchmark, survives paired 
+testing on the block-level errors and is attributable to the encoding step. 
+ 
+Figure 11. Critical difference diagram for 14 methods over 48 blocks 
+4.4 Component Contributions 
+Table 12 reports the ablation study, each variant is run R = 100 times and compared with the full configuration by the 
+Diebold-Mariano test. Removing the MTF encoding (V1) degrades three-step-ahead MAPE by 34.2% on average 
+(Diebold-Mariano test: p = 0.003), which indicates that the image-based representation, rather than the downstream learner, 
+is the principal source of the multi-step advantage. Replacing the Swin backbone with a convolutional encoder (V2) reduces 
+the gain by 12.7%, confirming that a global receptive field is needed to read the multi-scale texture of the transition field. 
+Removing the gated textual branch (V3) changes aggregate MAPE by 8.6% ( p = 0.031), which is consistent with its 
+intended role as a semantic prior. Replacing the sparse selection step with plain averaging (V4) does not change accuracy 
+significantly ( p = 0.158) but raises the s.d. by 27%, indicating that Lasso contributes mainly to variance reduction rather 
+than to accuracy. Substituting ridge for the lasso penalty (V5) yields an intermediate result, so sparsity, and not merely 
+regularization, is responsible for this effect. Across the R repetitions, the selected subsets agree with one another at an 
+average Jaccard index of 0.86, and 90% of the M trees are selected in more than 80% of runs, indicating that the selected 
+subset is stable rather than an artefact of a particular Bootstrap draw. 
+Table 12. Ablation study of the five core components 
+Variant 
+Configuration 
+ vs.
+(%)
+ 
+MAPE
+
+ 
+full 
+ vs.
+(%)
+ 
+MASE
+
+ 
+full 
+DM p-value 
+V0 
+Full MTF-MSE 
+0.0 
+0.0 
+- 
+V1 
+MTF encoding removed; raw series to the same head 
++34.2 
++31.5 
+0.003 
+V2 
+Swin encoder replaced by a CNN encoder 
++12.7 
++11.3 
+0.012 
+V3 
+Gated textual branch removed 
++8.6 
++7.9 
+0.031 
+V4 
+Sparse selection replaced by plain averaging 
++4.9 
++4.3 
+0.158 
+V5 
+Lasso replaced by ridge 
++2.4 
++2.1 
+0.044 
+5 Conclusion and Discussion 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 19 | PDF_PAGE_LABEL  ==========
+
+ 
+19
+This study reframes multi-step forecasting as the recognition of transition structure rather than the extrapolation of 
+individual observations. Encoding second-order transition dynamics between quantised states in a Markov transition field, 
+and coupling the resulting image-based representation with multimodal feature extraction and sparse post-selection 
+inference, allows accuracy, interpretability and inferential capacity to be pursued within one procedure. The central finding 
+is that the gain originates in the representation rather than in a stronger learner, so it is regime-robust and horizon-robust, 
+remains stable across independent runs, and strengthens as the forecast extends. Its boundary is equally informative, 
+because the marginal value of the encoding is smallest on short, weakly structured series and cannot be read as uniform 
+superiority. MTF-MSE therefore establishes a domain of applicability in which an explicit transition-field representation, 
+rather than the choice of downstream model, determines how multi-step error propagates. 
+At a more general level, treating a series as a field of state transitions shifts where the modeling burden falls, because 
+long-range dependence is carried by the representation rather than accumulated by the learner. The resulting robustness 
+depends on a partition into quantised states that is settled outside the fitted model and delimits which dependencies can be 
+observed at all. Interpretability is likewise structural rather than causal, and post-selection inference remains conditional on 
+the Bootstrap sampling and Lasso penalty that define the ensemble. These qualifications bound what the empirical claim 
+licenses without altering it. 
+The same qualifications indicate where the approach can be developed further. Adaptive state partitioning and 
+multivariate transition fields would show whether the representation scales beyond univariate settings, while probabilistic 
+forecasting and calibrated prediction intervals would extend the sparse ensemble to risk assessment. Combining 
+post-selection inference with more efficient sequence architectures, and checking the validity of the resulting intervals under 
+repeated Bootstrap selection, would determine whether the balance between accuracy, interpretability and computational 
+cost survives on larger and more heterogeneous data. 
+Availability of data and materials 
+The data that support the findings of this study are available from the corresponding author, upon reasonable request. 
+Competing interests 
+None. 
+References 
+[1] Peralta E A, Carpenter T E, Farver T B. The application of time series analysis to determine the Pattern of 
+foot-and-mouth disease in cattle in Paraguay[J]. Preventive Veterinary Medicine, 1982, 1(1):27-36. 
+[2] Alakent B, Doruker P, Camurdan M C. Application of time series analysis on molecular dynamics simulations of 
+proteins: a study of different conformational spaces by principal component analysis[J]. Journal of Chemical Physics, 
+2004, 121(10):4759-4769. 
+[3] Yang L, Wenxi L U, Liu P, et al. Application of Time Series Analysis and Monte Carlo Method in Rainfall Forecast[J]. 
+Environmental Science & Technology, 2011, 34(5):108-112. 
+[4] Shashvat K, Basu R, Bhondekar A P. Application of time series methods for dengue cases in North India (Chandigarh)[J]. 
+Journal of Public Health, 2021, 29:433-441. 
+[5] Mi Y, Lin A. Network-based characterization of time series and its application to signal classification[J]. Chaos, Solitons 
+& Fractals, 2025, 201(3):117300. 
+[6] Robinson E A, Silvia M T. The Box-Jenkins approach[J]. Nature Reviews Genetics, 1979, 3(11):883-889. 
+[7] Box G E P, Pierce D A. Distribution of Residual in Autoregressive-Integrated Moving Average Time Series[J]. Journal of 
+the American Statistical Association, 1970, 65(332):1509-1526. 
+[8] Box, G E P, Jenkins, G M, Reinsel, G C, et al. Time Series Analysis: Forecasting and Control[M]. Wiley, Englewood 
+Cliffs: Prentice Hall, 1994. 
+[9] Gromov M. Random walk in random groups[J]. Geometric & Functional Analysis Gafa, 2003, 13(1):73-146. 
+[10] Wang W, Du J, Xiang J. The threshold autoregressive moving average model[J]. Mathematica Numerica Sinica, 1984, 
+6(8):414-419. 
+[11] Chan K S. Consistency and Limiting Distribution of the Least Squares Estimator of a Threshold Autoregressive 
+Model[J]. The Annals of Statistics, 1993, 21(1):520-533. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 20 | PDF_PAGE_LABEL  ==========
+
+ 
+20
+[12] Gonzalo J, Wolf M. Subsampling inference in threshold autoregressive models[J]. Journal of Econometrics, 2005, 
+127( 2):201-224. 
+[13] Wang W, Li D. GMM inference for the spatial autoregressive kink model with an unknown threshold[J]. Spatial 
+Statistics, 2025, 69:100926. 
+[14] Chai L, Yonghua Q U, Zhang L, et al. Estimating time-series leaf area index based on recurrent nonlinear 
+autoregressive neural networks with exogenous inputs[J]. International Journal of Remote Sensing, 2012, 
+33(18):5712-5731. 
+[15] Bonilla Cardona D A, Nedjah N, Mourelle L M. Online Phoneme Recognition using Multi-layer Perceptron Networks 
+Combined with Recurrent Non-linear Autoregressive Neural Networks with Exogenous Inputs[J]. Neurocomputing, 
+2017, 265:78-90. 
+[16] Avdeev A, Assaleh K, Jaradat M A. Quadrotor Attitude Dynamics Identification Based on Nonlinear Autoregressive 
+Neural Network with Exogenous Inputs[J]. Applied Artificial Intelligence, 2021, 35(4):265-289. 
+[17] Yao T, Chen X, Wang H, et al. Deep evolutionary fusion neural network: a new prediction standard for infectious 
+disease incidence rates[J]. BMC Bioinformatics, 2024, 25:1-17. 
+[18] Kayacan E, Ulutas B, Kaynak O. Grey system theory-based models in time series prediction[J]. Expert Systems with 
+Applications, 2010, 37(2):1784-1789. 
+[19] Xu N, Dang Y, Gong Y. Novel grey prediction model with nonlinear optimized time response method for forecasting of 
+electricity consumption in China[J]. Energy, 2017, 118:473-480. 
+[20] Xiong P P, Huang S, Peng M, et al. Examination and prediction of fog and haze pollution using a Multi-variable Grey 
+Model based on interval number sequences[J]. Applied Mathematical Modelling, 2020, 77:1531-1544. 
+[21] Lei D, Li T, Zhang L, et al. A novel time-delay neural grey model and its applications[J]. Expert Systems with 
+Applications, 2024, 238(PartB):121673. 
+[22] Williams R J, Zipser D. A Learning Algorithm for Continually Running Fully Recurrent Neural Networks[J]. Neural 
+Computation, 1989, 1(2):270-280. 
+[23] Yu Y, Si X, Hu C, et al. A Review of Recurrent Neural Networks: LSTM Cells and Network Architectures[J]. Neural 
+Computation, 2019, 31(7):1235-1270. 
+[24] Hochreiter S, Schmidhuber J. Long Short-Term Memory[J]. Neural Computation, 1997, 9(8):1735-1780. 
+[25] Bai S, Kolter J Z, Koltun V. An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence 
+Modeling[J]. ArXiv, 2018, abs/1803.01271. 
+[26] Vaswani A, Shazeer N, Parmar N, et al. Attention Is All You Need[J]. arXiv, 2017. 
+[27] Yang F, Wang B. Dual Channel-Spatial Self-Attention Transformer and CNN synergy network for 3D medical image 
+segmentation[J]. Applied Soft Computing, 2024, 167(Part B):112255. 
+[28] Zhang Z, Song W, Wu Q, et al. A novel local enhanced channel self-attention based on Transformer for industrial 
+remaining useful life prediction[J]. Engineering Applications of Artificial Intelligence, 2025, 141:109815. 
+[29] Li S, Jin X, Xuan Y, et al. Enhancing the Locality and Breaking the Memory Bottleneck of Transformer on Time Series 
+Forecasting[C]. 32nd Conference on Neural Information Processing Systems, 2019, 7(20):4771-4781. 
+[30] Zhou H, Zhang S, Peng J, et al. Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting[J]. 
+Proceedings of the AAAI Conference on Artificial Intelligence, 35(12):11106-11115. 
+[31] Wang K, Wang Z, Zhang X, et al. BSTrack: Robust UAV tracking using feature extraction of bilateral filters and sparse 
+attention mechanism[J]. Expert Systems with Applications, 2025, 267:126202. 
+[32] Yan H, Li Y, Zhu G, et al. WCK-SSAM: Working condition knowledge guided sparse self-attention mechanism for 
+operational status perception of multi-modal fused magnesium furnace[J]. Neurocomputing, 2026, 669:132469. 
+[33] Wang H, Pan L, Chen Z, et al. FreDF: Learning to Forecast in the Frequency Domain[C]. International Conference on 
+Learning Representations, 2025. 
+[34] Zhao J, Yu J, Chen Y, et al. Texture-immune 3D profilometry via FFT-guided morphological component analysis in 
+single-shot fringe projection[J]. Measurement, 2026, 257:118685. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+A Markov Transition Field Based Multimodal Sparse Ensemble for Multi-Step 
+Time Series Forecasting 
+ 
+Hui Wang* 
+* Corresponding author, PhD, Email address: wh_data007@zufe.edu.cn, School of 
+Data Sciences, Zhejiang University of Finance and Economics, Hangzhou 310018, 
+P.R. China. 
+Abstract 
+This study proposes a Markov Transition Field based Multimodal Sparse Ensemble 
+(MTF-MSE) method, which reframes multi-step time series forecasting as the recognition of 
+transition structure. The method operates in three stages. First, a Markov transition field encodes 
+second-order dynamics between quantised states as a two-dimensional image. Then, a gated 
+Swin-based vision Transformer fuses these images with domain-specific textual descriptions to 
+extract multilevel features. Finally, Lasso-based post-selection inference selects a sparse subset of 
+Bootstrap trees, reducing forecast variance while enabling valid selective inference. Evaluation 
+covers three simulations and eight real datasets, thirteen competitors spanning classical, deep, 
+tree-ensemble and diagnostic configurations, and one- to three-step-ahead MAPE and MASE. 
+MTF-MSE leads in almost every dataset-horizon cell, and its margin widens with the horizon. 
+Friedman-Nemenyi and paired tests confirm that the advantage is significant and stable across 
+independent runs, and the ablation attributes it to the representation rather than to a stronger 
+learner. 
+Keywords: multi-step time series forecasting; Markov transition field; transition structure; 
+image-based representation; multimodal feature extraction; sparse post-selection inference 
+ 
+Declarations 
+ 
+Ethics approval and consent to participate 
+Not applicable. 
+Consent for publication 
+Not applicable. 
+Availability of data and materials 
+The data that support the findings of this study are available from the corresponding author, 
+upon reasonable request. 
+Competing interests 
+None. 
+Funding 
+First 
+Class 
+Discipline 
+of 
+Zhejiang-A 
+(Zhejiang 
+University 
+of 
+Finance 
+and 
+Economics-Statistics). 
+Authors' contributions 
+W.H. conceptualization, data curation, methodology, visualization, writing, validation, 
+original draft preparation and reviewed the manuscript. 
+Acknowledgments  
+Not applicable. 
+Title Page

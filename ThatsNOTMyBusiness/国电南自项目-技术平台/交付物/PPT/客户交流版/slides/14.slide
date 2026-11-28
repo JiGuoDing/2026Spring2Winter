@@ -62,9 +62,12 @@
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>存量应用的 CAS 接入不动，新增走 OIDC / SAML2——改造量落在平台侧一次，而不是每个应用各改一遍。</Text>
         </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [H-01] [J-08]</Text>
+        </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>4A 侧需提供 OIDC / SAML2 端点与属性映射规范（T01，本周待回复）</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>14 / 20</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>14 / 21</Text>
         </Box>
     </Box>
 </Slide>

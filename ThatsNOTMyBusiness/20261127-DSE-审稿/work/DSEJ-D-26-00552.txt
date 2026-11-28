@@ -1,0 +1,4778 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+SCETRA: Support-Conditioned Class Evidence for Gradient-Free Heterogeneous
+Node Classification
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00552
+Full Title:
+SCETRA: Support-Conditioned Class Evidence for Gradient-Free Heterogeneous
+Node Classification
+Article Type:
+Research Papers
+Funding Information:
+Abstract:
+In heterogeneous node classification, a query can receive different class evidence from
+its attributes and from the labels of nodes connected through shared entities. We study
+how to construct both forms of evidence with fixed typed propagation and how to
+choose a prediction rule using the current support set. We present SCETRA, a
+gradient-free inference framework that constructs both forms of class evidence from
+the same family of normalized typed half-path operators. For each half-path, the
+operator propagates attributes to the target nodes. Its transpose accumulates support-
+label mass at shared entities, whose smoothed class distributions are propagated back
+to the targets. We derive exact support-deletion updates for both evidence sources,
+including their availability after deletion. These updates allow SCETRA to select a
+prediction rule by leave-one-out evaluation on the current support set, with a fixed rule
+for one-shot supervision. On four transductive node classification benchmarks,
+SCETRA achieves competitive performance against supervised baselines under full-
+budget supervision and pretrained baselines under strict few-shot supervision, without
+encoder pretraining or gradient updates.  Stage-wise runtime and peak GPU memory
+measurements characterize the computational requirements of the proposed inference
+procedure. Together, these results demonstrate the practical potential of explicit
+support-conditioned class evidence while clarifying how its effectiveness depends on
+evidence construction and selection.
+Corresponding Author:
+Yanghui Fu
+NUDT: National University of Defense Technology
+CHINA
+Corresponding Author E-Mail:
+fyh97@nudt.edu.cn
+Order of Authors:
+Yanghui Fu
+Guangquan Cheng
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+NUDT: National University of Defense Technology
+Corresponding Author's Secondary
+Institution:
+First Author:
+Yanghui Fu
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Additional Information:
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+SCETRA: Support-Conditioned Class Evidence for
+Gradient-Free Heterogeneous Node Classiﬁcation
+Anonymous Authors
+Abstract
+In heterogeneous node classiﬁcation, a query can receive diﬀerent class evidence
+from its attributes and from the labels of nodes connected through shared entities.
+We study how to construct both forms of evidence with ﬁxed typed propaga-
+tion and how to choose a prediction rule using the current support set. We
+present SCETRA, a gradient-free inference framework that constructs both
+forms of class evidence from the same family of normalized typed half-path
+operators. For each half-path, the operator propagates attributes to the target
+nodes. Its transpose accumulates support-label mass at shared entities, whose
+smoothed class distributions are propagated back to the targets. We derive exact
+support-deletion updates for both evidence sources, including their availabil-
+ity after deletion. These updates allow SCETRA to select a prediction rule by
+leave-one-out evaluation on the current support set, with a ﬁxed rule for one-
+shot supervision. On four transductive node classiﬁcation benchmarks, SCETRA
+achieves competitive performance against supervised baselines under full-budget
+supervision and pretrained baselines under strict few-shot supervision, without
+encoder pretraining or gradient updates. Stage-wise runtime and peak GPU
+memory measurements characterize the computational requirements of the pro-
+posed inference procedure. Together, these results demonstrate the practical
+potential of explicit support-conditioned class evidence while clarifying how its
+eﬀectiveness depends on evidence construction and selection.
+Keywords: Heterogeneous graphs, Node classiﬁcation, Class evidence, Gradient-free
+inference, Few-shot learning
+1 Introduction
+A labeled node in a heterogeneous graph provides more than a supervision signal
+for ﬁtting a classiﬁer. Its attributes oﬀer a reference for identifying similar nodes,
+while its relations associate the observed class with authors, venues, or other shared
+entities. These two forms of information can support diﬀerent class predictions for the
+same query. For example, a paper may resemble one research category in its textual
+1
+Click here to access/download;Blinded manuscript;main.tex
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+(a)
+Observed graph
+u
+A
+A
+B
+B
+?
+u author
+venue
+Attribute evidence
+One fixed attribute view
+A
+A
+B
+B
+A mean
+B mean
+?
+Query nearer B
+a(q)
+A
+B
+Entity evidence
+Author evidence favors A
+Shared author u
+A
+A
+u
+?
+2 A, 0 B
+e(q)
+A
+B
+(b)
+0
+20
+40
+60
+80
+100
+Full-budget Macro-F1 (%)
+ACM
+RDF-MUTAG
+92.89
+43.64
+92.74
+69.94
+93.44
+69.94
+Δtrained −initial = −0.14 pp
+Δtrained −initial = +26.30 pp
+Initial fusion
+Support-LOO-trained fusion
+SCETRA (Ours)
+Fig. 1 Support-conditioned class evidence and a matched fusion comparison. (a) The query is closer
+to the class B attribute prototype, while its shared author provides evidence for class A. (b) Full-
+budget Macro-F1 on ACM and RDF-MUTAG. Initial and learned fusion use identical branch evidence.
+The learned variant ﬁts three fusion scalars using support leave-one-out (LOO) predictions. The
+annotated ∆is learned minus initial Macro-F1 in percentage points, computed from unrounded
+scores. SCETRA serves as a separate reference and uses exact support LOO to select from a broader
+candidate family. Table 11 reports the results for all four graphs.
+attributes but share authors with labeled papers from another category. Exploiting
+these signals is central to heterogeneous node classiﬁcation, where node and relation
+types provide multiple semantic contexts for prediction. Heterogeneous graph neural
+networks (HGNNs) use learned representations and prediction functions to exploit
+these contexts (Schlichtkrull et al. 2018; Hu et al. 2020b; Fu et al. 2026).
+Representation learning oﬀers ﬂexible ways to integrate heterogeneous information
+and often carries out three functions together: propagating information through typed
+structure, constructing evidence that discriminates among classes, and adapting the
+prediction rule. The resulting performance reﬂects both the class information available
+in the observed graph and labels and how ﬁtted parameters use that information. SGC
+and SIGN illustrate how propagation can be separated from parameter ﬁtting (Wu
+et al. 2019; Frasca et al. 2020), and related designs explore diﬀerent ways of decou-
+pling propagation and prediction (Klicpera et al. 2019; Zhang et al. 2022). SeHGNN
+applies this principle to heterogeneous graphs by precomputing neighborhood aggre-
+gation before learning semantic fusion (Yang et al. 2023). Label propagation and
+Correct and Smooth demonstrate the predictive value of observed labels (Zhu et al.
+2003; Huang et al. 2021), and work connecting graph convolution with label propaga-
+tion further motivates studying this signal directly (Wang and Leskovec 2022). These
+developments motivate our research question. When typed propagation is held ﬁxed,
+what class evidence can be constructed directly from observed attributes and support
+labels, and how can the current support set guide its use in prediction?
+Addressing this question requires distinguishing the construction of class evidence
+from its support-conditioned use. As illustrated in Figure 1(a), heterogeneous graphs
+2
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+provide two distinct forms of class evidence. Attribute evidence compares a query
+with class representatives in ﬁxed feature views, capturing similarity under diﬀer-
+ent attribute and structural contexts. Entity evidence uses observed support labels
+associated with shared entities, capturing class associations mediated by typed rela-
+tions even when target-node attributes diﬀer. However, neither source is uniformly
+informative. Attribute similarity can be ambiguous, while shared entities may have
+limited labeled support or associations with multiple classes. These diﬀerences moti-
+vate a common class-probability representation and a way to select how the evidence
+is used in the current task. Moreover, support-based selection must account for self-
+label inﬂuence, since each support contributes to the statistics used to evaluate its
+own prediction.
+To address these challenges, we introduce SCETRA (Support-Conditioned Evi-
+dence from Typed Relations and Attributes), a gradient-free inference framework that
+separates class-evidence construction from support-conditioned rule selection. SCE-
+TRA uses a shared family of normalized typed half-path operators to construct both
+forms of evidence. In the attribute branch, ﬁxed feature views provide class prototypes
+and pooled scales for computing class probabilities. In the entity branch, the trans-
+posed operators accumulate support-label mass at shared entities, whose smoothed
+class distributions are propagated back to target nodes. Both branches therefore pro-
+duce class probabilities that can be used individually or combined. Rather than ﬁtting
+a prediction model, SCETRA selects from a prespeciﬁed family of evidence rules
+through exact support leave-one-out (LOO) evaluation, removing each held-out label
+from all aﬀected statistics while retaining the node and its connections in the public
+graph. The selected rule is then applied using the full support set, with a predeﬁned
+combination for one-shot supervision.
+We evaluate SCETRA on four transductive node classiﬁcation benchmarks—
+ACM, DBLP, Freebase, and RDF-MUTAG—under full-budget supervision and strict
+1/3/5/10/20-shot protocols. Comparisons with supervised and pretrained baselines
+assess the predictive capability of directly constructed class evidence without encoder
+pretraining or gradient updates. To understand the underlying mechanisms, we ﬁrst
+examine the contributions of attribute and entity evidence through evidence-restricted
+controls. We then compare direct typed label propagation and smoothed entity statis-
+tics under ﬁxed fusion and support-based LOO selection. These matched comparisons
+reveal that the relative eﬀectiveness of entity statistics can depend on how the evidence
+is selected, with diﬀerent outcomes across graphs (Table 10). A separate learned-fusion
+control examines whether optimizing a small set of fusion parameters can further
+improve the use of ﬁxed branch evidence (Figure 1(b)). Finally, stage-wise runtime
+and peak GPU memory measurements characterize the computational requirements
+of the diﬀerent approaches. Table 1 summarizes their information requirements and
+gradient-based updates.
+Our contributions are threefold:
+• Uniﬁed support-conditioned class evidence. We construct attribute-prototype
+and shared-entity evidence through the same ﬁxed typed half-path operators, map-
+ping distinct sources of class information into a common probability space. This
+3
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 1 Mechanisms and pretraining data of the evaluated methods. In the Pretraining data
+column, Yes indicates pretraining on the unlabeled target graph. Target update lists the
+components updated by gradient-based optimization.
+Method
+Structural processing
+Pretraining data
+Target update
+R-GCN, HAN,
+HGT, Simple-HGN
+Learned relation transforms or attention
+No
+Encoder and
+classiﬁer
+SeHGNN
+Fixed aggregation and learned semantic
+fusion
+No
+Fusion and classi-
+ﬁer
+HeCo / HGMAE
+Self-supervised structural representa-
+tions
+Yes
+Classiﬁer
+HGPrompt
+Pretrained encoder and prompt adapta-
+tion
+Yes
+Prompts
+MUG
+Shared pretrained encoder
+Yes
+Classiﬁer
+CHoE
+Pretrained structural experts
+Yes
+Prompts and
+classiﬁer
+SCETRA
+Fixed typed operators, support-derived
+evidence, and LOO selection
+No
+None
+enables direct class prediction from observed graph information and support labels
+without ﬁtting a graph encoder.
+• Exact gradient-free evidence adaptation. We formulate task adaptation as
+selecting among a prespeciﬁed family of single-source and fused prediction rules
+using support leave-one-out (LOO) evaluation. Exact support deletion removes self-
+label inﬂuence from all aﬀected statistics, while sparse factorization enables eﬃcient
+execution and a predeﬁned rule handles one-shot supervision.
+• Mechanism-oriented evaluation of evidence construction and adaptation.
+Experiments across four graphs and full- and few-shot supervision assess predictive
+performance and computational requirements. Matched comparisons reveal graph-
+dependent interactions between entity statistics and support-based rule selection,
+while a separate learned-fusion control examines how limited parameter ﬁtting and
+validation-based selection can change the use of ﬁxed evidence.
+2 Related Work
+Learned structural and semantic models.
+GCN and GraphSAGE learn neighborhood representations (Kipf and Welling 2017;
+Hamilton et al. 2017), while GAT learns attention over neighborhoods (Velikovi et al.
+2018). Analyses of message passing expressiveness and low-pass behavior help separate
+representational assumptions from implementation complexity (Xu et al. 2019; NT
+and Maehara 2019). For heterogeneous graphs, R-GCN introduces relation-speciﬁc
+transformations (Schlichtkrull et al. 2018), HAN learns attention at the node and
+semantic levels (Wang et al. 2019), and HGT uses transformations and attention that
+depend on node and edge types (Hu et al. 2020b). MAGNN aggregates information
+within and across meta-paths (Fu et al. 2020); Graph Transformer Networks learn
+composite relations for a target task (Yun et al. 2019). Together, these models learn
+representations, aggregation parameters, or semantic combinations over a given graph.
+4
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+HGB emphasizes input processing and evaluation and introduces Simple-HGN (Lv
+et al. 2021). SeHGNN separates ﬁxed neighborhood aggregation from learned semantic
+fusion (Yang et al. 2023). Our question follows this separation to class prediction: we
+construct distributions from current supports and assess how much can be achieved
+without ﬁtting those modules.
+Propagation and direct label information.
+Gaussian ﬁelds formulate graph semi-supervision through harmonic functions (Zhu
+et al. 2003). GNetMine applies consistency across heterogeneous relation graphs (Ji
+et al. 2010), while PathSim formalizes typed path-based peer similarity (Sun et al.
+2011). Propagation can be decoupled from prediction, as in SGC, SIGN, and
+APPNP (Wu et al. 2019; Frasca et al. 2020; Klicpera et al. 2019); GAMLP learns
+how to combine propagated information at multiple scales (Zhang et al. 2022).
+Connections between graph convolution and label propagation further clarify their
+relationship (Wang and Leskovec 2022). Correct and Smooth combines a learned pre-
+dictor with label-based correction and smoothing (Huang et al. 2021). These methods
+motivate examining graph information separately from ﬁtted parameters.
+SCETRA uses a particular support statistic at shared entities. Labels accumulate
+through a typed half-path transpose; each entity’s class composition is normalized and
+shrunk toward a prior before returning along the path. A direct path label propagation
+control instead returns the accumulated mass before normalizing it at the ﬁnal target.
+The comparison therefore changes both entity-level normalization and prior shrinkage
+under the same typed propagation structure.
+Few-shot adaptation.
+Matching Networks, Prototypical Networks, and MAML represent metric and opti-
+mization approaches to adaptation (Vinyals et al. 2016; Snell et al. 2017; Finn et al.
+2017). G-Meta transfers knowledge through local graph substructures (Huang and
+Zitnik 2020). Our evaluation focuses on a known class set within each public trans-
+ductive graph with limited supports, rather than episodic adaptation to novel classes.
+SCETRA uses prototypes in ﬁxed graph feature views and adapts a ﬁnite prediction
+family without a learned task encoder.
+Self-supervision and graph prompting.
+Deep Graph Infomax, GraphCL, and GraphMAE learn representations through infor-
+mation maximization, contrastive objectives, and masked reconstruction (Velikovi
+et al. 2019; You et al. 2020; Hou et al. 2022). HeCo and HGMAE develop heteroge-
+neous self-supervised objectives (Wang et al. 2021; Tian et al. 2023). GraphPrompt
+and All in One connect pretraining and downstream graph tasks through prompt-
+ing (Liu et al. 2023; Sun et al. 2023); HGPrompt and HetGPT address heterogeneous
+prompting (Yu et al. 2024; Ma et al. 2024). MUG targets universal heterogeneous
+pretraining, and CHoE uses experts conditioned on structure for prompting across
+domains (Shan et al. 2026; Li et al. 2026). We evaluate pretrained baselines under the
+stated information budget for the target graph and report their target labels and com-
+putation explicitly. Benchmark design beneﬁts from making these information and
+5
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+evaluation budgets visible (Hu et al. 2020a; Lv et al. 2021), because methods with the
+same number of target labels can use diﬀerent pretraining data and computation.
+3 Problem Deﬁnition
+Let G = (V, E, τ, ρ) be a heterogeneous graph with node types T and relation types
+R. Type a contains na nodes and features Xa. One target type t has C known classes.
+The support set S carries labels yS; query labels for Q are held by the evaluator. The
+classiﬁer receives
+P = (G, {Xa}a∈T , t, S, yS, Q, C),
+S ∩Q = ∅.
+(1)
+We study transductive, single-label classiﬁcation. Query features and topology are
+public, but query labels do not enter feature processing, path construction, adaptation,
+or conﬁguration selection. Graph topology and observable features can be reused
+across support assignments, while class evidence and selection are constructed from
+the labels supplied in the current task. A separate validation set may be used in the
+full setting. Strict K-shot tasks provide exactly K supports per class and no additional
+target validation labels.
+For a typed relation r : a →b, the adjacency Ar ∈Rnb×na
+≥0
+places receivers in rows
+and senders in columns. Edge weights and multiplicity are preserved. Inverse relations
+are explicit, with transposed matrices. We use uC = (1/C, . . . , 1/C) for the uniform
+class distribution.
+Table 2 Main notation.
+Symbol
+Meaning
+S, Q
+Labeled supports and unlabeled query nodes
+Pp
+Row-normalized typed half-path operator ending at the tar-
+get type
+Hj, µjc
+Fixed attribute view and its class-c prototype
+Np, mp
+Class-speciﬁc and total support mass at source entities
+θp
+Smoothed entity class distributions
+a, e
+Attribute and entity branch probabilities
+nA, nE
+Available expert counts in the two branches
+Frule
+Fixed bank of 44 candidate probability rules
+4 SCETRA: Support-Conditioned Class Evidence
+SCETRA has three stages: build ﬁxed feature views, construct two forms of class
+evidence, and adapt their combination using the permitted labels. The same typed
+operators connect public graph structure to both attribute propagation and support
+label associations, providing a uniﬁed structural interface for the two evidence routes.
+Fig. 2 summarizes these mechanisms on a typed heterogeneous graph. Public feature
+6
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Heterogeneous graph
+A
+A
+B
+B
+?
+?
+A support
+?
+query
+author
+venue
+Author → paper
+Paper → venue
+(A)  Attribute evidence
+Target views
+Class centroids
+Self
+Pp Za
+?
+a(v)
+Per-view
+features
+Pooled-scale
+distance
+Softmax,
+then mean
+(B)  Entity evidence
+One-hot labels
+Shared entities
+Query
+A
+B
+Pp⊤
+Pp
+?
+e(v)
+Np = Pp⊤Y
+mp = Pp⊤b
+Class mass
+Mass-based
+smoothing
+Mean over
+covered paths
+Candidate family
+Evidence configurations
+a : e weights
+Rules
+Attribute-only
+1 : 0
+8
+Entity-only
+0 : 1
+4
+Balanced fusion
+1 : 1
+16
+Count-weighted fusion
+nA : nE
+16
+Support-conditioned selection
+Exact LOO
+A
+s
+Hold out
+label of s
+−
+−
+Support vector
+Refit centroid
+and pooled scale
+Path weight
+Deduct from class A
+and total mass
+Prediction
+Full support
+?
+p̂q
+A
+B
+ŷq = A
+Fig. 2 SCETRA on a representative typed heterogeneous graph. The same normalized half-path
+operator P constructs propagated attribute views and, through P ⊤, accumulates support labels at
+shared entities. Attribute prototypes and smoothed entity-level class distributions expose both routes
+through common class probabilities. Exact LOO removes only the held-out label contribution while
+retaining the public node, attributes, and relations, then selects among 44 prespeciﬁed evidence
+conﬁgurations. A ﬁxed combination covers one support per class.
+preparation can be reused, while the class evidence reﬂects the supports available in
+the current task.
+4.1 Fixed Views over Typed Half-Paths
+A half-path p = (r1, . . . , rL) begins at source type a(p) and ends at target type t.
+Deﬁne
+Bp = ArL · · · Ar1,
+dp = Bp1,
+Pp = diag(d†
+p)Bp,
+(2)
+where d† reciprocates positive values and leaves zeros unchanged. Nonzero rows of Pp
+sum to one; zero rows indicate absent paths. Normalization applies to the complete
+product, preserving the relative mass of its path instances. Sparse factors apply the
+operator without materializing Bp.
+Each node type has ﬁxed processed features Z(d)
+a , using the label-free preparation
+in Appendix B. The dimension choices are d ∈{8, 32}. The attribute views are
+Hd = {Z(d)
+t
+} ∪{PpZ(d)
+a(p) : p ∈Pt},
+(3)
+where Pt contains schema-compatible one- and two-hop half-paths, including back-
+tracking. We retain two hops when there are at most 512 eligible paths; otherwise
+we use one hop. This ﬁxed rule based on the public schema bounds the view bank
+without selecting paths separately for each dataset.
+The target’s own feature view is valid at every target node. A propagated view is
+valid at nodes with nonzero path rows. For each view Hj, SCETRA considers both
+7
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+the processed representation and its row-normalized form,
+HL2
+j (v) = Hj(v)/ max(∥Hj(v)∥2, 10−12).
+(4)
+Normalization follows aggregation, so SCETRA retains both the original directional
+view and a normalized view that removes magnitude.
+4.2 Attribute Prototypes
+Each typed view describes similarity under a particular relation pattern and therefore
+has its own coordinate semantics. SCETRA preserves these semantics by constructing
+prototypes and scales within each view, then maps the resulting scores into a shared
+class probability space for comparison and combination.
+For view j, let Sj be its valid supports and Sjc its valid class-c supports. A pro-
+totype expert is available only if every class is represented and the view has ﬁnite,
+nonconstant features of nonzero dimension dj. Its prototypes and pooled scale are
+µjc = |Sjc|−1 X
+s∈Sjc
+Hj(s),
+(5)
+¯hj = |Sj|−1 X
+s∈Sj
+Hj(s),
+(6)
+σ2
+j = max
+(P
+s∈Sj ∥Hj(s) −¯hj∥2
+2
+|Sj|dj
+, 0.01
+)
+.
+(7)
+The scale uses all valid support vectors around their pooled mean. For a valid node
+v, the expert gives
+aj(v, c) =
+exp{−∥Hj(v) −µjc∥2
+2/(djσ2
+j )}
+P
+k exp{−∥Hj(v) −µjk∥2
+2/(djσ2
+j )}.
+(8)
+Available experts are averaged to form a(v). Their count is nA(v); when it is zero, the
+branch returns uC. The collection of ﬁxed views supplies several interpretations of sim-
+ilarity deﬁned by typed relations, while the support labels determine the corresponding
+class representatives.
+4.3 Entity-Level Label Evidence
+Let Y ∈{0, 1}nt×C hold support one-hot labels and zeros elsewhere, and let b indicate
+support membership. Labels accumulate at source entities through
+Np = P ⊤
+p Y,
+mp = P ⊤
+p b.
+(9)
+The value Np(e, c) is the eﬀective class-c support mass at entity e, and mp(e) =
+P
+c Np(e, c). Because path rows are normalized, these masses can be fractional.
+8
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+A uniform prior stabilizes limited support:
+θp(e, c) = Np(e, c) + α/C
+mp(e) + α
+,
+ep(v, c) =
+X
+e
+Pp(v, e)θp(e, c),
+(10)
+with α ∈{1, 4}. Entity evidence therefore carries labels to shared entities and then
+back to targets. It aggregates observed class associations in a space where targets can
+share context without requiring similar feature vectors.
+Coverage and evidence strength.
+For mp(e) > 0, write fp(e) = Np(e)/mp(e) and λp(e) = mp(e)/(mp(e) + α); at zero
+mass, set fp(e) = uC and λp(e) = 0. Then
+θp(e) = λp(e)fp(e) + (1 −λp(e))uC.
+(11)
+An entity with more support contributes more of its observed class composition. For
+a nonzero target row,
+ep(v) =
+X
+e
+Pp(v, e)λp(e)fp(e) + (1 −rp(v))uC,
+(12)
+rp(v) =
+X
+e
+Pp(v, e)λp(e).
+(13)
+Thus rp(v) ∈[0, 1] measures the support strength reached through this path. The
+coverage
+κp(v) =
+X
+e
+Pp(v, e)1[mp(e) > 0]
+(14)
+satisﬁes rp(v) ≤κp(v). Coverage indicates whether a path reaches entities associated
+with observed support labels, whereas evidence strength additionally accounts for the
+amount of support mass relative to the smoothing prior. Thus, a path can be covered
+while still providing only weak class-discriminative evidence. The expert is available
+when its path row is nonzero and κp(v) > 0. Uncovered entities retain their prior
+contribution in Eq. (10); the prediction is not renormalized over covered entities alone.
+This decomposition gives a useful conﬁdence bound:
+∥ep(v) −uC∥1 ≤2(1 −1/C)rp(v).
+(15)
+It follows from the triangle inequality and ∥f −uC∥1 ≤2(1 −1/C) for any class
+distribution. Sparse support coverage consequently limits the class preference that
+this evidence can express. The entity branch e(v) averages its nE(v) available path
+experts, returning uC when none is available.
+9
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+4.4 A Prespeciﬁed Family of Evidence Rules
+SCETRA considers a compact family covering distinct evidence regimes. Temperature
+acts after the experts within a branch have been averaged:
+TT (q)c =
+max(qc, 10−8)1/T
+P
+k max(qk, 10−8)1/T ,
+T ∈{0.25, 1}.
+(16)
+Write ˜a = TT (a), ˜e = TT (e), IA = 1[nA > 0], and IE = 1[nE > 0]. The two fusion
+rules are
+qbal(v) = IA˜a(v) + IE˜e(v)
+IA + IE
+,
+(17)
+qcnt(v) = nA(v)˜a(v) + nE(v)˜e(v)
+nA(v) + nE(v)
+.
+(18)
+A zero denominator returns uC. Balanced fusion assigns equal weight to available
+branches. Count-weighted fusion retains their relative numbers of available experts.
+At T = 1, the transform only applies the probability ﬂoor and renormalization. If the
+ﬂoor is inactive, count-weighted fusion is equivalent to averaging all available experts.
+Table 3 The 44 candidate rules. All choices and their ordering are common across graphs and
+label budgets.
+Family
+Choices
+Combination
+Count
+Attribute
+d, representation, T
+TT (a)
+8
+Entity
+α, T
+TT (e)
+4
+Balanced
+d, representation, α, T
+qbal
+16
+Count-weighted
+d, representation, α, T
+qcnt
+16
+4.5 Exact Support-Based Adaptation
+SCETRA selects a candidate by predicting each support after removing its own
+label from the evidence construction. The held-out node remains in the public graph
+together with its attributes and incident edges; only its label contribution is removed
+from the statistics that depend on the supports. Exact deletion covers both routes
+because a support inﬂuences its prototype, the distance scale, entity class numerators,
+entity denominators, and coverage.
+For a held-out support s ∈Sj whose expert remains available after deletion, let
+zs = Hj(s), nj = |Sj|, njc = |Sjc|, and M2,j = P
+s∈Sj ∥zs −¯hj∥2
+2. Prototype deletion
+gives
+µ(−s)
+jc
+= njcµjc −1[ys = c]zs
+njc −1[ys = c]
+.
+(19)
+10
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+The centered-moment identity updates the scale:
+(σ2
+j )(−s) = max
+(M2,j −
+nj
+nj−1∥zs −¯hj∥2
+2
+(nj −1)dj
+, 0.01
+)
+.
+(20)
+An expert becomes unavailable if deletion removes the last valid example of a class
+or the held-out node is invalid for that view.
+For entity evidence,
+N (−s)
+p
+(e, c) = Np(e, c) −Pp(s, e)1[ys = c],
+(21)
+m(−s)
+p
+(e) = mp(e) −Pp(s, e).
+(22)
+Smoothing
+and
+coverage
+are
+recomputed
+from
+these
+residual
+statistics.
+Equations (20)–(22) reproduce evidence construction on S \ {s}, including the entity
+denominators and availability, up to ﬂoating-point arithmetic.
+Candidates are ranked lexicographically by decreasing LOO Macro-F1, increasing
+class-balanced Brier loss, and increasing ﬁxed candidate index. Let q(−s)(s) denote
+the prediction at s from the remaining support labels, and let Rsc distribute unit
+mass uniformly over the maximizing classes. With Mab = P
+s∈S 1[ys = a]Rsb and
+Sc = {s ∈S : ys = c}, the two criteria are
+FLOO = 1
+C
+X
+c
+2Mcc
+P
+a Mac + P
+b Mcb
+,
+(23)
+LB = 1
+C
+X
+c
+1
+|Sc|
+X
+s∈Sc
+q(−s)(s) −onehot(c)
+
+2
+2 .
+(24)
+Within each fold, the held-out label ys serves only as the scoring target. Fractional
+scoring resolves probability ties independently of class indices during selection. Final
+query predictions use ordinary argmax.
+One-shot adaptation.
+If any class has fewer than two supports, a deletion cannot retain all classes. SCETRA
+uses the ﬁxed combination
+qlow = 1
+2qd=8, raw, α=4, T =1
+cnt
++ 1
+2qd=8, L2, α=4, T =1
+cnt
+.
+(25)
+This deﬁnes one-shot behavior without extra target validation labels.
+4.6 Sparse Computation
+Let Ep be the sum of nonzeros in the relation factors of path p. Applying Pp or
+P ⊤
+p
+to w columns uses O(Epw) sparse multiplication work, plus initialization and
+scaling of its dense intermediate arrays. The transpose applies target row scaling
+before the reversed transposed factors. Excluding feature preparation, path views
+11
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+cost O(P
+p Epd) and entity propagation costs O(P
+p EpC). For J attribute views,
+prototype distance evaluation costs at most O(J(nt +|S|)Cd). These operations avoid
+a dense nt × nt target kernel.
+Exact LOO adds support-dependent work. Prototype deletion and scoring cost
+O(J|S|Cd); entity deletion is bounded by
+O
+ X
+p
+[Ep|S| + na(p)|S|C]
+!
+,
+(26)
+up to the ﬁxed smoothing choices. Processing b held-out supports at a time bounds
+the principal residual tensor by O(na(p)bC), in addition to factors and intermediate
+products. Factorization therefore avoids materializing a dense matrix between target
+nodes, while exact adaptation retains a dependence on support size. Appendix C gives
+the complete inference sequence and execution details.
+5 Experimental Design
+Mechanism questions and datasets.
+The experiments address three questions. Capability asks how much classiﬁcation
+performance ﬁxed typed propagation and class evidence from the supports provide
+across supervision budgets. Mechanism asks which evidence sources are useful and
+how reliably selection using the support labels exploits them. Boundary asks how
+fusion selected using validation data changes the use of ﬁxed evidence and in which
+regimes additional learning helps. ACM, DBLP, Freebase, and RDF-MUTAG cover
+diﬀerent schemas and feature conditions. RDF-MUTAG is an RDF node task, distinct
+from the TU benchmark for graph classiﬁcation.
+Table 4 Graph statistics.
+Graph
+Nodes
+Edges
+Types
+Rel.
+Classes
+Train
+Test
+ACM
+10,942
+1,095,744
+4
+16
+3
+907
+2118
+DBLP
+26,128
+479,132
+4
+12
+4
+1217
+2840
+Freebase
+180,098
+2,115,376
+8
+72
+7
+2386
+5568
+RDF-MUTAG
+23,644
+148,454
+1
+46
+2
+272
+68
+Evaluation protocol and metrics.
+In the full-budget setting, methods use the released training and validation labels
+according to their respective protocols. In the strict few-shot setting, twenty ﬁxed
+seeds generate nested support sets with exactly K ∈{1, 3, 5, 10, 20} labels per class.
+The graph and query nodes are ﬁxed across draws, and no additional target validation
+labels are available. Query labels are used only for evaluation in both settings. We
+report Macro-F1 and Micro-F1 as percentages. Average ranks are computed from
+unrounded method means within each graph and metric, with midranks for ties.
+12
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Baselines.
+Full comparisons include HetSAGE, HetGCN, HAN, HGT, R-GCN, Simple-HGN, and
+SeHGNN (Hamilton et al. 2017; Kipf and Welling 2017; Wang et al. 2019; Hu et al.
+2020b; Schlichtkrull et al. 2018; Lv et al. 2021; Yang et al. 2023). The ﬁrst ﬁve use
+documented operator recipes; Simple-HGN and SeHGNN follow ports of the author
+recipes. SeHGNN’s RDF port merges predicates by pairs of node types while preserv-
+ing weighted multiplicity. Few-shot comparisons include HeCo, HGMAE, HGPrompt,
+MUG, and CHoE (Wang et al. 2021; Tian et al. 2023; Yu et al. 2024; Shan et al. 2026;
+Li et al. 2026). MUG and CHoE pretrain without labels on the same graph under the
+reported information budget. HetGPT supplies related context (Ma et al. 2024); meth-
+ods without an available implementation are included only in the literature discussion.
+Appendix D records recipe details.
+Computation.
+We separate one-time pretraining, target ﬁtting or support adaptation, learned target
+encoding when measured, and ﬁnal query computation. Label independent preprocess-
+ing is measured separately. Cached classiﬁer evaluation and a complete graph forward
+remain distinct stages. All GPU measurements use a single NVIDIA RTX 3090. The
+timing for SCETRA separates preprocessing, exact LOO selection, and ﬁnal predic-
+tion on ﬁxed full and ﬁve-shot partitions, with one warmup and ﬁve timed trials.
+Shared pretraining is counted once for each checkpoint identity. Memory is reported as
+peak allocated CUDA memory in GiB, with pretraining and target-run peaks shown
+separately when available. Appendix E records execution backends, cache boundaries,
+and the scope of each measurement.
+6 Results and Mechanism Analysis
+6.1 Predictive Capability of Support-Conditioned Class
+Evidence
+Table 5 shows that directly constructed class evidence achieves competitive perfor-
+mance across the four benchmarks. Without encoder pretraining or gradient updates,
+SCETRA obtains the highest reported Macro-F1 on ACM (93.44) and RDF-MUTAG
+(69.94), while remaining close to SeHGNN on DBLP (94.35 versus 94.84). Across
+the four graphs, SCETRA achieves the highest average Macro-F1 of 76.00 and the
+best average rank of 1.88. These results demonstrate that ﬁxed typed propagation
+and observed support labels can provide substantial class-discriminative information
+without ﬁtting a graph encoder.
+The results also reveal graph-dependent diﬀerences in the eﬀectiveness of direct
+evidence and learned representations. SeHGNN achieves the highest Macro-F1 on
+DBLP, while Simple-HGN performs best on Freebase. On RDF-MUTAG, SCETRA
+leads in Macro-F1, whereas Simple-HGN achieves the highest Micro-F1, indicating
+that their relative performance depends on the evaluation metric. Although SCETRA
+does not dominate every graph or metric, its competitive performance across diﬀerent
+13
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+graph structures and feature conditions supports explicit class-evidence construction
+as a viable alternative to learned graph classiﬁers in the evaluated settings.
+Table 5 Full-budget classiﬁcation. All methods use the same ﬁxed data split. Learned baselines
+report means and sample standard deviations over ﬁve runs with diﬀerent random seeds, whereas
+SCETRA is deterministic and has zero run-to-run variance. Ma/Mi denote Macro/Micro-F1 (%);
+x±s denotes mean and sample SD. Lower rank is better; bold marks the best unrounded value in
+each column. OOM denotes a memory failure. Aggregate and tie rules are deﬁned in Sect. 5.
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (4 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+HetSAGE
+50.09±22.02 54.72±19.10
+83.18±0.66
+83.92±0.68
+41.34±5.06
+60.68±2.16 56.03±10.20 59.71±11.79
+57.66
+64.76
+6.12
+HetGCN
+86.24±11.74 86.30±11.33
+84.01±0.24
+84.77±0.21 26.53±10.90
+53.19±4.78 54.73±12.23 57.94±12.15
+62.88
+70.55
+6.38
+HAN
+91.70±0.44
+91.62±0.44
+80.64±1.53
+81.27±1.52
+35.08±4.77
+53.76±7.41
+43.21±3.62
+61.76±7.50
+62.66
+72.11
+6.25
+HGT
+85.49±0.70
+85.39±0.72
+75.85±2.95
+76.78±2.81
+45.04±1.33
+61.01±1.74
+66.89±6.67
+70.88±7.01
+68.32
+73.52
+5.25
+R-GCN
+91.69±0.96
+91.61±0.90
+82.65±1.17
+83.38±1.11
+37.21±2.04
+57.39±2.31
+59.31±6.31
+64.41±6.10
+67.72
+74.20
+5.50
+Simple-HGN
+93.14±0.60
+93.07±0.62
+93.70±0.36
+94.16±0.33
+47.60±0.57 66.39±0.44
+62.93±4.77
+72.35±1.92
+74.34 81.49
+2.38
+SeHGNN
+93.28±0.32
+93.19±0.33 94.84±0.17 95.23±0.15
+47.01±0.57
+61.58±0.35
+65.24±4.85
+69.12±4.99
+75.09
+79.78
+2.25
+SCETRA
+93.44
+93.39
+94.35
+94.79
+46.26
+63.67
+69.94
+70.59 76.00
+80.61
+1.88
+6.2 Support Budget and Evidence Availability
+Table 6 Strict ﬁve- and ten-shot classiﬁcation. MUG and CHoE pretrain on the target graph;
+CHoE has ﬁve support/head seeds and the other complete methods have twenty. Averages use
+ACM and DBLP. Notation follows Table 5.
+(a) 5-shot
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (2 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+HeCo
+89.98±1.97 89.94±1.93
+69.68±3.67
+70.57±3.49
+OOM
+OOM
+47.56±8.05
+49.49±8.07
+79.83
+80.26
+2.00
+HGMAE
+64.12±4.24
+65.38±3.46
+64.57±5.73
+66.08±4.90
+OOM
+OOM
+OOM
+OOM
+64.34
+65.73
+4.50
+HGPrompt
+69.49±7.34
+70.02±6.41
+87.15±2.87
+88.30±2.54
+12.28±1.60
+16.31±4.17
+49.99±5.65
+52.13±6.64
+78.32
+79.16
+3.00
+MUG
+75.91±11.88
+77.63±9.27
+63.64±5.19
+65.15±4.57
+OOM
+OOM
+OOM
+OOM
+69.77
+71.39
+4.00
+CHoE
+63.10±6.86
+64.72±5.50
+51.42±4.06
+52.21±4.25
+OOM
+OOM
+OOM
+OOM
+57.26
+58.47
+6.00
+SCETRA
+87.15±4.73
+87.31±4.33 90.46±2.53 91.10±2.59 24.37±4.05 24.07±4.67 65.11±8.88 66.32±9.11
+88.80 89.20
+1.50
+(b) 10-shot
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (2 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+HeCo
+91.05±1.05
+90.98±1.04
+73.41±1.57
+74.04±1.44
+OOM
+OOM
+49.38±8.89
+51.25±8.70
+82.23
+82.51
+2.00
+HGMAE
+66.20±2.16
+67.22±2.13
+69.96±2.10
+70.78±2.03
+OOM
+OOM
+OOM
+OOM
+68.08
+69.00
+5.00
+HGPrompt
+71.77±5.15
+71.69±5.46
+88.98±1.07
+89.93±1.04
+11.82±1.88
+17.18±5.04
+52.18±5.92
+54.19±6.79
+80.38
+80.81
+3.00
+MUG
+76.21±15.95 77.66±12.40
+69.21±2.84
+70.09±2.53
+OOM
+OOM
+OOM
+OOM
+72.71
+73.88
+4.00
+CHoE
+67.93±4.99
+68.89±4.56
+54.30±2.75
+55.12±3.07
+OOM
+OOM
+OOM
+OOM
+61.11
+62.00
+5.50
+SCETRA
+90.55±1.77
+90.49±1.80 91.80±1.67 92.39±1.62 29.18±3.20 28.35±6.11 67.44±5.60 68.60±5.96
+91.17 91.44
+1.50
+The few-shot results in Table 6 and Figure 3 demonstrate that directly constructed
+class evidence remains competitive under limited supervision. At ﬁve and ten labels
+per class, SCETRA achieves the highest average Macro-F1 and Micro-F1 across ACM
+and DBLP, the two graphs with complete results for all compared methods. Notably,
+SCETRA achieves these results without encoder pretraining or gradient updates,
+14
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+40
+50
+60
+70
+80
+90
+100
+Macro-F1 (%)
+ACM
+30
+40
+50
+60
+70
+80
+90
+100
+DBLP
+10
+15
+20
+25
+30
+35
+40
+Freebase
+30
+40
+50
+60
+70
+80
+RDF-MUTAG
+1
+3
+5
+10
+20
+shots
+40
+50
+60
+70
+80
+90
+100
+Micro-F1 (%)
+1
+3
+5
+10
+20
+shots
+30
+40
+50
+60
+70
+80
+90
+100
+1
+3
+5
+10
+20
+shots
+10
+15
+20
+25
+30
+35
+40
+1
+3
+5
+10
+20
+shots
+30
+40
+50
+60
+70
+80
+HeCo
+HGMAE
+HGPrompt
+MUG
+CHoE
+SCETRA (Ours)
+Fig. 3 Performance across ﬁve support budgets. Curves report Macro-F1 and Micro-F1, and the
+SCETRA band shows one sample SD. Hollow markers indicate incomplete planned repeats. MUG
+and CHoE use pretraining on the target graph.
+whereas the competing methods rely on learned representations. Results on Free-
+base and RDF-MUTAG are also reported to characterize performance across diﬀerent
+graph conditions.
+The amount of available supervision substantially aﬀects the predictive capability
+of SCETRA. As the support budget increases from one to ten labels per class, its mean
+Macro-F1 improves from 77.38 to 90.55 on ACM and from 52.43 to 91.80 on DBLP.
+Increasing the support budget provides more observations for constructing attribute
+prototypes and shared-entity class statistics. It also changes the available adaptation
+mechanism: SCETRA uses a predeﬁned rule at one-shot, whereas exact support LOO
+enables rule selection from three-shot onward. The observed improvements therefore
+reﬂect the combined eﬀects of richer support-derived evidence and the availability of
+support-based selection, rather than isolating either factor.
+The performance gains nevertheless vary across graphs and supervision budgets.
+HeCo remains stronger on ACM at ﬁve and ten labels per class, while HGPrompt
+performs better on DBLP under one-shot supervision. Freebase presents a more
+challenging setting for direct evidence construction, although SCETRA improves its
+Macro-F1 from 15.52 at one-shot to 29.18 at ten-shot. These results suggest that
+support-conditioned class evidence can provide a competitive alternative to pretrained
+representations under limited supervision, while its eﬀectiveness remains dependent
+on the graph and available support labels.
+6.3 Evidence Sources and Support-Based Selection
+Table 7 reveals distinct patterns in the usefulness of attribute and entity evidence.
+Attribute evidence is more eﬀective on ACM and RDF-MUTAG, whereas entity
+evidence performs better on DBLP and Freebase. Under full-budget supervision,
+SCETRA matches the strongest restricted branch on ACM and RDF-MUTAG and
+achieves higher Macro-F1 than either restricted branch on DBLP and Freebase. These
+15
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 7 Full-budget evidence and selection controls. Restricted branches select within their
+allowed candidate subsets.
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (4 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+SCETRA
+93.44 93.39 94.35 94.79 46.26
+63.67 69.94
+70.59 76.00 80.61
+1.38
+Attribute only 93.44 93.39
+82.20
+82.75
+30.87
+32.54 69.94
+70.59
+69.11
+69.82
+3.25
+Entity only
+88.91
+88.81
+93.89
+94.33
+43.91 63.94
+39.82
+66.18
+66.63
+78.31
+3.50
+Fixed rule
+92.96
+92.92
+92.81
+93.35
+42.29
+59.95
+48.54
+69.12
+69.15
+78.83
+3.50
+Uniform bank
+92.92
+92.87
+93.53
+94.01
+44.78
+62.79
+44.35
+67.65
+68.89
+79.33
+3.38
+results indicate that diﬀerent graphs beneﬁt from diﬀerent uses of the available evi-
+dence, motivating support-conditioned rule selection rather than a universally ﬁxed
+combination.
+The importance of rule selection is particularly apparent when averaging across
+candidate rules obscures an informative evidence source. On RDF-MUTAG, uniform
+averaging over the candidate bank yields 44.35 Macro-F1, compared with 69.94 for
+both SCETRA and the attribute-only variant. This result illustrates that combining
+available predictions indiscriminately can be less eﬀective than selecting a suitable
+evidence rule. In particular, the selected predictor need not always fuse both sources;
+preserving a strong individual branch can also provide competitive predictions.
+Table 8 Evidence and selection controls over twenty support samplings at ﬁve and ten labels per
+class.
+(a) 5-shot
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (4 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+SCETRA
+87.15±4.73
+87.31±4.33
+90.46±2.53
+91.10±2.59
+24.37±4.05
+24.07±4.67
+65.11±8.88
+66.32±9.11
+66.77 67.20
+2.25
+Attribute only 88.26±2.62 88.31±2.49
+68.36±4.20
+69.26±4.03
+15.20±3.41
+18.70±5.69 66.18±7.82 67.35±8.11
+59.50
+60.90
+3.00
+Entity only
+66.95±3.16
+67.92±2.78 91.15±1.37 91.82±1.36 26.01±2.42 24.33±4.80
+51.30±7.49
+54.34±8.89
+58.85
+59.60
+3.00
+Fixed rule
+87.83±3.00
+87.87±2.92
+85.28±2.27
+85.80±2.30
+21.93±3.95
+22.68±7.00
+59.71±8.40
+61.10±9.25
+63.69
+64.36
+3.25
+Uniform bank
+86.29±4.40
+86.41±4.13
+89.50±1.51
+90.12±1.52
+22.39±4.10
+23.97±7.98
+56.27±8.78
+58.09±9.84
+63.61
+64.65
+3.50
+(b) 10-shot
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (4 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+SCETRA
+90.55±1.77
+90.49±1.80
+91.80±1.67
+92.39±1.62
+29.18±3.20
+28.35±6.11
+67.44±5.60
+68.60±5.96
+69.74 69.96
+2.00
+Attribute only
+90.16±2.49
+90.09±2.53
+73.46±4.00
+73.99±4.06
+18.57±3.70
+21.74±6.64 68.87±3.64 70.00±4.25
+62.77
+63.96
+3.50
+Entity only
+70.15±2.74
+70.50±2.66 92.11±1.27 92.71±1.21 30.46±2.75 28.57±5.46
+52.18±7.52
+54.49±8.37
+61.22
+61.57
+3.00
+Fixed rule
+90.94±1.12 90.86±1.14
+89.44±0.79
+90.02±0.79
+26.01±3.17
+26.10±6.80
+62.44±7.08
+63.82±7.44
+67.21
+67.70
+3.00
+Uniform bank
+89.65±2.02
+89.56±2.02
+91.08±0.89
+91.70±0.89
+26.32±2.99
+26.67±6.83
+59.73±7.50
+61.25±8.03
+66.70
+67.29
+3.50
+The few-shot controls further examine the beneﬁts and limitations of support-
+based selection (Table 8). At ﬁve labels per class, SCETRA achieves an average
+Macro-F1 of 66.77 across the four graphs, compared with 63.69 for the predeﬁned
+ﬁxed rule and 63.61 for uniform averaging. Similar aggregate advantages are observed
+at ten labels per class. However, at ﬁve-shot, each graph has a restricted branch
+with a slightly higher mean Macro-F1 when identiﬁed retrospectively from the evalu-
+ation results. This gap highlights the diﬃculty of selecting the most eﬀective evidence
+source from limited support labels. Thus, while support-based LOO selection improves
+16
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+aggregate performance over the nonadaptive references, its ability to identify the best
+evidence rule remains dependent on the graph and supervision budget.
+6.4 Entity Statistics and Support-Based Rule Selection
+Table 9 compares direct typed label propagation (LP) with smoothed entity statistics
+under identical paths, feature views, supports, and ﬁxed fusion. Direct LP normalizes
+label mass at target nodes, whereas SCETRA normalizes and shrinks class distribu-
+tions at shared entities. The resulting eﬀects vary across graphs. On DBLP, entity-level
+smoothing improves entity-only Macro-F1 from 90.58 to 93.92, but under ﬁxed fusion,
+direct LP performs better on DBLP and Freebase, while the smoothed statistic per-
+forms better on ACM and RDF-MUTAG. Their average fused Macro-F1 values remain
+close (70.20 versus 69.65), indicating that neither statistic is uniformly preferable.
+Table 9 Matched propagation controls use eight-dimensional raw views, identical typed paths and
+supports, and a ﬁxed fusion rule. LP normalizes after returning to targets; the SCETRA statistic
+normalizes and smooths at shared entities.
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (4 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+LP (entity)
+89.66±0.48
+89.53±0.48
+90.58±0.35
+91.25±0.31
+41.80±0.40
+62.49±0.28
+39.82±0.00
+66.18±0.00
+65.47
+77.36
+2.88
+Smooth (entity)
+87.08±0.49
+86.97±0.49 93.92±0.09 94.34±0.09
+41.43±0.80
+62.15±0.41
+39.82±0.00
+66.18±0.00
+65.56
+77.41
+2.88
+LP (fused)
+92.36±0.17
+92.28±0.17
+91.60±0.26
+92.15±0.25 43.97±0.92 62.53±0.64
+52.87±4.66 69.12±2.08
+70.20 79.02
+1.69
+Smooth (fused)
+92.84±0.06 92.78±0.06
+90.36±0.34
+91.01±0.33
+41.01±0.26
+56.97±0.23 54.39±2.89 69.12±1.47
+69.65
+77.47
+2.56
+Interaction with support selection.
+Table 10 further examines whether these diﬀerences persist when both statistics use
+matched support-based LOO selection.
+The interaction is particularly evident on DBLP. Under ﬁve-shot supervision,
+replacing direct LP with smoothed entity statistics changes Macro-F1 by −9.79 points
+under ﬁxed fusion but by +2.05 points with LOO. Correspondingly, LOO improves
+the smoothed statistic by +11.78 points, compared with −0.06 for direct LP. On
+Freebase, LOO narrows the smoothed statistic’s deﬁcit from −7.89 to −2.94 points,
+whereas ACM and RDF-MUTAG exhibit diﬀerent patterns. Under full-budget super-
+vision, the corresponding smoothed-versus-LP diﬀerences with LOO are +0.21, +2.19,
+−2.21, and 0.00 points on ACM, DBLP, Freebase, and RDF-MUTAG, respectively.
+On RDF-MUTAG, both LOO variants select attribute-only evidence across all ﬁve
+full partitions.
+These results reveal graph-dependent interactions between entity statistics and
+support-based rule selection. The eﬀectiveness of a particular statistic depends in
+part on how its evidence is used, rather than on an intrinsic advantage of entity-level
+smoothing or LOO selection alone.
+6.5 Additional Adaptation through Learned Fusion
+Table 11 examines whether additional parameter ﬁtting can improve the use of ﬁxed
+class evidence. The initial and learned variants share identical branch evidence, while
+17
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 10 Paired eﬀects of entity statistics and exact support leave-one-out (LOO) selection. A
+and B use ﬁxed count-weighted fusion with direct typed label propagation and smoothed entity
+statistics, respectively. C and D use the same two statistics with LOO selection over matched banks
+of eight rules. Panel (a) reports mean Macro-F1 (%). Panel (b) reports mean paired diﬀerences and
+sample standard deviations in percentage points. The interaction I = (D −B) −(C −A) measures
+the change in the eﬀect of LOO when the entity statistic is used. Full training partitions use the
+training subset of each frozen train/validation split.
+(a) Macro-F1 (%)
+5-shot
+Full-budget
+Graph
+A
+B
+C
+D
+A
+B
+C
+D
+ACM
+83.18
+85.93
+85.03
+85.22
+92.36
+92.84
+92.39
+92.60
+DBLP
+88.49
+78.69
+88.42
+90.47
+91.60
+90.36
+91.73
+93.92
+Freebase
+27.86
+19.97
+27.58
+24.64
+43.97
+41.01
+44.30
+42.09
+RDF-MUTAG
+57.55
+63.24
+64.28
+66.07
+52.87
+54.39
+69.94
+69.94
+(b) Paired eﬀects
+Entity statistic
+LOO selection
+Interaction
+Graph
+B −A
+D −C
+C −A
+D −B
+I
+5-shot
+ACM
++2.76 ± 2.00 +0.19 ± 2.81
++1.85 ± 2.64
+−0.71 ± 3.20
+−2.56 ± 3.57
+DBLP
+−9.79 ± 4.50 +2.05 ± 2.77
+−0.06 ± 1.32 +11.78 ± 5.76 +11.84 ± 5.43
+Freebase
+−7.89 ± 2.97 −2.94 ± 3.89
+−0.28 ± 2.28
++4.67 ± 4.52
++4.95 ± 4.24
+RDF-MUTAG +5.70 ± 4.10 +1.79 ± 6.77
++6.73 ± 9.63
++2.82 ± 6.37
+−3.91 ± 7.20
+Full-budget
+ACM
++0.48 ± 0.14 +0.21 ± 0.32
++0.03 ± 0.35
+−0.24 ± 0.19
+−0.27 ± 0.42
+DBLP
+−1.24 ± 0.34 +2.19 ± 0.34
++0.13 ± 0.13
++3.55 ± 0.37
++3.43 ± 0.40
+Freebase
+−2.96 ± 0.99 −2.21 ± 0.86
++0.33 ± 0.33
++1.08 ± 0.18
++0.74 ± 0.35
+RDF-MUTAG +1.52 ± 1.98 +0.00 ± 0.00 +17.07 ± 4.29 +15.55 ± 2.87
+−1.52 ± 1.98
+the latter optimizes three fusion scalars using support LOO and selects a checkpoint
+on validation data. In contrast, SCETRA adapts through exact support LOO selection
+from a broader, prespeciﬁed family of evidence rules without gradient updates.
+The eﬀects of learned fusion vary across graphs. It improves Macro-F1 by 2.71
+points on DBLP and 26.30 points on RDF-MUTAG, but changes performance by
+−0.14 and −1.03 points on ACM and Freebase, respectively. On RDF-MUTAG,
+learned fusion reaches 69.94 Macro-F1, matching SCETRA at the reported precision.
+Across all four graphs, SCETRA achieves the highest average Macro-F1 of 76.00.
+These results show that limited parameter ﬁtting, together with validation-based
+selection, can substantially improve the use of ﬁxed evidence in some settings, while
+support-based rule selection oﬀers a competitive gradient-free alternative.
+6.6 Computational Characteristics
+SCETRA concentrates its recorded cost in support adaptation and direct query com-
+putation. In the full-budget panels, it uses 0.151 GiB on ACM and 0.114 GiB on
+DBLP, the lowest recorded peak among the displayed methods. Its adaptation takes
+3.47 seconds on ACM and 1.14 seconds on DBLP; the latter is also the shortest
+18
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 11 Fusion control with ﬁxed branch evidence and three parameters trained on support
+leave-one-out predictions.
+Method
+ACM
+DBLP
+Freebase
+RDF-MUTAG
+Avg. (4 graphs)
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi
+Ma
+Mi Macro Micro Rank ↓
+Initial fusion
+92.89
+92.82
+91.32
+91.94
+43.09
+59.91
+43.64
+66.18
+67.73
+77.71
+2.50
+Learned fusion
+92.74
+92.68
+94.02
+94.44
+42.06
+55.75 69.94
+70.59
+74.69
+78.36
+2.38
+SCETRA
+93.44 93.39 94.35 94.79 46.26 63.67 69.94
+70.59 76.00 80.61
+1.12
+10−1
+100
+101
+102
+HetSAGE
+HetGCN
+HAN
+HGT
+R-GCN
+Simple-HGN
+SeHGNN
+SCETRA
+2.53
+16.2
+4.76
+5.23
+5.13
+66.5
+15.6
+3.47
+(a) ACM
+Training / adaptation
+10−3
+10−2
+10−1
+100
+0.0868
+0.0954
+0.0892
+0.0843
+0.114
+0.119
+0.244
+0.101
+Query prediction
+10−2
+10−1
+100
+101
+0.191
+0.31
+1.01
+2.73
+0.25
+0.69
+1.03
+0.151
+Peak GPU memory
+10−1
+100
+101
+102
+Seconds (log scale)
+HetSAGE
+HetGCN
+HAN
+HGT
+R-GCN
+Simple-HGN
+SeHGNN
+SCETRA
+1.93
+4.56
+3.55
+5.03
+2.58
+21.7
+3.33
+1.14
+(b) DBLP
+10−3
+10−2
+10−1
+100
+Seconds (log scale)
+0.036
+0.0493
+0.0439
+0.039
+0.0588
+0.0686
+0.0177
+0.0454
+10−2
+10−1
+100
+101
+GiB (log scale)
+0.179
+0.313
+0.634
+1.32
+0.267
+0.718
+0.324
+0.114
+Full budget / ACM and DBLP (no pretraining)
+Time excludes separately measured preprocessing; memory is the recorded target stage peak.
+Fig. 4 Recorded full-budget CUDA costs on ACM and DBLP. Columns report ﬁtting or sup-
+port adaptation, query prediction, and peak allocated memory on common logarithmic scales. Time
+excludes separately measured preprocessing; memory is the recorded peak for the target stage.
+recorded ﬁtting or adaptation stage. These measurements place exact LOO within a
+small recorded memory footprint.
+The ﬁve-shot panels expose a diﬀerent allocation of work. SCETRA requires no
+pretraining and uses 0.562/0.184 seconds for adaptation on ACM/DBLP, followed
+by 0.102/0.036 seconds for query prediction. Pretrained methods place more work
+before target adaptation and can obtain very small cached query stages. SCETRA
+instead performs evidence construction and selection for the current supports, giving
+a distinct cost proﬁle that accompanies its gradient-free design. Appendix E retains
+the complete stage records and backend labels.
+19
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+100
+101
+102
+103
+HeCo
+HGMAE
+HGPrompt
+MUG
+CHoE
+SCETRA
+163
+139
+3.91
+70.2
+72.9
+Not required
+(a) ACM
+Pretraining
+10−2
+10−1
+100
+101
+102
+0.243
+0.201
+16
+0.15
+NA
+0.562
+Training / adaptation
+10−5
+10−3
+10−1
+0.000312
+0.000726
+0.0323
+0.000127
+NA
+0.102
+Query prediction
+10−2
+10−1
+100
+101
+0.0526
+1.27
+0.071
+9.53
+4.33
+0.133
+NA
+10.7
+NA
+NA
+0.14
+Peak GPU memory
+100
+101
+102
+103
+Seconds (log scale)
+HeCo
+HGMAE
+HGPrompt
+MUG
+CHoE
+SCETRA
+339
+12.3
+4.08
+10.7
+4.08
+Not required
+(b) DBLP
+10−2
+10−1
+100
+101
+102
+Seconds (log scale)
+0.234
+0.198
+9.54
+0.152
+NA
+0.184
+10−5
+10−3
+10−1
+Seconds (log scale)
+0.000358
+0.000537
+0.0202
+0.000151
+NA
+0.0359
+10−2
+10−1
+100
+101
+GiB (log scale)
+0.0289
+1.11
+0.0344
+0.846
+1.66
+0.161
+NA
+3.91
+NA
+NA
+0.0786
+5-shot / ACM and DBLP
+MUG cached queries exclude encoding: ACM 3.61 s; DBLP 0.0752 s. CHoE target stages are incomplete.
+Target stage memory
+Pretraining memory
+Fig. 5 Recorded ﬁve-shot CUDA costs on ACM and DBLP. Columns align four stages: pretraining,
+target adaptation, query prediction, and peak GPU memory. Hatched and solid bars show pretraining
+and target stage memory, respectively; NA marks an unmeasured stage. MUG uses cached embeddings
+at query time, and the additional CHoE records appear in Table E2.
+7 Discussion
+The results provide a complementary perspective on heterogeneous node classiﬁca-
+tion by separating the construction of class-discriminative evidence from the ﬁtting
+of graph representations and prediction functions. Across the evaluated graphs, ﬁxed
+typed propagation and observed support labels provide substantial predictive infor-
+mation without encoder pretraining or gradient updates. However, the usefulness of
+this information diﬀers across evidence sources and graphs. Attribute-based evidence
+is particularly eﬀective on ACM and RDF-MUTAG, whereas entity-mediated label
+associations play a more prominent role on DBLP and Freebase. These diﬀerences
+suggest that neither attribute similarity nor shared-entity class associations should be
+assumed to provide universally reliable evidence. Instead, their value depends on the
+available graph information and the current support set.
+The matched controls further show that evidence construction and rule selection
+are distinct but interacting aspects of prediction. Under ﬁxed fusion, replacing direct
+typed label propagation with smoothed entity statistics can either improve or degrade
+performance. Allowing both statistics to use the same support-based LOO selection
+changes their relative eﬀectiveness, most notably on DBLP. On Freebase, selection
+reduces but does not eliminate the disadvantage of the smoothed statistic, while
+on RDF-MUTAG the full-budget LOO conﬁgurations select attribute-only evidence
+20
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+under both statistics. These observations do not establish the superiority of a particu-
+lar entity statistic. Rather, they show that the predictive value of constructed evidence
+must be interpreted in relation to how that evidence is selected and combined. This
+distinction motivates SCETRA’s separation between explicit evidence construction
+and support-conditioned rule selection.
+Additional parameter ﬁtting provides another way to adapt the use of constructed
+evidence. The learned-fusion control shows that optimizing a small number of fusion
+parameters, ﬁtting three fusion parameters on support leave-one-out predictions, can
+substantially change performance even when the underlying branch evidence remains
+ﬁxed. The eﬀect is concentrated in particular graphs rather than being uniformly
+beneﬁcial. SCETRA instead adapts through discrete rule selection from the observed
+supports. Because these alternatives diﬀer in both adaptation mechanisms and selec-
+tion information, their comparison should not be interpreted as isolating the eﬀect of
+gradient optimization alone. Together, they illustrate diﬀerent ways to exploit ﬁxed
+class evidence and help clarify when additional learning may be useful.
+Several limitations deﬁne the scope of the present ﬁndings. The evaluation con-
+siders transductive node classiﬁcation with known classes, and the same inference
+procedure is applied across several graph schemas without separate gradient ﬁtting.
+It does not establish transfer to entirely unseen graphs or novel classes. Exact LOO
+removes self-label inﬂuence from support-based evaluation but does not guarantee
+that the selected rule is optimal for unlabeled queries, particularly with very limited
+supports. One-shot tasks therefore rely on a predeﬁned combination, and the com-
+putational cost of exact selection increases with support size. The reported eﬃciency
+measurements also distinguish reusable preprocessing from support-dependent adap-
+tation and prediction, rather than representing a single end-to-end cost under every
+deployment scenario. These boundaries motivate further investigation of more reliable
+support-based selection, broader transfer settings, and reduced adaptation costs.
+8 Conclusion
+We presented SCETRA, a gradient-free inference framework that constructs attribute-
+prototype and shared-entity class evidence from ﬁxed typed propagation and observed
+support labels. Exact support LOO enables task-conditioned selection among pre-
+speciﬁed prediction rules without ﬁtting a graph encoder. Experiments across four
+transductive benchmarks demonstrate the predictive capability of explicit class evi-
+dence under diﬀerent supervision budgets. Matched controls further reveal that the
+eﬀectiveness of entity statistics depends on how their evidence is selected, with graph-
+dependent outcomes rather than a uniformly preferred construction. These ﬁndings
+support explicit evidence construction and support-conditioned selection as a practical
+approach to heterogeneous node classiﬁcation, while clarifying the potential beneﬁts
+and remaining limitations of additional adaptation.
+21
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 23 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Appendix A
+Experimental Protocols for Mechanism
+Controls
+A.1
+Evidence Source and Selection Controls
+The attribute and entity controls retain support selection within their respective can-
+didate families. The ﬁxed fusion used with very few supports and uniform averaging
+of 44 candidates provide two nonadaptive references. Together, these controls sepa-
+rate the contribution of each evidence source from the contribution of selecting how
+the evidence is used.
+A.2
+Matched Propagation and Support Selection
+Matched propagation.
+We ﬁx raw views of dimension eight, α = 4, supports, paths, and expert availability.
+Entity probabilities are compared with direct PpP ⊤
+p Y followed by normalization at
+the target; zero mass returns the same uniform prior. The entity and ﬁxed fusion
+versions are measured on ﬁve full partitions. This comparison captures the joint eﬀect
+of normalization at shared entities and prior shrinkage.
+Matched support selection.
+Using the same paths, views, and statistics as the matched propagation control, we
+cross the choice of entity statistic with exact support LOO. Both ﬁxed arms use count-
+weighted fusion at T = 1. Each adaptive arm selects from eight matched rules that pair
+one of four options (attribute only, entity only, balanced fusion, and count-weighted
+fusion) with T ∈{0.25, 1}. Here T = 1 leaves the branch probabilities unchanged, and
+the ﬁxed rule belongs to both banks.
+Each fold retains the held-out node in the graph and removes its label from proto-
+types, scales, entity class mass, and availability. Direct propagation also renormalizes
+its returned mass after deletion. Both banks use the same LOO Macro-F1, class-
+balanced Brier score, and ﬁxed candidate order for selection. The selected rule is
+evaluated with all support labels restored. All four arms share each of the twenty
+frozen ﬁve-shot support draws per graph and each of the ﬁve training subsets from
+the full train/validation partitions. Neither panel uses a separate validation set for
+selection. We compute contrasts within each support set before summarizing across
+draws or partitions.
+A.3
+Support-LOO-Trained Fusion
+The initial and learned fusion variants use the same branch evidence, constructed
+from eight-dimensional raw views with α = 4. For both variants, the support set is
+the union of the training and validation subsets. Starting from the initial fusion, we
+optimize one branch logit and two log temperatures with Adam for 100 steps at a
+learning rate of 0.05. The objective is class-balanced negative log-likelihood on exact
+support leave-one-out predictions. We use the ﬁnal iterate for query prediction, with
+no separate validation set for checkpoint selection.
+22
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 24 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Appendix B
+Feature Preparation and Numerical
+Details
+Dense attributes use column medians and interquartile ranges ﬂoored at 10−6, clip-
+ping to [−10, 10]; missing and constant columns contribute zero. Sparse features
+use column RMS scaling without centering. Attribute-free types receive eight ﬁxed
+log-transformed summaries: sum, mean, maximum, and nonzero relation fraction
+over incoming and outgoing neighborhoods. Features with excess dimension use
+ﬁxed-seed randomized SVD (seed 1729, eight oversampling directions, two power iter-
+ations). Degenerate directions can reduce the eﬀective dimension. No label enters this
+preparation.
+Appendix C
+Inference Procedure
+Construct explicit inverse relation channels with exact weighted transposes, retaining
+edge multiplicity. Enumerate schema-compatible half-paths according to the ﬁxed cap
+rule. Apply the complete-product row normalization through sparse factors. Build
+raw and L2 attribute views; construct prototypes, pooled scales, smoothed entity
+distributions, and availability from the supports. With at least two supports per class,
+delete each support’s contribution from every statistic that depends on labels, evaluate
+the 44 ﬁxed rules, and select by LOO Macro-F1, balanced Brier score, and ﬁxed
+index. Otherwise use the predeﬁned raw/L2 combination for limited supports. Finally
+evaluate the selected rule on the requested query IDs. Caches and public feature
+statistics depend only on public inputs.
+Complete deletion updates numerators, denominators, and availability, remov-
+ing the label contribution from shared entity statistics. All paths use receiver-
+row/sender-column matrices; inverse channels retain their shared relation family.
+Sparse factorization avoids materializing a dense kernel between target nodes.
+Appendix D
+Baseline Recipes and Information
+Budgets
+The supervised operator defaults use hidden dimension 64, dropout 0.5, Adam learning
+rate 0.005, weight decay 0.0005, at most 200 epochs, and patience 30 in the full setting,
+ordering validation Macro-F1 then Micro-F1. HetSAGE applies typed SAGEConv;
+HetGCN uses a bipartite GCN port with joint indices; HAN uses typed HANConv
+inputs. These ﬁxed recipes provide a common supervised comparison.
+Simple-HGN follows its documented two-layer author recipe with at most 300
+epochs, learning rate 0.0005, weight decay 0.0001, and validation NLL checkpointing.
+SeHGNN uses 50 epochs, embedding dimension 256, hidden dimension 512, dropout
+0.5, input dropout 0.1, learning rate 0.001, no weight decay, and attributes with-
+out propagated labels. ACM, DBLP, and Freebase retain their documented feature
+and aggregation adaptations. The RDF port represents channels at the level of node
+type pairs. Equivalent execution backends retain model operations and their training
+budgets while reporting costs separately.
+23
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 25 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+HeCo, HGMAE, HGPrompt, MUG, and CHoE pretrain on the unlabeled target
+graph. Query labels are reserved for evaluation. CHoE shares frozen expert com-
+putation across independently trained support heads on the same graph, so the
+independent head time represents one component of adaptation. MUG retains the
+oﬃcial input width and contextual feature slicing documented by the adapter. These
+comparisons adapt the published methods to the schemas of the evaluated graphs.
+Appendix E
+Computational Stages and Missing
+Results
+Table E1: Recorded CUDA stages and memory. P: pretraining seconds;
+A: target adaptation seconds; Q: query seconds; E: separately measured
+target encoding seconds. MP/MT: pretraining and target stage peak
+allocated GiB. Times exclude separately measured preprocessing; mem-
+ory retains its recorded scope. NA is unmeasured; group IDs map to the
+accompanying CSV.
+Graph/setting
+Method/group
+P
+A
+Q
+E
+MP
+MT
+ACM/Full
+HAN/1
+0
+4.76
+0.0892
+NA
+NA
+1.01
+DBLP/Full
+HAN/2
+0
+3.55
+0.0439
+NA
+NA
+0.634
+Freebase/Full
+HAN/3
+0
+54
+0.192
+NA
+NA
+4.38
+RDF-MUTAG/Full
+HAN/4
+0
+6.55
+0.0858
+NA
+NA
+2.51
+ACM/Full
+HGT/5
+0
+5.23
+0.0843
+NA
+NA
+2.73
+DBLP/Full
+HGT/6
+0
+5.03
+0.039
+NA
+NA
+1.32
+Freebase/Full
+HGT/7
+0
+36.1
+0.172
+NA
+NA
+6.94
+RDF-MUTAG/Full
+HGT/8
+0
+8.83
+0.0661
+NA
+NA
+2.01
+ACM/Full
+HetGCN/9
+0
+16.2
+0.0954
+NA
+NA
+0.31
+DBLP/Full
+HetGCN/10
+0
+4.56
+0.0493
+NA
+NA
+0.313
+Freebase/Full
+HetGCN/11
+0
+17.2
+0.219
+NA
+NA
+2.5
+RDF-MUTAG/Full
+HetGCN/12
+0
+7.35
+0.0954
+NA
+NA
+0.622
+ACM/Full
+HetSAGE/13
+0
+2.53
+0.0868
+NA
+NA
+0.191
+DBLP/Full
+HetSAGE/14
+0
+1.93
+0.036
+NA
+NA
+0.179
+Freebase/Full
+HetSAGE/15
+0
+22.2
+0.15
+NA
+NA
+1.59
+RDF-MUTAG/Full
+HetSAGE/16
+0
+5.18
+0.0617
+NA
+NA
+1.1
+ACM/Full
+R-GCN/17
+0
+5.13
+0.114
+NA
+NA
+0.25
+DBLP/Full
+R-GCN/18
+0
+2.58
+0.0588
+NA
+NA
+0.267
+Freebase/Full
+R-GCN/19
+0
+14.9
+0.326
+NA
+NA
+6.67
+RDF-MUTAG/Full
+R-GCN/20
+0
+6.92
+0.127
+NA
+NA
+0.584
+ACM/5-shot
+CHoE/21
+72.9
+NA
+NA
+NA
+NA
+NA
+DBLP/5-shot
+CHoE/22
+4.08
+NA
+NA
+NA
+NA
+NA
+ACM/5-shot
+MUG/23
+70.2
+0.15 0.000127
+3.61
+10.7
+NA
+DBLP/5-shot
+MUG/24
+10.7 0.152 0.000151 0.0752
+3.91
+NA
+ACM/Full
+SeHGNN/25
+0
+15.6
+0.244
+NA
+NA
+1.03
+DBLP/Full
+SeHGNN/26
+0
+3.33
+0.0177
+NA
+NA
+0.324
+Freebase/Full
+SeHGNN/27
+0
+30
+2.83
+NA
+NA
+4.84
+RDF-MUTAG/Full
+SeHGNN/28
+0
+5.31
+0.0496
+NA
+NA
+0.775
+ACM/Full
+Simple-HGN/29
+0
+66.5
+0.119
+NA
+NA
+0.69
+DBLP/Full
+Simple-HGN/30
+0
+21.7
+0.0686
+NA
+NA
+0.718
+Freebase/Full
+Simple-HGN/31
+0
+62.3
+0.309
+NA
+NA
+4.2
+RDF-MUTAG/Full
+Simple-HGN/32
+0
+5.43
+0.0973
+NA
+NA
+0.533
+RDF-MUTAG/5-shot HeCo/33
+3.62e+03
+0.15 0.000471 0.0551
+16.8 0.0248
+ACM/5-shot
+HGMAE/34
+139 0.201 0.000726
+0
+9.53
+0.071
+Continued on next page
+24
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 26 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table E1 continued
+Graph/setting
+Method/group
+P
+A
+Q
+E
+MP
+MT
+DBLP/5-shot
+HGMAE/35
+12.3 0.198 0.000537
+0 0.846 0.0344
+ACM/5-shot
+HGPrompt/36
+3.91
+16
+0.0323
+0 0.133
+4.33
+DBLP/5-shot
+HGPrompt/37
+4.08
+9.54
+0.0202
+0 0.161
+1.66
+Freebase/5-shot
+HGPrompt/38
+10.9
+46.4
+0.0918
+0
+1.1
+10.8
+RDF-MUTAG/5-shot HGPrompt/39
+3.28
+1.43
+0.00282
+0 0.156
+0.118
+ACM/5-shot
+HeCo/40
+163 0.243 0.000312
+0
+1.27 0.0526
+DBLP/5-shot
+HeCo/41
+339 0.234 0.000358
+0
+1.11 0.0289
+ACM/5-shot
+SCETRA/42
+0 0.562
+0.102
+NA
+NA
+0.14
+DBLP/5-shot
+SCETRA/43
+0 0.184
+0.0359
+NA
+NA 0.0786
+Freebase/5-shot
+SCETRA/44
+0
+1.01
+0.168
+NA
+NA
+0.786
+RDF-MUTAG/5-shot SCETRA/45
+0 0.358
+0.0909
+NA
+NA 0.0464
+ACM/Full
+SCETRA/46
+0
+3.47
+0.101
+NA
+NA
+0.151
+DBLP/Full
+SCETRA/47
+0
+1.14
+0.0454
+NA
+NA
+0.114
+Freebase/Full
+SCETRA/48
+0
+18.8
+0.475
+NA
+NA
+0.788
+RDF-MUTAG/Full
+SCETRA/49
+0 0.858
+0.0906
+NA
+NA 0.0919
+Table E2 Additional recorded CHoE stages. Head times cover the independent classiﬁer, while
+shared times combine backbone computation and query evaluation; the two measurements are
+reported separately.
+Graph
+Head only (s)
+Shared backbone + test (s)
+ACM
+0.754
+1.04e+03
+DBLP
+0.73
+10.4
+Group numbers identify distinct rows in the accompanying eﬃciency data. All
+reported GPU measurements use a single NVIDIA RTX 3090. The tables separate
+pretraining, target adaptation, query evaluation, optional target encoding, and the
+recorded memory scope; cached classiﬁer evaluation and a complete graph forward
+remain distinct stages.
+Pretraining records the cost of producing a checkpoint and is shared when the same
+checkpoint is reused. NA marks an unmeasured or unavailable ﬁeld, and OOM marks
+a run that could not be completed within GPU memory. Missing stages do not enter
+aggregate results. Peak allocated CUDA memory retains its recorded pretraining or
+target stage scope, which can include preprocessing.
+References
+Finn C, Abbeel P, Levine S (2017) Model-Agnostic Meta-Learning for Fast Adaptation
+of Deep Networks. In: Proceedings of the 34th International Conference on Machine
+Learning, Proceedings of Machine Learning Research, vol 70. PMLR, pp 1126–1135,
+URL https://proceedings.mlr.press/v70/ﬁnn17a.html
+Frasca F, Rossi E, Eynard D, et al (2020) SIGN: Scalable Inception Graph Neural
+Networks. In: ICML 2020 Workshop on Graph Representation Learning and Beyond
+(GRL+), URL https://grlplus.github.io/papers/77.pdf
+25
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 27 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Fu X, Zhang J, Meng Z, et al (2020) Magnn: Metapath aggregated graph neural
+network for heterogeneous graph embedding. In: Proceedings of The Web Confer-
+ence 2020. ACM, WWW 20, p 23312341, https://doi.org/10.1145/3366423.3380297,
+URL http://dx.doi.org/10.1145/3366423.3380297
+Fu Y, Wang Y, Zou H, et al (2026) Invariant learning on heterogeneous graphs via
+subgraph environment inference. In: Proceedings of the ACM Web Conference 2026.
+Association for Computing Machinery, New York, NY, USA, WWW ’26, p 968979,
+https://doi.org/10.1145/3774904.3792342, URL https://doi.org/10.1145/3774904.
+3792342
+Hamilton
+W,
+Ying
+Z,
+Leskovec
+J
+(2017)
+Inductive
+representation
+learn-
+ing
+on
+large
+graphs.
+In:
+Guyon
+I,
+Luxburg
+UV,
+Bengio
+S,
+et
+al
+(eds)
+Advances in Neural Information Processing Systems, vol 30. Curran Asso-
+ciates,
+Inc.,
+URL
+https://proceedings.neurips.cc/paper_ﬁles/paper/2017/ﬁle/
+5dd9db5e033da9c6fb5ba83c7a7ebea9-Paper.pdf
+Hou Z, Liu X, Cen Y, et al (2022) GraphMAE: Self-Supervised Masked Graph Autoen-
+coders. In: Proceedings of the 28th ACM SIGKDD Conference on Knowledge
+Discovery and Data Mining, pp 594–604, https://doi.org/10.1145/3534678.3539321
+Hu W, Fey M, Zitnik M, et al (2020a) Open Graph Benchmark: Datasets for Machine
+Learning on Graphs. In: Advances in Neural Information Processing Systems,
+vol 33. Curran Associates, Inc., pp 22118–22133, URL https://proceedings.neurips.
+cc/paper_ﬁles/paper/2020/ﬁle/fb60d411a5c5b72b2e7d3527cfc84fd0-Paper.pdf
+Hu Z, Dong Y, Wang K, et al (2020b) Heterogeneous Graph Transformer. In: Proceed-
+ings of The Web Conference 2020, pp 2704–2710, https://doi.org/10.1145/3366423.
+3380027
+Huang K, Zitnik M (2020) Graph Meta Learning via Local Subgraphs. In:
+Advances in Neural Information Processing Systems, vol 33. Curran Asso-
+ciates, Inc., URL https://proceedings.neurips.cc/paper_ﬁles/paper/2020/hash/
+412604be30f701b1b1e3124c252065e6-Abstract.html
+Huang Q, He H, Singh A, et al (2021) Combining Label Propagation and Simple Mod-
+els Out-performs Graph Neural Networks. In: International Conference on Learning
+Representations, URL https://openreview.net/forum?id=8E1-f3VhX1o
+Ji M, Sun Y, Danilevsky M, et al (2010) Graph Regularized Transductive Classi-
+ﬁcation on Heterogeneous Information Networks. In: Lecture Notes in Computer
+Science, pp 570–586, https://doi.org/10.1007/978-3-642-15880-3_42
+Kipf TN, Welling M (2017) Semi-Supervised Classiﬁcation with Graph Convolutional
+Networks. In: International Conference on Learning Representations, URL https:
+//openreview.net/forum?id=SJU4ayYgl
+26
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 28 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Klicpera J, Bojchevski A, Günnemann S (2019) Predict then Propagate: Graph Neural
+Networks Meet Personalized PageRank. In: International Conference on Learning
+Representations, URL https://openreview.net/forum?id=H1gL-2A9Ym
+Li P, Huang Y, Zhao J, et al (2026) CHoE: Cross-Domain Heterogeneous Graph
+Prompt Learning via Structure-Conditioned Experts. In: Proceedings of the Thirty-
+Fifth International Joint Conference on Artiﬁcial Intelligence, pp 2780–2788, https:
+//doi.org/10.24963/ijcai.2026/309
+Liu Z, Yu X, Fang Y, et al (2023) GraphPrompt: Unifying Pre-Training and Down-
+stream Tasks for Graph Neural Networks. In: Proceedings of the ACM Web
+Conference 2023, pp 417–428, https://doi.org/10.1145/3543507.3583386
+Lv Q, Ding M, Liu Q, et al (2021) Are we really making much progress?: Revisiting,
+benchmarking and reﬁning heterogeneous graph neural networks. In: Proceedings
+of the 27th ACM SIGKDD Conference on Knowledge Discovery & Data Mining,
+pp 1150–1160, https://doi.org/10.1145/3447548.3467350
+Ma Y, Yan N, Li J, et al (2024) HetGPT: Harnessing the Power of Prompt Tuning in
+Pre-Trained Heterogeneous Graph Neural Networks. In: Proceedings of the ACM
+Web Conference 2024, pp 1015–1023, https://doi.org/10.1145/3589334.3645685
+NT H, Maehara T (2019) Revisiting graph neural networks: All we have is low-pass
+ﬁlters. URL https://arxiv.org/abs/1905.09550, arXiv:1905.09550
+Schlichtkrull M, Kipf TN, Bloem P, et al (2018) Modeling Relational Data with Graph
+Convolutional Networks. In: The Semantic Web (ESWC 2018), pp 593–607, https:
+//doi.org/10.1007/978-3-319-93417-4_38
+Shan L, Zhao J, He D, et al (2026) MUG: Meta-path-aware Universal Heteroge-
+neous Graph Pre-Training. In: Proceedings of the AAAI Conference on Artiﬁcial
+Intelligence, pp 25260–25268, https://doi.org/10.1609/aaai.v40i30.39718
+Snell J, Swersky K, Zemel R (2017) Prototypical networks for few-shot learning. In:
+Guyon I, Luxburg UV, Bengio S, et al (eds) Advances in Neural Information Pro-
+cessing Systems, vol 30. Curran Associates, Inc., URL https://proceedings.neurips.
+cc/paper_ﬁles/paper/2017/ﬁle/cb8da6767461f2812ae4290eac7cbc42-Paper.pdf
+Sun X, Cheng H, Li J, et al (2023) All in one: Multi-task prompting for graph neural
+networks. In: Proceedings of the 29th ACM SIGKDD Conference on Knowledge
+Discovery and Data Mining. ACM, KDD 23, p 21202131, https://doi.org/10.1145/
+3580305.3599256, URL http://dx.doi.org/10.1145/3580305.3599256
+Sun Y, Han J, Yan X, et al (2011) PathSim: Meta Path-Based Top-K Similarity Search
+in Heterogeneous Information Networks. Proceedings of the VLDB Endowment
+4(11):992–1003. https://doi.org/10.14778/3402707.3402736
+27
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 29 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Tian Y, Dong K, Zhang C, et al (2023) Heterogeneous Graph Masked Autoencoders.
+In: Proceedings of the AAAI Conference on Artiﬁcial Intelligence, pp 9997–10005,
+https://doi.org/10.1609/aaai.v37i8.26192
+Velikovi P, Cucurull G, Casanova A, et al (2018) Graph Attention Networks. In:
+International Conference on Learning Representations, URL https://openreview.
+net/forum?id=rJXMpikCZ
+Velikovi P, Fedus W, Hamilton WL, et al (2019) Deep Graph Infomax. In: Inter-
+national Conference on Learning Representations, URL https://openreview.net/
+forum?id=rklz9iAcKQ
+Vinyals O, Blundell C, Lillicrap T, et al (2016) Matching Networks for One Shot
+Learning. In: Advances in Neural Information Processing Systems, vol 29. Curran
+Associates, Inc., pp 3630–3638, URL https://proceedings.neurips.cc/paper_ﬁles/
+paper/2016/ﬁle/90e1357833654983612fb05e3ec9148c-Paper.pdf
+Wang H, Leskovec J (2022) Combining Graph Convolutional Neural Networks and
+Label Propagation. ACM Transactions on Information Systems 40(4):73. https:
+//doi.org/10.1145/3490478
+Wang X, Ji H, Shi C, et al (2019) Heterogeneous Graph Attention Network. In:
+The World Wide Web Conference, pp 2022–2032, https://doi.org/10.1145/3308558.
+3313562
+Wang X, Liu N, Han H, et al (2021) Self-supervised Heterogeneous Graph Neural
+Network with Co-contrastive Learning. In: Proceedings of the 27th ACM SIGKDD
+Conference on Knowledge Discovery & Data Mining, pp 1726–1736, https://doi.
+org/10.1145/3447548.3467415
+Wu F, de Souza AHJr., Zhang T, et al (2019) Simplifying Graph Convolutional Net-
+works. In: Proceedings of the 36th International Conference on Machine Learning,
+Proceedings of Machine Learning Research, vol 97. PMLR, pp 6861–6871, URL
+https://proceedings.mlr.press/v97/wu19e.html
+Xu K, Hu W, Leskovec J, et al (2019) How Powerful Are Graph Neural Networks? In:
+International Conference on Learning Representations, URL https://openreview.
+net/forum?id=ryGs6iA5Km
+Yang X, Yan M, Pan S, et al (2023) Simple and Eﬃcient Heterogeneous Graph Neural
+Network. In: Proceedings of the AAAI Conference on Artiﬁcial Intelligence, pp
+10816–10824, https://doi.org/10.1609/aaai.v37i9.26283
+You Y, Chen T, Sui Y, et al (2020) Graph contrastive learning with aug-
+mentations. In: Larochelle H, Ranzato M, Hadsell R, et al (eds) Advances
+in Neural Information Processing Systems, vol 33. Curran Associates, Inc.,
+pp 5812–5823, URL https://proceedings.neurips.cc/paper_ﬁles/paper/2020/ﬁle/
+28
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 30 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+3fe230348e9a12c13120749e3f9fa4cd-Paper.pdf
+Yu X, Fang Y, Liu Z, et al (2024) HGPrompt: Bridging Homogeneous and Het-
+erogeneous Graphs for Few-Shot Prompt Learning. In: Proceedings of the AAAI
+Conference on Artiﬁcial Intelligence, pp 16578–16586, https://doi.org/10.1609/aaai.
+v38i15.29596
+Yun
+S,
+Jeong
+M,
+Kim
+R,
+et
+al
+(2019)
+Graph
+Transformer
+Networks.
+In:
+Advances in Neural Information Processing Systems, vol 32. Curran Asso-
+ciates, Inc., URL https://proceedings.neurips.cc/paper_ﬁles/paper/2019/hash/
+9d63484abb477c97640154d40595a3bb-Abstract.html
+Zhang W, Yin Z, Sheng Z, et al (2022) Graph Attention Multi-Layer Perceptron. In:
+Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and
+Data Mining, pp 4560–4570, https://doi.org/10.1145/3534678.3539121
+Zhu X, Ghahramani Z, Laﬀerty J (2003) Semi-Supervised Learning Using Gaussian
+Fields and Harmonic Functions. In: Proceedings of the Twentieth International
+Conference on Machine Learning, URL https://www.cs.cmu.edu/~zhuxj/pub/zgl.
+pdf
+29
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 31 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+  
+Compiled manuscript for reference
+Click here to access/download
+Supplementary Material
+main.pdf
+
+
+========== PDF_PHYSICAL_PAGE 32 | PRINTED_PAGE_CANDIDATE 1 | PDF_PAGE_LABEL  ==========
+
+SCETRA: Support-Conditioned Class Evidence for
+Gradient-Free Heterogeneous Node Classification
+Yanghui Fu1* and Guangquan Cheng1
+1* Laboratory for Big Data and Decision, National University of Defense Technology,
+Changsha, China .
+*Corresponding author(s). E-mail(s): fyh97@nudt.edu.cn;
+Contributing authors: cgq299@nudt.edu.cn;
+Abstract
+In heterogeneous node classification, a query can receive different class evidence from its attributes and
+from the labels of nodes connected through shared entities. We study how to construct both forms of
+evidence with fixed typed propagation and how to choose a prediction rule using the current support set.
+We present SCETRA, a gradient-free inference framework that constructs both forms of class evidence
+from the same family of normalized typed half-path operators. For each half-path, the operator prop-
+agates attributes to the target nodes. Its transpose accumulates support-label mass at shared entities,
+whose smoothed class distributions are propagated back to the targets. We derive exact support-deletion
+updates for both evidence sources, including their availability after deletion. These updates allow SCE-
+TRA to select a prediction rule by leave-one-out evaluation on the current support set, with a fixed rule
+for one-shot supervision. On four transductive node classification benchmarks, SCETRA achieves com-
+petitive performance against supervised baselines under full-budget supervision and pretrained baselines
+under strict few-shot supervision, without encoder pretraining or gradient updates. Stage-wise runtime
+and peak GPU memory measurements characterize the computational requirements of the proposed
+inference procedure. Together, these results demonstrate the practical potential of explicit support-
+conditioned class evidence while clarifying how its effectiveness depends on evidence construction and
+selection.
+Keywords: Heterogeneous graphs, Node classification, Class evidence, Gradient-free inference, Few-shot learning
+ORCID iDs
+Yanghui Fu 0000-0001-7792-9983
+Guangquan Cheng 0000-0002-3166-477X
+Statements and Declarations
+Competing Interests. The authors declare no competing interests.
+Funding. No funding was received for this study.
+Ethics approval and consent to participate. Not applicable.
+Consent for publication. Not applicable.
+Data availability. This study uses the public benchmark datasets ACM, DBLP, Freebase, and RDF-
+MUTAG, as described in the Experimental Design section of the manuscript.
+Code availability. The code used to implement SCETRA and reproduce the reported experiments is
+available from the corresponding author upon reasonable request.
+Author contributions. Yanghui Fu: Conceptualization, Methodology,Formal analysis, Software, Inves-
+tigation, Validation, Writing – original draft. Guangquan Cheng: Supervision, Writing – review &
+editing.
+1
+Title Page

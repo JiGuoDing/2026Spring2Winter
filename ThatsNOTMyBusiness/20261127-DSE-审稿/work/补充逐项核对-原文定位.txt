@@ -1,0 +1,362 @@
+
+### 00526
+
+-- month to complete
+p 8 ' as a result of the examination of literature sources. Respondents were given a month to complete the anonymous questionnaires. The gathered information was combined into a dataset for statistical analysis after the survey period. Figure 1a: Gende'
+
+-- (1)
+p 8 '𝑚, to 𝑐𝑚 in the range. 𝐶𝑦= (𝐶𝑦−𝑚𝑖𝑛𝑚) (𝑚𝑎𝑥𝑚−𝑚𝑖𝑛𝑚) ⁄ ∗(𝑛𝑒𝑤𝑚𝑎𝑥𝑚−𝑛𝑒𝑤𝑚𝑖𝑛𝑚) + 𝑛𝑒𝑤𝑚𝑖𝑛𝑚 (1) 3.3 Feature extraction using PCA 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42'
+
+-- (2)
+p 9 '𝑡 𝑦 α1y My, where α1 = (α11,...,α1s) . ∝1= 𝑎𝑟𝑔𝑢max ∝ ∝𝑠∑̂ ∝ 𝑠𝑢𝑏𝑗𝑒𝑐𝑡 𝑡𝑜 ‖∝1‖ = 1 (2) Key ingredients are defined as Σ = (MPM )/n, in order: ∝𝑙+1= 𝑎𝑟𝑔𝑢max ∝ ∝𝑠∑̂ ∝ (3) ‖ ∝‖ = 1 𝑎𝑛𝑑 ∝𝑠∝ℎ= 0, ∀1 ≤𝑔≤ℎ (4) The projection operator is Wk= h '
+p 13 '𝑒𝑛𝑑−𝑝𝑜𝑠+ 1 Set 𝑒𝑛𝑑−𝑝𝑜𝑠= 𝑖𝑛𝑑𝑒𝑥 × 𝑆𝑡𝑒𝑝𝑆𝑖𝑧𝑒 Prompt for the 𝑵𝑩 Approx. (𝑹𝑭 from Eqn (2) or 𝑰𝑷𝑫 from Eqn (3)) For each 𝑘= 1 to 𝑃do Begin Calculate 𝑃(𝐶𝑘|𝑉𝐴,.𝑗") = 𝑃(𝐶𝑘) ∏ ∏ 𝑁𝐵 𝐴𝑝𝑝𝑟𝑜𝑥. 𝑃(𝐶𝑘) 𝑒𝑛𝑑−𝑝𝑜𝑠 𝑗"=𝑠𝑡𝑎𝑟𝑡−𝑝𝑜𝑠 𝑛 𝑖=1 Find the highest condi'
+
+-- (14)
+p 11 '𝑀𝑖= 1 𝑚∑𝑡𝑖𝑗 𝑚 𝑗=1 (14) Table 3: Characteristics of Clustering Cluster Size (n) Characteristics C1: Digitally Mature Innovators 54 High adoption of all digital tools, mostly'
+
+-- [30]
+p 14 ' 86.5 85.9 85.2 85.5 Logistic Regression [29] 83.7 82.8 82.5 82.6 Decision Tree [30] 81.9 80.6 80.9 80.7 Naïve Bayes [31] 78.4 76.9 77.5 77.2 Accuracy 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31'
+
+### 00527
+
+-- Kalman
+p 10 'le was used to assess the responses. 3.2 Data Filtering and Normalization using Kalman Filter and Min-Max Normalization The Kalman filter is a real-time preprocessing method used to degrade multivariate sensor stream data. Because noise'
+p 10 'a Filtering and Normalization using Kalman Filter and Min-Max Normalization The Kalman filter is a real-time preprocessing method used to degrade multivariate sensor stream data. Because noise from learning behaviors and educational tra'
+p 10 ' 𝜖 ℝ𝑚 and ∑∈ ℝ𝑚×𝑚 𝑎 represent the initial mean and covariance of AI-driven, the Kalman filter performs exact Bayesian prediction expressed in Eq (3-5) and update steps are expressed in Eq. (6-9). 𝑎(𝜃𝑠|𝑦1:𝑠−1) = 𝑁(𝜃𝑠|𝜇𝑗|𝑠−1, Σ𝑖|𝑖−1) (3) '
+p 11 'icipated observation at time 𝑠 is represented by 𝑦̂𝑠= 𝐻𝑠μ𝑖|𝑠−1, where 𝐾𝑠 is the Kalman Gain, which is used to translate the residual (error between observed and predicted sensor value) into the latent space. For increased dependability '
+
+-- Savitzky
+not found
+
+-- (20)
+p 14 'ion and system resilience is its aim. The objective of ILSVM is to use Equation (20) to identify a function. 𝑒(𝑤) = 𝑥𝑠∅(𝑤) + 𝑎 (20) The best fits training data {(𝑤𝑗, 𝑧𝑗)}𝑗=1 𝑚, 𝑤ℎ𝑒𝑟𝑒𝑤𝑗𝜖𝑄𝑚, 𝑧𝑗𝜖{−1,1}𝑎𝑛𝑑 ∅(𝑤) is a nonlinear mapping to a'
+p 14 'tive of ILSVM is to use Equation (20) to identify a function. 𝑒(𝑤) = 𝑥𝑠∅(𝑤) + 𝑎 (20) The best fits training data {(𝑤𝑗, 𝑧𝑗)}𝑗=1 𝑚, 𝑤ℎ𝑒𝑟𝑒𝑤𝑗𝜖𝑄𝑚, 𝑧𝑗𝜖{−1,1}𝑎𝑛𝑑 ∅(𝑤) is a nonlinear mapping to a feature space with great dimensions. Equations'
+
+-- (26)
+p 15 ' 𝑧] (24) 𝐿(𝑤𝑗, 𝑤𝑖) = exp (− ||𝑤𝑗−𝑤𝑗||2 𝜎2 ) (25) 𝑒(𝑤) = ∑ ∝𝑗𝐿(𝑤𝑗, 𝑤𝑖) + 𝑐 𝑚 𝑗=1 (26) It adjusts to real-time students changes and detects faults in early stages, which are appropriate for predictive maintenance activity. The ILSVM equ'
+
+-- 81.7%
+p 9 " for an 88.7% questionnaire recovery rate. The effective questionnaire rate was 81.7% after the faulty questionnaires were eliminated. It displays the respondents' gender distribution: 51.3% of respondents are male, 48.7% are female, a"
+
+-- 88.7%
+p 9 "365 majors. 330 of the 369 distributed surveys are eventually retrieved, for an 88.7% questionnaire recovery rate. The effective questionnaire rate was 81.7% after the faulty questionnaires were eliminated. It displays the respondents'"
+
+-- 2026
+p 28 'echnology,” Journal of Physics: Conference Series, vol. 1915, no. 4, Art. no. 042026, 2021. [Online]. Available: https://doi.org/10.1088/1742- 6596/1915/4/042026 28. F. Yang, L. Chao, and Z. Yang, “Research on the construction of teac'
+p 28 ' 042026, 2021. [Online]. Available: https://doi.org/10.1088/1742- 6596/1915/4/042026 28. F. Yang, L. Chao, and Z. Yang, “Research on the construction of teaching staff in higher vocational colleges under the background of enrollment e'
+p 28 'Computational Methods in Sciences and Engineering, vol. 26, no. 1, pp. 699–711, 2026. https://doi.org/10.1177/14727978251361291 33. Y. Shen, “Using long short-term memory networks (LSTM) to predict student academic achievement: Dynami'
+
+### 00544
+
+-- (5)
+p 14 'ngly, a trace of class y can be interpreted as xy(t) = scom(t) + sy(t) + ϵy(t), (5) 12 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52'
+
+-- (6)
+p 15 'und a realistic signal template, which can be written as G(¯x, y) = ¯x + ry(t), (6) where ¯x is the mean trace and ry(t) is the class-dependent residual term. This refor- mulation reduces the functional complexity of the mapping to b'
+p 32 'tack based on bagging ensemble strategy. Computer Engineering andApplications 58(6), 110–117 (2022) Wang, P., Chen, P., Luo, Z., Dong, G., Zheng, M., Yu, N., Hu, H.: Enhancing the Per- formance of Practical Profiling Side-Channel Att'
+
+-- RMSprop
+not found
+
+-- epochs
+p 17 'CAD Datasets Hyperparameter CW Dataset (1D-CNN based) ASCAD Dataset (MLP based) Epochs 45,000 45,000 Batch Size 100 100 Optimizer Adam Adam Optimizer Betas (β1, β2) (0.5, 0.9) (0.9, 0.999) Learning Rate (Generator) 9 × 10−3 7 × 10−3 Lea'
+p 23 'trained models. Fig. 12(a) shows the guessing entropy results after 40 training epochs. The original traces require 3,704 attack traces to reduce the guessing entropy to zero, while SMOTE, Mixup, and CGAN require 2,030, 3,101, and 2,902'
+p 26 'AN, and CGANHW Fig. 14(a) shows the guessing entropy results after 100 training epochs. The original traces and Mixup fail to achieve a successful attack within 5,000 attack traces, while SMOTE and CGAN require 4,240 and 2,705 traces, r'
+p 27 'rained models. Fig. 15(a) shows the guessing entropy results after 100 training epochs. The original traces, SMOTE, Mixup, and CGAN require 3,508, 3,410, 2,842, and 3,305 attack traces, respectively, to reduce the guessing entropy to ze'
+
+-- 2018
+p 7 'taset, the masked ASCAD public electromagnetic dataset, and the masked CHES CTF 2018 dataset, profiled attacks is performed on the key of the AES encryption algorithm. The experimental results demonstrate that CGANHW can learn the noi'
+p 11 ' (Luo et al. 2020), the ASCAD dataset (Benadjila et al. 2020), and the CHES CTF 2018 dataset. Fig. 2 shows the overall flow chart of the experiment. 3.1 Data Pre-processing The power traces of the CW dataset are power data containing '
+p 17 '8515, including 200,000 training traces and 100,000 attack traces. The CHES CTF 2018 dataset was released at the Con- ference on Cryptographic Hardware and Embedded Systems (CHES) in 2018 (Perin et al. 2020). The traces were collected'
+p 17 'ed at the Con- ference on Cryptographic Hardware and Embedded Systems (CHES) in 2018 (Perin et al. 2020). The traces were collected during the execution of a masked AES encryp- tion on a 32-bit STM microcontroller. The CHES CTF 2018 d'
+p 17 'tion of a masked AES encryp- tion on a 32-bit STM microcontroller. The CHES CTF 2018 dataset comprises a total of 50,000 traces, with 45,000 traces allocated for the training dataset and 5,000 traces for the attack dataset. To ensure '
+p 19 '. Due to the significant variations in the shapes of traces within the CHES CTF 2018 dataset, it is not feasible to effectively compare the quality of the generated traces. After visual inspection, the similarity between the original '
+p 26 'stently outperforms the other compared methods. 4.7 Synthetic Trace of CHES CTF 2018 Dataset for DLPA The CHES CTF 2018 dataset contains side-channel traces collected from a 32-bit STM microcontroller running a masked AES implementati'
+p 26 'red methods. 4.7 Synthetic Trace of CHES CTF 2018 Dataset for DLPA The CHES CTF 2018 dataset contains side-channel traces collected from a 32-bit STM microcontroller running a masked AES implementation. It includes 45,000 profiling tr'
+
+-- 4:1
+p 6 '1:1:1. Finally, the generated traces are combined with the original traces in a 4:1 ratio to form the dataset for SCAs. CGANHW not only efficiently reduces the degree of data imbalance, but also increases the amount of leaked traces '
+p 16 ':1:1. Finally, the original traces were combined with the generated traces in a 4:1 ratio to produce the composite dataset. The method proposed in this study effec- tively reduced the ratio of majority to minority class labeled trace'
+p 16 ' majority to minority class labeled traces in the training dataset from 70:1 to 4:1, significantly mitigating the degree of data imbalance. In the experiment, the quantity of added generated traces must be carefully controlled due to'
+
+### 00551
+
+-- (6)
+p 8 'ion is combined with the current input: \uf028 \uf029 1 t r t t src r r Q W x U h \uf073 \uf02d \uf03d \uf02b (6) The update gate controls the extent to which historical information is retained up to the current time step: \uf028 \uf029 1 t z t t src z z Q W x U h \uf073 \uf02d \uf03d \uf02b '
+
+-- (8)
+p 8 'ion with the current input: \uf028 \uf029 1 nh ta t t h t h r t s c h r U h Q W x \uf02d \uf03d \uf0b0 \uf02b (8) The final hidden state balances historical information and candidate states through the update gate: \uf028 \uf029 1 1 t t t t t h z h z h \uf02d \uf03d \uf02d \uf0b0 \uf02b \uf0b0 (9) Wher'
+p 22 'arning model for intra-change detection in images. Journal of supercomputing, 80(8), 11640-11660. [16] Ravi, V. & Alazab, M. (2023). Attention-based convolutional neural network deep learning approach for robust malware classificatio'
+
+-- (23)
+p 14 'ows: , , 1 1 1 1 Pr ( , ) K L h c h c h c i j ed Share p q b b K L \uf03d \uf03d \uf03d \uf02b \uf02b \uf0e5\uf0e5 (23) Where, K represents the total number of connection sequences between the source and target domains; hb and cb represent the host offset and connectio'
+p 23 'rative adversarial network for video anomaly detection. Applied Intelligence, 53(23), 28133-28152. [20] Demirbaga, U. (2025). Advancing anomaly detection in cloud environments with cutting-edge generative ai for expert systems. Expert'
+
+-- 2025
+p 21 'ial Internet of Things. References [1] Saket, O., Aicha, A. B. & Fathallah, H. (2025). Deep learning applied for abnormal human behavior recognition in video surveillance systems: a systematic review. Applied Intelligence, 55(13), 1-2'
+p 22 'ifier. Journal of Cloud Computing, 12(1), 14-23. [6] Rasheed, I. & Mostafa, H. (2025). Federated learning-based anomaly detection for zero-day attack prevention in 6g network slices. Computer Networks, 268(Aug.), 1.1-1.13. [7] Heidari'
+p 22 'Computation, 16(3), 1073-1091. [8] Babaei, G. A., Bayat, P. & Ekbatanifard, G. (2025). Detecting attacks on the internet of things network in the computing fog layer with an embedded learning approach based on clustering and blockchai'
+p 23 'omaly detection. Applied Intelligence, 53(23), 28133-28152. [20] Demirbaga, U. (2025). Advancing anomaly detection in cloud environments with cutting-edge generative ai for expert systems. Expert Systems, 42(2), e13722.1-e13722.14. [2'
+
+-- 10 min
+p 20 'in this paper remains above 450 Mbit/s. The communication time is extended from 10 minutes to 60 minutes to simulate the long-term operation of industrial scenarios. The throughput of the method in this paper is basically unchanged and '
+
+-- 90 nodes
+not found
+
+### 00552
+
+-- 512 eligible paths
+p 8 'half-paths, including back- tracking. We retain two hops when there are at most 512 eligible paths; otherwise we use one hop. This ﬁxed rule based on the public schema bounds the view bank without selecting paths separately for each dataset. The ta'
+
+-- 1729
+p 24 'eighborhoods. Features with excess dimension use ﬁxed-seed randomized SVD (seed 1729, eight oversampling directions, two power iter- ations). Degenerate directions can reduce the eﬀective dimension. No label enters this preparation. A'
+
+-- 0.01
+p 9 ' (5) ¯hj = |Sj|−1 X s∈Sj Hj(s), (6) σ2 j = max (P s∈Sj ∥Hj(s) −¯hj∥2 2 |Sj|dj , 0.01 ) . (7) The scale uses all valid support vectors around their pooled mean. For a valid node v, the expert gives aj(v, c) = exp{−∥Hj(v) −µjc∥2 2/(djσ2'
+p 12 'ty updates the scale: (σ2 j )(−s) = max (M2,j − nj nj−1∥zs −¯hj∥2 2 (nj −1)dj , 0.01 ) . (20) An expert becomes unavailable if deletion removes the last valid example of a class or the held-out node is invalid for that view. For entit'
+p 20 ' 10−3 10−2 10−1 100 Seconds (log scale) 0.036 0.0493 0.0439 0.039 0.0588 0.0686 0.0177 0.0454 10−2 10−1 100 101 GiB (log scale) 0.179 0.313 0.634 1.32 0.267 0.718 0.324 0.114 Full budget / ACM and DBLP (no pretraining) Time excludes s'
+p 25 '2 3.91 NA ACM/Full SeHGNN/25 0 15.6 0.244 NA NA 1.03 DBLP/Full SeHGNN/26 0 3.33 0.0177 NA NA 0.324 Freebase/Full SeHGNN/27 0 30 2.83 NA NA 4.84 RDF-MUTAG/Full SeHGNN/28 0 5.31 0.0496 NA NA 0.775 ACM/Full Simple-HGN/29 0 66.5 0.119 NA '
+
+-- 0.25
+p 11 'ranch have been averaged: TT (q)c = max(qc, 10−8)1/T P k max(qk, 10−8)1/T , T ∈{0.25, 1}. (16) Write ˜a = TT (a), ˜e = TT (e), IA = 1[nA > 0], and IE = 1[nE > 0]. The two fusion rules are qbal(v) = IA˜a(v) + IE˜e(v) IA + IE , (17) qcn'
+p 18 '0 66.18±0.00 65.56 77.41 2.88 LP (fused) 92.36±0.17 92.28±0.17 91.60±0.26 92.15±0.25 43.97±0.92 62.53±0.64 52.87±4.66 69.12±2.08 70.20 79.02 1.69 Smooth (fused) 92.84±0.06 92.78±0.06 90.36±0.34 91.01±0.33 41.01±0.26 56.97±0.23 54.39±2'
+p 20 '0.114 0.119 0.244 0.101 Query prediction 10−2 10−1 100 101 0.191 0.31 1.01 2.73 0.25 0.69 1.03 0.151 Peak GPU memory 10−1 100 101 102 Seconds (log scale) HetSAGE HetGCN HAN HGT R-GCN Simple-HGN SeHGNN SCETRA 1.93 4.56 3.55 5.03 2.58 2'
+p 23 'tribute only, entity only, balanced fusion, and count-weighted fusion) with T ∈{0.25, 1}. Here T = 1 leaves the branch probabilities unchanged, and the ﬁxed rule belongs to both banks. Each fold retains the held-out node in the graph '
+p 25 'AG/Full HetSAGE/16 0 5.18 0.0617 NA NA 1.1 ACM/Full R-GCN/17 0 5.13 0.114 NA NA 0.25 DBLP/Full R-GCN/18 0 2.58 0.0588 NA NA 0.267 Freebase/Full R-GCN/19 0 14.9 0.326 NA NA 6.67 RDF-MUTAG/Full R-GCN/20 0 6.92 0.127 NA NA 0.584 ACM/5-sh'
+
+-- 44
+p 2 '7 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 3 ' 40 60 80 100 Full-budget Macro-F1 (%) ACM RDF-MUTAG 92.89 43.64 92.74 69.94 93.44 69.94 Δtrained −initial = −0.14 pp Δtrained −initial = +26.30 pp Initial fusion Support-LOO-trained fusion SCETRA (Ours) Fig. 1 Support-conditioned c'
+p 3 '7 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 4 '7 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 5 '7 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 6 '7 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 7 'bilities nA, nE Available expert counts in the two branches Frule Fixed bank of 44 candidate probability rules 4 SCETRA: Support-Conditioned Class Evidence SCETRA has three stages: build ﬁxed feature views, construct two forms of cl'
+p 7 '7 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+
+-- Table 3
+p 11 'active, count-weighted fusion is equivalent to averaging all available experts. Table 3 The 44 candidate rules. All choices and their ordering are common across graphs and label budgets. Family Choices Combination Count Attribute d, repr'
+
+-- 2 × 2
+not found
+
+-- FLOPs
+not found
+
+-- 87.15
+p 15 '5.73 66.08±4.90 OOM OOM OOM OOM 64.34 65.73 4.50 HGPrompt 69.49±7.34 70.02±6.41 87.15±2.87 88.30±2.54 12.28±1.60 16.31±4.17 49.99±5.65 52.13±6.64 78.32 79.16 3.00 MUG 75.91±11.88 77.63±9.27 63.64±5.19 65.15±4.57 OOM OOM OOM OOM 69.77 7'
+p 15 '0±6.86 64.72±5.50 51.42±4.06 52.21±4.25 OOM OOM OOM OOM 57.26 58.47 6.00 SCETRA 87.15±4.73 87.31±4.33 90.46±2.53 91.10±2.59 24.37±4.05 24.07±4.67 65.11±8.88 66.32±9.11 88.80 89.20 1.50 (b) 10-shot Method ACM DBLP Freebase RDF-MUTAG Avg'
+p 17 'ase RDF-MUTAG Avg. (4 graphs) Ma Mi Ma Mi Ma Mi Ma Mi Macro Micro Rank ↓ SCETRA 87.15±4.73 87.31±4.33 90.46±2.53 91.10±2.59 24.37±4.05 24.07±4.67 65.11±8.88 66.32±9.11 66.77 67.20 2.25 Attribute only 88.26±2.62 88.31±2.49 68.36±4.20 69'
+
+-- 88.80
+p 15 '73 87.31±4.33 90.46±2.53 91.10±2.59 24.37±4.05 24.07±4.67 65.11±8.88 66.32±9.11 88.80 89.20 1.50 (b) 10-shot Method ACM DBLP Freebase RDF-MUTAG Avg. (2 graphs) Ma Mi Ma Mi Ma Mi Ma Mi Macro Micro Rank ↓ HeCo 91.05±1.05 90.98±1.04 73.41'
+
+### 00553
+
+-- 38.98
+p 7 'y is Eq. (13) necessary in multi-objective NAS? In NSGA- II, a sub-network with 38.98% accuracy and 6.92 M FLOPs (such as Subnet #3 in Table 2) resides on the Rank-0 Pareto front alongside an 80.18% accuracy sub-network because the for'
+p 7 'he former is non-dominated in the minimal-FLOP regime. With- out Eq. (13), this 38.98% Rank-0 model would be assigned to teach a 65.00% Rank-1 model, injecting inaccurate soft targets into a superior student. In the Diverse Phase (g < '
+p 9 't #2 a1deaed5 43.65% 10.05 46.87 Stages: 2 | Sparsity: 21.7% Subnet #3 6a4574d8 38.98% 6.92 47.13 Stages: 2 | Sparsity: 22.1% Subnet #4 f0f01151 56.57% 19.63 65.42 Stages: 2 | Sparsity: 14.3% Subnet #5 1666486d 58.92% 20.87 68.02 Stage'
+p 13 'els (e.g., 80.18% accuracy, 55.80 M FLOPs) and tiny, low-accuracy models (e.g., 38.98% accuracy, 6.92 M FLOPs). Without filtering edges by valida- tion accuracy, low-FLOP Pareto solutions degrade the popu- lation via reverse distillati'
+
+-- 16, 24
+p 6 'classification head. Given stage channel capacities c = [c0, c1, c2, c3, c4] = [16, 24, 32, 64, 96] and head dimension chead = 256: 1. Convolutional Stem: A 3×3 convolution with stride 1 and padding 1 projects the 3-channel input to c0 '
+
+-- 0.075
+p 7 'obability µ, and channel mask bits m(s) c flip with a damped probability 0.5µ = 0.075 to avoid abrupt channel collapse. 3.3.3. Level-3 Curriculum Mentorship Graph Genome (g3) The Level-3 genome defines a directed mentorship graph g3 = '
+
+-- 0.7
+p 4 'm Mentorship Graph Phase 1: Diverse (g < 0.4G) Rank-0 →Student Exploration (p = 0.7) Phase 2: Hierarchical (g ≥0.4G) Top-50% Elite Rank-0 (Acc(It) ≥Acc(Is)) Directed Edges e = (t, s, τe, λe), Kmax = 2 τe ∈{3, 4, 5, 6}, λe ∈{0.1, 0.3,'
+p 4 ' Ksample = 3 Students/Batch · Per-Batch Detached Teacher Logit Cache C Ltotal = 0.7LCE(zs, y) + 0.3(1/|Ms|) P m∈Ms λmτ2 mDKL \x00σ(ztm/τm) ∥σ(zs/τm)\x01 BN Recalibration, Zero-Cost Complexity & NSGA-II Selection 4-Batch BN Running Stat Rec'
+p 7 ' every pair (t, s) ∈R0 × R>0 satisfying Eq. (13) forms an edge with probability 0.7 (sub- sequently filtered to respect Kmax = 2), exposing develop- ing sub-networks to varied feature representations. In the Hi- erarchical Phase (g ≥'
+p 7 'bjective is: Ltotal(zs, y, Ms) = \uf8f1\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f2\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f4\uf8f3 LCE(zs, y), if |Ms| = 0, 0.7LCE(zs, y) + 0.3 |Ms| |Ms| X m=1 λmLKD(zs, ztm, τm), if |Ms| > 0. (15) where LCE is the multiclass cross-entropy loss. Weighting LCE at 0.7 and the me'
+p 7 '|Ms| > 0. (15) where LCE is the multiclass cross-entropy loss. Weighting LCE at 0.7 and the mean mentor distillation term at 0.3 guarantees that ground-truth label supervision remains the primary opti- mization signal even when teach'
+p 11 ') 11.6% 75.10% -31.8% (46.13 M) +27.3% (130.86 K) 50% Pruned (ρt = 0.50) 31.4% 70.71% +8.0% (32.20 M) +62.5% (67.50 K) 75% Pruned (ρt = 0.75) 40.8% 74.15% +19.6% (28.14 M) +58.1% (75.42 K) aMeasured relative to the unpruned reference'
+p 11 'uned (ρt = 0.50) 31.4% 70.71% +8.0% (32.20 M) +62.5% (67.50 K) 75% Pruned (ρt = 0.75) 40.8% 74.15% +19.6% (28.14 M) +58.1% (75.42 K) aMeasured relative to the unpruned reference baseline budget of 35.0 M FLOPs and 180.0 K parameters.'
+p 11 'arameters. 0% Pruned 25% Pruned 50% Pruned 75% Pruned 0 20 40 60 80 76.99 75.1 70.71 74.15 0 11.6 31.4 40.8 Target Pruning Ratio (ρtarget) Percentage (%) Validation Accuracy (%) Effective Channel Sparsity (%) Figure 5: Experiment 4 ('
+
+-- 40%
+p 1 'd Sorting Genetic Algorithm II (NSGA-II), the Level-3 mentorship transitions at 40% of the generational budget from diverse exploration to hierarchical refinement, restricting distillation to accuracy-verified Pareto-optimal teachers'
+p 3 'Sorting Genetic Algo- rithm II (NSGA-II), the Level-3 mentorship transitions at 40% of the generational budget from diverse exploration to hierarchical refinement, restricting distillation to accuracy-verified Pareto-optimal teachers'
+p 4 'ced by NSGA-II [20] through a two-phase curriculum schedule. During the initial 40% of generations (diverse exploration phase), non-dominated Rank-0 individuals form probabilistic mentorship connections across the broader population,'
+p 4 'gned to transition from broad exploration to elite hi- erarchical refinement at 40% of the generational bud- get while enforcing teacher-student accuracy monotonicity (Accval(It) ≥Accval(Is)) to prevent negative transfer from low-FLO'
+p 4 ' five seeds), graceful accuracy retention under up to 75% target pruning, a +11.40% cross-domain trans- fer advantage on medical imagery with zero target NAS cost, and verified clinical interpretability via Grad-CAM saliency attribut'
+p 11 'vantage Target NAS Cost EvoMentor-Net Transferred CIFAR-10 (Evolved) 85.90% +11.40% Zero (0 GPU-hrs) Shallow CNN from Scratch None (Random Init) 74.50% 0.00% (Baseline) Standard Training Table 9: Experiment 8 (E8): High-level diagnos'
+p 13 'torship graph alongside architectural and pruning genomes, and transitioning at 40% of the evolutionary budget from di- verse exploration to accuracy-monotonic hierarchical refine- ment, EvoMentor-Net mitigates weight-sharing gradien'
+p 14 '+58.1% parameter compression), transfers to PathMNIST with 85.90% accuracy (+11.40% over training from scratch) at zero target NAS cost, and delivers 80.30% direct diagnostic ac- curacy with 97.54% macro specificity and 0.9741 ROC-AU'
+
+-- 0.15
+p 6 'mped to [2, 4]), and each node count ns is perturbed by ±1 with probability µ = 0.15. 3.3.2. Level-2 Micro-Cell DAG and Channel Pruning Genome (g2) As shown in Fig. 2, the Level-2 genome encodes the intra- stage topology and channel m'
+p 7 't. During mutation, upper-triangular entries A(s) i,j flip with probability µ = 0.15, operator indices o(s) i resample uniformly from {0, . . . , |O| −1} with probability µ, and channel mask bits m(s) c flip with a damped probability '
+p 9 'y 10−4) and cosine annealing, crossover probability pc = 0.8, mutation rate µ = 0.15, tournament size k = 2, fast valida- tion subset size Nsub = 1024, and statistical validation seeds {42, 123, 2024, 777, 999}. 4.1.3. Baseline Models'
+
+-- 4-batch
+p 4 'σ(ztm/τm) ∥σ(zs/τm)\x01 BN Recalibration, Zero-Cost Complexity & NSGA-II Selection 4-Batch BN Running Stat Recalibration · Analytical FLOPs & Parameter Evaluation Fast Non-Dominated Sort min \x00 −Accval, FLOPs, Params\x01 + Crowding Distance Sel'
+p 5 ') directly into the Level-2 genome with damped mutation rates (0.5µ), executing 4-batch Batch Normalization recalibra- tion prior to every fitness evaluation, and compensating for pruned capacity via multi-mentor knowledge distillation. '
+p 8 'Recalibration & Fitness Evaluation 25: Evaluate F(Ii) via Eq. (1) for Ii ∈P(g) (4-batch BN calibration). 26: // Step 3: Evolutionary Offspring Generation 27: Offspring Q(g) ←Evolve(P(g)) via tournament, crossover, mutation. 28: Evaluate '
+p 8 'via tournament, crossover, mutation. 28: Evaluate F(I j) for all I j ∈Q(g) with 4-batch BN calibration. 29: // Step 4: NSGA-II Selection & Mentorship Update 30: R(g) ←P(g) ∪Q(g); fronts {Fk} ←FastNonDominatedSort(R(g)). 31: Select P(g+1)'
+p 13 'per batch, and (3) evaluating fitness on a 1, 024-sample validation subset with 4-batch BN recalibration during evolution while re- serving full validation and 6-epoch standalone fine-tuning for the discovered Pareto winner. 5.4. Limitat'
+
+-- 19.64
+p 9 'A-NAS Baseline 0 71.16% 71.63 128.45 NO Shallow CNN (Baseline) N/A 68.86% 18.50 19.64 NO LeNet-5 (Baseline) N/A 71.47% 4.20 59.47 NO Depthwise-Bottleneck CNN N/A 55.25% 8.10 2.50 NO Table 2: Experiment 1 (E1): Complete Rank-0 non-domin'
+
+-- 59.47
+p 9 'low CNN (Baseline) N/A 68.86% 18.50 19.64 NO LeNet-5 (Baseline) N/A 71.47% 4.20 59.47 NO Depthwise-Bottleneck CNN N/A 55.25% 8.10 2.50 NO Table 2: Experiment 1 (E1): Complete Rank-0 non-dominated Pareto frontier discovered by EvoMentor'
+
+-- 2.50
+p 9 '-5 (Baseline) N/A 71.47% 4.20 59.47 NO Depthwise-Bottleneck CNN N/A 55.25% 8.10 2.50 NO Table 2: Experiment 1 (E1): Complete Rank-0 non-dominated Pareto frontier discovered by EvoMentor-Net on CIFAR-10. Pareto Solution Subnet ID Val A'
+
+-- 2020
+p 14 'ize it for efficient deployment, in: Proc. Int. Conf. Learn. Represent. (ICLR), 2020, pp. 1-15. [13] Z. Guo, X. Zhang, H. Mu, W. Heng, Z. Liu, Y. Wei, J. Sun, Single path one-shot neural architecture search with uniform sampling, in: '
+p 14 'tecture search with uniform sampling, in: Proc. Eur. Conf. Comput. Vis. (ECCV), 2020, pp. 544-560. https://doi.org/ 10.1007/978-3-030-58517-4_32. [14] Z. Liu, M. Sun, T. Zhou, G. Huang, T. Darrell, Rethinking the value of network prun'
+p 14 ' search with big single-stage models, in: Proc. Eur. Conf. Comput. Vis. (ECCV), 2020, pp. 702-717. https://doi.org/10.1007/978-3-030-5857 1-6_41. [18] M. Phuong, C.H. Lampert, Distillation-based training for multi-exit ar- chitectures'
+p 14 'y-efficient architecture search, in: Proc. Int. Conf. Learn. Represent. (ICLR), 2020, pp. 1-13. [27] Z. Lu, I. Whalen, V. Boddeti, Y. Dhebar, K. Deb, E. Goodman, W. Banzhaf, NSGA-Net: Neural architecture search using multi-objective g'
+p 15 'ization policy, in: Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR), 2020, pp. 2078-2087. https://doi.org/10.1109/CVPR42600.20 20.00215. [33] A. Romero, N. Ballas, S.E. Kahou, A. Chassang, C. Gatta, Y. Bengio, FitNets: Hint'
+
+### 00558
+
+-- 100
+p 14 'greement 87.9% (254 / 289) EverGreen (Automated) Human Annotators 0 20 40 60 80 100 Accuracy (%) (c) Accuracy Against Adjudicated Labels 87.5% 84.8% 12.5% 15.2% EverGreen Correct Human Correct Residual Discrepancy Fig. 5 Human–machin'
+p 15 'trate the feasibility of graph-guided repair, we examine a stratified cohort of 100 flagged MuSiQue validation candidates spanning factual, temporal, answer-set, and compositional defect strata. A read-only audit of stored evi- dence'
+p 16 'nthesis across a stratified panel of 300 seed questions distributed evenly with 100 seeds from each of MuSiQue, 2WikiMHQA, and HotpotQA to reflect their source hop count and composi- tional reasoning distributions. In this evaluation'
+p 17 'inely solvable rea- soning tasks rather than ill-posed formulations. 0 25 50 75 100 Solved within budget (%) Seed (original) Descendant 8 3 48 47 67 65 70 70 75 83 4 16k 8 32k 12 48k 16 64k 24 – Turn cap / token cap 1.0 1.2 1.4 Token'
+p 18 'ative Efficiency Standard verification 2–4-hop benchmark items 15–30 s < $0.05 ≈100× Deep research audit Complex open-web queries 5.5 min ≈$0.18 40–90× Human annotation Complex open-web queries 32.6 min $8–16 Baseline (1.0×) Because '
+p 20 '2023 Conference on Empirical Methods in Natural Language Processing, pp 12076–12100 [24] Nahum O, Calderon N, Keller O, et al (2025) Are LLMs better than reported? Detect- ing label errors and mitigating their effect on model perform'
+
+-- 289
+p 13 'p-zh [39]. BrowseComp- zh provides a challenging evaluation corpus com- prising 289 complex open-web queries character- ized by fine-grained temporal constraints, ambigu- ous entity scopes, and multi-hop dependency chains. Human anno'
+p 14 '0%) 25 (8.7%) (b) Human Machine Agreement Matrix Overall Agreement 87.9% (254 / 289) EverGreen (Automated) Human Annotators 0 20 40 60 80 100 Accuracy (%) (c) Accuracy Against Adjudicated Labels 87.5% 84.8% 12.5% 15.2% EverGreen Corr'
+p 14 'an Correct Residual Discrepancy Fig. 5 Human–machine verification comparison on 289 BrowseComp-zh tasks, showing (a) per-query verification latency, (b) verdict concordance, and (c) verification accuracy evaluated against double-blin'
+p 14 'double-blind to reference labels [1]. Evaluating verdict concordance across the 289 queries demonstrates strong alignment between automated verification and human cura- tion, reaching consensus on 87.9% of instances (Fig. 5(b)). The '
+p 15 'archives (Fig. 5(c)). Across all 289 tasks, Ever- Green achieves 87.5% accuracy, demonstrat- ing parity with professional human annotators (84.8%). Because both procedures reached con- s'
+
+-- six
+p 1 'tion, automated auditing achieves comparable accuracy while delivering a nearly sixfold increase in throughput. Guided by verified Evidence Graphs, backward repair restores 82.8% of confirmed defects by editing an average of only 1.2'
+p 3 'tion, automated auditing achieves comparable accuracy while delivering a nearly sixfold increase in throughput. Guided by verified Evidence Graphs, backward repair restores 82.8% of confirmed defects by editing an average of only 1.2'
+p 4 't human anno- tators, automated verification achieves expert parity with nearly sixfold throughput. 2 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47'
+p 11 'constraint, |π(t+1)| ≥|π(t)| + 1. (6) The generation loop enforces a ceiling of six can- didate revisions, retrying upon transient search or tool timeouts. Candidates failing to reach the fail- ure boundary within six iterations are '
+p 11 'rch or tool timeouts. Candidates failing to reach the fail- ure boundary within six iterations are discarded as abstentions, so that only verified, hardened questions enter the descendant benchmark suite. Provenance Tracking. Every v'
+p 12 'o measure how annotation errors affect model assessment, we evaluate a panel of six models across four archi- tectural families and parameter scales from 8B to 235B (Qwen3-8B, Qwen3-235B-A22B, Llama 3.1 8B, Llama 3.3 70B, DeepSeek-Fl'
+p 17 'within budget for seeds and descendants, which stay within 1.7 pp from eight to sixteen turns; bot- tom: ratio of mean session tokens spent on descendants to seeds at the same cap, climbing to 1.44× at the uncapped tier. Error bars d'
+p 17 '3.3% to 83.3% for descendants as retrieval allowances expand. Between eight and sixteen turns, the two solv- ability curves remain within 1.7 percentage points of each other. At the uncapped tier, descendants finish 8.3 percentage po'
+
+-- Eq. (5)
+p 11 '. Candidate acceptance is governed by the boundary-stop criterion formulated in Eq. (5), Accept(x(t) desc) ⇐⇒Mexam(Q(t) desc)̸ ≃A∗(t) desc ∧Screen(G(t)) = Valid, (5) where̸ ≃denotes semantic non-equivalence under normalized answer matchi'
+
+-- 2WikiMultiHopQA
+p 1 'actual, compositional, and uniqueness dimensions. Across MuSiQue, HotpotQA, and 2WikiMultiHopQA, EverGreen reveals that up to 19.3% of validation answers are incorrect and 27.7% of audited answer spaces are non-unique, flaws that distort relativ'
+p 3 'actual, compositional, and uniqueness dimensions. Across MuSiQue, HotpotQA, and 2WikiMultiHopQA, EverGreen reveals that up to 19.3% of validation answers are incorrect and 27.7% of audited answer spaces are non-unique, flaws that distort relativ'
+p 4 'ace uniqueness. 2. We diagnose annotation erosion across MuSiQue, HotpotQA, and 2WikiMultiHopQA, showing that benchmark defects materially distort empirical evaluation. Cleaning datasets with verified corrections and expanded answers inverts obs'
+p 5 'interme- diate steps [2, 16, 17]. Widely used benchmarks such as HotpotQA [36], 2WikiMultiHopQA [9], and MuSiQue [30] evaluate this capability by pro- viding multi-document contexts alongside anno- tated supporting paragraphs. However, construc-'
+p 12 'onduct experiments on three representative multi-hop QA corpora: HotpotQA [36], 2WikiMultiHopQA (2WikiMHQA) [9], and MuSiQue [30]. These datasets reflect distinct authoring paradigms, spanning Wikipedia paragraph linking, Wikidata relation paths'
+p 19 'ta governance through persistent Evidence Graphs. Across MuSiQue, HotpotQA, and 2WikiMultiHopQA, dependency-aware ver- ification identifies factual, compositional, and uniqueness defects, and correcting these errors inverts observed pairwise mod'
+p 22 'aterials. The benchmark datasets analyzed in this study (MuSiQue, HotpotQA, and 2WikiMultiHopQA) are publicly available from their original releases. The verified subsets, evidence-graph artifacts, and the verification and synthesis toolkit will'
+
+-- 34.2%
+p 8 'l compute and search overhead, cutting redundant model and retrieval actions by 34.2% as evaluated in Section 4.6. To verify a ready fact claim, the verifica- tion agent queries external search APIs under an instance-level action budge'
+p 18 've hypotheses, the audit halts downstream explo- ration immediately, yielding a 34.2% reduction in redundant search and inference calls compared to unpruned graph traversal. In standard benchmark auditing on two- to four-hop instances,'
+
+### 00560
+
+-- 45
+p 3 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 4 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 5 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 6 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 7 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 8 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 9 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+p 10 '8 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65'
+
+-- 50 to 800
+not found
+
+-- Table 13
+p 50 'azon Sales, respectively. The corresponding numerical results are summarized in Table 13. For MovieLens 32M, NWU increases from 14.3% at 50 submitted queries to 20.0% at 100 queries and 25.0% at 200 queries. Further increases are observed'
+p 50 'h Amazon Sales exhibiting higher reported NWU values throughout the evaluation. Table 13 Normalized weighted utility under increasing aggregate query workload sizes. Submitted Queries MovieLens 32M NWU Amazon Sales NWU 50 14.3 16.7 100 20'
+
+-- Theorem 5
+p 25 'd protected-coordinate membership tests against the complete historical matrix. Theorem 5 (Incremental Projection Criterion) Let Bt have orthonormal rows, and let u ∈ Rn be a unit vector orthogonal to its row space. Define Bc = [Bt; uT ] a'
+
+-- Theorem 1
+p 23 'protected numerical coordinate from accumulated exact linear aggregate results. Theorem 1 (Exact Linear Reconstruction Criterion) Let A ∈Rh×n and b ∈Rh define a consistent system Ax = b, where x ∈Rn is otherwise unrestricted. A coordinate '
+p 23 ' their jth coordinates vary with α. Therefore, xj is not uniquely determined. □ Theorem 1 characterizes exact linear reconstruction through row-space mem- bership. It does not establish protection against nonlinear inference or additional '
+p 24 ' by the approval rule. Thus, the condition holds after every approved query. By Theorem 1, none of the designated protected coordinates is uniquely determined by the accumulated released linear constraints. □ This result establishes the sp'
+
+-- 8nh
+not found
+
+-- 1984
+p 57 'nce control for range sum queries. Theoretical Computer Science 32(1–2), 77–86 (1984) https://doi.org/10. 1016/0304-3975(84)90025-2 [24] Lu, H., Vaidya, J., Atluri, V., Li, Y.: Statistical database auditing without query denial threat'
+
+### 00561
+
+-- Table 2
+p 8 'ted in Simulation 1 for one-step-ahead forecasting, the results are reported in Table 2. As shown in the table, all forecasting methods substantially outperform the naïve forecast benchmark (MASE < 1), and the introduced baselines are ge'
+p 9 '8 Table 2. One-step-ahead forecasting results for Simulation 1 Family Method MAPE MASE Proposed MTF-MSE 0.047832 0.057801 Classical ARIMA 0.250854 0.087221 NNE'
+p 17 'ival family on all eight datasets of Table 9. The families are those defined in Table 2, and for each dataset and metric the representative is the member with the lowest geometric mean error over h = 1, 2, 3, so that one continuous curve'
+
+-- Table 8
+p 13 'ndom Forest 0.393962 1.031491 Diagnostic GBDT + flattened MTF 0.379209 0.992864 Table 8 reports the multi-step-ahead results for the fourteen methods, further substantiating the robustness and superiority of MTF-MSE. Read as one continuo'
+p 13 'e is not a by-product of trend or seasonality but of the representation itself. Table 8. Multi-step-ahead (h = 2, 3) forecasting results for Simulation 3 Family Method MAPE (h = 2) MASE (h = 2) MAPE (h = 3) MASE (h = 3) Proposed MTF-MSE '
+
+-- 0.047832
+p 9 'd forecasting results for Simulation 1 Family Method MAPE MASE Proposed MTF-MSE 0.047832 0.057801 Classical ARIMA 0.250854 0.087221 NNET-AR 0.060357 0.061064 LSTM 0.059491 0.060065 Deep time-series model PatchTST 0.051802 0.062598 TimesNe'
+
+-- h = 1
+p 13 'y the one-step picture is reversed once the horizon is extended. Recall that at h = 1 on this trendless DGP the best raw-sequence tree ensemble was marginally ahead of MTF-MSE, that is gone by h = 2 and never returns: MTF-MSE posts 0.2'
+p 13 's below 1 (i.e. below the naïve forecast benchmark) at both h = 2 and h = 3; at h = 1 several methods shared this property, but by h = 2 even PatchTST (1.0238) and the GBDT + flattened MTF diagnostic (1.0317) have crossed above 1, and '
+p 17 'tric the representative is the member with the lowest geometric mean error over h = 1, 2, 3, so that one continuous curve stands for each family. The capped bars are estimated standard deviations, and each dataset carries its own band.'
+p 17 'st curve in most panels and the gap between it and MTF-MSE widens steadily from h = 1 to h = 3. The rival families exchange their relative positions from one dataset to another, whereas MTF-MSE keeps its position, so the robustness vis'
+p 18 ', the advantage over the best rival rises from 4.28% (95% CI [0.39%, 8.17%]) at h = 1 to 8.14% ([6.38%, 9.91%]) at h = 2 and 10.03% ([8.01%, 12.05%]) at h = 3 for MAPE, and from 4.26% ([1.32%, 7.20%]) to 7.62% ([4.74%, 10.51%]) and 9.1'
+
+-- 256
+p 4 'dimensions and, if the image is too large, uniformly crops it to a standardized 256×256 format to ensure consistent input dimensions for all subsequent processing. (2) The preprocessed image is passed into the feature extraction modu'
+p 4 'nsions and, if the image is too large, uniformly crops it to a standardized 256×256 format to ensure consistent input dimensions for all subsequent processing. (2) The preprocessed image is passed into the feature extraction module. '
+p 10 ' 1 Family Method MAPE MASE Proposed MTF-MSE 0.191162 0.097892 Classical ARIMA 0.256219 0.116849 NNET-AR 0.272263 0.123756 LSTM 0.209679 0.112415 Deep time-series model PatchTST 0.227865 0.116687 TimesNet 0.264324 0.135357 DLinear 0.2'
+p 13 '3 1.205718 NNET-AR 0.284039 1.089484 0.438629 2.029738 LSTM 0.246859 1.059125 0.256219 1.134538 Deep time-series model PatchTST 0.243047 1.023783 0.277839 1.077276 TimesNet 0.267351 1.126162 0.305623 1.185004 DLinear 0.281934 1.18758'
+p 15 '990 0.061371 0.057608 0.057389 0.060559 0.063856 0.062255 0.054296 Traffic 0.038256 0.050416 0.048184 0.044545 0.040173 0.043228 0.046404 0.044323 0.041818 0.041677 0.043427 0.045955 0.044777 0.042157 ILI 0.213647 0.350124 0.321706 0'
+p 15 '13586 0.378183 0.342761 0.297615 0.238640 0.331587 0.285644 0.316753 0.258901 0.256638 0.280896 0.315124 0.298279 0.259137 ETTm2 0.302174 0.585959 0.542784 0.446676 0.345235 0.442460 0.530189 0.470402 0.381839 0.379330 0.424290 0.472'
+p 15 '35 0.442460 0.530189 0.470402 0.381839 0.379330 0.424290 0.472277 0.443751 0.385256 Electricity (ECL) 0.121485 0.192700 0.182273 0.157997 0.132795 0.152956 0.158923 0.176206 0.141735 0.141122 0.151740 0.165950 0.157891 0.140579 Traff'
+p 16 '98 0.958553 0.813649 1.018010 1.013804 1.092235 0.885008 0.884298 0.968077 1.068256 1.007775 0.815140 Three-step-ahead Beijing PM2.5 concentration 0.566088 0.619628 0.996720 0.760316 0.634531 0.750048 0.771416 0.853843 0.693903 0.686'
+
+-- 0.00001
+not found
+
+-- 1.042
+p 18 'port correction gives F = 206.60 (df = (13, 611), p < 0.001). Average ranks are 1.042 for MTF-MSE, 2.417 for PatchTST and 3.271 for the GBDT + flattened MTF diagnostic, with the remaining methods ranging from 4.208 for LightGBM to 12.7'
+
+### 00562
+
+-- 3170.1811
+p 12 'iction. Table 1 Error results of each algorithm Algorithm MAE MSE R2 RF 43.3659 3170.1811 0.8973 SVM 95.3814 16352.2563 0.4701 XGBoost 83.0926 11880.6837 0.6150 CNN 95.3048 13986.1784 0.5468 As can be seen from Table 1, in the task of auto'
+
+-- Gini
+p 6 'f ∗and segmentation point t∗are selected in Fj so that a certain index (such as Gini index, information gain, etc.) is optimal after segmentation[22]. 3.2.2 Segmentation criteria The criteria for splitting nodes are usually the follow'
+p 6 'r splitting nodes are usually the following methods: 1. Classification problem: Gini index G(f, t) = K ∑︂ k=1 pk (1 −pk) Among them, pk represents the proportion of samples of the k th category in the current node. 2. Regression probl'
+
+-- x1
+p 6 '. 2. Regression problem: Minimize mean square error (MSE) MSE(f, t) = 1 |S1| ∑︂ x1∈S1 (yi −¯y1)2 + 1 |S2| ∑︂ xi∈S2 (yi −¯y2)2 Among them, S1, S2 is the two subsets after segmentation, and ¯y1, ¯y2 is the mean of the subsets. 3.2.3 S'
+
+-- variance
+p 7 ' idea of random forest is to improve the stability of the model by reducing the variance of a single model, and at the same time combine multiple weak learners (decision trees) to form a strong learner[24]. Its theoretical advantage can b'
+p 7 'Its theoretical advantage can be expressed by the following formula: 3.4.1 Bias-variance decomposition The prediction error E(H(x)) of random forest can be expressed as: E(H(x)) = Bias 2 + Variance m + Noise Among them: - Bias: the inhere'
+p 7 'ediction error E(H(x)) of random forest can be expressed as: E(H(x)) = Bias 2 + Variance m + Noise Among them: - Bias: the inherent error of the decision tree; - Variance: the changes introduced by sampling from different training sets; -'
+p 7 'riance m + Noise Among them: - Bias: the inherent error of the decision tree; - Variance: the changes introduced by sampling from different training sets; - Noise: the random error in the data. 3.4.2 OOB Error The generalization error of '
+
+-- topic expertise
+p 9 'ix key features from the text: vocab- ulary difficulty, grammatical complexity, topic expertise, sentiment tendency, text length, and corpus source. Among them, vocabulary difficulty is measured by calculat- ing the proportion of rare words and '
+p 9 'al complexity is evaluated by analyzing the structural complexity of sentences; topic expertise is determined by topic models or keyword extraction; sentiment tendency is judged by sentiment analysis technology; text length directly counts the n'
+p 11 'cation of English learning materials, followed by ”grammatical complexity” and ”topic expertise”. This shows that the model mainly considers the language difficulty, grammatical structure and topic content of the text when making classifications'
+p 11 'likely to be classified as advanced learning materials, while texts with strong topic expertise are more likely to be classified as academic materials. The bootstrap interval prediction is a statistical method based on resampling, which is used '
+
+-- 2024
+p 15 ' In Improving Stu- dent Achievement and Character. Progres Educ. 5(3), 302–311 (2024). https://doi.org/10.29303/prospek.v5i3.1120 [4] Albahri, A.S., Khaleel, Y.L., Habeeb, M.A., et al.: A systematic review of trust- worthy artificial '
+p 15 'telligence applications in natural disasters. Comput. Electr. Eng. 118, 109409 (2024). https://doi.org/10.1016/j.compeleceng.2024.109409 [5] Hossain, S.K.M., Ema, S.A., Sohn, H.: Rule-Based Classification Based on Ant Colony Optimizat'
+p 15 ' Comput. Electr. Eng. 118, 109409 (2024). https://doi.org/10.1016/j.compeleceng.2024.109409 [5] Hossain, S.K.M., Ema, S.A., Sohn, H.: Rule-Based Classification Based on Ant Colony Optimization: A Comprehensive Review. Appl. Comput. In'
+p 16 'n. How to increase student motivation? Educ. Inf. Technol. 29(11), 13635–13662 (2024). https://doi.org/10.1007/s10639-023-12396- y [12] Pathak, D., Kashyap, R.: Electroencephalogram-based deep learning framework for the proposed solut'
+p 16 'urvey of more than two decades of research. Knowl. Inf. Syst. 66(3), 1575–1637 (2024). https://doi.org/10.1007/s10115-023-02010-5 [16] Barbhuiya, A.A., Karsh, R.K., Jain, R.: CNN based feature extraction and clas- sification for sign '
+p 16 '-words models and TF-IDF in NLP tasks. J. Artif. Intell. Gen. Sci. 5(1), 13–21 (2024). https://doi.org/10.60087/jaigs.v5i1.149 [18] Kula, S., Kozik, R., Chora´s, M.: Implementation of the BERT-derived architec- tures to tackle disinfo'
+p 17 's, limitations, opportunities, and chal- lenges. Neural Comput. Appl. 36, 1–36 (2024). https://doi.org/10.1007/s00521- 024-10869-w [30] Rathore, K., Maurya, A.K., Singh, D.: Potential assessment of SAR and optical data with machine le'
+p 17 'oral changes in tall vegetation. J. Indian Soc. Remote Sens. 52(12), 2807–2824 (2024). https://doi.org/10.1007/s12524-024-02056-0 16 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37'

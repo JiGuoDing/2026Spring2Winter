@@ -1,0 +1,23 @@
+00560-01 CONFIRMED | 800 次固定 3 查询重叠试验 | 800 是作者报告的每数据集受控试验次数；3 查询设置另见实验节。 | p3 “800 controlled reconstruction trials per dataset”
+00560-02 CONFIRMED | 2,400 次比较 | 为两个小规模合成负载、多个容差设置下的比较次数。 | p35 “1,200 query-level comparisons per profile and 2,400 comparisons overall”
+00560-03 CONFIRMED | ADAR=100% | 限两个受控二元 SUM 工作负载及文中容差，不能外推到所有真实负载。 | p35 “both profiles achieved an ADAR of 100%”
+00560-04 CONFIRMED | 80% 降至 0% | 是有意构造的有限数值压力测试，不是实际生产误批准概率。 | p36 “4/5 4/5 80” p36 “0/5 0/5 0”
+00560-05 CONFIRMED | 预言机验证与查询级 ADAR | 前文和后文对应工作负载不同，仍需作者解释哪些验证不存在；不能笼统称无任何预言机实验。 | p31 “Neither result is presently reported” p35 “both profiles achieved an ADAR of 100%”
+00560-06 OVERSTATED | 全文存在严重内部自相矛盾 | Table 6 数据集实验与 Table 7 受控合成实验的范围不同，先分开叙述再追问遗漏。 | p34 “they are not reported as empirical outcomes in Table 6” p34 “independently of the MovieLens 32M and Amazon Sales datasets”
+00560-07 CONFIRMED | preliminary / illustrative / analytical formula | 应准确区分预先披露的示意分析与未执行实测，不应指控伪造。 | p31 “the preliminary profiles are not used to claim quantitative speedup” p38 “do not establish a measured auditing-time reduction”
+00560-08 OVERSTATED | 大多数实验结果未真实执行 | 只对明确披露的具体耗时和存储分析作限定；不能以部分示意结果概括全部实验。 | p35 “both profiles achieved an ADAR of 100%” p38 “do not establish a measured auditing-time reduction”
+00560-09 UNVERIFIABLE | 零实质创新 | 作者主张集成贡献；离线无最接近先行工作的全文比较，不能断言零创新。 | p13 “The intended contribution lies in the integration, formal characterization, and comparative evaluation”
+00560-10 CONFIRMED | 0.00%–4.09% | Table 12 的 MovieLens 小规模样本；Amazon 最大值另为 2.30%。 | p47 “MovieLens 32M 20 51.76 69.25 72.28 4.09”
+00560-11 CONFIRMED | forensic and medical data | 数据可用性声明与主要数据集关系不明，应请作者澄清；不得推断错贴动机。 | p60 “forensic and medical data” p3 “MovieLens 32M and Amazon Sales data”
+00560-12 OVERSTATED | 错贴法医医疗数据声明 | 不能排除尚未说明的其他数据来源；只能要求解释声明与数据来源的关系。 | p60 “forensic and medical data” p3 “MovieLens 32M and Amazon Sales data”
+00560-13 CONFIRMED | 3 查询重叠试验 | 与摘要的每数据集 800 次受控重构试验结合理解；不同于 Table 7 的查询级合成负载。 | p31 “three overlapping SUM queries are constructed per trial”
+00560-14 CONFIRMED | 由 0.288 ms 降至 0.016 ms（约 18 倍加速） | Table 11 自报 MovieLens-like 受控负载；稿件同时称未报告重复实测时间，需澄清计时来源和重复方式。 | p41 “0.288 ms/query for H-AQA to 0.016 ms/query for IUH-AQA”
+00560-15 CONFIRMED | 由 0.198 ms 降至 0.014 ms（约 14.1 倍加速） | Table 11 自报 Amazon-like 受控负载；0.198/0.014≈14.14，但不能独立验证计时。 | p41 “0.198 to 0.014 ms/query”
+00560-16 OVERSTATED | 多数图表自承未实测 | 部分时间曲线和内存估算明确为示意或解析值；Table 11 又报告跨三随机种子的消融耗时，需作者澄清两处口径，不能概括多数实验未做。 | p32 “The available results do not include repeated measured execution times” p41 “The reported values represent averages across three independent random seeds”
+00560-17 CONFIRMED | 100,000 条评分 | §5.2.1 受控试验使用选取的 100,000 条评分，不能视为完整数据集实测。 | p33 “MovieLens 32M, using 100,000 selected rating records”
+00560-18 CONFIRMED | 1,465 条折扣价记录 | §5.2.1 的 Amazon Sales 有效折扣价记录数。 | p33 “containing 1,465 valid discounted-price records”
+00560-19 CONFIRMED | TRSR=100%、QAR=100% | Table 6 的 S-AQA 受控负载结果，仅用于指定攻击和受保护目标。 | p33 “S-AQA 800 100.00 2,400 100.00”
+00560-20 CONFIRMED | TRSR=0%、QAR=66.67% | Table 6 的 H-AQA 与 IUH-AQA 受控负载结果；不能推广为任意查询的安全保证。 | p33 “H-AQA 0 0.00 1,600 66.67” p33 “IUH-AQA 0 0.00 1,600 66.67”
+00560-21 CONFIRMED | 53.75% 升至 72.98% | Table 11 的 MovieLens-like 合成负载排序比较，相关耗时测量口径仍需澄清。 | p41 “increased NWU from 53.75% to 72.98%”
+00560-22 CONFIRMED | 44.89% 升至 65.38% | Table 11 的 Amazon-like 合成负载排序比较。 | p41 “NWU increased from 44.89% to 65.38%”
+00560-23 CONFIRMED | 0.00%–2.30%（Amazon） | Table 12 为小样本、10–20 查询及三个随机种子的结果，不能外推到大规模负载。 | p47 “Amazon Sales 10 96.11 97.14 97.14 0.00” p47 “Amazon Sales 20 58.26 74.00 75.74 2.30”

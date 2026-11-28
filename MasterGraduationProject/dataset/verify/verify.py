@@ -153,9 +153,40 @@ def p0() -> None:
         validate_rows("update_events", io.read_jsonl(fx / "update_events.sample.jsonl"))
         validate_rows("act_plan_pool", [io.read_json(fx / "act_plan_pool.sample.json")])
 
+    def online_eval_split():
+        split = io.read_online_eval_split() if hasattr(io, "read_online_eval_split") else io.load_online_eval_split()
+        tables = split["tables"]
+        for stem in ("request_stream", "update_events", "docs_versioned", "act_plan_pool", "tasks"):
+            assert stem in tables, f"ONLINE_EVAL_SPLIT 缺 {stem}"
+            on = set(tables[stem]["online_visible"])
+            ev = set(tables[stem]["eval_only"])
+            assert not (on & ev), f"{stem} online_visible 与 eval_only 有交集: {on & ev}"
+            schema_props = set(load_schema(stem)["properties"].keys())
+            assert (on | ev) == schema_props, f"{stem} 字段覆盖不全: 差集={(on | ev) ^ schema_props}"
+
+    def v040_params_and_frozen_core():
+        p = PARAMS
+        assert p.get("dataset_version") == "0.6.0", f"版本应为 0.6.0，实为 {p.get('dataset_version')}"
+        assert p.get("cache_capacity_tiers") == [0.1, 0.25, 0.5], f"容量档位异常: {p.get('cache_capacity_tiers')}"
+        assert "pool_working_set_ref" in p and "stream_splits" in p, "params 缺 v0.4.0 池/流切分字段"
+        assert "rag_pipeline" in p and "fast_calibration" in p and "act_prod_benchmark" in p, "params 缺 v0.6.0 配置"
+        frozen = {
+            "knowledge/docs.jsonl": "0b2db62f0426e26a7604d1615bf0fc346eadb6fc8cf53e364f736d6b33012b2a",
+            "tasks/tasks.jsonl": "591280a332f36c9f4f48245c202e5f1bfff9033102e7fa88dfc9ed5868bb0bf3",
+            "events/request_stream.jsonl": "c746932ba60bf00b2b8f51a0da95bfad239b7508d03136620551b11f598efe3a",
+            "events/update_events.jsonl": "2e1cbd1e7a0ea633dcdf80442a296fd10e8bce943ccde6fcbe549e43f698190a",
+            "events/real_calibration_300.csv": "f42a1d57084a496ece34f0e1f138561f470dd3785139f066e46c962ebc3291a3",
+            "embeddings/query_embeddings.npz": "5a30251c694079056b1077a0f3c7a18ec9ff5f03ecff5a2f1821e54d7f37bcd0",
+        }
+        for rel, expect in frozen.items():
+            got = io.sha256_file(ROOT / rel)
+            assert got == expect, f"冻结主干 {rel} 哈希漂移: {got} != {expect}"
+
     for name, fn in (("目录结构", dirs), ("params 一致性", params), ("schema 合法", schemas),
                      ("表目录", catalog), ("血缘", lineage), ("ID 规则", id_rules),
-                     ("随机数可复现", seeds_stable), ("fixtures 合规", fixtures)):
+                     ("随机数可复现", seeds_stable), ("fixtures 合规", fixtures),
+                     ("在线/评测字段隔离", online_eval_split),
+                     ("v0.4.0 参数与冻结主干", v040_params_and_frozen_core)):
         check(name, fn)
 
 
@@ -579,6 +610,66 @@ def p4() -> None:
             if tid and tid in tasks:
                 assert tasks[tid] == cid, f"{r['req_id']} 的簇与题目簇不一致"
 
+    def update_impact_table():
+        p = e / "update_impact_summary.jsonl"
+        assert p.is_file(), "缺 events/update_impact_summary.jsonl"
+        rows = list(io.read_jsonl(p))
+        assert len(rows) == PARAMS["updates"]["primary"], f"影响面行数 {len(rows)}"
+        tot_claim = sum(r["claim_affected_reqs"] for r in rows)
+        tot_local = sum(r["local_repair_cnt"] for r in rows)
+        assert tot_claim == 1102, f"主张级受影响对 {tot_claim} != 1102"
+        lo, hi = PARAMS["updates"]["local_repair_ratio_target"]
+        ratio = tot_local / tot_claim
+        assert lo <= ratio <= hi, f"局部修复占比 {ratio:.4f} 超出 [{lo},{hi}]"
+        neg = [r for r in rows if r["negative_control"]]
+        assert len(neg) == 6 and all(r["doc_affected_reqs"] == 0 for r in neg), "负对照影响应全为 0"
+
+    def repair_sample_table():
+        p = e / "repair_calibration_sample.jsonl"
+        assert p.is_file(), "缺 events/repair_calibration_sample.jsonl"
+        rows = list(io.read_jsonl(p))
+        cfg = PARAMS["repair_calibration"]
+        assert len(rows) == cfg["total_pairs"], f"修复标定样本数 {len(rows)} != {cfg['total_pairs']}"
+        cal_reqs = {
+            ln.split(",")[0]
+            for ln in (e / "real_calibration_300.csv").read_text(encoding="utf-8").splitlines()[1:]
+            if ln.strip()
+        }
+        strata_cnt: dict[str, int] = {}
+        for r in rows:
+            assert r["req_id"] in cal_reqs, f"{r['req_id']} 不在 300 条主标定中"
+            assert r["old_resp_text"], f"{r['pair_id']} 缺旧回答文本"
+            strata_cnt[r["stratum"]] = strata_cnt.get(r["stratum"], 0) + 1
+        assert strata_cnt == cfg["strata"], f"分层配比不符: {strata_cnt} != {cfg['strata']}"
+
+    def tool_failures_sidecar():
+        p = e / "tool_failures.jsonl"
+        assert p.is_file(), "缺 events/tool_failures.jsonl"
+        rows = list(io.read_jsonl(p))
+        assert len(rows) > 0, "tool_failures.jsonl 为空"
+        req_ids = {r["req_id"] for r in io.read_jsonl(e / "request_stream.jsonl")}
+        for r in rows:
+            assert r.get("source") == "assumed_synthetic", f"必须标注 assumed_synthetic: {r}"
+            assert r["req_id"] in req_ids, f"未知 req_id: {r['req_id']}"
+            assert r["attempts"] >= 2 and r["retries"] == r["attempts"] - 1
+
+    def fast_sample_table():
+        p = e / "fast_calibration_sample_50.jsonl"
+        assert p.is_file(), "缺 events/fast_calibration_sample_50.jsonl"
+        rows = list(io.read_jsonl(p))
+        cfg = PARAMS["fast_calibration"]
+        assert len(rows) == cfg["total_requests"], f"快模型样本数 {len(rows)} != {cfg['total_requests']}"
+        cal_reqs = {
+            ln.split(",")[0]
+            for ln in (e / "real_calibration_300.csv").read_text(encoding="utf-8").splitlines()[1:]
+            if ln.strip()
+        }
+        dcnt: dict[str, int] = {}
+        for r in rows:
+            assert r["req_id"] in cal_reqs, f"{r['req_id']} 不在 300 条主标定中"
+            dcnt[r["difficulty"]] = dcnt.get(r["difficulty"], 0) + 1
+        assert dcnt == cfg["quota_by_difficulty"], f"快模型样本难度配比不符: {dcnt}"
+
     for name, fn in (("文件齐备", files), ("schema 合规", schemas), ("规模", stream_size),
                      ("五类更新齐备", update_classes), ("无未来快照泄漏", no_leak),
                      ("ID 合法", ids_valid), ("种子流与长流", streams),
@@ -586,7 +677,11 @@ def p4() -> None:
                      ("更新影响面", update_impact), ("双时间戳语义", clock_semantics),
                      ("局部修复比例", local_repair_ratio),
                      ("act/plan 异质性", act_plan_heterogeneity),
-                     ("簇一致性", cluster_consistency)):
+                     ("簇一致性", cluster_consistency),
+                     ("逐事件影响面汇总表", update_impact_table),
+                     ("局部修复先导样本集", repair_sample_table),
+                     ("工具失败重试 sidecar", tool_failures_sidecar),
+                     ("快模型 50 条样本集", fast_sample_table)):
         check(name, fn)
 
 
@@ -649,7 +744,69 @@ def p5() -> None:
         assert len(lines) - 1 >= PARAMS["labels"]["human_review"], \
             f"待复核 {len(lines) - 1} 行，应 ≥ {PARAMS['labels']['human_review']}"
 
-    for name, fn in (("成本表", cost_table), ("安全复用标签", label_table),
+    def fallback_cost_table():
+        import csv as _csv  # noqa: PLC0415
+        f = c / "fallback_costs.csv"
+        assert f.is_file(), "缺 costs/fallback_costs.csv"
+        rows = list(_csv.DictReader(f.open("r", encoding="utf-8", newline="")))
+        assert len(rows) >= 5, f"fallback_costs 行数不足: {len(rows)}"
+        for r in rows:
+            assert not (r["measured"] and r["mock"]), f"measured 与 mock 同时非空: {r}"
+            if r["measured"] == "1":
+                assert float(r["p50_ms"]) > 0 and int(r["n"]) >= 1000, f"本地实测值异常: {r}"
+
+    def modern_rag_and_act_tables():
+        import csv as _csv  # noqa: PLC0415
+        for fn_name, min_rows in (("rag_rerank_costs.csv", 8), ("act_toolchain_costs.csv", 20)):
+            fp = c / fn_name
+            assert fp.is_file(), f"缺 costs/{fn_name}"
+            rows = list(_csv.DictReader(fp.open("r", encoding="utf-8", newline="")))
+            assert len(rows) >= min_rows, f"{fn_name} 行数不足: {len(rows)}"
+            for r in rows:
+                assert r["measured"] == "1" and not r["mock"], f"{fn_name} 必须全实测: {r}"
+                assert float(r["p50_ms"]) > 0, f"{fn_name} 耗时异常: {r}"
+        ir_p = c / "rag_ir_eval.csv"
+        assert ir_p.is_file(), "缺 costs/rag_ir_eval.csv"
+        ir_rows = list(_csv.DictReader(ir_p.open("r", encoding="utf-8", newline="")))
+        assert {r["mode"] for r in ir_rows} == {
+            "bm25_only", "dense_only", "hybrid_rrf", "hybrid_rrf_rerank_dynamic"
+        }, "rag_ir_eval 缺少消融模式"
+
+    def act_prod_and_diagnostics():
+        import csv as _csv  # noqa: PLC0415
+        meta = io.read_json(ROOT / "db" / "scale" / "meta.json")
+        assert meta["total_rows"] >= 1_000_000, f"生产规模库行数不足 100 万: {meta['total_rows']}"
+        fp = c / "act_prod_costs.csv"
+        assert fp.is_file(), "缺 costs/act_prod_costs.csv"
+        rows = list(_csv.DictReader(fp.open("r", encoding="utf-8", newline="")))
+        concs = {int(r["concurrency"]) for r in rows}
+        assert concs == {1, 8, 16}, f"并发档位不全: {concs}"
+        for r in rows:
+            assert r["measured"] == "1" and not r["mock"], f"act_prod_costs 必须全实测: {r}"
+        c1_p50 = float(next(r["p50_ms"] for r in rows if int(r["concurrency"]) == 1 and r["difficulty"] == "all" and r["stage"] == "e2e_client"))
+        c16_p95 = float(next(r["p95_ms"] for r in rows if int(r["concurrency"]) == 16 and r["difficulty"] == "all" and r["stage"] == "e2e_client"))
+        assert c16_p95 > c1_p50, f"高并发 c=16 p95({c16_p95}) 应大于串行 c=1 p50({c1_p50})"
+        diag = io.read_json(c / "act_value_diagnostics.json")
+        assert diag["snapshot_numerical_drift"]["any_snapshot_changed"] > 0, "快照漂移数异常"
+        assert diag["reuse_and_db_qps_reduction"]["db_query_reduction_upper_bound_pct"] > 50.0
+
+    def deployment_profiles_check():
+        fp = c / "deployment_profiles.json"
+        assert fp.is_file(), "缺 costs/deployment_profiles.json"
+        doc = io.read_json(fp)
+        profs = doc["profiles"]
+        assert len(profs) == 4, f"部署画像数应为 4，实为 {len(profs)}"
+        for p in profs:
+            for st in ("model_stage", "rag_stage", "act_stage"):
+                assert p[st]["status"] in ("measured", "assumed"), f"{p['id']}.{st} 状态非法"
+        p3 = next(p for p in profs if p["id"] == "P3_fast_modern_rag_prod_act")
+        assert p3["rag_stage"]["status"] == "measured" and p3["act_stage"]["status"] == "measured", "P3 应达成 RAG+ACT 双实测"
+
+    for name, fn in (("成本表", cost_table), ("回退成本表", fallback_cost_table),
+                     ("现代 RAG 与 act 工具链实测表", modern_rag_and_act_tables),
+                     ("生产级 act 网关压测与价值诊断", act_prod_and_diagnostics),
+                     ("多部署画像契约表", deployment_profiles_check),
+                     ("安全复用标签", label_table),
                      ("双视角分歧样本", divergent_cases), ("分支配对", pairs),
                      ("待复核清单", review_csv)):
         check(name, fn)
@@ -661,7 +818,8 @@ def p6() -> None:
 
     def docs():
         for f in ("DATASET_CARD.md", "PAPER_MAP.md", "MANIFEST.json", "HANDBOOK.md",
-                  "audit_v010_report.json"):
+                  "audit_v010_report.json", "contracts/ONLINE_EVAL_SPLIT.json",
+                  "contracts/PATH_AND_TIMING_SPEC.md"):
             assert (ROOT / f).is_file(), f"缺 {f}"
 
     def card_fields():
@@ -686,7 +844,19 @@ def p6() -> None:
             assert (ROOT / "embeddings" / "STATUS.md").is_file(), \
                 "句向量未生成时必须提供 embeddings/STATUS.md 说明原因"
 
-    for name, fn in (("交付文档", docs), ("卡片要素", card_fields), ("句向量状态", embeddings)):
+    def chunk_embeddings_check():
+        cfg = PARAMS["rag_pipeline"]
+        path = ROOT / cfg["chunk_embeddings_path"]
+        assert path.is_file(), f"缺块向量索引 {cfg['chunk_embeddings_path']}"
+        import numpy as np  # noqa: PLC0415
+        z = np.load(path, allow_pickle=False)
+        n, dim = z["embeddings"].shape
+        assert n == cfg["chunk_count"] and dim == cfg["chunk_dim"], f"块向量维度异常: {(n, dim)}"
+        norms = np.linalg.norm(z["embeddings"], axis=1)
+        assert np.allclose(norms, 1.0, atol=1e-3), "块向量未 L2 归一化"
+
+    for name, fn in (("交付文档", docs), ("卡片要素", card_fields),
+                     ("句向量状态", embeddings), ("块向量索引状态", chunk_embeddings_check)):
         check(name, fn)
 
 

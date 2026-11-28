@@ -47,7 +47,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>具体材料清单见《客户交流版》第 19 页（T01 / T09 / T10 / T12 / T20）</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>07 / 08</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>07 / 09</Text>
         </Box>
     </Box>
 </Slide>

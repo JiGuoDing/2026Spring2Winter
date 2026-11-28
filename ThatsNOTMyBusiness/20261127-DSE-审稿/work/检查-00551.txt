@@ -1,0 +1,10 @@
+00551-01 CONFIRMED | 5类攻击 | 这是 Table 3 对历史案例的描述。 | p16 “5 types of high-incidence abnormal attacks”
+00551-02 CONFIRMED | Deepfake 论文 | 文内称该文研究网络异常，[7] 题名为 deepfake 检测；需核实原文和基线改造细节。 | p4 “deepfake network attacks, a type of network abnormal connection [7]” p22 “A novel blockchain-based deepfake detection method using federated and deep learning models”
+00551-03 OVERSTATED | 错将视频 Deepfake 论文当网络入侵基线 | 仅凭参考文献题名不能确认全部任务细节；说明图表比较和引用的关联方式不清。 | p19 “Reference [7] method” p22 “A novel blockchain-based deepfake detection method using federated and deep learning models”
+00551-04 CONFIRMED | 10至50节点 | 这是正文所讨论的两个例子，不证明 90 节点图值错误。 | p20 “When the number of nodes is 10” p20 “when the number of nodes increases to 50”
+00551-05 CONFIRMED | 400 Mbit/s | 是正文对 10 节点、30 分钟的近似描述。 | p20 “the throughput of the method in this paper is close to 400 Mbit/s”
+00551-06 IMPRECISE | Section 2仅以4个主机度计数 | §2.1 确有四项连接特征，§2.2 的 GRU 输入该矩阵；不能仅据此排除文中其他环节还使用了其他数据或后处理。 | p7 “The four feature metrics described above” p8 “The dynamic connection feature matrix”
+00551-07 OVERSTATED | 数学模型与实验输出彻底断裂 | 应指出协议字段、路径及干扰信息与建模输入/输出的映射未说明。 | p8 “dynamic connection feature matrix” p17 “PC-05 hijacked → intermediate switch → horizontal connection path of SCADA server”
+00551-08 UNVERIFIABLE | 偏离DSE核心数据科学与数据工程范畴 | 原稿能支持领域描述；范围结论需编辑按现行政策判断。 | p5 “dynamic network abnormal connection patterns”
+00551-09 UNVERIFIABLE | 缺少损失函数 | [UNVERIFIABLE] 尚不能排除其他位置的训练/损失定义；对外只说训练与评估细节不足。 | p8 “a Gated Recurrent Unit (GRU) is introduced”
+00551-10 CONFIRMED | 5 vs. 8 attack classes | 历史样例和混淆矩阵的类别数不同；两者可能覆盖不同集合，须解释对应关系。 | p16 “covers 5 types of high-incidence abnormal attacks” p18 “correspond to 8 types of dynamic network abnormal connection patterns”

@@ -1,0 +1,3593 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+EverGreen: Sustaining Multi-Hop Question Answering Benchmarks with Evidence
+Graphs
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00558
+Full Title:
+EverGreen: Sustaining Multi-Hop Question Answering Benchmarks with Evidence
+Graphs
+Article Type:
+Research Papers
+Funding Information:
+National Natural Science Foundation of
+China
+(U23B2057)
+Prof. Haofen Wang
+Abstract:
+Multi-hop question answering benchmarks are essential for evaluating complex
+reasoning in large language models, yet static datasets degrade over time as real-
+world facts evolve and advancing models saturate questions through memorization.
+Conventional curation treats verification merely as a terminal discard filter, which
+steadily shrinks evaluation coverage without preventing obsolescence because flat
+representations cannot preserve intermediate proof artifacts. To overcome this
+limitation, we present EverGreen, a framework that introduces persistent Evidence
+Graphs to sustain benchmarks across a closed loop of audit, repair, and evolution.
+Each Evidence Graph models atomic claims, causal dependencies, and timestamped
+web evidence, enabling systematic auditing in topological dependency order across
+factual, compositional, and uniqueness dimensions. Across MuSiQue, HotpotQA, and
+2WikiMultiHopQA, EverGreen reveals that up to 19.3% of validation answers are
+incorrect and 27.7% of audited answer spaces are non-unique, flaws that distort
+relative model rankings. Compared with human expert verification, automated auditing
+achieves comparable accuracy while delivering a nearly sixfold increase in throughput.
+Guided by verified Evidence Graphs, backward repair restores 82.8% of confirmed
+defects by editing an average of only 1.29 claim nodes per item, while forward
+evolution mutates graph topologies to synthesize robust descendant questions that
+resist parametric memorization. Grounding benchmark governance in Evidence
+Graphs thus enables evaluation suites to be continually corrected and extended rather
+than depleted.
+Corresponding Author:
+Haofen Wang
+Tongji University
+CHINA
+Corresponding Author E-Mail:
+carter.whfcarter@gmail.com
+Order of Authors:
+Yunfan Gao
+Xinyi Huang
+Lihao Lv
+Rong An
+Yun Xiong
+Haofen Wang
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+Tongji University
+Corresponding Author's Secondary
+Institution:
+First Author:
+Yunfan Gao
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Additional Information:
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+EverGreen: Sustaining Multi-Hop Question Answering
+Benchmarks with Evidence Graphs
+Anonymized Author
+Anonymized Institution.
+Abstract
+Multi-hop question answering benchmarks are essential for evaluating complex reasoning in large
+language models, yet static datasets degrade over time as real-world facts evolve and advancing
+models saturate questions through memorization. Conventional curation treats verification merely as
+a terminal discard filter, which steadily shrinks evaluation coverage without preventing obsolescence
+because flat representations cannot preserve intermediate proof artifacts. To overcome this limitation,
+we present EverGreen, a framework that introduces persistent Evidence Graphs to sustain benchmarks
+across a closed loop of audit, repair, and evolution. Each Evidence Graph models atomic claims, causal
+dependencies, and timestamped web evidence, enabling systematic auditing in topological dependency
+order across factual, compositional, and uniqueness dimensions. Across MuSiQue, HotpotQA, and
+2WikiMultiHopQA, EverGreen reveals that up to 19.3% of validation answers are incorrect and
+27.7% of audited answer spaces are non-unique, flaws that distort relative model rankings. Compared
+with human expert verification, automated auditing achieves comparable accuracy while delivering a
+nearly sixfold increase in throughput. Guided by verified Evidence Graphs, backward repair restores
+82.8% of confirmed defects by editing an average of only 1.29 claim nodes per item, while forward
+evolution mutates graph topologies to synthesize robust descendant questions that resist parametric
+memorization. Grounding benchmark governance in Evidence Graphs thus enables evaluation suites
+to be continually corrected and extended rather than depleted.
+Keywords: Multi-hop QA, Evidence Graph, Benchmark Auditing, Answer Verification, Data Synthesis
+1 Introduction
+Multi-hop question answering (QA) benchmarks
+are central to evaluating complex reasoning in
+large language models (LLMs), measuring multi-
+step evidence integration, ranking frontier archi-
+tectures, and providing testbeds for retrieval-
+augmented systems [2, 5, 8, 16, 30]. A benchmark
+item is foundational evaluation infrastructure, yet
+existing datasets are released as static question-
+answer pairs whose correctness is asserted once
+and rarely revisited. Because multi-hop reason-
+ing requires cascading transitions across heteroge-
+neous sources, a single stale premise, misaligned
+entity binding, or unconstrained phrasing is suffi-
+cient to invalidate an entire evaluation item.
+Scaling and reusing these benchmarks reveals
+that static items erode along two independent
+clocks, namely a factual clock governed by real-
+world change and a model clock driven by rapid
+capability advances. Under the factual clock,
+real-world facts evolve, rendering originally cor-
+rect answers obsolete. Simultaneously, manual
+1
+Blinded manuscript
+Click here to access/download;Blinded manuscript;main.pdf
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+decomposition pipelines introduce latent anno-
+tation flaws, including compositional misalign-
+ments where individually valid sub-claims fail to
+entail the final answer, and answer-space expan-
+sions where unconstrained wording admits multi-
+ple unverifiable or unannotated solutions [28, 29,
+31]. On the MuSiQue validation set, for exam-
+ple, 19.3% of the 2,415 gold answers are fac-
+tually incorrect, and 27.7% of the 1,546 items
+with an adjudicated answer space admit multiple
+valid solutions. Under the model clock, as pre-
+training corpora absorb public benchmarks and
+models expand parametric memory, items that
+once demanded complex reasoning become solv-
+able through surface heuristics or direct memo-
+rization, causing evaluation saturation even when
+annotations remain factually valid [27].
+The
+structural
+bottleneck
+to
+halting
+this
+erosion lies in the stateless flat-file representa-
+tion adopted by standard benchmarks. Datasets
+record only question-answer pairs (Q, a∗), where
+Q denotes the input question and a∗represents the
+annotated gold answer. Consequently, interme-
+diate reasoning dependencies, timestamped web
+references, and counter-hypotheses gathered dur-
+ing verification have nowhere to be preserved.
+Verification therefore operates as an ephemeral
+discard filter. Flagged items are either discarded,
+which reduces benchmark coverage and intro-
+duces survivor bias, or manually re-annotated
+from scratch, which breaks longitudinal compara-
+bility across releases. When applied to large-scale
+corpora, such discard filtering permanently elimi-
+nates 5,123 training instances from the MuSiQue
+training split alone (25.7% of its 19,902 items).
+Such severe attrition starves downstream post-
+training and reinforcement learning workflows
+that rely on multi-round rollouts to isolate high-
+difficulty training samples [5, 18].
+To overcome this representation bottleneck, an
+effective governance protocol must retain verifi-
+cation artifacts as an editable, version-controlled
+state. As illustrated in Fig. 1, we propose Ever-
+Green, a framework that sustains a continuous
+benchmark lifecycle through Evidence Graph-
+based auditing, repair, and evolution. EverGreen
+models each instance as an externally persisted
+Evidence Graph state machine G
+= (V, E, τ),
+where V represents the node set partitioned into
+atomic claims, candidate alternatives, and citable
+evidence snippets annotated with source URLs
+and retrieval timestamps, E
+denotes directed
+dependency and evidentiary support edges, and
+τ specifies the temporal horizon anchoring all
+retrieved evidence. By scheduling verification in
+topological dependency order over E, EverGreen
+short-circuits evaluation when a key premise is
+refuted, eliminating redundant web queries and
+model invocations.
+By maintaining verification artifacts in a per-
+sistent graph state, EverGreen unifies backward
+annotation recovery with forward benchmark evo-
+lution. For backward maintenance, EverGreen
+formalizes
+annotation
+recovery
+as
+minimum-
+cost graph repair, replacing refuted claims with
+verified alternatives while preserving ancestral
+proof dependencies, in accordance with classical
+database repair principles. For forward evolu-
+tion, EverGreen decouples graph mutation from
+question-surface projection and enforces an adver-
+sarial boundary-stop control law, which contin-
+ues structural hardening until an independent
+examiner model fails rather than stopping at an
+arbitrary computational budget.
+Empirical evaluation across diverse multi-hop
+benchmarks confirms that Evidence Graphs pro-
+vide both reliable verification and sustainable
+maintenance. We summarize our primary contri-
+butions as follows:
+1. We propose EverGreen, a framework that
+recasts
+benchmark
+verification
+as
+stateful
+data governance by modeling evaluation items
+through the Evidence Graph. As a persis-
+tent and versioned state machine, the Evi-
+dence Graph preserves intermediate reasoning
+dependencies, timestamped evidence, and can-
+didate alternatives as first-class benchmark
+state, enabling dependency-driven verification
+across
+factuality,
+compositional
+entailment,
+and answer-space uniqueness.
+2. We
+diagnose
+annotation
+erosion
+across
+MuSiQue, HotpotQA, and 2WikiMultiHopQA,
+showing that benchmark defects materially
+distort empirical evaluation. Cleaning datasets
+with verified corrections and expanded answers
+inverts
+observed
+pairwise
+model
+rankings
+across
+evaluated
+configurations,
+while
+in
+independent evaluations against human anno-
+tators, automated verification achieves expert
+parity with nearly sixfold throughput.
+2
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Outdated answers
+q1: Who currently leads the
+institute founded by P?
+led by
+P
+Institute X
+A
+now
+led by
+B
+Stored answer: A
+Current evidence: B
+A valid current answer
+can be rejected.
+Non-unique answers
+q2: Who directed the adaptation
+of novel N?
+directed
+by
+adapted as
+A
+Invalid composition
+q3: Which river crosses author
+P's birthplace?
+born in
+Springfield A
+Models advance
+q4: Which country hosted the
+cup won by team T?
+won
+hosted by
+then
+founded
+P
+T
+cup
+Earlier model
+Time
+?
+Country ?
+Later model
+≠
+crossed by
+N
+Film F
+Evaluated
+now
+Institute X
+B
+Stored answer: A
+Supported answers: A and B
+An incomplete key rejects
+valid answers.
+Springfield B
+River R
+Same city name,
+different entities.
+Correct hops can yield an
+unsupported answer.
+The question stays valid.
+Its challenge may decrease
+as models improve.
+Benchmark v0
+Benchmark v1
+v2 ...
+Existing questions
+Updated question set
+Recheck
+& update
+Maintain old questions
+Derive a new question
+q1
+q1 B
+Answer A
+adapted as
+premiered in
+q1 A
+B
+q2
+q2 {A, B}
+Answer A
+Update the reference answer
+N
+F
+City
+q3
+q4 Retained
+Invalid
+q2 A
+{A, B}
+Verified in q2
+New evidence
+q4
+New question
+Valid
+Accept both valid answers
+Extend benchmark life by reusing verification evidence to maintain old questions and create new ones.
+Reuse verification evidence
+Fig. 1 The EverGreen benchmark lifecycle, in which verification evidence maintained in an Evidence Graph repairs existing
+questions and derives new descendant questions across benchmark versions.
+3. We
+demonstrate
+that
+persistent
+Evidence
+Graphs sustain closed-loop benchmark gover-
+nance through backward repair and forward
+synthesis. Backward repair restores 82.8% of
+confirmed defects under a minimum-cost objec-
+tive, editing an average of 1.29 claims per item
+while preserving 92.3% of ancestral evidence.
+Forward boundary-controlled synthesis gener-
+ates hardened descendants that reduce closed-
+book accuracy across diverse model families
+while remaining solvable under retrieval.
+2 Related Work
+2.1 Annotation Quality
+Multi-hop question answering requires synthesiz-
+ing scattered evidence across multiple sources and
+performing compositional reasoning over interme-
+diate steps [2, 16, 17]. Widely used benchmarks
+such as HotpotQA [36], 2WikiMultiHopQA [9],
+and MuSiQue [30] evaluate this capability by pro-
+viding multi-document contexts alongside anno-
+tated supporting paragraphs. However, construc-
+tion pipelines relying on automatic entity linking,
+text scraping, and paragraph concatenation intro-
+duce systemic vulnerabilities. Models frequently
+bypass multi-step reasoning by exploiting lexical
+overlap, entity type hints, and single-hop short-
+cuts [11, 22]. Beyond heuristic shortcuts, anno-
+tation errors remain widespread even in estab-
+lished corpora [24]. Open-world question formu-
+lations also frequently omit temporal boundaries
+or geographic qualifiers, creating underspecified
+queries with multiple valid answers [28]. As real-
+world facts evolve, static gold annotations rapidly
+become obsolete [29, 31].
+These annotation flaws undermine the relia-
+bility of empirical evaluations and leaderboards.
+Recent studies report pervasive noise across adja-
+cent data tasks, showing that over 30% of exam-
+ples in standard benchmarks contain incorrect
+annotations and that correcting these errors sub-
+stantially alters model rankings [13]. Manual
+audits of widely reused corpora reach the same
+conclusion beyond QA, uncovering systematic
+quality defects that large-scale collection pipelines
+never filter [15]. Cheng et al. [3] emphasize
+that noisy reference answers mask genuine model
+progress and produce fragile performance conclu-
+sions. Traditional benchmark curation typically
+3
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+applies a terminal discard filter that permanently
+removes flawed instances. While this practice
+purges erroneous samples, it reduces benchmark
+coverage, accelerates saturation, and introduces
+survivor bias. In contrast, classical data cleaning
+formulates minimum-cost repair under integrity
+constraints as a core objective [10]. EverGreen
+grounds this repair principle in persistent Evi-
+dence Graphs, using verified alternative evidence
+to fix broken nodes locally while preserving the
+surrounding reasoning topology.
+2.2 Automated Verification
+Automated verification has evolved from binary
+classification of isolated claims to structured
+evidence retrieval and fine-grained error local-
+ization.
+Decontextualization
+and
+atomic
+fact
+decomposition frameworks break complex model
+outputs into individual propositions that can
+be independently verified against retrieval cor-
+puses [7, 20, 23]. Search-augmented evaluators
+scale this paradigm to long-form answers by issu-
+ing grounded queries for each atomic fact [34],
+while sampling-consistency checks and planned
+verification chains detect hallucinations without
+consulting external references [4, 21]. Program-
+guided approaches further translate verification
+into executable sub-tasks to improve interpretabil-
+ity and retrieval precision [25]. Similarly, auto-
+mated evaluation systems such as ARES [26]
+assess retrieval-augmented generation [8] by mea-
+suring context relevance and answer faithfulness
+against retrieved documents.
+Deploying large language models directly as
+evaluators has gained widespread popularity [38],
+but ungrounded model judges often exhibit sys-
+tematic position bias, verbosity preferences, and
+self-enhancement tendencies [19, 32, 33]. Although
+graph-structured evidence has proven effective
+for multi-hop retrieval and corpus-level reason-
+ing [6, 12], prevailing verification frameworks
+predominantly operate over flat lists of inde-
+pendent claims. As a consequence, they verify
+factual correctness in isolation, leaving compo-
+sitional entailment between reasoning hops and
+answer-space uniqueness unexamined. EverGreen
+structures multi-hop verification as an auditable
+dependency graph over factual, compositional,
+and uniqueness dimensions, anchoring intermedi-
+ate decisions in timestamped web evidence.
+2.3 Dynamic Benchmarking
+Rapid advances in model pre-training and reason-
+ing architectures have accelerated the saturation
+of static benchmarks, while test set contami-
+nation further erodes evaluation integrity [27,
+31, 37]. To maintain evaluation utility, recent
+research has explored dynamic evaluation frame-
+works that continuously refresh test instances,
+ranging from human-in-the-loop adversarial col-
+lection [14] to periodically rebuilt contamination-
+limited suites [35]. However, existing dynamic
+benchmarks predominantly depend on manual
+crowdsourcing or unconstrained large language
+model generation. Human authoring requires pro-
+hibitive manual effort and proves difficult to
+standardize. Conversely, unconstrained generation
+risks compounding hallucinations, broken logic
+chains, and noisy reference answers.
+A parallel line of work uses heuristic expan-
+sions
+to
+synthesize
+multi-hop
+questions,
+but
+increasing question length or hop count does
+not automatically guarantee reasoning difficulty.
+Unconstrained synthetic questions often collapse
+into
+shallow
+pattern
+matching
+or
+single-hop
+retrieval shortcuts because raw generation length
+does not reflect intrinsic reasoning complexity.
+EverGreen addresses these limitations by repur-
+posing verification artifacts into a generative sub-
+strate. By applying graph mutation operators to
+verified subgraphs and enforcing an adversarial
+boundary-stop condition where generation contin-
+ues until an independent model examiner fails,
+EverGreen derives challenging descendant ques-
+tions that preserve strict factual provenance and
+resist parametric memory.
+3 Method
+EverGreen formalizes benchmark curation as a
+continuous lifecycle structured around three inter-
+connected stages: diagnostic auditing, minimum-
+cost backward repair, and boundary-controlled
+forward evolution. As illustrated in Fig. 2, tra-
+ditional static benchmarks degrade as real-world
+facts evolve and model capabilities advance, while
+manual re-annotation requires substantial effort
+and deletion shrinks benchmark coverage. Ever-
+Green addresses this vulnerability by maintaining
+intermediate reasoning steps, dependency con-
+straints, retrieved web snippets, and diagnostic
+4
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Fig. 2 Architecture of EverGreen across the Audit–Repair–Evolve benchmark lifecycle, illustrating Evidence Graph
+grounding and verification (left), minimum-cost graph repair (middle), and boundary-controlled forward evolution (right).
+tags within a persistent Evidence Graph. Pre-
+serving explicit topological state enables auditable
+verification with deterministic dependency prop-
+agation, localized backward repair that salvages
+flawed questions without altering reasoning intent,
+and forward question synthesis that actively coun-
+ters parametric memorization.
+3.1 Evidence Graph Model
+Problem Formulation. A multi-hop question
+answering instance is formalized as a tuple x =
+(Q, D, A∗), where Q denotes the composite natu-
+ral language question, A∗represents the authen-
+ticated reference answer set with initial singleton
+A∗= {a∗}, and D = {(qi, ai, depsi)}n
+i=1 specifies
+an ordered decomposition into sub-questions qi,
+intermediate answers ai, and prerequisite depen-
+dency indices depsi ⊆{1, . . . , i −1}. Because
+prerequisite indices are strictly bounded by pre-
+decessors, the dependency structure forms an
+acyclic directed graph by construction, guarantee-
+ing the existence of a valid topological verification
+order. To initialize graph-based auditing, each
+sub-question decomposition (qi, ai) is mapped to
+an atomic fact claim ci, with claim-level depen-
+dencies defined as deps(ci) = {cj | j ∈depsi}.
+EverGreen evaluates each instance to pro-
+duce four structured outputs comprising a dis-
+crete consistency verdict v
+∈
+Y, diagnostic
+metadata tags identifying specific failure modal-
+ities, an auditable verification report R con-
+taining timestamped retrieval trajectories, and
+operational dataset revisions that update bench-
+mark corpora. The categorical verdict space Y
+encompasses five mutually exclusive outcomes,
+spanning Correct, Corrected, Incorrect,
+Composition-Error, and Ambiguous. These
+categorical determinations directly dictate the
+construction of cleaned evaluation subsets Dclean
+evaluated in downstream experiments. Specifi-
+cally, instances evaluated as Correct are pre-
+served in their original form, instances evaluated
+as Corrected are retained under updated target
+labels, verified non-unique instances are preserved
+under expanded answer sets A∗, while instances
+receiving Incorrect, Composition-Error, or
+Ambiguous are removed from Dclean.
+Evidence Graph Architecture. EverGreen
+maintains
+an
+externalized,
+directed
+Evidence
+Graph G = (V, E, τ) as its foundational substrate,
+where τ denotes the system time horizon anchor-
+ing all retrieved evidence and claim evaluations.
+The node set V = VC ∪VE partitions into claim
+nodes VC and external evidence nodes VE. Claim
+nodes represent atomic verification targets, par-
+titioning into fact claims Vfact
+C
+= {c1, . . . , cn}, a
+distinguished final claim cfinal encoding whether
+(Q, A∗) holds, a composition claim ccomp assess-
+ing whether supported sub-answers logically entail
+the final answer under consistent entity bindings,
+5
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+and alternative claims c′ introduced during back-
+ward repair. Fact claims upon which cfinal tran-
+sitively depends define the key claim set Vkey
+C
+=
+Anc(cfinal)∩Vfact
+C
+. Each claim node c ∈VC carries
+an evaluation state s(c) ∈S, spanning discrete
+states Unknown, Supported, Refuted, and
+Ambiguous. Each evidence node e ∈VE encap-
+sulates a verifiable web snippet extracted from
+external sources, recording the source URL, access
+timestamp, a minimally sufficient verbatim quote,
+and the execution tool trace.
+The edge set E consists of four typed rela-
+tions governing inference and provenance. Depen-
+dency edges requires(ci, cj) enforce prerequisite
+constraints, stipulating that claim ci cannot be
+evaluated before cj attains a decided state. Evi-
+dential edges supports(e, c) and refutes(e, c) con-
+nect retrieved text spans to corresponding claim
+hypotheses. Provenance edges alternative of (c′, c)
+link proposed candidate hypotheses to refuted pre-
+decessor claims. For any claim c, its ancestral
+dependency closure is defined over the transitive
+closure of prerequisite edges as
+Anc(c) = {cj ∈VC | (c, cj) ∈requires+},
+(1)
+with associated ancestral evidence Vanc
+E (c) = {e ∈
+VE | ∃c′ ∈Anc(c) ∪{c}, (e, c′) ∈supports ∪
+refutes}. Aggregating over all claims yields the
+graph-level ancestral evidence set Vanc
+E (G)
+=
+⋃︁
+c∈VC Vanc
+E (c). This transitive closure provides
+the structural basis for measuring evidence preser-
+vation during backward repair and ancestral
+tracking during forward evolution.
+3.2 Diagnostic Auditing
+Topological Scheduling. EverGreen schedules
+claim verification in topological dependency order
+(formalized in Algorithm 1) to ensure that inter-
+mediate premises are validated prior to evalu-
+ating downstream assertions. A claim node c
+is designated as ready for evaluation when all
+its immediate prerequisites possess non-tentative
+truth assignments, satisfying
+∀d ∈deps(c),
+s(d)̸ = Unknown.
+(2)
+Evaluating ready claims in ascending topological
+order establishes deterministic evidence propaga-
+tion and avoids redundant retrieval. If any prereq-
+uisite claim d ∈deps(c) is evaluated as Refuted
+without a verified alternative hypothesis, Ever-
+Green marks dependent claim c as Refuted
+and prunes downstream retrieval branches (Algo-
+rithm 1). This deterministic short-circuiting saves
+substantial compute and search overhead, cutting
+redundant model and retrieval actions by 34.2%
+as evaluated in Section 4.6.
+To verify a ready fact claim, the verifica-
+tion agent queries external search APIs under an
+instance-level action budget B, retrieving relevant
+pages and extracting verbatim candidate passages.
+Claim states update through a multi-source cor-
+roboration protocol, wherein a claim transitions to
+Supported or Refuted when corroborated by
+at least two independent web sources from distinct
+registrable domains, or when anchored by author-
+itative primary references such as official gov-
+ernmental portals and established encyclopedias.
+Contradictory evidence across sources or failure
+to locate corroborating citations within budget B
+assigns the claim to Ambiguous. A refuted key
+claim generates a candidate alternative c′ satisfy-
+ing s(c′) = Supported through localized search,
+establishing an alternative of (c′, c) relation that
+restores dependency viability.
+Compositional Verification. Factual con-
+sistency among isolated sub-answers does not
+guarantee that they validly compose into an
+answer for the composite question Q. Construc-
+tion pipelines frequently introduce compositional
+binding errors, temporal mismatches, or scope
+misalignments where all intermediate claims hold
+true yet fail to entail A∗. EverGreen elevates
+compositional validity to a first-class audit target
+through explicit composition claims ccomp.
+Given composite question Q and resolved fact
+claims Vfact
+C
+, the composition verifier inspects
+variable bindings, temporal qualifiers, and entity
+role assignments induced by graph dependen-
+cies,
+yielding
+a
+discrete
+judgment
+valid
+∈
+{true, false, unknown}. When entity bindings
+contradict or cross-hop constraints break, the
+verifier assigns valid
+=
+false, triggering a
+Composition-Error verdict whenever prereq-
+uisite facts hold. Auditing this structural failure
+mode independently of factual consistency ensures
+6
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Algorithm 1: EverGreen: Dependency-
+Driven Benchmark Auditing
+Input: QA instance x = (Q, D, A∗), budget B
+Output: Verdict v ∈Y, report R, modified graph G
+1 Initialize graph G with fact claims Vfact
+C
+, final claim
+cfinal, composition claim ccomp, and requires edges;
+2 Set s(c) ←Unknown for all c ∈VC;
+3 while ∃c ∈Vfact
+C
+: s(c) = Unknown and B > 0 do
+4
+Cready ←{c ∈Vfact
+C
+| s(c) = Unknown ∧∀d ∈
+deps(c), s(d)̸ = Unknown};
+5
+if Cready = ∅then
+6
+break;
+7
+Select ready claim c ∈Cready with lowest
+topological index;
+8
+if ∃d ∈deps(c) such that s(d) = Refuted
+without verified alternative then
+9
+s(c) ←Refuted;
+10
+continue;
+11
+Execute web retrieval for c, deducting
+search-and-read actions from B;
+12
+Extract minimal verbatim evidence spans and
+append evidence nodes to VE;
+13
+Update s(c) ∈{Supported, Refuted, Ambiguous}
+via dual-source policy;
+14
+if c ∈Vkey
+C
+and s(c) = Refuted then
+15
+Generate candidate alternatives {c′} and
+evaluate each under remaining budget B;
+16 Mark remaining undetermined claims in Vfact
+C
+as
+Ambiguous;
+17 Evaluate composition validity
+valid ←VerifyComp(Q, Vfact
+C
+);
+18 Audit answer space uniqueness
+uniq ←AuditUniqueness(Q, A∗);
+19 Synthesize consistency verdict v ∈Y via prioritized
+decision rules;
+20 Assemble auditable report R containing graph
+snapshots and retrieval URLs;
+that compositional defects remain mutually exclu-
+sive from factual invalidity.
+Answer
+Space
+Uniqueness
+Auditing.
+Even when multi-hop reasoning passes factual
+and compositional scrutiny, benchmark questions
+frequently permit multiple valid answers due to
+underspecified relational constraints. EverGreen
+systematically evaluates answer space topology
+by classifying each question across closed finite,
+open unbounded, and indeterminate structures.
+For closed finite spaces, such as enumerating
+members of an executive cabinet or athletic medal-
+ists, the verifier identifies all candidate entities
+through web retrieval and evaluates whether mul-
+tiple candidates satisfy composite constraints. For
+open unbounded spaces, the agent deploys tar-
+geted counterexample searches seeking alternative
+entities a′ /∈A∗supported by external evidence.
+To support rigorous empirical auditing, only
+questions definitively verified as single-answer or
+corroborated with multiple supported answers are
+categorized as determinative uniqueness evalua-
+tions. Instances where counterexample searches
+exhaust budget without finding secondary answers
+in unconstrained spaces are classified as indeter-
+minate, avoiding ambiguous denominators when
+estimating non-uniqueness rates.
+Verdict Synthesis. EverGreen aggregates
+claim
+states,
+compositional
+judgments,
+and
+uniqueness metadata into a consistency verdict
+v ∈Y via prioritized decision rules:
+1. Factual Refutation. If any key fact claim
+is evaluated as Refuted, EverGreen assigns
+Corrected if a verified alternative hypothesis
+successfully restores the dependency chain with
+valid composition, and Incorrect otherwise.
+2. Composition Failure. If all key fact claims
+are Supported but compositional verifica-
+tion yields valid = false, EverGreen assigns
+Composition-Error.
+3. Unresolved Ambiguity. If key fact claims
+or compositional entailment remain unresolved
+upon budget exhaustion, the instance receives
+Ambiguous. Unresolved answer space unique-
+ness does not trigger ambiguity, preserving
+valid items for evaluation.
+4. Verified
+Correctness.
+If
+all
+key
+claims
+are Supported and composition evaluates
+as valid = true, EverGreen assigns Cor-
+rect. When uniqueness auditing reveals mul-
+tiple valid answers, the instance retains Cor-
+rect while attaching an expanded reference
+set A∗= {a∗, a′
+1, . . . } and diagnostic non-
+uniqueness tags.
+Fig. 3 Schematic Evidence Graph for a recorded case.
+The education claim (C1) is retained while evidence refutes
+the original rank (C2) and supports its replacement (C′
+2).
+Composition and answer-space checks yield 136th within
+QS 2026. E2–E4 denote excerpts from the same QS source.
+7
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Fig. 3 illustrates the claims, evidence, and
+repair links retained in the Evidence Graph.
+EverGreen also compiles verification trajectories
+into an interactive Evidence Graph report. This
+auditable record provides complete provenance
+for each sub-assertion, allowing human auditors
+and downstream benchmarks to inspect source
+URLs, exact quote spans, and applied structural
+modifications. By systematically retaining both
+the topological reasoning dependencies and the
+explicit counter-evidence refuting flawed asser-
+tions, this auditing process transforms defective
+instances into structured repair representations,
+providing the foundation for backward mainte-
+nance.
+3.3 Backward Maintenance via
+Minimum-Cost Graph Repair
+Standard benchmark curation discards flawed
+items upon error detection, precipitating dataset
+shrinkage and selection bias. EverGreen formalizes
+benchmark maintenance through the database
+principle of Minimum-Cost Graph Repair.
+Unlike conventional curation pipelines that
+discard defective instances or re-annotate ques-
+tions from scratch, EverGreen seeks a minimally
+modified graph G′
+=
+(V′, E′, τ) that resolves
+detected factual errors or non-uniqueness while
+preserving ancestral reasoning structures. For-
+mally, let ∆V(G, G′) quantify the symmetric dif-
+ference in claim nodes,
+∆V(G, G′) = |V′
+C \ VC| + |VC \ V′
+C|.
+(3)
+EverGreen frames backward maintenance as a
+constrained graph editing problem formulated in
+Eq. (4),
+min
+G′
+∆V(G, G′)
+subject to
+Verdict(G′) = Correct,
+|Vanc
+E (G′) ∩Vanc
+E (G)|
+|Vanc
+E (G)|
+≥θanc,
+(4)
+where θanc is the evidence retention threshold.
+Optimization follows a minimal-modification hier-
+archy, prioritizing temporal restrictions over scope
+adjustments and entity rewrites.
+EverGreen implements this repair objective
+across three coordinated structural operations.
+• Factual Correction. For refuted or tempo-
+rally outdated sub-claims c, the agent inserts
+a
+verified
+alternative
+node
+c′
+backed
+by
+fresh evidence enew
+∈
+VE, establishing an
+alternative of (c′, c) edge while maintaining all
+upstream dependency linkages.
+• Scope Disambiguation. For questions vul-
+nerable to semantic ambiguity, the agent mod-
+ifies claim premises with explicit jurisdictional
+or chronological qualifiers, propagating neces-
+sary boundary conditions into the composite
+question Qrep.
+• Answer-Set
+Expansion.
+For
+questions
+exhibiting
+valid
+non-unique
+answer
+spaces,
+EverGreen
+expands
+the
+singular
+refer-
+ence
+answer
+into
+an
+authenticated
+set
+A∗= {a∗, a′
+1, . . . }, where each candidate ele-
+ment is substantiated by an explicit, verified
+sub-graph path.
+Under this optimization objective, graph repair
+identifies the minimal set of claim modifications
+necessary to restore logical consistency while max-
+imizing ancestral evidence retention, rectifying
+false-negative evaluations without altering the
+underlying reasoning topology. While minimum-
+cost repair salvages flawed instances, backward
+maintenance alone cannot mitigate benchmark
+saturation driven by rapid improvements in model
+capacity and parametric memory. To prevent eval-
+uation obsolescence, EverGreen also advances for-
+ward, repurposing authenticated evidence struc-
+tures into generative substrates that synthesize
+increasingly challenging evaluations.
+3.4 Forward Evolution via
+Boundary-Controlled Synthesis
+EverGreen
+implements
+forward
+evolution
+by
+decoupling generation into graph-level semantic
+mutation and surface question projection under
+an adversarial boundary-stop loop.
+Synthesis Operators. The forward synthesis
+pipeline operates through two orthogonal layers
+of manipulation. At the graph substrate layer,
+the agent alters semantic topology through two
+fundamental graph manipulation operators.
+• add claim(cnew, enew, deps). Extends the graph
+frontier
+by
+issuing
+targeted
+web
+searches
+anchored on entities within VC, retrieving fresh
+evidence snippet enew ∈VE and linking new
+8
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+claim cnew to existing nodes via requires and
+(enew, cnew) ∈supports edges.
+• revise claim(cold, crev, enew).
+Modifies
+rela-
+tional predicates or variable bindings to reflect
+updated temporal contexts or domain shifts.
+Given mutated graph G′, the agent projects
+selected reasoning trajectories into fully formed
+natural language question instances xdesc
+=
+(Qdesc, Ddesc, A∗
+desc) via four projection operators
+aligned with Fig. 2.
+• select path(G′, π). Extracts an active reason-
+ing trajectory π = (c1, . . . , ck), formalizing the
+descendant hop count as the exact chain length
+|π|.
+• reverse lookup(ui, uj, r−1). Inverts relational
+orientation between entities ui and uj, querying
+antecedent attributes from terminal properties
+to prevent direct associative recall.
+• hide entity(ui, ri−1,i). Replaces an explicit
+intermediate entity name on the question sur-
+face with its relational description, preserving
+the underlying dependency chain in G while
+masking superficial lexical cues.
+• join branches(π1, π2, cmp). Synthesizes con-
+vergent multi-hop reasoning by merging paral-
+lel trajectories at a comparative bridge entity
+under explicit temporal and categorical con-
+straints.
+Boundary-Controlled Closed-Loop Syn-
+thesis. Direct question synthesis frequently gen-
+erates items solvable through surface shortcuts
+or pretraining parametric memory. Conventional
+generation paradigms that stop after a fixed
+generation budget often terminate prematurely
+on trivial variations, producing descendants that
+are empirically easier than seed items. Ever-
+Green resolves this limitation by introducing the
+Boundary-stop protocol, establishing a closed-
+loop control system that uses examiner model
+failure as its governing setpoint.
+The synthesis loop designates a single closed-
+book examiner model Mexam, instantiated with
+GPT-6-Luna operating in zero-shot closed-book
+mode. Held-out model families never enter the
+synthesis loop, preventing examiner overfitting.
+At each synthesis iteration t, the agent proposes
+candidate descendant x(t)
+desc with associated graph
+G(t). Candidate acceptance is governed by the
+boundary-stop criterion formulated in Eq. (5),
+Accept(x(t)
+desc) ⇐⇒Mexam(Q(t)
+desc)̸ ≃A∗(t)
+desc
+∧Screen(G(t)) = Valid,
+(5)
+where̸ ≃denotes semantic non-equivalence under
+normalized answer matching, and Screen(G(t)) =
+Valid enforces three automated screening crite-
+ria comprising factual verification of all newly
+introduced claims (Vfact), compositional binding
+validity (Vcomp), and answer uniqueness (Vans). If
+Mexam correctly solves candidate x(t)
+desc, the candi-
+date has not reached the boundary of parametric
+memorization. In response, an adversarial critique
+isolates the shortcut cue, prompting the synthesis
+agent to execute further graph mutations under a
+mandatory monotonic dependency constraint,
+|π(t+1)| ≥|π(t)| + 1.
+(6)
+The generation loop enforces a ceiling of six can-
+didate revisions, retrying upon transient search or
+tool timeouts. Candidates failing to reach the fail-
+ure boundary within six iterations are discarded
+as abstentions, so that only verified, hardened
+questions enter the descendant benchmark suite.
+Provenance
+Tracking.
+Every
+veri-
+fied
+descendant
+instance
+xdesc
+preserves
+an
+immutable
+provenance
+pedigree
+P(xdesc)
+=
+(Vseed
+C
+, Vnew
+C
+, Vnew
+E
+),
+mapping
+question
+compo-
+nents directly to ancestral seed nodes and newly
+authenticated web evidence. Because descendant
+instances retain the standardized multi-hop QA
+format (Q, D, A∗), they can re-enter EverGreen
+as seeds in future iterations, enabling continuous
+and auditable curation.
+4 Experiments
+Our empirical evaluation tracks the benchmark
+lifecycle across three key stages that govern con-
+tinuous benchmark evolution. First, Sections 4.2
+and 4.3 examine the prevalence of annotation
+decay in multi-hop benchmarks and evaluate
+whether automated graph verification matches
+expert
+human
+accuracy.
+Second,
+Section
+4.4
+explores backward maintenance, demonstrating
+that verified Evidence Graphs support minimum-
+cost repair to salvage flawed items while pre-
+serving their original reasoning intent. Finally,
+9
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Sections 4.5 and 4.6 investigate forward evolu-
+tion, examining how boundary-controlled synthe-
+sis generates grounded descendant questions that
+counter parametric memorization while preserv-
+ing task difficulty across search and compute
+dimensions.
+4.1 Experimental Setup
+To evaluate EverGreen across diverse bench-
+mark construction methodologies, we conduct
+experiments on three representative multi-hop
+QA corpora: HotpotQA [36], 2WikiMultiHopQA
+(2WikiMHQA) [9], and MuSiQue [30]. These
+datasets reflect distinct authoring paradigms,
+spanning Wikipedia paragraph linking, Wikidata
+relation paths, and disconnected sub-question
+composition. For MuSiQue, we audit both the
+complete validation split (2,415 instances) and
+the full training split (19,902 instances); for Hot-
+potQA and 2WikiMHQA, we evaluate standard
+validation subsets of 988 and 989 instances follow-
+ing HippoRAG [12]. Based on our audit, we estab-
+lish cleaned evaluation subsets (Dclean) by filtering
+unrepairable instances while incorporating verified
+label corrections and expanded alias answer sets
+A∗, yielding Nclean = 1,872 for MuSiQue, 884 for
+HotpotQA, and 962 for 2WikiMHQA.
+We employ DeepSeek-Flash as the backbone
+verification model and use the Jina search API
+for web retrieval, anchoring each factual deci-
+sion to timestamped external sources. To measure
+how annotation errors affect model assessment, we
+evaluate a panel of six models across four archi-
+tectural families and parameter scales from 8B to
+235B (Qwen3-8B, Qwen3-235B-A22B, Llama 3.1
+8B, Llama 3.3 70B, DeepSeek-Flash, and GPT-5-
+mini), using greedy decoding (T = 0). On original
+benchmarks, predictions are scored against pub-
+lished gold answers via exact match and standard
+alias lookup; on cleaned subsets, model outputs
+are matched against verified answer sets A∗under
+standard text normalization, using Qwen-plus as
+an equivalence judge to accommodate benign sur-
+face variations.
+Subsequent lifecycle experiments investigate
+backward maintenance and forward evolution,
+whose
+task-specific
+cohorts,
+agent
+configura-
+tions, and evaluation protocols are detailed in
+Sections 4.4 and 4.5, respectively.
+4.2 Evaluation Distortion
+We evaluate benchmark decay by first quanti-
+fying the prevalence and structural patterns of
+annotation defects across multi-hop corpora, and
+then examining how correcting these defects alters
+relative model performance and rankings.
+0
+5
+10
+15
+20
+25
+30
+Percentage (%)
+MuSiQue-Train
+HotpotQA
+2WikiMultihop
+MuSiQue
+19.3%
+0.9%
+27.7%
+2.8%
+0.5%
+8.7%
+6.3%
+0.1%
+13.4%
+25.7%
+2.2%
+16.9%
+Incorrect
+Ambiguous
+Non-unique
+Fig. 4 Verification defect rates across benchmark valida-
+tion splits and the MuSiQue training set, covering factual
+errors, non-unique answers, and question ambiguity.
+An exhaustive audit of the benchmark valida-
+tion splits reveals that annotation defects affect
+all three corpora to varying degrees (Fig. 4). Pub-
+lished gold answers prove factually incorrect in
+19.3% of MuSiQue instances, 6.3% of HotpotQA,
+and 2.8% of 2WikiMHQA. Beyond individual fac-
+tual premises, compositional failures, where inter-
+mediate deductions fail to logically entail the
+final question, account for an additional 2.5% of
+instances in MuSiQue, 1.3% in HotpotQA, and
+0.3% in 2WikiMHQA. Notably, these composi-
+tional flaws are heavily concentrated in items
+where multi-hop queries were assembled from
+independently generated single-hop components.
+A second systemic source of evaluation dis-
+tortion stems from target multiplicity, which
+undermines the standard single-string evalua-
+tion paradigm. When auditing answer unique-
+ness, determinative verdicts were established for
+1,546 MuSiQue items (64.0% coverage), 899 Hot-
+potQA items (91.0%), and 876 2WikiMHQA items
+(88.6%). Among these audited instances, multi-
+ple valid answers exist for 27.7% of MuSiQue,
+10
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+13.4% of HotpotQA, and 8.7% of 2WikiMHQA.
+Taking these verified subsets as conservative lower
+bounds across full splits confirms that at least
+17.7% of MuSiQue, 12.1% of HotpotQA, and 7.7%
+of 2WikiMHQA admit multiple legitimate answers
+penalized by standard exact-match scoring.
+Across all evaluated error types, defect rates
+follow a consistent hierarchy of MuSiQue
+>
+HotpotQA > 2WikiMHQA. This pattern directly
+mirrors the structural freedom permitted by each
+benchmark’s
+authoring
+methodology.
+Because
+MuSiQue constructs questions by concatenating
+independently generated single-hop sub-questions,
+any factual shift or entity ambiguity at an interme-
+diate step cascades downstream, frequently widen-
+ing the legitimate answer space beyond the single
+annotated target. HotpotQA relies on crowd-
+workers searching over hyperlinked Wikipedia
+paragraphs, yielding intermediate defect rates.
+Conversely, 2WikiMHQA instantiates questions
+from structured Wikidata relation paths under
+predefined schema constraints, which substan-
+tially curtails human error. By anchoring verifica-
+tion to timestamped external evidence, EverGreen
+separates original annotation artifacts from sub-
+sequent temporal drift. This structural decay is
+not restricted to evaluation splits. An audit of the
+complete MuSiQue training set (19,902 instances)
+reveals 25.7% factually incorrect answers, 2.2%
+ambiguous formulations, and 16.9% non-unique
+answers. The high training defect rate confirms
+that annotation decay stems from unconstrained
+compositional authoring rather than test split
+sampling artifacts.
+Having quantified the prevalence of defects,
+we next investigate how these errors distort
+downstream
+model
+evaluation.
+As
+shown
+in
+Table 1, comparing model performance on origi-
+nal benchmarks against the cleaned subsets Dclean
+reveals pervasive score suppression caused by
+flawed annotations. Evaluated across 18 model–
+benchmark pairs, accuracy increases universally,
+with gains ranging from +3.9 to +31.1 percentage
+points (pp). Mean per-model improvements range
+from +7.3 pp for GPT-5-mini to +22.4 pp for
+Llama 3.1 8B. Because benchmark cleaning simul-
+taneously removes unanswerable items, corrects
+erroneous reference labels, and broadens valid
+answer aliases, the resulting accuracy shifts rep-
+resent a composite cleaning-induced benchmark-
+version effect reflecting measurement distortion
+within the original test suites.
+Beyond uniform accuracy gains, score cali-
+bration inverts relative model rankings in three
+of the 45 pairwise configurations, altering com-
+parative conclusions on cleaned benchmarks. On
+2WikiMHQA, Llama 3.1 8B gains +31.1 pp on
+cleaned instances, reaching 47.3% and overturn-
+ing Qwen3-8B (34.8%), reversing their uncleaned
+16.2% vs. 29.5% ranking by a 12.5 pp margin. On
+HotpotQA, DeepSeek-Flash improves by +14.7 pp
+to 76.6%, surpassing GPT-5-mini (72.0%) to claim
+the top rank. Similarly on MuSiQue, Qwen3-235B-
+A22B overtakes GPT-5-mini, reaching 52.2% com-
+pared to 51.7%.
+The emergence of these rank reversals chal-
+lenges the common assumption that benchmark
+evaluation remains rank-preserving under annota-
+tion noise. A closer analysis of the panel reveals
+three structural patterns governing this instabil-
+ity. First, reversals are confined to closely matched
+models whose cleaned performance differs by at
+most 12.5 pp; wide-margin hierarchies remain
+robust, as shown by DeepSeek-Flash maintain-
+ing a decisive 33.9 pp lead over Llama 3.1 8B
+on 2WikiMHQA. Second, different model archi-
+tectures absorb label corrections asymmetrically,
+with average gains spanning +7.3 pp to +22.4
+pp across models. Consequently, modest perfor-
+mance leads reported on uncleaned benchmarks
+often fall entirely within the error margin intro-
+duced by annotation flaws. Third, the largest
+reversal (Llama 3.1 8B over Qwen3-8B) occurs
+between models of identical scale (8B), showing
+that evaluation distortion reflects architectural
+noise sensitivity rather than raw capacity limits.
+4.3 Comparison with Human
+Verification
+To assess whether automated graph auditing
+matches expert human accuracy, we benchmark
+EverGreen directly against professional human
+annotators on BrowseComp-zh [39]. BrowseComp-
+zh provides a challenging evaluation corpus com-
+prising 289 complex open-web queries character-
+ized by fine-grained temporal constraints, ambigu-
+ous entity scopes, and multi-hop dependency
+chains. Human annotators operated under strictly
+11
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 1 Model accuracy on original benchmarks versus cleaned subsets.
+Model
+MuSiQue
+2WikiMHQA
+HotpotQA
+Original
+Cleaned (∆)
+Original
+Cleaned (∆)
+Original
+Cleaned (∆)
+Qwen3-8B
+20.6%
+35.8% (+15.2)
+29.5%
+34.8% (+5.3)
+26.0%
+34.3% (+8.3)
+Qwen3-235B-A22B
+39.6%
+52.2% (+12.6)
+55.5%
+74.5% (+19.0)
+56.8%
+69.4% (+12.6)
+Llama 3.1 8B
+14.5%
+35.3% (+20.8)
+16.2%
+47.3% (+31.1)
+28.8%
+44.0% (+15.2)
+Llama 3.3 70B
+32.5%
+49.6% (+17.1)
+49.7%
+69.5% (+19.8)
+54.1%
+63.3% (+9.2)
+DeepSeek-Flash
+46.2%
+63.8% (+17.6)
+69.5%
+81.2% (+11.7)
+61.9%
+76.6% (+14.7)
+GPT-5-mini
+43.9%
+51.7% (+7.8)
+47.6%
+57.9% (+10.3)
+68.1%
+72.0% (+3.9)
+Note. ∆denotes the accuracy shift in percentage points from original benchmarks to cleaned subsets (Dclean); underlined values
+indicate model pairs whose relative rankings reverse after cleaning.
+EverGreen
+(Automated)
+Human
+Annotators
+0
+10
+20
+30
+40
+50
+60
+70
+Verification Time (min/query)
+5.5 min
+32.6 min
+5.2 min
+23.0 min
+(a) Verification Latency & Efficiency
+Mean Latency
+Median Latency
+Valid / Correct
+Defective / Refuted
+EverGreen Verdict
+Defective
+Valid / Correct
+Human Verdict
+229
+(79.2%)
+9
+(3.1%)
+26
+(9.0%)
+25
+(8.7%)
+(b) Human Machine Agreement Matrix
+Overall Agreement
+87.9% (254 / 289)
+EverGreen
+(Automated)
+Human
+Annotators
+0
+20
+40
+60
+80
+100
+Accuracy (%)
+(c) Accuracy Against Adjudicated Labels
+87.5%
+84.8%
+12.5%
+15.2%
+EverGreen Correct
+Human Correct
+Residual Discrepancy
+Fig. 5 Human–machine verification comparison on 289 BrowseComp-zh tasks, showing (a) per-query verification latency,
+(b) verdict concordance, and (c) verification accuracy evaluated against double-blind expert adjudication.
+symmetric information conditions, working solely
+from raw questions and retrieving timestamped
+web evidence under the same citation protocols as
+EverGreen, while remaining fully double-blind to
+reference labels [1].
+Evaluating verdict concordance across the
+289
+queries
+demonstrates
+strong
+alignment
+between automated verification and human cura-
+tion, reaching consensus on 87.9% of instances
+(Fig. 5(b)). The two procedures jointly confirm
+79.2% of benchmark items and jointly identify
+defects in 8.7%, leaving 35 discrepancies (12.1%)
+that reveal two asymmetric error modalities. In
+the first modality (accounting for 9.0% of cases),
+human annotators flagged errors on items that
+EverGreen verified as valid. Qualitative review
+reveals that manual search frequently terminated
+prematurely when encountering thinly indexed or
+obscure entities, mistaking retrieval exhaustion
+for factual invalidity. Conversely, in the second
+modality (3.1% of cases), human annotators
+accepted items that EverGreen refuted. These
+discrepancies predominantly stem from subtle
+temporal obsolescence, such as superseded official
+appointments, or fine-grained jurisdictional mis-
+matches that escaped informal human reading.
+Structured dependency retrieval prevents prema-
+ture search exhaustion on obscure entities, while
+temporal anchoring captures outdated facts that
+human annotators frequently miss.
+To establish an authoritative ground truth,
+all 35 disputed instances were resolved through
+independent double-blind adjudication by senior
+domain experts equipped with timestamped web
+12
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+archives (Fig. 5(c)). Across all 289 tasks, Ever-
+Green
+achieves
+87.5%
+accuracy,
+demonstrat-
+ing parity with professional human annotators
+(84.8%). Because both procedures reached con-
+sensus on the 254 concordant queries, this per-
+formance advantage predominantly stems from
+resolving contested instances where manual open-
+web searches proved brittle. These results confirm
+that automated graph verification attains domain
+expert parity on complex open-domain queries.
+Beyond matching expert human accuracy,
+automated graph verification provides substan-
+tial throughput advantages over manual cura-
+tion, as shown by the latency distributions in
+Fig. 5(a). Driven by the DeepSeek-Flash verifi-
+cation pipeline, EverGreen resolves queries in an
+average of 5.5 min with a median of 5.2 min and
+sample standard deviation of 2.0 min, compared
+to an average of 32.6 min and median of 23.0 min
+for human annotators, delivering a 5.9× mean
+acceleration and a 4.4× median speedup. The
+discrepancy between mean and median speedups
+highlights a heavily right-skewed human latency
+profile, where difficult searches for obscure entities
+produce an extended tail. In contrast, automated
+verification maintains a tight temporal concentra-
+tion. By verifying claims in topological order with
+early stopping, runtime scales predictably with
+graph depth, mitigating the labor bottlenecks of
+manual benchmark auditing.
+Having established both expert parity and
+scalability on open-domain queries, verified Evi-
+dence Graphs offer a persistent evidentiary foun-
+dation for benchmark maintenance. Rather than
+treating verification as a passive screening step,
+the structured graph state can be directly applied
+to repair defective benchmark instances while
+preserving their original reasoning topologies.
+4.4 Backward Maintenance via
+Minimum-Cost Repair
+Identifying benchmark decay is only an ini-
+tial step; sustaining long-term evaluation utility
+requires principled mechanisms to repair flawed
+instances rather than discarding them. Conven-
+tional curation typically resorts to outright fil-
+tering, which would discard up to 30.0% of the
+MuSiQue validation split and disproportionately
+purge its most challenging compositional ques-
+tions. Structured Evidence Graphs offer a non-
+destructive alternative grounded in the database
+principle of Minimum-Cost Repair. Because inter-
+mediate premises, multi-hop dependencies, and
+refuting evidence spans are preserved within the
+graph topology, identified defects can be resolved
+by modifying the minimal sufficient subgraph nec-
+essary to restore logical consistency, keeping the
+original reasoning depth intact.
+To demonstrate the feasibility of graph-guided
+repair, we examine a stratified cohort of 100
+flagged MuSiQue validation candidates spanning
+factual, temporal, answer-set, and compositional
+defect strata. A read-only audit of stored evi-
+dence confirms 87 of these candidates as genuine
+defects, resolves 8 as historical false positives, and
+leaves 5 with insufficient materials for a deter-
+minate verdict. Equipped with timestamped web
+retrieval, the maintenance agent applies targeted
+graph transformations exclusively to confirmed
+defects. Across this cohort, the agent achieves
+an 82.8% protocol-internal repair success rate,
+successfully restoring 72.0% of all evaluated candi-
+dates without manual re-annotation. The repairs
+exhibit notable minimality: the agent modifies an
+average of only 1.29 claim nodes per restored
+graph while preserving 92.3% of verified ancestral
+evidence nodes. A structural audit confirms that
+98.6% of restored instances retain their original
+hop count and reasoning topology, demonstrat-
+ing that consistency is achieved through surgical
+modifications rather than question simplification.
+For non-unique queries where reference targets
+were expanded into verified sets with unchanged
+question text, rescoring frontier models elimi-
+nates false-negative penalties, yielding a +22.4 pp
+accuracy calibration across evaluated scorings.
+Two concrete repair cases illustrate how graph-
+grounded maintenance operates across distinct
+defect classes. The first case addresses factual
+obsolescence in a two-hop geographical query that
+asks for the largest national park in the country
+implied by a hunting-economics premise. Reason-
+ing along the chain e1 →e2 →a∗soundly estab-
+lished the intermediate country, yet the legacy
+annotation recorded Ruaha National Park, a des-
+ignation that the 2019 establishment of Nyerere
+National Park superseded as the largest park in
+the country. The maintenance agent re-bound
+13
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+the terminal claim c′
+term from an already-stored
+timestamped evidence record covering the newer
+park, carrying forward the untouched country-
+deduction premise with its full support intact. The
+second case resolves answer-space incompleteness
+in a three-hop query about the number of plague
+outbreaks in the birthplace of a named composer.
+The legacy annotation recorded a single admis-
+sible count, penalizing models that reported the
+equally valid figure obtained under a narrower
+enumeration window. The agent verified each sat-
+isfying count against stored and newly fetched
+evidence and expanded the target into a verified
+set A∗= {a∗, a′
+1, . . . }, converting false-negative
+evaluation penalties into correct scores without
+modifying the question text.
+While minimum-cost repair demonstrates that
+structured graph maintenance reliably salvages
+defective instances and eliminates evaluation dis-
+tortion, backward maintenance by nature only
+remedies past decay. As frontier language mod-
+els rapidly advance, static benchmark instances
+inevitably face saturation through pretraining
+memorization. To sustain diagnostic rigor over
+time, benchmarks require both retroactive correc-
+tion of historical errors and forward synthesis to
+counter pretraining saturation.
+4.5 Forward Evolution under
+Boundary Control
+To counter benchmark saturation caused by pre-
+training contamination, forward synthesis must
+satisfy two dual requirements by guaranteeing rig-
+orous external factual grounding while enforcing
+genuine reasoning difficulty. EverGreen achieves
+this by synthesizing descendant questions directly
+from verified Evidence Graphs. Because ancestral
+entities, relations, and dependencies already carry
+timestamped web provenance, newly added rea-
+soning hops naturally inherit verifiable grounding
+under controlled model failure. We evaluate for-
+ward synthesis across a stratified panel of 300 seed
+questions distributed evenly with 100 seeds from
+each of MuSiQue, 2WikiMHQA, and HotpotQA
+to reflect their source hop count and composi-
+tional reasoning distributions. In this evaluation,
+GPT-6-Luna acts as the examiner model guiding
+the boundary-stop control policy, while DeepSeek-
+Flash and Gemini-3.8-Flash are held-out answer
+models assessing generalization. Guided by this
+policy, the synthesis agent applies graph expan-
+sions and question projection operators (entity
+masking, temporal constraints, and branch join-
+ing) to deepen multi-hop reasoning while preserv-
+ing auditability.
+To illustrate how projection operators harden
+candidate questions against heuristic shortcuts
+during iterative synthesis, consider an example
+based on the corporate acquisition of Compaq. An
+initial synthesized variant asked which company
+acquired Compaq, the top personal computer
+maker of 1994, and who served as its chief exec-
+utive officer. Because the bridge entity Compaq
+was explicitly named, models could bypass multi-
+hop reasoning by directly retrieving its acquiring
+company through single-hop memorization. To
+prevent this shortcut, the synthesis loop applied
+entity masking to rephrase the question around
+the chief executive officer of the enterprise that
+merged in 2002 with the vendor ranking as the
+top personal computer maker in 1994. This refor-
+mulation conceals the intermediate bridge entity
+behind a verifiable descriptive constraint while
+leaving the underlying graph dependencies intact.
+Eliminating surface entity leakage thus frustrates
+parametric shortcuts, forcing models to execute
+genuine multi-hop deduction.
+Across the 300 seeds, boundary-controlled
+synthesis successfully generated 233 boundary-
+reaching descendant questions, achieving an over-
+all success rate of 77.7% and reaching the exam-
+iner failure boundary in an average of 2.1 iterative
+steps. To verify structural soundness and evidence
+provenance at the atomic claim level, domain
+experts audited the MuSiQue cohort, where source
+decomposition graphs provide rigorous structural
+baselines. Out of 96 model-screened candidates
+in this cohort, expert review approved 94 items
+(97.9% acceptance), with only two candidates
+rejected for underspecified chronological bound-
+aries.
+Table 2 Reasoning topology and hop depth expansion
+from seeds to synthesized descendants on MuSiQue.
+Metric
+Seed
+Descendant
+Shift (∆)
+Mean reasoning hops
+2.57
+5.03
++2.46
+Shallow (2–3 hops)
+88.5%
+14.6%
+−73.9 pp
+High-order (≥4 hops)
+11.5%
+85.4%
++73.9 pp
+Deep chains (≥6 hops)
+0.0%
+39.6%
++39.6 pp
+Evidence DAG depth
+2.15
+3.94
++1.79
+14
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 100 | PDF_PAGE_LABEL  ==========
+
+As detailed in Table 2, boundary-controlled
+graph transformations substantially expand rea-
+soning depth, elevating the average hop count
+from 2.57 on seeds to 5.03 on descendants. The
+proportion of complex questions requiring at least
+four hops increases from 11.5% to 85.4%, and
+58.3% of the items require five or more hops. This
+structural deepening preserves verifiability: claim-
+level provenance auditing confirms that 97.9%
+of approved descendants integrate ancestral seed
+premises with newly verified web claims into valid,
+factually grounded reasoning chains.
+As reported in Table 3, evaluating synthesized
+descendants under closed-book conditions demon-
+strates a substantial performance cliff across all
+evaluated model families and benchmarks. Across
+the entire panel, model accuracy drops by 25.3 to
+29.3 percentage points, and performance declines
+occur consistently across all nine benchmark
+and model configurations with drops between 17
+and 42 percentage points. The examiner model
+exhibits the steepest decline, dropping 29.3 per-
+centage points from 59.6% to 30.3%. Meanwhile,
+the two held-out answer models not exposed to the
+synthesis examiner reproduce comparable drops
+of 25.3 percentage points for DeepSeek-Flash and
+26.5 percentage points for Gemini-3.8-Flash. The
+consistent accuracy drop across held-out archi-
+tectures confirms that difficulty is a structural
+property of the synthesized items rather than an
+optimization artifact overfitted to a specific exam-
+iner. Qualitative error analysis indicates that lan-
+guage models under closed-book conditions rely
+heavily on parametric shortcuts where prominent
+entity collocations trigger memorized answers. By
+lengthening the reasoning chain to an average of
+five hops and masking intermediate bridge enti-
+ties, synthesized descendants eliminate surface
+entity associations. To answer correctly, models
+must retrieve and compose multiple intermediate
+facts entirely in memory, which exposes the fragile
+limits of parametric multi-hop reasoning.
+4.6 Difficulty Migration
+While the closed-book accuracy cliff confirms that
+synthesized descendants resist parametric recall,
+a key question remains regarding whether these
+hardened questions remain genuinely solvable rea-
+soning tasks rather than ill-posed formulations.
+0
+25
+50
+75
+100
+Solved within budget (%)
+Seed (original)
+Descendant
+8
+3
+48
+47
+67
+65
+70
+70
+75
+83
+4
+16k
+8
+32k
+12
+48k
+16
+64k
+24
+–
+Turn cap / token cap
+1.0
+1.2
+1.4
+Token ratio
+(desc / seed)
+1.05×
+1.11×
+1.16×
+1.18×
+1.44×
+Fig. 6 Budget elasticity of a tool-augmented solver on
+60 seed–descendant pairs used for the open-book test, 20
+per benchmark, across five session allowances. Top: fraction
+of items solved within budget for seeds and descendants,
+which stay within 1.7 pp from eight to sixteen turns; bot-
+tom: ratio of mean session tokens spent on descendants to
+seeds at the same cap, climbing to 1.44× at the uncapped
+tier. Error bars denote 95% Wilson intervals; at four and
+eight turns both seeds and descendants reach the token cap.
+In parallel, evaluating computational and anno-
+tation economics determines whether continuous
+graph maintenance is viable at benchmark scale.
+To investigate both questions, we track 60 seed
+and descendant pairs across progressive retrieval
+budgets to examine how task difficulty migrates
+into external evidence acquisition effort, followed
+by an efficiency comparison between automated
+verification and manual curation.
+To determine whether synthesized descendants
+remain solvable when models are equipped with
+external search tools, we re-evaluate 60 seed and
+descendant pairs distributed with 20 pairs per
+benchmark using a tool-augmented agent solver
+across five progressive interaction budgets ranging
+from four turns with a 16k token limit to 24 turns
+without token caps. As plotted in Fig. 6, the pro-
+portion of tasks solved within budget rises from
+8.3% to 75.0% for seeds and from 3.3% to 83.3%
+for descendants as retrieval allowances expand.
+Between eight and sixteen turns, the two solv-
+ability curves remain within 1.7 percentage points
+of each other. At the uncapped tier, descendants
+finish 8.3 percentage points higher than seeds.
+Under sufficient retrieval allowances, descendants
+are at least as solvable as seeds, confirming that
+boundary-controlled synthesis preserves factual
+answerability while preventing degenerate formu-
+lations.
+15
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Table 3 Closed-book accuracy of three answer models on 233 original–descendant pairs.
+Model
+Accuracy (%)
+Change (pp)
+Original
+Descendant
+Overall
+MuSiQue
+2WikiMHQA
+HotpotQA
+GPT-6-Luna
+59.6
+30.3
+−29.3
+−17.6
+−36.1
+−34.4
+DeepSeek-Flash
+67.4
+42.1
+−25.3
+−26.7
+−26.5
+−21.9
+Gemini-3.8-Flash
+41.7
+15.2
+−26.5
+−17.1
+−22.4
+−41.7
+Table 4 Computational efficiency and query latency across benchmark evaluation settings, compared against
+professional human annotation.
+Evaluation Setting
+Query Complexity
+Mean Latency
+Cost / Instance
+Relative Efficiency
+Standard verification
+2–4-hop benchmark items
+15–30 s
+< $0.05
+≈100×
+Deep research audit
+Complex open-web queries
+5.5 min
+≈$0.18
+40–90×
+Human annotation
+Complex open-web queries
+32.6 min
+$8–16
+Baseline (1.0×)
+Because task accuracy reaches statistical par-
+ity when retrieval is unconstrained, the diffi-
+culty gap observed under closed-book evaluation
+migrates into search and computational expen-
+diture. Across matching interaction allowances,
+solver token expenditure on descendants scales
+monotonically from 1.05× to 1.44× relative to
+seeds as retrieval limits expand, reflecting a com-
+putational premium that widens under uncon-
+strained search. In addition, solver agents retrieve
+between 39% and 42% more web pages for descen-
+dants than for seeds, confirming that this com-
+putational overhead reflects deeper exploratory
+retrieval across multiple evidence sources. Task
+difficulty is therefore conserved across evaluation
+paradigms, shifting from closed-book parametric
+recall to open-book retrieval expenditure.
+Beyond factual rigor, structured Evidence
+Graphs
+bound
+computational
+overhead
+by
+enabling early termination along refuted depen-
+dency paths. When a prerequisite premise is
+refuted and cannot be restored by alternative
+hypotheses, the audit halts downstream explo-
+ration immediately, yielding a 34.2% reduction in
+redundant search and inference calls compared to
+unpruned graph traversal. In standard benchmark
+auditing on two- to four-hop instances, an atomic
+claim is verified in an average of 4.8 seconds using
+2.1 search queries, allowing an entire multi-hop
+question to be audited in 15 to 30 seconds at
+below five cents per item. Table 4 compares this
+profile against complex open-web auditing and
+professional human annotation.
+For unconstrained open-domain tasks, the
+deep-research
+configuration
+handles
+complex
+queries that require 20 to 40 sequential search and
+reading actions across heterogeneous web sources,
+incurring approximately eighteen cents per query.
+Compared to the estimated eight to sixteen dollars
+of labor cost required for manual human cura-
+tion on equivalent open-web queries, automated
+graph verification reduces annotation expenses by
+a factor of 40 to 90 on complex queries, and by
+approximately two orders of magnitude on struc-
+tured multi-hop benchmarks. Because verification
+cost scales with graph depth rather than labor
+overhead, Evidence Graph maintenance provides
+a scalable foundation for continuous curation.
+Taken together, these empirical findings sub-
+stantiate a unified lifecycle for benchmark gov-
+ernance. Rather than treating multi-hop evalua-
+tion datasets as static consumables that degrade
+over time, Evidence Graphs provide a persistent
+foundation that bridges diagnosis, maintenance,
+and generation. Graph-grounded auditing reli-
+ably identifies factual and compositional decay to
+rectify ranking distortions, minimum-cost repair
+salvages flawed instances through minimal topo-
+logical edits, and boundary-controlled synthe-
+sis generates contamination-resistant descendants
+whose difficulty is preserved across parametric and
+retrieval settings. Continuous graph governance
+thus allows multi-hop benchmarks to maintain
+diagnostic rigor as frontier models advance.
+16
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+5 Conclusion
+Multi-hop
+question
+answering
+benchmarks
+degrade as real-world facts change and static
+annotations age. We presented EverGreen, a
+framework that recasts benchmark verification as
+continuous data governance through persistent
+Evidence Graphs. Across MuSiQue, HotpotQA,
+and 2WikiMultiHopQA, dependency-aware ver-
+ification identifies factual, compositional, and
+uniqueness defects, and correcting these errors
+inverts observed pairwise model rankings across
+evaluated configurations. On BrowseComp-zh,
+automated verification reaches consensus with
+human annotators on 87.9% of queries while
+achieving parity with expert adjudication at
+substantially higher throughput.
+Persistent graph representations further sus-
+tain
+closed-loop
+maintenance.
+Minimum-cost
+graph repair restores over four-fifths of con-
+firmed defects through targeted claim edits, while
+boundary-controlled synthesis generates hardened
+descendants that deepen reasoning chains and
+substantially reduce closed-book memorization
+across diverse model families. Under retrieval-
+augmented evaluation, this difficulty gap migrates
+into increased search and token expenditure while
+preserving factual answerability. Together, these
+results demonstrate that verification artifacts pro-
+vide reusable infrastructure for benchmark cura-
+tion, transforming static items into persistent,
+evolvable assets.
+References
+[1] AGI-Eval (2026) BrowseComp-ZH-revised:
+Ground-Truth
+Corrected
+Web
+Research
+Benchmark.
+URL
+https://github.com/
+AGI-Eval-Official/BrowseComp-ZH-revised
+[2] Chen R, Jiang W, Qin C, et al (2024) LLM-
+based multi-hop question answering with
+knowledge graph integration in evolving envi-
+ronments. In: Findings of the Association for
+Computational Linguistics: EMNLP 2024, pp
+14438–14451
+[3] Cheng Z, Wohnig S, Gupta R, et al (2025)
+Benchmarking is broken — don’t let AI be its
+own judge. arXiv preprint arXiv:2510.07575
+[4] Dhuliawala S, Komeili
+M, Xu
+J, et al
+(2023) Chain-of-verification reduces hallu-
+cination in large language models. arXiv
+preprint arXiv:2309.11495
+[5] Dong G, Mao H, Ma K, et al (2025)
+Agentic reinforced policy optimization. arXiv
+preprint arXiv:2507.19849
+[6] Edge D, Trinh H, Cheng N, et al (2024) From
+local to global: A graph RAG approach to
+query-focused summarization. arXiv preprint
+arXiv:2404.16130
+[7] Fadeeva E, Rubashevskii A, Shelmanov A,
+et al (2024) Fact-checking the output of large
+language models via token-level uncertainty
+quantification. In: Findings of the Association
+for Computational Linguistics: ACL 2024, pp
+9367–9385
+[8] Gao Y, Xiong Y, Gao X, et al (2023)
+Retrieval-augmented generation for large lan-
+guage
+models:
+A
+survey.
+arXiv
+preprint
+arXiv:2312.10997
+[9] Ho X, Duong Nguyen AK, Sugawara S,
+et al (2020) Constructing a multi-hop QA
+dataset for comprehensive evaluation of rea-
+soning steps. In: Proceedings of the 28th
+International Conference on Computational
+Linguistics, pp 6609–6625
+[10] Ilyas IF, Chu X (2019) Data Cleaning. ACM
+[11] Jiang Y, Bansal M (2019) Avoiding reasoning
+shortcuts: Adversarial evaluation, training,
+and model development for multi-hop QA.
+In: Proceedings of the 57th Annual Meet-
+ing of the Association for Computational
+Linguistics, pp 2726–2736
+[12] Jim´enez
+Guti´errez
+B,
+Shu
+Y,
+Gu
+Y,
+et al (2024) HippoRAG: Neurobiologically
+inspired long-term memory for large lan-
+guage models. In: The Thirty-eighth Annual
+Conference on Neural Information Process-
+ing Systems, URL https://openreview.net/
+forum?id=hkujvAPVsg
+[13] Jin T, Choi Y, Zhu Y, et al (2026) Per-
+vasive annotation errors break Text-to-SQL
+17
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+benchmarks and leaderboards. arXiv preprint
+arXiv:2601.08778
+[14] Kiela D, Bartolo M, Nie Y, et al (2021) Dyn-
+abench: Rethinking benchmarking in NLP.
+In: Proceedings of the 2021 Conference of
+the North American Chapter of the Associ-
+ation for Computational Linguistics: Human
+Language Technologies, pp 4110–4124
+[15] Kreutzer J, Caswell I, Wang L, et al (2022)
+Quality at a glance: An audit of web-crawled
+multilingual datasets. Transactions of the
+Association for Computational Linguistics
+10:50–72
+[16] Li X, He S, Lei F, et al (2024) Teaching small
+language models to reason for knowledge-
+intensive multi-hop question answering. In:
+Findings of the Association for Computa-
+tional Linguistics: ACL 2024, pp 7804–7816
+[17] Li Y, Gu JC, Wu D, et al (2025) BRIEF:
+Bridging retrieval and inference for multi-hop
+reasoning via compression. In: Findings of the
+Association for Computational Linguistics:
+NAACL 2025, pp 5449–5470
+[18] Liu
+A,
+Mei
+A,
+Lin
+B,
+et
+al
+(2025)
+DeepSeek-V3.2:
+Pushing
+the
+frontier
+of
+open large language models. arXiv preprint
+arXiv:2512.02556
+[19] Liu S, Li X, Liu Z, et al (2025) Judge
+as a judge: Improving the evaluation of
+retrieval-augmented generation through the
+judge-consistency of large language models.
+In: Findings of the Association for Computa-
+tional Linguistics: ACL 2025, pp 5788–5807
+[20] Lu Y, Ziems N, Dang H, et al (2025) Opti-
+mizing decomposition for optimal claim ver-
+ification. In: Proceedings of the 63rd Annual
+Meeting of the Association for Computa-
+tional Linguistics (Volume 1: Long Papers),
+pp 5095–5114
+[21] Manakul P, Liusie A, Gales MJF (2023)
+SelfCheckGPT: Zero-resource black-box hal-
+lucination detection for generative large lan-
+guage models. In: Proceedings of the 2023
+Conference on Empirical Methods in Natural
+Language Processing
+[22] Min S, Wallace E, Singh S, et al (2019)
+Compositional questions do not necessitate
+multi-hop reasoning. In: Proceedings of the
+57th Annual Meeting of the Association for
+Computational Linguistics, pp 4249–4257
+[23] Min S, Krishna K, Lyu X, et al (2023)
+FActScore: Fine-grained atomic evaluation of
+factual precision in long form text genera-
+tion. In: Proceedings of the 2023 Conference
+on Empirical Methods in Natural Language
+Processing, pp 12076–12100
+[24] Nahum O, Calderon N, Keller O, et al (2025)
+Are LLMs better than reported? Detect-
+ing label errors and mitigating their effect
+on model performance. In: Proceedings of
+the 2025 Conference on Empirical Methods
+in Natural Language Processing, pp 26782–
+26809
+[25] Pan L, Wu X, Lu X, et al (2023) Fact-
+checking
+complex
+claims
+with
+program-
+guided reasoning. In: Proceedings of the
+61st Annual Meeting of the Association for
+Computational Linguistics (Volume 1: Long
+Papers), pp 6981–7004
+[26] Saad-Falcon J, Khattab O, Potts C, et al
+(2024)
+ARES:
+An
+automated
+evaluation
+framework for retrieval-augmented genera-
+tion systems. In: Proceedings of the 2024
+Conference of the North American Chapter of
+the Association for Computational Linguis-
+tics: Human Language Technologies (Volume
+1: Long Papers), pp 338–354
+[27] Sainz O, Campos J, Garc´ıa-Ferrero I, et al
+(2023) NLP evaluation in trouble: On the
+need to measure LLM data contamination for
+each benchmark. In: Findings of the Associa-
+tion for Computational Linguistics: EMNLP
+2023, pp 10776–10787
+[28] Sun W, Cai H, Chen H, et al (2023)
+Answering ambiguous questions via iter-
+ative
+prompting.
+In:
+Proceedings
+of
+the
+61st Annual Meeting of the Association for
+Computational Linguistics (Volume 1: Long
+Papers), pp 7669–7683
+18
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+[29] Tan Q, Ng HT, Bing L (2023) Towards bench-
+marking and improving the temporal reason-
+ing capability of large language models. In:
+Proceedings of the 61st Annual Meeting of
+the Association for Computational Linguis-
+tics (Volume 1: Long Papers), pp 14820–
+14835
+[30] Trivedi H, Balasubramanian N, Khot T,
+et al (2022) MuSiQue: Multihop questions
+via single-hop question composition. Trans-
+actions of the Association for Computational
+Linguistics 10:539–554
+[31] Vu T, Iyyer M, Wang X, et al (2024) Fresh-
+LLMs: Refreshing large language models with
+search engine augmentation. In: Findings of
+the Association for Computational Linguis-
+tics: ACL 2024, pp 13697–13720
+[32] Wang C, Cheng S, Guo Q, et al (2023)
+Evaluating Open-QA evaluation. Advances
+in Neural Information Processing Systems
+36:77013–77042
+[33] Wang P, Li L, Chen L, et al (2024) Large lan-
+guage models are not fair evaluators. In: Pro-
+ceedings of the 62nd Annual Meeting of the
+Association for Computational Linguistics
+[34] Wei J, Yang C, Song X, et al (2024) Long-
+form factuality in large language models.
+arXiv preprint arXiv:2403.18802
+[35] White C, Dooley S, Roberts M, et al (2025)
+LiveBench: A challenging, contamination-
+limited LLM benchmark. In: International
+Conference on Learning Representations
+[36] Yang Z, Qi P, Zhang S, et al (2018) Hot-
+potQA: A dataset for diverse, explainable
+multi-hop question answering. In: Proceed-
+ings of the 2018 Conference on Empirical
+Methods in Natural Language Processing, pp
+2369–2380
+[37] Zhang H, Da J, Lee D, et al (2024) A
+careful examination of large language model
+performance on grade school arithmetic. In:
+Advances in Neural Information Processing
+Systems
+[38] Zheng L, Chiang WL, Sheng Y, et al (2023)
+Judging LLM-as-a-judge with MT-bench and
+chatbot arena. In: Advances in Neural Infor-
+mation Processing Systems
+[39] Zhou P, Leon B, Ying X, et al (2025)
+BrowseComp-zh: Benchmarking web brows-
+ing ability of large language models in Chi-
+nese. arXiv preprint arXiv:2504.19314
+19
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 1 | PDF_PAGE_LABEL  ==========
+
+EverGreen: Sustaining Multi-Hop Question Answering
+Benchmarks with Evidence Graphs
+Yunfan Gao1, Xinyi Huang2, Lihao Lv2, Rong An3, Yun Xiong2,
+Haofen Wang4*
+1Shanghai Research Institute for Intelligent Autonomous Systems, Tongji University,
+Shanghai, China.
+2Shanghai Key Laboratory of Data Science, College of Computer Science and
+Artificial Intelligence, Fudan University, Shanghai, China.
+3Meituan, Shanghai, China.
+4College of Design and Innovation, Tongji University, Shanghai, China.
+*Corresponding author(s). E-mail(s): carter.whfcarter@gmail.com;
+Contributing authors: gaoyunfan1602@gmail.com; xinyihuang25@m.fudan.edu.cn;
+26113050294@m.fudan.edu.cn; anrong@meituan.com; yunx@fudan.edu.cn;
+Keywords: Multi-hop QA, Evidence Graph, Benchmark Auditing, Answer Verification, Data Synthesis
+Declarations
+Availability of data and materials.
+The benchmark datasets analyzed in this study (MuSiQue,
+HotpotQA, and 2WikiMultiHopQA) are publicly available from their original releases. The verified
+subsets, evidence-graph artifacts, and the verification and synthesis toolkit will be made publicly
+available upon acceptance.
+Competing interests.
+The authors declare that they have no known competing financial interests
+or personal relationships that could have appeared to influence the work reported in this paper.
+Funding.
+This work was supported by the National Natural Science Foundation of China
+(U23B2057).
+Authors’ contributions.
+Yunfan Gao and Haofen Wang conceived and designed the EverGreen
+framework. Yunfan Gao developed the methodology and conducted the computational experiments.
+Xinyi Huang and Lihao Lv contributed to the benchmark auditing and human verification analysis.
+Rong An, Yun Xiong, and Haofen Wang supervised the project and provided critical guidance. Yunfan
+Gao drafted the manuscript, and all authors reviewed, edited, and approved the final version.
+Acknowledgements.
+This research was supported by Meituan.
+Ethics approval.
+The human verification study annotated public benchmark items; no personal
+or sensitive data were collected.
+Consent to participate.
+Not applicable.
+1
+Title Page

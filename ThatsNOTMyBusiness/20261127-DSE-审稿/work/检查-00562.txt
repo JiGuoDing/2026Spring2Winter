@@ -1,0 +1,13 @@
+00562-01 IMPRECISE | 仅报告 MAE、MSE、R² | Table 1 报告这三个回归指标；所引“一轮”表述若指全文则覆盖超过现有核验。 | p12 “Algorithm MAE MSE R2”
+00562-02 CONFIRMED | 43.3659 | 表 1 的 RF 三个数值依次为 MAE、MSE、R²。 | p12 “RF 43.3659 3170.1811 0.8973”
+00562-03 UNSUPPORTED | 高度疑似时序回归实验结果错配至文本分类稿件 | 指标与任务定义之间需要解释；缺少证据断言结果来自另一项时序实验。 | p2 “automatic classification method for English learning materials” p12 “RF 43.3659 3170.1811 0.8973”
+00562-04 CONFIRMED | 局部均值分解（LMD） | 作者确实声称将 LMD 用于数据时频分解。 | p2 “local mean decomposition (LMD)”
+00562-05 UNVERIFIABLE | 未说明离散文本如何映射为一维时间序列 | [UNVERIFIABLE] 已检内容无清晰映射；尚需完整核对方法与实验。 | p2 “local mean decomposition (LMD)”
+00562-06 CONFIRMED | Data Availability 为 “Not applicable” | 作者声明如此，不能据此断言没有任何数据存在。 | p18 “Data Availability Not applicable”
+00562-07 OVERSTATED | 目标变量标准差高达 ≈175.7 | 只有在 MSE 和 R² 使用相同样本、权重及分母时才能推导 sqrt(3170.1811/(1−0.8973))≈175.7；原文未交代。 | p12 “RF 43.3659 3170.1811 0.8973”
+00562-08 UNVERIFIABLE | 零原创性 | 离线未比较相关先行文献，只能指出文稿尚未清楚说明方法贡献。 | p2 “automatic classification method for English learning materials”
+00562-09 UNVERIFIABLE | 偏离 DSE 范围 | 期刊范围需参考编辑部现行政策。[待人工裁决] | p2 “automatic classification method for English learning materials”
+00562-10 CONFIRMED | public database of English learning materials | §4.1 只以此称呼数据来源，声明写不适用；请求补充数据集名称、规模、标签及获取方式。 | p9 “a public database of English learning materials” p18 “Data Availability Not applicable”
+00562-11 CONFIRMED | MAE = 83.0926, MSE = 11880.6837, R² = 0.6150 | Table 1 的 XGBoost 数值；指标与分类目标之间的关系仍需说明。 | p12 “XGBoost 83.0926 11880.6837 0.6150”
+00562-12 CONFIRMED | MAE = 95.3048, MSE = 13986.1784, R² = 0.5468 | Table 1 的 CNN 数值。 | p12 “CNN 95.3048 13986.1784 0.5468”
+00562-13 CONFIRMED | MAE = 95.3814, MSE = 16352.2563, R² = 0.4701 | Table 1 的 SVM 数值；未见统计显著性证据，不应仅凭点估计称显著优于。 | p12 “SVM 95.3814 16352.2563 0.4701”

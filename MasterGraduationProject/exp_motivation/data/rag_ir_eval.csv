@@ -1,0 +1,5 @@
+mode,n,chunk_recall_pct,doc_recall_at_5_pct,mrr_at_5,ndcg_at_5,avg_k_returned,p50_latency_ms,p95_latency_ms,tau_rerank
+bm25_only,300,5.54,16.53,0.572,0.2366,8.0,14.05,23.07,
+dense_only,300,9.22,14.49,0.3472,0.1663,8.0,14.91,20.57,
+hybrid_rrf,300,10.37,18.79,0.5034,0.2367,8.0,27.04,39.43,
+hybrid_rrf_rerank_dynamic,300,9.94,20.05,0.5587,0.2524,4.63,1856.43,2400.3,0.5

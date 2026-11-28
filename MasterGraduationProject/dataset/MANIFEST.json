@@ -6,9 +6,69 @@
       "sha256": "b5a9bc6bdc44f5f360ad782dbbd5987633d6b2c3e0b2f40dc6082c4b9c1b876b"
     },
     "costs/README.md": {
-      "bytes": 22890,
-      "lines": 289,
-      "sha256": "df2381ddeef5f72f56a138a6aef97a7d1f945472be52ee534b684c3574608801"
+      "bytes": 23124,
+      "lines": 291,
+      "sha256": "af26bc1747956547d32b91d8c99ed7be5d8511d9fb82b3584517b9b32e75740e"
+    },
+    "costs/act_prod_costs.csv": {
+      "bytes": 10815,
+      "lines": 85,
+      "sha256": "34fc74c4ed4af97f03102d428b30426196fff2b0a0e7037efe3c7a6f5040e274"
+    },
+    "costs/act_tool_server.py": {
+      "bytes": 8085,
+      "lines": 194,
+      "sha256": "cf1537b3c505f93a5eb0e5a628bc9ecbfcef97ebaf52dc72f51cc30d18d0ceab"
+    },
+    "costs/act_toolchain_costs.csv": {
+      "bytes": 2807,
+      "lines": 21,
+      "sha256": "0785f8d412e53dc2c22f94ee727eec117c01a486276470ed6e55d0a860a07fed"
+    },
+    "costs/act_value_diagnostics.json": {
+      "bytes": 1281,
+      "lines": 49,
+      "sha256": "9730ae60fb82e9de99cc1e8cbc97ae6e48d0e29cb4824885889cf7cc15afaa4c"
+    },
+    "costs/analyze_act_value.py": {
+      "bytes": 6666,
+      "lines": 155,
+      "sha256": "f184bfc3549cd17aec2a06f21ee53a0594dbad5841b87f91140b91db966ecda4"
+    },
+    "costs/build_deployment_profiles.py": {
+      "bytes": 8749,
+      "lines": 203,
+      "sha256": "0ea0a99768fb1b1fd31128e3d8d3e414b1c64e7ba3ffc1a117bf75f8e5b72a00"
+    },
+    "costs/deployment_profiles.json": {
+      "bytes": 4569,
+      "lines": 142,
+      "sha256": "13fff3ce03c592500223a9b0edb459d3c0984b88e057f6a6bae2c2b35bbd3dcd"
+    },
+    "costs/fallback_costs.csv": {
+      "bytes": 1123,
+      "lines": 6,
+      "sha256": "6d5fcac5386b2abb1d5ebe66cb60761193feffb104bb46f954c680f7686a22b8"
+    },
+    "costs/measure_act_prod.py": {
+      "bytes": 7816,
+      "lines": 182,
+      "sha256": "0de8fd922e9d7e22f7491575d38b16c17c01f15a3a6b0f4812fd1619dc586a40"
+    },
+    "costs/measure_act_toolchain.py": {
+      "bytes": 6032,
+      "lines": 145,
+      "sha256": "2474e02fc553f373ff9b008511985353831d03cc4b7ec2059d41e019fe84fa2b"
+    },
+    "costs/measure_fallback.py": {
+      "bytes": 7305,
+      "lines": 184,
+      "sha256": "3275a28e38c42f6c7fc9d351dc69504931fd172e9ebaa3aa30e134bae9bfd967"
+    },
+    "costs/measure_rag_rerank.py": {
+      "bytes": 10306,
+      "lines": 239,
+      "sha256": "6bfa3743bf9930864b8476aae610b4538a05cdface0034f3c7160b8aea9b35bb"
     },
     "costs/path_costs.backfill.template.csv": {
       "bytes": 682,
@@ -19,6 +79,21 @@
       "bytes": 95779,
       "lines": 223,
       "sha256": "e77954c48a3fd36c602a8398678ac433cb55ad534edacd396e23402e4851ac21"
+    },
+    "costs/rag_ir_eval.csv": {
+      "bytes": 373,
+      "lines": 5,
+      "sha256": "71d1465833050136199bfb225fe11cab012044e47d0750615875d077a21bd8f0"
+    },
+    "costs/rag_pipeline.py": {
+      "bytes": 14525,
+      "lines": 340,
+      "sha256": "d22612e6839851983c2d68f2d56cf2b2277565d3d9eb65062d0aaf6c00495060"
+    },
+    "costs/rag_rerank_costs.csv": {
+      "bytes": 827,
+      "lines": 9,
+      "sha256": "b935983b08b34cc82490bf916c0933ba845c7105b1ba9e3df2d5ffb60fc2a1a9"
     },
     "costs/runner.py": {
       "bytes": 58690,
@@ -45,6 +120,11 @@
       "lines": 941,
       "sha256": "75eb932a7a09fa82767539cea8911f305bfb79271866fb9eb1bfd3d0259a5ace"
     },
+    "db/build_prod_scale.py": {
+      "bytes": 5358,
+      "lines": 136,
+      "sha256": "5c2b108a7df7c34662a87941e0046293d86968ddcc7feb5a3127ea602db3848e"
+    },
     "db/compare.py": {
       "bytes": 9535,
       "lines": 238,
@@ -64,6 +144,11 @@
       "bytes": 2086,
       "lines": 83,
       "sha256": "be4f4bd8676e56233c4f03ec95c2e6d9e607980197241b8a91eb71e54abf2e4a"
+    },
+    "db/scale/meta.json": {
+      "bytes": 426,
+      "lines": 12,
+      "sha256": "329ad2f0b4294b31757efbf928deb38ccf7d35a49dc188fee2ce1a2a4971a611"
     },
     "db/schema.sql": {
       "bytes": 35122,
@@ -111,9 +196,14 @@
       "sha256": "b0ca0afc4a6f3265ab99df5a04e90627a38fd05146aba41eed80311530239727"
     },
     "embeddings/README.md": {
-      "bytes": 7653,
+      "bytes": 7715,
       "lines": 143,
-      "sha256": "3cb366fb0baed4937876eab9309efcf022fd66d41669f9ae06d34465c2568aea"
+      "sha256": "e904bc1c7213cfa952cbc8b326b9740624ae84127503c8d8ebed8fb52f526aec"
+    },
+    "embeddings/calibration/act_prod_300.jsonl": {
+      "bytes": 59379,
+      "lines": 300,
+      "sha256": "fdc6ff9800b09646c50cea9854e6e06dac71db9b8247230291948c95865808d3"
     },
     "embeddings/calibration/archive_config_4096/requests_progress.jsonl": {
       "bytes": 48876,
@@ -145,6 +235,11 @@
       "lines": 30,
       "sha256": "c2ecac46301f89514182901ed2dd593b711a7fca3f3ae387f60314e9598b9c23"
     },
+    "embeddings/calibration/rag_rerank_300.jsonl": {
+      "bytes": 214290,
+      "lines": 300,
+      "sha256": "c5b64318d82c60811de213850decf4efbbcced1f04181ae97b6c33ed8746ba33"
+    },
     "embeddings/calibration/real_calibration_300.csv": {
       "bytes": 179,
       "lines": 3,
@@ -175,6 +270,16 @@
       "lines": 74,
       "sha256": "9fee3d726f704e763771350438e0f073da1f8534cad09fa0c7dc6f0c9d127935"
     },
+    "embeddings/chunk_embeddings.meta.json": {
+      "bytes": 404,
+      "lines": 11,
+      "sha256": "6ebcf6a11fbd218975f4c9ae6b191950de70b1a3ff4634cb17ede04b1c0e710f"
+    },
+    "embeddings/chunk_embeddings.npz": {
+      "bytes": 26219211,
+      "lines": null,
+      "sha256": "a6650259634e0f53af3d48c57cbf09366abaf757155a8297f1c4c43173bbb426"
+    },
     "embeddings/query_embeddings.meta.json": {
       "bytes": 1214,
       "lines": 43,
@@ -198,7 +303,7 @@
     "events/README.md": {
       "bytes": 9034,
       "lines": 123,
-      "sha256": "e06d88dba97bf3db8f12f6f63510068f9a380a574de4a51bb9300b94c8fff1b1"
+      "sha256": "98e06d83fed8ee882d7b1f01c4360ecd54e370c862dcea1c70f4e984ae9e881e"
     },
     "events/act_plan_pool.json": {
       "bytes": 41239,
@@ -209,6 +314,26 @@
       "bytes": 58229,
       "lines": 1272,
       "sha256": "15ab4cfeb844c791e1d54586b9e32afee138e35ea3d2d00783776efcf52b42f6"
+    },
+    "events/build_fast_sample.py": {
+      "bytes": 2742,
+      "lines": 77,
+      "sha256": "f12d4ab7f5b31fb69cda7398572ca9148790d10694b006c2468eafd8e218048b"
+    },
+    "events/build_repair_sample.py": {
+      "bytes": 5865,
+      "lines": 155,
+      "sha256": "151fcfa8ed2545e61f0cdaef3197a6b5f1ce765580a2270acdbe10002abc5337"
+    },
+    "events/build_tool_failures.py": {
+      "bytes": 2703,
+      "lines": 77,
+      "sha256": "c586947912a887506d9e86ab7ea91654fb146d80e6c6d2ebef3b0cd934f5ee79"
+    },
+    "events/build_update_impact.py": {
+      "bytes": 3820,
+      "lines": 107,
+      "sha256": "31326f46db644165463abb2f69cc0a47e4692e273dd56c49bdb422080e60cb2a"
     },
     "events/calibrate.py": {
       "bytes": 4299,
@@ -225,6 +350,11 @@
       "lines": 6000,
       "sha256": "0b2db62f0426e26a7604d1615bf0fc346eadb6fc8cf53e364f736d6b33012b2a"
     },
+    "events/fast_calibration_sample_50.jsonl": {
+      "bytes": 21169,
+      "lines": 50,
+      "sha256": "39b57551bee4f4d066ed2f15effc3578d5f8c32b5d2c2f2bc4e91f36c195135f"
+    },
     "events/real_calibration_300.csv": {
       "bytes": 16986,
       "lines": 301,
@@ -234,6 +364,11 @@
       "bytes": 5773,
       "lines": 301,
       "sha256": "ce10ab09f205adfdc345d569cdbd98b8ca8af400b962c807ede4d5b7e72bb75a"
+    },
+    "events/repair_calibration_sample.jsonl": {
+      "bytes": 72375,
+      "lines": 40,
+      "sha256": "fdf650e4e47ac1c00e55bb65e61290da1d78e461d899bdfabe1e417341c70ff6"
     },
     "events/request_context.jsonl": {
       "bytes": 925217,
@@ -285,10 +420,20 @@
       "lines": 3000,
       "sha256": "d3af8011058c27b70d2a74c549ecf0b055e0bc58ce951c90810b8ce51396feb3"
     },
+    "events/tool_failures.jsonl": {
+      "bytes": 68835,
+      "lines": 390,
+      "sha256": "25acc1f5007ad9c5eef310b29456a2a0bc775fca8789b25108c7f21fffa0e3b7"
+    },
     "events/update_events.jsonl": {
       "bytes": 12978,
       "lines": 40,
       "sha256": "2e1cbd1e7a0ea633dcdf80442a296fd10e8bce943ccde6fcbe549e43f698190a"
+    },
+    "events/update_impact_summary.jsonl": {
+      "bytes": 20504,
+      "lines": 40,
+      "sha256": "dd73819e1ef2fe8d2f06362fe18cae32ad40cc1b6a0b0c5abf5b2aed6a4447e3"
     },
     "knowledge/MANIFEST.json": {
       "bytes": 650,
@@ -323,7 +468,7 @@
     "labels/README.md": {
       "bytes": 19194,
       "lines": 274,
-      "sha256": "bcfac5f40e74309f3ed017e31df1cfb748d569b1be40f6b5a413fce7f5e9b246"
+      "sha256": "e90e2100eea9edae1033ff908461d30b88c277dbb46b87b55c5847b63177cedc"
     },
     "labels/branch_pairs.jsonl": {
       "bytes": 43787,
@@ -386,8 +531,8 @@
       "labels",
       "embeddings"
     ],
-    "file_count": 75,
+    "file_count": 104,
     "generated_by": "tools/gen_manifest.py",
-    "total_bytes": 76595637
+    "total_bytes": 103384293
   }
 }

@@ -17,8 +17,9 @@ from common import io  # noqa: E402
 DIRS = ["db", "knowledge", "tasks", "events", "costs", "labels", "embeddings"]
 SKIP_SUFFIX = {".pyc", ".sqlite-wal", ".sqlite-shm"}
 TEXT_SUFFIX = {".jsonl", ".json", ".csv", ".md", ".sql", ".py"}
-# 模型缓存体积大且可重新下载，不进清单
+# 模型缓存与可一键重建的百万行压力库体积大，不进清单（meta.json 仍纳入清单）
 SKIP_PARTS = {"__pycache__", "cache"}
+SKIP_NAMES = {"prod_scale.sqlite"}
 
 
 def count_lines(p: Path) -> int | None:
@@ -38,7 +39,7 @@ def main() -> int:
         if not base.is_dir():
             continue
         for p in sorted(base.rglob("*")):
-            if not p.is_file() or p.suffix in SKIP_SUFFIX or SKIP_PARTS & set(p.parts):
+            if not p.is_file() or p.suffix in SKIP_SUFFIX or p.name in SKIP_NAMES or SKIP_PARTS & set(p.parts):
                 continue
             rel = p.relative_to(ROOT).as_posix()
             out[rel] = {

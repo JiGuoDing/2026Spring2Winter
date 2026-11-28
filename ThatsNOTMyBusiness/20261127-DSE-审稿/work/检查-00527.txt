@@ -1,0 +1,11 @@
+00527-01 IMPRECISE | 330 份问卷 | 摘要称 330 有效，正文称回收 330 且剔除无效后有效率为 81.7%；先澄清实际有效样本。 | p2 “a dataset of 330 valid responses of students” p9 “330 of the 369 distributed surveys are eventually retrieved” p9 “The effective questionnaire rate was 81.7%”
+00527-02 CONFIRMED | gas anomalies | 与创业教育任务之间的关系应说明。 | p14 “prediction accuracy for gas anomalies, impact events, and environmental changes”
+00527-03 CONFIRMED | thermal data | 两处热故障描述与问卷任务不一致；不评价来源与作者动机。 | p14 “By categorizing thermal data, fault detection improves system dependability” p17 “Train the ILSVM model using historical thermal data”
+00527-04 OVERSTATED | Algorithm 1 与正文声称的 EEWSO-ILSVM 流程完全不符 | 算法仍含 ILSVM，宜说输入、任务和流程细节与正文不一致。 | p17 “Train the ILSVM model using historical thermal data” p17 “Make predictions for fault detection”
+00527-05 OVERSTATED | 跨领域拼凑 | 只描述材料中的主题不一致；不得断定拼接来源或诚信违规。 | p2 “a dataset of 330 valid responses of students” p17 “Train the ILSVM model using historical thermal data”
+00527-06 CONFIRMED | Accuracy 92.1% | 表头依次为准确率、精确率、召回率和 F1。 | p18 “EEWSO-ILSVM (Proposed) 92.1 91.0 90.2 90.6”
+00527-07 CONFIRMED | 平均准确率为 91.0% | 该处标示平均准确率；与 Table 4 的数据划分及统计单位应澄清。 | p23 “CNN-LSTM vs. EEWSO-ILSVM 85.4 vs. 91.0 ±1.12 0.001”
+00527-08 CONFIRMED | RBF 核误写 | Eq. 25 书写成同一变量相减；按式面为常数核，需作者确认排版还是实现。 | p15 “||𝑤𝑗−𝑤𝑗||2”
+00527-09 UNVERIFIABLE | 零创新 | 原稿不足以穷尽最近文献并判定绝对零创新；仅说方法贡献和已有工作的区别需要明确。 | p14 “EEWSO improves the whole ILSTM architecture”
+00527-10 UNVERIFIABLE | 严重偏离 DSE 范围 | 教育应用的存在可确认，期刊范围及应用型稿件门槛需编辑判断。 | p2 “a dataset of 330 valid responses of students”
+00527-11 OVERSTATED | the reported accuracies conflict between Table 4 (92.1%) and the statistical test table (91.0%) | 数值不同；是否为单次结果与重复试验均值、或不同划分，稿件需解释。 | p18 “EEWSO-ILSVM (Proposed) 92.1 91.0 90.2 90.6” p23 “CNN-LSTM vs. EEWSO-ILSVM 85.4 vs. 91.0 ±1.12 0.001”

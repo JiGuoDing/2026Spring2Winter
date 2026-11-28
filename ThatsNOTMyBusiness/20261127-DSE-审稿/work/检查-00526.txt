@@ -1,0 +1,12 @@
+00526-01 IMPRECISE | 136 份中国企业管理者结构化问卷 | 原文报告 136 家企业；该引文未限定答卷者均为管理者，未核验原始数据。 | p2 “a structured survey of 136 businesses in China”
+00526-02 CONFIRMED | Accuracy = 94.6% | 按表头引用 ENB 的准确率。 | p14 “Enhanced Naïve Bayes (ENB) 94.6 93.8 94.2 94.0”
+00526-03 CONFIRMED | 50+50+50+44 = 194 | 四行求和为 194；与 136 问卷的对应关系需作者解释。 | p17 “Innovative 47 2 1 0 Risk-taking 3 44 2 1 Proactive 1 2 46 1 Conservative 0 1 2 41”
+00526-04 CONFIRMED | 178/194 = 91.75% | 对角和 178，178/194=91.7526%；若不同划分/汇总，不能直接断定表值为假。 | p17 “Innovative 47 2 1 0 Risk-taking 3 44 2 1 Proactive 1 2 46 1 Conservative 0 1 2 41”
+00526-05 OVERSTATED | 与 94.6% 严重冲突 | 数值不同已确认；应要求澄清统计口径，而非断言同一评价条件。 | p14 “Enhanced Naïve Bayes (ENB) 94.6 93.8 94.2 94.0” p17 “Innovative 47 2 1 0 Risk-taking 3 44 2 1 Proactive 1 2 46 1 Conservative 0 1 2 41”
+00526-06 CONFIRMED | painting students who took the exam | 指出该表述与企业问卷任务的联系不清。 | p10 “The mean value of the painting students who took the exam”
+00526-07 CONFIRMED | regular weather observations from the previous decade | 描述为方法内容与任务不一致；不能推断复制来源或动机。 | p12 “regular weather observations from the previous decade”
+00526-08 OVERSTATED | 科研诚信与文本拼贴 | 保留两个内容不一致的事实，删除作者拼贴或诚信违规的定性。 | p2 “a structured survey of 136 businesses in China” p10 “The mean value of the painting students who took the exam”
+00526-09 CONFIRMED | 0.781, DT 0.805, LR 0.832, RF 0.860, SVM 0.877, ENB 0.942 | 这些是图 6 的正文解读，比较 Table 4 时注明可能统计口径不同。 | p17 “0.781 and 0.805” p17 “Logistic Regression(0.832), Random Forest (0.860) and SVM (0.877)” p17 “highest F1 -score (0.942)”
+00526-10 CONFIRMED | 77.2%, 80.7%, 82.6%, 85.5%, 87.3%, 94.0% | Table 4 对应六模型 F1，与图 6 叙述不同，需确认相同实验口径。 | p14 “Naïve Bayes [31] 78.4 76.9 77.5 77.2” p14 “Decision Tree [30] 81.9 80.6 80.9 80.7” p14 “Logistic Regression [29] 83.7 82.8 82.5 82.6” p14 “Random Forest [29] 86.5 85.9 85.2 85.5” p14 “Support Vector Machine (SVM) [28] 88.2 87.5 87.1 87.3” p14 “Enhanced Naïve Bayes (ENB) 94.6 93.8 94.2 94.0”
+00526-11 UNVERIFIABLE | 偏离范围 | 稿件显示应用领域；离线原稿本身不能确证期刊当前收稿边界。[待人工裁决] | p2 “a structured survey of 136 businesses in China”
+00526-12 UNVERIFIABLE | the promised path analysis is absent from the methodology and experiments | 文稿使用“路径分析”一词；是否执行规范的路径分析需进一步按方法定义核验，不能只凭关键词或局部段落断言全文缺失。 | p10 “determine the path analysis of entrepreneurship behavior”

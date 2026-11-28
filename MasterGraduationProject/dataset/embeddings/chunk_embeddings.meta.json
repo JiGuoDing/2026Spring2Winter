@@ -1,0 +1,11 @@
+{
+  "bytes": 26219211,
+  "contextual_prefix": "[doc_type | domain | doc_id@vX | permission] text",
+  "count": 13770,
+  "dim": 512,
+  "matrix_sha256": "ccc3441fb80666fd4e383b554cb25f4ca7d035aa40243885c6d59d1bdec10e8f",
+  "model": "BAAI/bge-small-zh-v1.5",
+  "normalize": "l2",
+  "npz_sha256": "a6650259634e0f53af3d48c57cbf09366abaf757155a8297f1c4c43173bbb426",
+  "onnx_repo": "Xenova/bge-small-zh-v1.5"
+}

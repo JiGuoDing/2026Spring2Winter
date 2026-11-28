@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中国华电 · 国电南自 · 华电睿思 —— 公司认知与平台适配</title>
+<style>
+  :root{
+    --navy:#1F3864; --blue:#2E6DA4; --red:#B3261E;
+    --ink:#3D4C63; --grey:#7A8699; --line:#D9DEE7;
+    --soft:#F2F5F9; --soft2:#EEF3F9; --bg:#F7F9FC;
+    --maxw:1040px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:70px}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.8 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* Hero */
+  .hero{background:var(--navy);color:#fff;padding:58px 0 0}
+  .hero .kicker{font-size:13px;letter-spacing:.12em;color:#9DB0CC}
+  .hero h1{font-size:37px;line-height:1.26;font-weight:700;margin:14px 0 0;text-wrap:balance}
+  .hero .sub{margin-top:16px;font-size:16.5px;line-height:1.75;color:#C9D4E4;max-width:760px}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#3A5480;border:1px solid #3A5480;margin-top:32px}
+  .fact{background:var(--navy);padding:16px 20px}
+  .fact b{display:block;font-size:25px;font-weight:700;color:#fff;line-height:1.2;font-variant-numeric:tabular-nums}
+  .fact span{display:block;font-size:12.5px;color:#9DB0CC;margin-top:4px;line-height:1.5}
+
+  /* TOC */
+  .toc{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .toc-in{max-width:var(--maxw);margin:0 auto;padding:0 24px;display:flex;gap:20px;overflow-x:auto}
+  .toc a{display:block;padding:13px 0 11px;font-size:13px;color:var(--grey);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent}
+  .toc a:hover{color:var(--navy);border-bottom-color:var(--line)}
+  .toc a b{font-weight:700;color:var(--navy);margin-right:4px;font-variant-numeric:tabular-nums}
+
+  main{padding:34px 0 60px}
+  .sec{background:#fff;border:1px solid var(--line);padding:36px 38px;margin-bottom:22px}
+  .sec-head{padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  .sec-head .tag{display:inline-block;font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.12em}
+  .sec-head h2{font-size:24px;line-height:1.35;color:var(--navy);font-weight:700;margin-top:6px;text-wrap:balance}
+  .sec-head p{font-size:14.5px;color:var(--grey);margin-top:8px;line-height:1.7}
+
+  h3{font-size:17px;color:var(--navy);font-weight:700;margin:34px 0 10px;line-height:1.5;text-wrap:balance}
+  h3 .n{color:var(--blue);font-variant-numeric:tabular-nums;margin-right:8px}
+  p.body{font-size:15px;margin-bottom:12px;line-height:1.8}
+  .hl{color:var(--navy);font-weight:700}
+
+  /* 大定义 */
+  .def{border-left:3px solid var(--navy);background:var(--soft);padding:20px 22px;font-size:16.5px;line-height:1.85}
+  .def b{color:var(--navy)}
+
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 4px}
+  .tbl th{background:var(--navy);color:#fff;font-weight:600;text-align:left;padding:11px 14px;font-size:13px;line-height:1.5}
+  .tbl td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.65}
+  .tbl tr:nth-child(even) td{background:#FAFBFC}
+  .tbl td.k{font-weight:600;color:var(--navy)}
+  .tbl td.c{text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tbl .muted{color:var(--grey)}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;background:var(--soft);border:1px solid var(--line);border-radius:2px;padding:1px 5px;color:#2E4966;white-space:nowrap}
+
+  /* 占比条 */
+  .bar{display:block;height:9px;background:#B7C6D8;border-radius:1px}
+  .bar.on{background:var(--blue)}
+
+  /* 图 */
+  figure{margin:20px 0 22px}
+  .fig-frame{border:1px solid var(--line);background:#fff;padding:18px;overflow-x:auto}
+  .fig-frame > svg{display:block;width:100%;min-width:640px;height:auto;font-family:inherit}
+  .fig-swipe{display:none;font-size:12px;color:var(--blue);margin-top:8px;text-align:center;background:var(--soft2);border:1px solid #C9D8E8;padding:4px 8px}
+  figcaption{display:flex;gap:10px;align-items:baseline;font-size:13px;color:var(--grey);margin-top:10px;line-height:1.6}
+  figcaption .no{flex:none;font-weight:700;color:var(--blue);font-size:12px;letter-spacing:.04em}
+
+  /* 提示条 */
+  .note{background:var(--soft2);border-left:3px solid var(--blue);padding:13px 18px;font-size:14px;line-height:1.75;margin-top:16px}
+  .note b{color:var(--navy)}
+  .warn{background:#FBEDEB;border-left-color:var(--red)}
+  .warn b{color:var(--red)}
+
+  /* 驱动卡 */
+  .drvs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .drv{border:1px solid var(--line);border-top:3px solid var(--blue);padding:15px 18px 16px}
+  .drv em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--blue)}
+  .drv b{display:block;font-size:15.5px;color:var(--navy);margin-top:3px;line-height:1.5}
+  .drv p{font-size:13.5px;margin-top:6px;line-height:1.72}
+
+  /* 六个必须 */
+  .musts{display:flex;flex-direction:column;gap:11px;margin-top:16px}
+  .must{border:1px solid var(--line);display:grid;grid-template-columns:52px 1fr}
+  .must .no{background:var(--navy);color:#fff;display:flex;align-items:flex-start;justify-content:center;padding-top:15px;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  .must .body{padding:13px 18px 14px}
+  .must h4{font-size:15px;color:var(--navy);font-weight:700;line-height:1.5}
+  .must p{font-size:14px;margin-top:4px;line-height:1.72}
+  .must p + p{margin-top:6px}
+
+  /* 辨析 */
+  .clarify{display:flex;flex-direction:column;border:1px solid var(--line);margin-top:16px}
+  .cl{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+  .cl:last-child{border-bottom:none}
+  .cl div{padding:14px 18px;font-size:14px;line-height:1.7}
+  .cl .a{background:#FBEDEB;color:var(--red)}
+  .cl .a::before{content:"容易混淆";display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:#B3261E;opacity:.75;margin-bottom:3px}
+  .cl .b{background:#F3F7FB;color:var(--ink);border-left:1px solid var(--line)}
+  .cl .b::before{content:"分清之后";display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--blue);margin-bottom:3px}
+
+  footer{border-top:1px solid var(--line);background:#fff;padding:28px 0 48px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:flex-start}
+  footer p{font-size:12.5px;color:var(--grey);line-height:1.8;max-width:640px}
+  footer .mark{font-size:12.5px;color:var(--grey);text-align:right}
+
+  @media (max-width:960px){
+    .hero h1{font-size:30px}
+    .drvs{grid-template-columns:1fr}
+    .sec{padding:28px 26px}
+  }
+  @media (max-width:920px){
+    .fig-frame > svg{min-width:760px}
+    .fig-swipe{display:block}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 18px}
+    .hero{padding:40px 0 0}
+    .hero h1{font-size:25px}
+    .hero .sub{font-size:15px}
+    .fact{padding:13px 14px}
+    .fact b{font-size:20px}
+    .facts{grid-template-columns:1fr 1fr}
+    .facts .fact:last-child{grid-column:1 / -1}
+    .toc-in{gap:0 14px;flex-wrap:wrap;padding:0 18px;overflow-x:visible}
+    .toc a{font-size:12px;padding:9px 0 8px}
+    .sec{padding:22px 18px;margin-bottom:16px}
+    .sec-head h2{font-size:20px}
+    .must{grid-template-columns:40px 1fr}
+    .must .no{font-size:13px}
+    .cl{grid-template-columns:1fr}
+    .cl .b{border-left:none;border-top:1px solid var(--line)}
+    figure .fig-frame{padding:8px 10px 10px}
+    .fig-frame > svg{min-width:760px}
+    .fig-swipe{display:block}
+    /* 表格卡片化 */
+    .tbl,.tbl tbody,.tbl tr{display:block;width:100%}
+    .tbl thead{display:none}
+    .tbl{font-size:14px;margin:16px 0 4px}
+    .tbl tr{border:1px solid var(--line);margin-bottom:12px;padding:0 0 7px}
+    .tbl td,.tbl td.k,.tbl td.c,.tbl tr:nth-child(even) td{display:block;background:transparent;border:none;padding:8px 14px 0;text-align:left;white-space:normal;word-break:normal}
+    .tbl td::before{content:attr(data-label);display:block;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.06em;margin-bottom:1px}
+    .tbl td.hd{display:block;background:var(--soft);padding:11px 14px;margin-bottom:8px;font-size:15px;font-weight:700;color:var(--navy)}
+    .tbl td.hd::before{display:inline-block;float:right;margin:3px 0 0 10px;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--grey);background:#fff;border:1px solid var(--line);padding:1px 6px}
+    footer .wrap{flex-direction:column}
+    footer .mark{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">中国华电 · 国电南自 · 华电睿思数智底座</div>
+    <h1>先认清这家公司，再谈它为什么需要多租户</h1>
+    <p class="sub">这份材料不打底技术，打底"客户是谁"。看完你应该能回答三个问题：这家公司长什么样、它的生意为什么逼出一个平台、这个平台为什么必须是多租户的。</p>
+    <div class="facts">
+      <div class="fact"><b>51 家</b><span>集团直属单位<br>（一级建设的真实主体）</span></div>
+      <div class="fact"><b>417 家</b><span>基层企业<br>（电厂、场站、项目部）</span></div>
+      <div class="fact"><b style="font-size:21px">2.86 亿千瓦</b><span>发电总装机<br>其中新能源 1.16 亿千瓦</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-in">
+    <a href="#s1"><b>01</b>四层身份</a>
+    <a href="#s2"><b>02</b>集团骨架</a>
+    <a href="#s3"><b>03</b>底座家底</a>
+    <a href="#s4"><b>04</b>生意逻辑</a>
+    <a href="#s5"><b>05</b>为什么必须</a>
+    <a href="#s6"><b>06</b>怎么适配</a>
+    <a href="#s7"><b>07</b>一页结论</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ========== 01 ========== -->
+<section class="sec" id="s1">
+  <div class="sec-head">
+    <div class="tag">01 四层身份</div>
+    <h2>你听到的四个名字，是四个不同的东西</h2>
+    <p>集团、上市公司、子公司、产品底座——都带"华电""南自"，混起来就谈不下去。先把这条链捋直。</p>
+  </div>
+
+  <div class="def">
+    这不是"一家公司"，是<b>一条四层的链条</b>：中国华电集团是客户和出资方；国电南自是集团直属的上市装备企业；南自华盾是国电南自旗下做数字化的子公司；华电睿思数智底座是华盾做出来的产品。<b>出钱的、做产品的、被改造的，是三拨人。</b>
+  </div>
+
+  <figure>
+    <div class="fig-frame">
+<svg viewBox="0 0 1000 372" role="img" aria-label="四层身份关系">
+<text x="30" y="14" font-size="10.5" letter-spacing="1" fill="#7A8699" font-family="Microsoft YaHei">主体</text>
+<text x="330" y="14" font-size="10.5" letter-spacing="1" fill="#7A8699" font-family="Microsoft YaHei">关键数字</text>
+<text x="700" y="14" font-size="10.5" letter-spacing="1" fill="#7A8699" font-family="Microsoft YaHei">在这件事里</text>
+
+<rect x="10" y="24" width="5" height="62" fill="#1F3864"/>
+<rect x="15" y="24" width="975" height="62" fill="#F7F9FC" stroke="#E4E9F1"/>
+<text x="34" y="50" font-size="15.5" font-weight="700" fill="#1F3864" font-family="Microsoft YaHei">中国华电集团</text>
+<text x="34" y="70" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">中国华电集团有限公司 · 国资委监管 · 总部注册地雄安</text>
+<text x="330" y="52" font-size="13" fill="#3D4C63" font-family="Microsoft YaHei">51 家直属 · 417 家基层 · 10 万员工</text>
+<text x="330" y="71" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">资产 1.3 万亿 · 业务分布 32 个省区市</text>
+<text x="700" y="60" font-size="13" fill="#2E6DA4" font-family="Microsoft YaHei">需求方 · 出资方 · 规则的制定者</text>
+
+<line x1="32" y1="90" x2="32" y2="106" stroke="#7A8699" stroke-width="1.2"/>
+<path d="M29 104 L32 108 L35 104" fill="none" stroke="#7A8699" stroke-width="1.2"/>
+<text x="44" y="103" font-size="10.5" fill="#7A8699" font-family="Microsoft YaHei">直属</text>
+
+<rect x="10" y="110" width="5" height="62" fill="#2E6DA4"/>
+<rect x="15" y="110" width="975" height="62" fill="#F7F9FC" stroke="#E4E9F1"/>
+<text x="34" y="136" font-size="15.5" font-weight="700" fill="#1F3864" font-family="Microsoft YaHei">国电南自</text>
+<text x="34" y="156" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">国电南京自动化股份有限公司 · 600268.SH</text>
+<text x="330" y="138" font-size="13" fill="#3D4C63" font-family="Microsoft YaHei">2025 年营收 96.44 亿元 · 净利 4.80 亿元</text>
+<text x="330" y="157" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">1999 年上市 · 前身 1940 年南京电力自动化设备总厂</text>
+<text x="700" y="146" font-size="13" fill="#2E6DA4" font-family="Microsoft YaHei">集团直属单位 · 睿思的产业化主体</text>
+
+<line x1="32" y1="176" x2="32" y2="192" stroke="#7A8699" stroke-width="1.2"/>
+<path d="M29 190 L32 194 L35 190" fill="none" stroke="#7A8699" stroke-width="1.2"/>
+<text x="44" y="189" font-size="10.5" fill="#7A8699" font-family="Microsoft YaHei">旗下</text>
+
+<rect x="10" y="196" width="5" height="62" fill="#2E6DA4"/>
+<rect x="15" y="196" width="975" height="62" fill="#F7F9FC" stroke="#E4E9F1"/>
+<text x="34" y="222" font-size="15.5" font-weight="700" fill="#1F3864" font-family="Microsoft YaHei">南自华盾</text>
+<text x="34" y="242" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">南京南自华盾数字技术有限公司</text>
+<text x="330" y="224" font-size="13" fill="#3D4C63" font-family="Microsoft YaHei">注册资金 1 亿元 · 约 360 人</text>
+<text x="330" y="243" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">专精特新「小巨人」· 硕士以上 124 人 · 软著 92 项</text>
+<text x="700" y="232" font-size="13" fill="#2E6DA4" font-family="Microsoft YaHei">睿思的研发与运营主体 · 本方案编制方</text>
+
+<line x1="32" y1="262" x2="32" y2="278" stroke="#7A8699" stroke-width="1.2"/>
+<path d="M29 276 L32 280 L35 276" fill="none" stroke="#7A8699" stroke-width="1.2"/>
+<text x="44" y="275" font-size="10.5" fill="#7A8699" font-family="Microsoft YaHei">自研</text>
+
+<rect x="10" y="282" width="5" height="62" fill="#8FA3B8"/>
+<rect x="15" y="282" width="975" height="62" fill="#F7F9FC" stroke="#E4E9F1"/>
+<text x="34" y="308" font-size="15.5" font-weight="700" fill="#1F3864" font-family="Microsoft YaHei">华电睿思数智底座</text>
+<text x="34" y="328" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">「华电睿」五大产品矩阵之一（睿蓝·睿信·睿风·睿思·睿智）</text>
+<text x="330" y="310" font-size="13" fill="#3D4C63" font-family="Microsoft YaHei">31 省 · 近 700 座场站 · 8000 万千瓦接入</text>
+<text x="330" y="329" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">对接场站监控系统 4000 余套 · 核心软硬件全国产化</text>
+<text x="700" y="318" font-size="13" fill="#B3261E" font-family="Microsoft YaHei">本次要改造的对象</text>
+</svg>
+    </div>
+    <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+    <figcaption><span class="no">图 1</span>四层身份。谈判桌上说"客户"，通常指第一层；说"我们"，通常指第二、三层；说"平台"，指第四层。</figcaption>
+  </figure>
+
+  <h3><span class="n">1.1</span>三个最容易混的地方</h3>
+  <div class="clarify">
+    <div class="cl">
+      <div class="a">「华电睿思」和「华电睿」是一回事</div>
+      <div class="b">「华电睿」是品牌序列，含睿蓝（燃机/DCS 控制）、睿信（水电监控）、睿风（风电主控）、睿思（数智底座）、睿智五个产品。<b>睿思只是其中一个</b>，做的是上层数据与智能，不碰机组控制。</div>
+    </div>
+    <div class="cl">
+      <div class="a">国电南自就是做软件平台的</div>
+      <div class="b">南自的主体是<b>装备与工程</b>：2025 年电网自动化占收入 44.7%，电厂自动化 14.7%，真正归到"信息技术业务"的只有 12%。平台是它新长出来的一条腿，不是主业。</div>
+    </div>
+    <div class="cl">
+      <div class="a">华电集团是"甲方"，国电南自是"乙方"</div>
+      <div class="b">形式上是，实质上是<b>体内协作</b>。国电南自是集团直属单位，睿思底座本来就是为集团建的，现在要做的是从"给集团交项目"变成"向集团供能力"，再往外卖。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 02 ========== -->
+<section class="sec" id="s2">
+  <div class="sec-head">
+    <div class="tag">02 集团骨架</div>
+    <h2>三级组织、四类业态，这就是租户模型的全部来源</h2>
+    <p>多租户不是设计出来的，是从这张组织图上"抄"出来的。组织怎么分，租户就怎么分。</p>
+  </div>
+
+  <p class="body">中国华电是 2002 年电力体制改革时组建的五家国有独资发电集团之一，国资委直管，总部在雄安。它管人的方式叫<span class="hl">三级管控</span>：<b>总部定规则、区域/省公司做经营、基层企业干活</b>。这个"三级"是理解后面一切的前提。</p>
+
+  <figure>
+    <div class="fig-frame">
+<svg viewBox="0 0 1000 300" role="img" aria-label="三级组织到两级租户的映射">
+<text x="20" y="22" font-size="11" font-weight="700" letter-spacing="1" fill="#7A8699" font-family="Microsoft YaHei">集团组织（三级）</text>
+<text x="610" y="22" font-size="11" font-weight="700" letter-spacing="1" fill="#7A8699" font-family="Microsoft YaHei">平台租户（两级）</text>
+
+<rect x="20" y="40" width="340" height="54" fill="#1F3864"/>
+<text x="40" y="63" font-size="14" fill="#FFFFFF" font-weight="700" font-family="Microsoft YaHei">集团总部</text>
+<text x="40" y="81" font-size="11" fill="#C9D4E4" font-family="Microsoft YaHei">定标准、定预算、定考核</text>
+
+<rect x="20" y="130" width="340" height="54" fill="#FFFFFF" stroke="#2E6DA4" stroke-width="1.2"/>
+<text x="40" y="153" font-size="14" fill="#1F3864" font-weight="700" font-family="Microsoft YaHei">51 家直属单位</text>
+<text x="40" y="171" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">区域公司 · 省公司 · 专业公司</text>
+
+<rect x="20" y="220" width="340" height="54" fill="#FFFFFF" stroke="#8FA3B8" stroke-width="1.2"/>
+<text x="40" y="243" font-size="14" fill="#1F3864" font-weight="700" font-family="Microsoft YaHei">417 家基层企业</text>
+<text x="40" y="261" font-size="11" fill="#7A8699" font-family="Microsoft YaHei">电厂 · 场站 · 项目部</text>
+
+<path d="M360 67 H470" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M360 157 H470" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M470 67 V157" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M470 112 H600" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M595 109 L601 112 L595 115" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+
+<rect x="610" y="40" width="370" height="120" fill="#EEF3F9" stroke="#2E6DA4" stroke-width="1.4"/>
+<text x="630" y="66" font-size="14.5" fill="#1F3864" font-weight="700" font-family="Microsoft YaHei">一级租户　≤ 50 个</text>
+<line x1="630" y1="76" x2="960" y2="76" stroke="#C9D8E8" stroke-width="1"/>
+<text x="630" y="97" font-size="12.5" fill="#3D4C63" font-family="Microsoft YaHei">独立门户 · 独立管理员 · 可代管下属二级</text>
+<text x="630" y="117" font-size="12.5" fill="#3D4C63" font-family="Microsoft YaHei">具备 SSO 能力 · 可自建应用与低代码</text>
+<text x="630" y="141" font-size="12" fill="#7A8699" font-family="Microsoft YaHei">总部与直属单位共用这一级，按主体分租户</text>
+
+<path d="M360 247 H600" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+<path d="M595 244 L601 247 L595 250" fill="none" stroke="#7A8699" stroke-width="1.25"/>
+
+<rect x="610" y="210" width="370" height="74" fill="#F7F9FC" stroke="#8FA3B8" stroke-width="1.4"/>
+<text x="630" y="236" font-size="14.5" fill="#1F3864" font-weight="700" font-family="Microsoft YaHei">二级租户　≈ 417 个</text>
+<line x1="630" y1="246" x2="960" y2="246" stroke="#D9DEE7" stroke-width="1"/>
+<text x="630" y="267" font-size="12.5" fill="#3D4C63" font-family="Microsoft YaHei">不建门户 · 不建身份源 · 由一级代管</text>
+</svg>
+    </div>
+    <p class="fig-swipe">图幅较宽，可左右滑动查看完整示意图</p>
+    <figcaption><span class="no">图 2</span>三级组织压成两级租户。中间那级（51 家直属）才是一级租户的真实主体，总部本身也是其中一个。</figcaption>
+  </figure>
+
+  <div class="note">
+    <b>这组数字顺手解决了方案里一个悬了很久的问题。</b>方案原来假设"一级 ≤ 50、二级 ≤ 800、合计 ≤ 900"，是拿睿思已接入的近 700 座场站倒推的。现在拿到官方口径：51 家直属单位、417 家基层企业——一级 ≤ 50 直接对上，417 家基层加上其下属场站落在二级 ≤ 800 里，合计 900 也站得住。<span class="muted">（口径来自集团官网 2026 年校招公告与公开报道，属可引用的公开事实。）</span>
+  </div>
+
+  <h3><span class="n">2.1</span>四类业态：为什么不能一套资源模板通吃</h3>
+  <p class="body">集团不是"一种电厂管 417 遍"，是四类业态并行。它们的核心矛盾完全不同，所以对平台的资源形态、时序密度、计算类型的要求也不同——这正是后面"配额要分档、模板要分业态"的根因。</p>
+
+  <table class="tbl">
+    <thead><tr><th style="width:14%">业态</th><th style="width:13%">核心矛盾</th><th style="width:26%">监控对象</th><th>对平台的特殊要求</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="hd" data-label="业态">水电</td>
+        <td class="k" data-label="核心矛盾">调度</td>
+        <td data-label="监控对象">流域梯级电站、水库水位、生态流量</td>
+        <td data-label="对平台的特殊要求">强时序（600 万测点级写入）、跨厂站联合调度，租户之间要能"看见"但不"拿到"</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="业态">新能源</td>
+        <td class="k" data-label="核心矛盾">预测</td>
+        <td data-label="监控对象">风机、光伏逆变器、功率预测</td>
+        <td data-label="对平台的特殊要求">场站数量多、单场站资源极小（几百个点位），要求"海量小租户"低成本开通，不能一家一套</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="业态">煤电 / 燃机</td>
+        <td class="k" data-label="核心矛盾">灵活</td>
+        <td data-label="监控对象">机组 DCS/TCS、环保、性能计算</td>
+        <td data-label="对平台的特殊要求">计算密集（性能计算、燃烧优化），要能分到独占算力；控制侧数据受安全分区约束，不能随便跨租户流通</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="业态">综合能源</td>
+        <td class="k" data-label="核心矛盾">聚合</td>
+        <td data-label="监控对象">虚拟电厂、源网荷储、售电交易</td>
+        <td data-label="对平台的特殊要求">天然跨主体（一个虚拟电厂聚合多个单位的资源），是唯一"默认就要跨租户"的业态，必须有受控的跨租户数据授权</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ========== 03 ========== -->
+<section class="sec" id="s3">
+  <div class="sec-head">
+    <div class="tag">03 底座家底</div>
+    <h2>睿思已经跑起来了，而且跑得不小</h2>
+    <p>这件事不是从零开始。多租户平台要改造的对象，是一个已经在 31 个省接了 8000 万千瓦装机的生产系统。</p>
+  </div>
+
+  <p class="body">睿思底座的业务思路被概括成<span class="hl">「152」</span>：1 个一体化数智底座，覆盖生产监控、生产管理、电力营销与客户服务、经营管理、综合管理 5 个业务维度，加数字空间与物理空间 2 项安全防护。技术上是<span class="hl">七大能力板块</span>：应用构建、应用集成、数据集成、时序数据、大数据、大模型工具链，以及<b>多租户管理</b>——注意，多租户本来就是其中一块，不是新增的。</p>
+
+  <div class="note">
+    睿思对自己的定位是一句很好用的比喻：<b>做电力行业的「智能安卓系统」</b>——能力像应用商店一样按需获取。这句话直接决定了它必须有多租户：安卓不可能给每个 App 装一台手机。
+  </div>
+
+  <h3><span class="n">3.1</span>已建成的规模（截至 2025 年底公开口径）</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:22%">维度</th><th style="width:20%">数字</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="hd" data-label="维度">覆盖范围</td><td class="k c" data-label="数字">31 个省</td><td data-label="说明">国内全部省级行政区基本铺开，不是试点</td></tr>
+      <tr><td class="hd" data-label="维度">接入场站</td><td class="k c" data-label="数字">近 700 座</td><td data-label="说明">对接场站监控系统 4000 余套</td></tr>
+      <tr><td class="hd" data-label="维度">接入装机</td><td class="k c" data-label="数字">8000 万千瓦</td><td data-label="说明">约占集团总装机的 <b>28%</b>——剩下七成还没进来</td></tr>
+      <tr><td class="hd" data-label="维度">设备适配</td><td class="k c" data-label="数字">100+ 机型</td><td data-label="说明">100 余种风机、90 余种逆变器状态标准化，判别准确率超 99%</td></tr>
+      <tr><td class="hd" data-label="维度">自主可控</td><td class="k c" data-label="数字">全栈国产</td><td data-label="说明">从操作系统内核到算法框架，核心软硬件全国产化</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note warn">
+    <b>28% 这个比例是关键。</b>如果已经接满了，那多租户平台只是"优化存量"；正因为还有七成装机要接进来，"每接一个单位就要开一套环境"的做法必然撞墙。规模压力不是未来的假设，是当下的算术。
+  </div>
+
+  <h3><span class="n">3.2</span>多租户现在做到哪一步了</h3>
+  <p class="body">这是整份方案最实在的起点——客户不是没有多租户，是有一套<b>配置驱动的手工多租户口径</b>。它已经有租户分级、有概念模型、有部署形态，缺的是"治理"。</p>
+
+  <table class="tbl">
+    <thead><tr><th style="width:20%">能力</th><th style="width:12%">状态</th><th>现状事实（来自客户对外宣讲材料 P142–P153）</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="hd" data-label="能力">租户分级</td>
+        <td class="k" data-label="状态">已有</td>
+        <td data-label="现状">一级 = 集团租户 / 省公司租户；二级 = 集团水电、集团新能源、集团煤电、陕西省煤电、福建-水电等。<b>"动态划分，通过配置记录租户关系"</b>——即靠人工配置，没有判定准则</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="能力">概念模型</td>
+        <td class="k" data-label="状态">已有</td>
+        <td data-label="现状">租户 1—* 用户、1—* 组织、1—* 角色、1—* 订购的解决方案、1—* 资源域；组织 1—* 员工。这套模型本方案直接沿用作基线</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="能力">开通方式</td>
+        <td class="k" data-label="状态">已有</td>
+        <td data-label="现状">六类配置：容器、中间件、数据库、功能模板、安全、通知。建租户前先配模板，再按订购的子系统下发——已经是模板化思路</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="能力">部署形态</td>
+        <td class="k" data-label="状态">混合</td>
+        <td data-label="现状"><b>「多租户 SaaS 化」与「按区域公司独立部署」并存</b>，客户自称"混合租户"。这是现状的真实定性，也是要规范化的对象</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="能力">网络</td>
+        <td class="k" data-label="状态">已有</td>
+        <td data-label="现状">泛域名 <code>*.zhsc.chd.com</code> 绑出口容器，租户地址形如 <code>tenantIdA.zhsc.chd.com</code>；不同租户走不同出口 IP、对应不同集群</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="能力">监控计量</td>
+        <td class="k" data-label="状态">部分</td>
+        <td data-label="现状">Prometheus + Grafana 采容器资源，按租户层级上报，支持单租户/一级含下属/全平台三级分析；应用侧有 UV/PV 埋点。<b>但只有"看"，没有"限"</b></td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="能力">二级租户约束</td>
+        <td class="k" data-label="状态">已有</td>
+        <td data-label="现状">二级租户<b>不含门户能力</b>，应用全部聚合到一级的统一门户；<b>二级不具备 SSO</b>，只有一级提供 SSO</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3><span class="n">3.3</span>还差什么：三个缺口</h3>
+  <p class="body">把上表读一遍会发现，这套系统"能建租户"，但"管不住租户"。三处缺口，正好是方案的三个主攻方向。</p>
+
+  <table class="tbl">
+    <thead><tr><th style="width:8%">编号</th><th style="width:24%">缺口</th><th>具体表现</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="hd" data-label="编号">G1</td>
+        <td class="k" data-label="缺口">隔离没有判定准则</td>
+        <td data-label="具体表现">现状是"根据配置可以实现多个租户共享或分离"——共享还是分离，由谁定、按什么定、代价差多少，全凭讨论。没有 4 档、没有打分、没有代价模型，900 个租户就会谈 900 次</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="编号">G2</td>
+        <td class="k" data-label="缺口">有资源监控，没有配额体系</td>
+        <td data-label="具体表现">Prometheus 能看到谁用了多少，但没有上限、没有分档默认值、没有执行点。看得见却拦不住，等于一个租户可以把公共资源吃干净</td>
+      </tr>
+      <tr>
+        <td class="hd" data-label="编号">G3</td>
+        <td class="k" data-label="缺口">身份没贯通，边界没定义</td>
+        <td data-label="具体表现">一级有 SSO、二级没有；每个租户同步全量组织架构，以统一用户中心为修改源头。跨租户操作靠什么授权、平台管理员能进到租户里做什么，缺明文</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ========== 04 ========== -->
+<section class="sec" id="s4">
+  <div class="sec-head">
+    <div class="tag">04 生意逻辑</div>
+    <h2>一家做继电保护和自动化的公司，为什么要养一个平台</h2>
+    <p>这个问题不回答，方案就只是技术方案。看了收入结构就明白：平台是它换商业模式的地方。</p>
+  </div>
+
+  <table class="tbl">
+    <thead><tr><th style="width:26%">2025 年业务板块</th><th style="width:12%">收入占比</th><th style="width:34%">量级</th><th>性质</th></tr></thead>
+    <tbody>
+      <tr><td class="hd" data-label="板块">电网自动化</td><td class="c" data-label="占比">44.7%</td><td data-label="量级"><span class="bar" style="width:100%"></span></td><td data-label="性质">装备与工程，主业</td></tr>
+      <tr><td class="hd" data-label="板块">电厂自动化</td><td class="c" data-label="占比">14.7%</td><td data-label="量级"><span class="bar" style="width:33%"></span></td><td data-label="性质">装备与工程</td></tr>
+      <tr><td class="hd" data-label="板块">系统集成中心</td><td class="c" data-label="占比">14.2%</td><td data-label="量级"><span class="bar" style="width:32%"></span></td><td data-label="性质">工程交付</td></tr>
+      <tr><td class="hd" data-label="板块">信息技术业务</td><td class="c" data-label="占比">12.0%</td><td data-label="量级"><span class="bar on" style="width:27%"></span></td><td data-label="性质"><b>软件与服务，睿思在这条线里</b></td></tr>
+      <tr><td class="hd" data-label="板块">轨道交通自动化</td><td class="c" data-label="占比">3.7%</td><td data-label="量级"><span class="bar" style="width:8%"></span></td><td data-label="性质">装备与工程</td></tr>
+      <tr><td class="hd" data-label="板块">水电自动化</td><td class="c" data-label="占比">3.0%</td><td data-label="量级"><span class="bar" style="width:7%"></span></td><td data-label="性质">装备与工程</td></tr>
+      <tr><td class="hd" data-label="板块">信息安防</td><td class="c" data-label="占比">2.7%</td><td data-label="量级"><span class="bar" style="width:6%"></span></td><td data-label="性质">安全产品</td></tr>
+      <tr><td class="hd" data-label="板块">电力电子</td><td class="c" data-label="占比">2.6%</td><td data-label="量级"><span class="bar" style="width:6%"></span></td><td data-label="性质">装备</td></tr>
+      <tr><td class="hd" data-label="板块">智能一次设备</td><td class="c" data-label="占比">1.9%</td><td data-label="量级"><span class="bar" style="width:4%"></span></td><td data-label="性质">装备</td></tr>
+    </tbody>
+  </table>
+  <p class="body" style="margin-top:10px;font-size:13px;color:#7A8699">数据来源：国电南自 2025 年年度报告公开披露口径。占比按营业收入 96.44 亿元计算。</p>
+
+  <p class="body" style="margin-top:18px">这张表说明两件事。第一，<span class="hl">它的钱主要是靠卖硬件和干工程挣的</span>：电网自动化一项就占 44.7%，装一次、收一次钱，边际成本不降。第二，<span class="hl">软件这条线只有约七分之一</span>（信息技术 12.0% + 信息安防 2.7%），但它有一个别的板块没有的性质——<b>做一次，可以卖很多次</b>。</p>
+
+  <div class="def">
+    多租户平台要解决的不是技术问题，是<b>交付形态问题</b>：从"给每个单位做一套系统、派一队人运维"，变成"建一套底座、开一个租户、按用量收"。前者是项目制，收入随人增长；后者是平台制，收入随租户增长而成本几乎不动。<b>这就是"电力行业智能安卓"那句话的商业翻译。</b>
+  </div>
+
+  <div class="note">
+    对照一下路径就清楚了：客户自己写的是"底座标准化 → 能力产品化 → 场景方案化 → 生态伙伴化"。多租户平台是<b>从第一步跨到第二步的那道门</b>——没有租户体系和计量，能力永远只能是"这个项目的能力"，成不了"可售的产品"。
+  </div>
+</section>
+
+<!-- ========== 05 ========== -->
+<section class="sec" id="s5">
+  <div class="sec-head">
+    <div class="tag">05 为什么必须</div>
+    <h2>四个驱动力，缺一个都不成立</h2>
+    <p>把"为什么需要多租户"拆成四件事看：规模、成本、合规、商业。这四条同时成立，才叫"必须"。</p>
+  </div>
+
+  <div class="drvs">
+    <div class="drv">
+      <em>D1</em>
+      <b>规模：近五百个组织单元，管不过来</b>
+      <p>51 家直属 + 417 家基层。每开一个单位就要一套门户、一套用户体系、一套流程、一套低代码环境。同业华能说过一句实话：<b>二级单位做信息化的人可能只有一到两个人</b>，让他们各自建平台、管机房根本不现实。所以只能是"平台统一供给、租户按需开通"。</p>
+    </div>
+    <div class="drv">
+      <em>D2</em>
+      <b>成本：独立部署贵 5–8 倍，接不起剩下七成</b>
+      <p>独立集群的成本约为共享方案的 5–8 倍。当前只接入 28% 的装机，剩下七成要进来；如果每家都独立部署，光资源账就过不去。<b>共享是唯一能规模化接完的路，但共享就必须有隔离与配额</b>——这两件事是一体两面。</p>
+    </div>
+    <div class="drv">
+      <em>D3</em>
+      <b>合规：敏感度不同，不能一刀切</b>
+      <p>生产控制区（安全Ⅰ、Ⅱ区）与管理信息区（安全Ⅲ、Ⅳ区）是硬边界；不同租户的数据敏感度、监管要求差别很大。第三方开发商（中电金信、南京圣唯思已在底座上落地）要进来开发，必须有硬隔离。<b>一套"全都共享"的方案过不了合规，一套"全都独立"的方案过不了预算。</b></p>
+    </div>
+    <div class="drv">
+      <em>D4</em>
+      <b>商业：没有租户和计量，只能接项目</b>
+      <p>要对外输出（集团外、行业外），就必须能"开一个账号、按用量结算"。没有租户体系就没有计量对象，没有计量就没有定价，没有定价就退回到一单一议的项目制。<b>多租户是平台可售的前置条件，不是优化项。</b></p>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>时点也卡住了。</b>客户自己定的目标是 2026 年实现对新能源、水电、煤电三类平台的统一支撑与全业务接入，2028 年建成行业领先的能源数智底座。也就是说，"多租户"这件事必须在<b>业务规模冲上来之前</b>定型——等 700 个场站变成 2000 个再改，代价不是重写代码，是重写已经签过的交付。
+  </div>
+</section>
+
+<!-- ========== 06 ========== -->
+<section class="sec" id="s6">
+  <div class="sec-head">
+    <div class="tag">06 怎么适配</div>
+    <h2>六个必须：这家公司的约束条件，决定了方案长什么样</h2>
+    <p>通用多租户方案在这里一条都用不上。下面六条，每一条都对应这家公司的一个具体事实。</p>
+  </div>
+
+  <div class="musts">
+    <div class="must">
+      <div class="no">1</div>
+      <div class="body">
+        <h4>按三级组织压成两级租户，且"二级不自管"</h4>
+        <p>一级 = 总部与 51 家直属单位，给独立门户、独立管理员、SSO；二级 = 417 家基层企业，不建门户、不建身份源，应用聚合到上级门户。</p>
+        <p><b>但必须留"可升级为自管"的开关。</b>今天的二级厂站不需要自管，三年后可能有一个大厂要独立；架构上锁死，到时候只能推翻重做。</p>
+      </div>
+    </div>
+
+    <div class="must">
+      <div class="no">2</div>
+      <div class="body">
+        <h4>配额按四类业态分模板，不给一套通吃的数字</h4>
+        <p>水电要的是高密度时序写入，新能源是海量小场站，煤电燃机要独占算力，综合能源天然跨主体。同一套配额默认值套四类业态，结果是小的浪费、大的不够。</p>
+        <p><b>做法</b>：每个业态一组配额模板（CPU/内存/存储/测点/接口调用/Token 等 15 项），默认值 + 上限倍数 + 超标审批三件套；900 个租户 × 15 项 = 13500 个配额对象，只能靠模板下发、变更走流水线，不能人工维护。</p>
+      </div>
+    </div>
+
+    <div class="must">
+      <div class="no">3</div>
+      <div class="body">
+        <h4>能力在集团侧开发，以镜像分发到二级，不指望基层有开发力</h4>
+        <p>417 家基层企业没有开发团队，也不该有。<b>统一技术框架 + 集团集中开发 + 容器镜像分发</b>是被同业验证过的路径（华能原话：区域侧不要求有很强开发能力，完全集中在集团开发，再以容器镜像分发下去，达到云边协同）。</p>
+        <p>这条也解释了为什么"二级租户不给独立门户"是合理的而不是偷懒——门户在上级，应用由上级分发，二级只消费。</p>
+      </div>
+    </div>
+
+    <div class="must">
+      <div class="no">4</div>
+      <div class="body">
+        <h4>安全分区是红线：隔离等级再高，也不跨区</h4>
+        <p>按 27 号令，生产控制区（安全Ⅰ、Ⅱ区）与管理信息区（安全Ⅲ、Ⅳ区）之间是正向/反向隔离装置的单向通道。<b>平台的 L0–L3 四档隔离全部发生在管理信息区内部</b>——L3 的"物理隔离"指的是独立集群与独立资源池，不等于可以进生产控制区。</p>
+        <p>这条必须写在方案最显眼的位置，否则评审时会被当成"用技术手段绕过合规"。</p>
+      </div>
+    </div>
+
+    <div class="must">
+      <div class="no">5</div>
+      <div class="body">
+        <h4>信创双轨：一云多芯、国产栈优先但不排斥开源</h4>
+        <p>客户明确"国产中间件优先、兼容开源生态"，底座要跑在麒麟等国产 OS、达梦/人大金仓等国产库、飞腾/龙芯/海光/鲲鹏等多芯上。</p>
+        <p>对多租户的直接约束：<b>租户模板必须能表达"这套模板跑在哪类芯片与数据库上"</b>，否则同一个模板在不同资源池上开出来的租户行为不一致，隔离与配额都不可比。</p>
+      </div>
+    </div>
+
+    <div class="must">
+      <div class="no">6</div>
+      <div class="body">
+        <h4>第三方进来要分信任等级，不能按"自己人"处理</h4>
+        <p>底座上已经有中电金信、南京圣唯思等第三方落地。内部单位隔离防的是<b>误操作</b>，外部开发商要防的是<b>越权尝试</b>——这两件事的强度不是一个量级。</p>
+        <p><b>做法</b>：A 类（内部）命名空间 + 配额 + 网络策略；B 类（第三方）强制虚拟集群或独立集群，数据进出只能走受控通道（数据服务接口、双向授权、限期、全程留痕），不允许直连数据库。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="def" style="margin-top:22px">
+    六条背后其实只有一句总原则：<b>统一技术框架，差异化配置</b>。不是"用一套标准化把所有东西固定死"，而是"框架必须统一，参数允许分化"。同业踩过这个坑，原话是——体量不同、业务模式不同、投资规模差得远，很难用一套特别标准化的东西把所有东西固定到一起，只能提供一套技术框架、制定一套标准。<b>多租户平台就是这套框架的载体。</b>
+  </div>
+</section>
+
+<!-- ========== 07 ========== -->
+<section class="sec" id="s7">
+  <div class="sec-head">
+    <div class="tag">07 一页结论</div>
+    <h2>如果只记三句话</h2>
+  </div>
+
+  <div class="def">
+    一、这家公司的形状是：<b>一个集团、三级组织、四类业态、近五百个组织单元</b>。<br>
+    二、它要的不是一套系统，是<b>一种能自我复制的能力供给方式</b>——装一次、卖很多次。<br>
+    三、所以多租户平台对它不是 IT 基础设施，<b>是产品形态本身</b>。这就是为什么"隔离等级、配额、计量"这些看起来琐碎的东西，在别的项目里是加分项，在这里是生死线。
+  </div>
+
+  <table class="tbl" style="margin-top:20px">
+    <thead><tr><th style="width:30%">这家公司的具体事实</th><th>推导出的平台设计</th></tr></thead>
+    <tbody>
+      <tr><td class="hd" data-label="具体事实">51 家直属 + 417 家基层，三级管控</td><td data-label="推导出的平台设计">两级租户模型，一级独立门户、二级聚合不自管，留升级开关</td></tr>
+      <tr><td class="hd" data-label="具体事实">四类业态，核心矛盾各不相同</td><td data-label="推导出的平台设计">配额与资源模板按业态分档，不做统一默认值</td></tr>
+      <tr><td class="hd" data-label="具体事实">基层单位信息化人力 1–2 人</td><td data-label="推导出的平台设计">集团集中开发 + 镜像分发，平台运维由专业公司托管</td></tr>
+      <tr><td class="hd" data-label="具体事实">生产控制区与管理信息区硬隔离</td><td data-label="推导出的平台设计">四档隔离全部落在管理信息区内，安全分区单列为红线</td></tr>
+      <tr><td class="hd" data-label="具体事实">全栈信创、一云多芯</td><td data-label="推导出的平台设计">模板需携带芯片与数据库属性，保证跨资源池行为一致</td></tr>
+      <tr><td class="hd" data-label="具体事实">已有第三方开发商在底座上落地</td><td data-label="推导出的平台设计">租户分 A/B 两类信任，B 类硬隔离 + 受控通道</td></tr>
+      <tr><td class="hd" data-label="具体事实">只接入 28% 装机，目标 2028 建成行业底座</td><td data-label="推导出的平台设计">共享为主、独立为例外，控制独立部署的比例与审批门槛</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note warn">
+    <b>一句话提醒。</b>这份材料里的公司事实来自公开披露与客户对外宣讲材料；凡是标了页码的（如 P142–P153）是客户一手口径，可以直接引用；凡是我推算的（如"约 360 人""28%"），引用前请复核。<b>对客户讲的时候，数字要敢说，但要知道自己说的是哪一种数字。</b>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>本页为《集团级多租户技术平台架构设计方案》v0.1 的背景认知材料，只讲"客户是谁、为什么需要、怎么适配"，不含技术选型与实施计划。<br>公司数据来源：中国华电集团官网公开信息、国电南自 2025 年年度报告、客户《数智底座宣讲材料-对外 V0.1》。同业对标引自公开演讲实录。</p>
+    <div class="mark">公司认知与平台适配<br>2026 年 11 月</div>
+  </div>
+</footer>
+
+</body>
+</html>

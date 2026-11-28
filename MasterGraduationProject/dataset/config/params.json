@@ -1,5 +1,5 @@
 {
-  "dataset_version": "0.3.0",
+  "dataset_version": "0.6.0",
   "global_seed": 42,
   "seeds": [
     42,
@@ -10,10 +10,37 @@
   ],
   "semantic_threshold": 0.88,
   "cache_capacity_tiers": [
+    0.1,
     0.25,
-    0.5,
-    0.75
+    0.5
   ],
+  "pool_working_set_ref": {
+    "resp": 200,
+    "rag": 4590,
+    "act": 100,
+    "plan": 60,
+    "unit": "resp/act/plan 按条目计，rag 按单快照活跃证据块计；用于 C2 固定分池绝对配额换算"
+  },
+  "stream_splits": {
+    "motivation_seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "primary_benchmark": "seed42",
+    "validation": "seed43",
+    "test": [
+      "seed44",
+      "seed45",
+      "seed46"
+    ],
+    "long_stability": [
+      "long_01",
+      "long_02"
+    ]
+  },
   "stale_penalty_weight": 1.0,
   "ttl_scale_fractions": {
     "short": 0.03,
@@ -142,6 +169,57 @@
     "resp_truncated": 0,
     "empty_outputs": 0,
     "service_restart_at_request": 259
+  },
+  "repair_calibration": {
+    "sample_file": "events/repair_calibration_sample.jsonl",
+    "total_pairs": 40,
+    "strata": {
+      "local_change": 20,
+      "major_change": 10,
+      "doc_only_unchanged": 10
+    },
+    "status": "pending",
+    "note": "先导 40 对样本，全部绑定 real_calibration_300.csv 中已有回答的 req_id；跑完 run_repair_calibration.py --write-back 后改为 measured"
+  },
+  "rag_pipeline": {
+    "version": "modern_v1",
+    "chunk_embeddings_path": "embeddings/chunk_embeddings.npz",
+    "chunk_count": 13770,
+    "chunk_dim": 512,
+    "reranker_model": "BAAI/bge-reranker-v2-m3",
+    "reranker_onnx": "onnx-community/bge-reranker-v2-m3-ONNX (model_quantized.onnx)",
+    "rrf_k": 60,
+    "rerank_top_k": 12,
+    "per_doc_cap": 2,
+    "dynamic_k_range": [
+      3,
+      8
+    ],
+    "status": "measured"
+  },
+  "fast_calibration": {
+    "sample_file": "events/fast_calibration_sample_50.jsonl",
+    "total_requests": 50,
+    "quota_by_difficulty": {
+      "single_table": 15,
+      "join": 18,
+      "nested_agg": 17
+    },
+    "status": "pending",
+    "note": "50 条分层快模型样本（100% 为 300 条主标定子集）；跑完 run_fast_model_calibration.py --write-back 后改为 measured"
+  },
+  "act_prod_benchmark": {
+    "scale_factor": 100,
+    "scale_meta": "db/scale/meta.json",
+    "gateway_pool_size": 4,
+    "concurrencies": [
+      1,
+      8,
+      16
+    ],
+    "costs_csv": "costs/act_prod_costs.csv",
+    "diagnostics_json": "costs/act_value_diagnostics.json",
+    "status": "measured"
   },
   "labels": {
     "branch_pairs": 120,

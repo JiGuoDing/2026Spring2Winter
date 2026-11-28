@@ -1,0 +1,3460 @@
+
+
+========== PDF_PHYSICAL_PAGE 1 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Data Science and Engineering
+ 
+Intelligent Recognition Method for Dynamic Network Abnormal Connection Patterns
+Based on Transfer Learning with Historical Data
+--Manuscript Draft--
+ 
+Manuscript Number:
+DSEJ-D-26-00551
+Full Title:
+Intelligent Recognition Method for Dynamic Network Abnormal Connection Patterns
+Based on Transfer Learning with Historical Data
+Article Type:
+Research Papers
+Funding Information:
+Science and Technology Research
+Project of Jiangxi Provincial Department of
+Education: Research on the Application of
+Deep Learning in the Construction of
+Speech Recognition Databases
+(GJJ209311)
+Dr Yidan Xu
+Abstract:
+The topological structure of dynamic networks evolves in real time with service access
+and terminal migration, and their connection behaviors exhibit strong temporal coupling
+and sudden disturbance characteristics, leading to significant cross-scenario data
+distribution differences. Accordingly, abnormal connection patterns present high
+concealment and polymorphism. Traditional recognition methods rely on static feature
+modeling for a single scenario, making it difficult to effectively extract cross-domain
+shared temporal-global correlation features. In dynamic environments with sparse
+abnormal samples and diverse attack types, such methods are prone to feature drift
+and generalization ability attenuation. To address these issues, an intelligent
+recognition method for dynamic network abnormal connection patterns based on
+transfer learning with historical data is proposed. An interactive network flow dynamic
+connection model is constructed, and a fine-grained connection feature matrix is
+established by introducing multi-dimensional feature indicators such as the in/out
+connection degrees of source/destination hosts, realizing the structured expression of
+dynamic network behaviors. A stacked Gated Recurrent Unit (GRU) is introduced to
+capture the evolutionary laws of connection features in the temporal dimension and
+mine the temporal coupling features of abnormal behaviors. Meanwhile, a self-attention
+feature enhancement module is designed to explore the global interaction
+dependencies among multiple hosts, and the extracted global correlation features are
+injected into the temporal model to improve the ability to identify concealed abnormal
+patterns. On this basis, a transfer learning framework based on a cross-domain
+transport network is built, which takes the enhanced temporal-global composite
+features as input. Through bidirectional feature transfer between the historical data of
+the source domain and the real-time data of the target domain, cross-scenario
+migration and dynamic adaptation of abnormal recognition knowledge are achieved.
+Experimental results show that the proposed method can fully cover 8 typical abnormal
+attacks including unauthorized access, DDoS, and protocol tampering. In a complex
+dynamic environment with the number of nodes expanded to 90, the pattern
+recognition coverage remains stable above 96%, and the network throughput is
+maintained above 400 Mbit/s, verifying its superiority and engineering applicability in
+the task of dynamic network anomaly recognition.
+Corresponding Author:
+Yidan Xu
+Nanchang Jiaotong Institute
+CHINA
+Corresponding Author E-Mail:
+Xuyidan0917@163.com
+Order of Authors:
+Yidan Xu
+Corresponding Author Secondary
+Information:
+Corresponding Author's Institution:
+Nanchang Jiaotong Institute
+Corresponding Author's Secondary
+Institution:
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 2 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+First Author:
+Yidan Xu
+First Author Secondary Information:
+Order of Authors Secondary Information:
+Additional Information:
+Question
+Response
+Does this manuscript belong to a special
+issue?
+No
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+
+========== PDF_PHYSICAL_PAGE 3 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Intelligent Recognition Method for Dynamic Network Abnormal Connection 
+Patterns Based on Transfer Learning with Historical Data 
+Abstract: The topological structure of dynamic networks evolves in real time with service access 
+and terminal migration, and their connection behaviors exhibit strong temporal coupling and 
+sudden disturbance characteristics, leading to significant cross-scenario data distribution 
+differences. Accordingly, abnormal connection patterns present high concealment and 
+polymorphism. Traditional recognition methods rely on static feature modeling for a single 
+scenario, making it difficult to effectively extract cross-domain shared temporal-global correlation 
+features. In dynamic environments with sparse abnormal samples and diverse attack types, such 
+methods are prone to feature drift and generalization ability attenuation. To address these issues, 
+an intelligent recognition method for dynamic network abnormal connection patterns based on 
+transfer learning with historical data is proposed. An interactive network flow dynamic connection 
+model is constructed, and a fine-grained connection feature matrix is established by introducing 
+multi-dimensional feature indicators such as the in/out connection degrees of source/destination 
+hosts, realizing the structured expression of dynamic network behaviors. A stacked Gated 
+Recurrent Unit (GRU) is introduced to capture the evolutionary laws of connection features in the 
+temporal dimension and mine the temporal coupling features of abnormal behaviors. Meanwhile, a 
+self-attention feature enhancement module is designed to explore the global interaction 
+dependencies among multiple hosts, and the extracted global correlation features are injected into 
+the temporal model to improve the ability to identify concealed abnormal patterns. On this basis, a 
+transfer learning framework based on a cross-domain transport network is built, which takes the 
+enhanced temporal-global composite features as input. Through bidirectional feature transfer 
+between the historical data of the source domain and the real-time data of the target domain, 
+cross-scenario migration and dynamic adaptation of abnormal recognition knowledge are achieved. 
+Experimental results show that the proposed method can fully cover 8 typical abnormal attacks 
+including unauthorized access, DDoS, and protocol tampering. In a complex dynamic 
+environment with the number of nodes expanded to 90, the pattern recognition coverage remains 
+stable above 96%, and the network throughput is maintained above 400 Mbit/s, verifying its 
+superiority and engineering applicability in the task of dynamic network anomaly recognition. 
+Keywords: Historical Data; Transfer Learning; Dynamic Network; Abnormal Connection Pattern; 
+Intelligent Recognition; Cross-Domain Transport Network 
+ 
+1 Introduction 
+With the in-depth integration of 5G, the Internet of Things (IoT) and edge computing 
+technologies, the network scale has expanded exponentially, the types of terminal access have 
+become increasingly diverse, and the network topological structure and traffic characteristics have 
+shown significant dynamics and heterogeneity [1,2]. Against this background, network abnormal 
+connection patterns such as attack camouflage connections, cross-domain unauthorized access, 
+traffic anomalies, and hybrid intrusions have become increasingly concealed and complex, and 
+their manifestations continue to evolve with the iteration of business scenarios [3]. The essence of 
+network abnormal connections is a sequence of behaviors that deviate from the normal 
+communication paradigm [4], and the core of their recognition lies in accurately capturing the 
+feature differences between normal and abnormal connections. However, in actual networks, 
+normal connection patterns fluctuate dynamically with user behaviors, service loads and 
+Blinded manuscript
+Click here to access/download;Blinded
+manuscript;Manuscript.doc
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 4 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+topological adjustments, and abnormal samples often present sparse and sudden characteristics. As 
+a result, training data in a single scenario is difficult to cover complex and variable abnormal 
+patterns, and the training of traditional recognition models based on static rule matching or single 
+feature modeling is prone to overfitting [5]. As a key technology to solve the problems of data 
+sparsity and domain adaptation, transfer learning mines shared knowledge among different 
+scenarios and transfers the effective features and decision-making experience of the trained model 
+to new scenarios [6], which can significantly reduce the model's dependence on labeled data in the 
+target domain and improve the model's rapid adaptation ability in the dynamic network abnormal 
+connection pattern recognition environment. 
+In response to the above challenges such as difficult cross-scenario adaptation and variable 
+abnormal patterns in dynamic network anomaly recognition, scholars at home and abroad have 
+carried out extensive research and proposed a variety of recognition methods based on deep 
+learning and blockchain technology. Heidari et al. applied blockchain-based federated learning 
+and deep learning algorithms to the detection of deepfake network attacks, a type of network 
+abnormal connection [7]. This method records the identity of data contributors and data usage 
+traces through encryption algorithms and distributed ledgers, uses the blockchain distributed 
+ledger to record the training data features and parameter contributions of each node, and screens 
+malicious nodes combined with a consensus mechanism, ensuring that data is only used for model 
+training and cannot be tampered with or abused, and clarifying the ownership of data sovereignty. 
+This method relies on each node having sufficient and effective abnormal samples locally to 
+contribute valuable gradients. If most nodes lack key abnormal patterns, the fundamental problems 
+of data imbalance and lack of representativeness cannot be solved only by a secure collaboration 
+mechanism, and the model is still difficult to identify highly polymorphic new attacks. Babaei et 
+al. studied the IoT network attack detection (network abnormal connection) in the fog computing 
+layer based on clustering and blockchain [8]. This method encrypts and uploads the traffic features, 
+clustering results, attack detection logs, model update records and other data of fog nodes to the 
+chain to form an immutable distributed ledger, and screens malicious fog nodes through the 
+consensus algorithm of the consortium chain; the screened fog nodes can share the effective 
+features of local clustering through the blockchain to realize global feature fusion and improve the 
+detection accuracy of cross-node attacks. This method fails to solve the fundamental contradiction 
+in scenarios with sparse abnormal samples—if most fog nodes lack representative abnormal 
+samples locally, their clustering results will mainly reflect normal patterns, and feature fusion 
+based on this cannot significantly improve the ability to identify highly concealed new anomalies, 
+and the problem of "generalization ability attenuation" of the model across scenarios is still 
+prominent. Lilhore et al. applied the optimized CNN-LSTM and transfer learning algorithms to 
+the hybrid intrusion detection of Industry 4.0 networks, a type of network abnormal connection 
+detection [9]. This method automatically extracts the spatial local features of traffic data through 
+the convolutional layer, captures the long-term temporal dependencies in the extracted features by 
+using a gating mechanism, weights key features through an attention mechanism, and adopts a 
+lightweight activation function to reduce the model complexity while ensuring detection accuracy. 
+This method focuses on the optimization of a single detection model and lacks a framework 
+design for continuous and online learning in a dynamic network environment, making it difficult 
+to adapt to the detection requirements of real-time evolution of topology and behaviors. Turab et al. 
+applied multi-modal big data representation and game theory to the security-enhanced network 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 5 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+abnormal connection (intrusion) recognition in the IoT [10]. This method integrates the 
+complementary features of different modal data through feature fusion technology, breaking 
+through the detection blind spots of a single modality. It regards the system detection module and 
+the attacker as two players in a game, constructs a non-cooperative zero-sum game model, 
+quantifies the benefits and strategy costs of both parties, and adjusts the detection strategy in real 
+time through the solution of Nash equilibrium, and actively optimizes the defense scheme against 
+the attacker's evasion means. The game theory framework provides a theoretical basis for strategy 
+adjustment, but its effectiveness relies heavily on the accurate and real-time modeling of the 
+attacker's behavior and profit function; in the face of polymorphic attacks with strong coupling, 
+sudden disturbances and high concealment, the attack strategy space is difficult to enumerate and 
+quantify, leading to the game model may not converge to the optimal defense strategy in a timely 
+manner, and even produce strategy lag. 
+To address the above problems, an intelligent recognition method for dynamic network 
+abnormal connection patterns based on transfer learning with historical data is proposed, which 
+provides a security protection solution with real-time performance, generalization and accuracy 
+for complex dynamic network environments. 
+2 Intelligent Recognition Method for Dynamic Network Abnormal Connection Patterns 
+2.1 Structured Representation Method for Dynamic Network Connections 
+Network connection behavior evolves with business scenarios, exhibiting strong coupling 
+and suddNetwork connection behaviors exhibit strong temporal coupling and sudden disturbance 
+characteristics with the evolution of business scenarios, leading to significant cross-scenario data 
+distribution differences, and abnormal patterns also show high concealment and polymorphism. 
+Traditional static features are difficult to depict the dynamic evolutionary nature of network 
+behaviors and cannot provide feature inputs with cross-domain generalization ability for 
+subsequent temporal modeling and transfer learning [11]. Therefore, it is necessary to establish a 
+dynamic model that conforms to the essence of network connections and construct a quantitative 
+feature system with both fine-grained expression and cross-scenario adaptation ability. Combined 
+with the needs of transfer learning, a dynamic connection model based on interactive network 
+flow is constructed, defined as a set of network data packets with the same five-tuple information 
+within a unit time, covering forward and backward data packets [12]. Fine-grained dynamic 
+connection features are extracted by capturing the forward and backward interaction laws, which 
+can effectively cope with the pattern drift problem caused by topological evolution and provide 
+adapted source domain feature representations for transfer learning. 
+ To extract transferable dynamic connection features from historical data, network 
+monitoring points are deployed at the network exit router to ensure that the collected connection 
+data covers both internal and external network interaction scenarios, maintaining consistency with 
+the data collection context of historical records [13]. Assuming there arem monitored hosts 
+within the network, which engage in dynamic communication with n external hosts,
+ij
+a 
+represents the number of packets sent from the internal source host
+iS to the external destination 
+host
+j
+D , and
+ji
+b represents the number of packets sent from the external destination host
+j
+D to 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 6 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+the internal source host
+iS . A directed graph is used to depict this communication relationship, 
+where
+j
+D and
+iS are network nodes, 
+ij
+a and
+ji
+b represent the dynamic connection strength 
+between nodes. 
+Let the matrix
+
+G t represent the dynamic connection feature matrix of the monitored 
+network at timet . As the core carrier of source domain features for transfer learning using 
+historical data, its temporal evolution patterns can effectively capture the dynamic coupling 
+characteristics of network behavior. Its expression is as follows:  
+11
+11
+12
+21
+1
+1
+21
+12
+22
+22
+2
+2
+1
+1
+2
+2
+(
+,
+)
+(
+,
+)
+(
+,
+)
+(
+,
+)
+(
+,
+)
+(
+,
+)
+( )
+(
+,
+)
+(
+,
+)
+(
+,
+)
+n
+n
+n
+n
+m
+m
+m
+m
+mn
+nm
+a
+b
+a
+b
+a
+b
+a
+b
+a
+b
+a
+b
+G t
+a
+b
+a
+b
+a
+b
+
+
+
+
+
+
+
+
+
+
+
+
+ (1) 
+In the context of historical data transfer learning, dynamic network connection behavior can 
+be characterized by the time-series feature matrix sequence
+(1),
+(2),
+,
+( )
+G
+G
+G t . This sequence 
+encompasses both the temporal evolution patterns of normal connections in historical data and the 
+burst characteristics and pattern differences of anomalous connections. By analyzing the temporal 
+variation characteristics of the matrix sequence, transferable connection pattern knowledge is 
+extracted, providing temporal feature support for source-domain samples in transfer learning 
+models [14]. Based on the aforementioned dynamic connection feature matrix, four core metrics 
+are defined to capture connection features across different dimensions, providing transfer learning 
+with highly discriminative and domain-adaptive features . The definitions of each metric are as 
+follows: 
+(1) Outbound Connection Density of the Source Host 
+Defined as the number of distinct external destination hosts to which a specific internal 
+source host actively initiates connections within a time window T , this reflects the source host’s 
+active connection activity and is one of the core features of abnormal connection propagation by 
+malicious hosts in historical data. The expression is: 
+
+
+0,1
+,1
+i
+ij
+ij
+A
+a
+a
+j
+n
+i
+m
+
+
+
+
+
+∣
+ 
+(2) 
+Where,
+iA represents the outbound connection density of thei th source host. This metric 
+effectively captures the behavioral patterns of hosts actively scanning external targets during 
+lateral movement attacks. 
+(2) Source Host Inbound Connection Density 
+Defined as the number of distinct external destination hosts accessing a given internal source 
+host within the time window T , this metric reflects the source host’s passive connection activity 
+and captures the connection patterns of external penetration attacks in historical data. The 
+expression is: 
+
+
+0,1
+,1
+i
+ji
+ji
+B
+b
+b
+j
+n
+i
+m
+
+
+
+
+
+∣
+ 
+(3) 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 7 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Where,
+iB represents the inbound connection density of thei th source host. This metric 
+effectively identifies concurrent access behavior by multiple external hosts to internal target hosts 
+during DDoS attacks. 
+(3) Outbound Connection Density of Target Hosts 
+It is defined as the number of different internal source hosts to which a specific external 
+target host actively initiates connections within the time window T . It is used to characterize the 
+active penetration intent of external hosts toward the internal network [15] and provides features 
+for identifying external anomalous hosts in historical data. The expression is: 
+
+
+0,1
+,1
+j
+ji
+ji
+C
+b
+b
+i
+m
+j
+n
+
+
+
+
+
+∣
+ 
+(4) 
+Where,
+j
+C represents the outbound connection density of the j th target host. This metric 
+can effectively identify behavioral characteristics of external zombie hosts initiating scanning and 
+probing against the internal network. 
+(4) Inbound Connectivity of Target Hosts 
+Defined as the number of distinct internal source hosts accessing a specific external target 
+host within the time window T , this metric reflects the interaction intensity between the internal 
+network and external hosts. It aids in identifying abnormal connections, such as the transmission 
+of spyware data, in historical data. The expression is: 
+
+
+0,1
+,1
+j
+ij
+ij
+D
+a
+a
+i
+m
+j
+n
+
+
+
+
+
+∣
+ 
+(5) 
+Where,
+j
+D represents the inbound connection rate of the j th target host. This metric 
+effectively captures data exfiltration behavior where internal compromised hosts transmit data 
+outward. 
+The four feature metrics described above—
+iA ,
+iB ,
+j
+C and
+j
+D —comprehensively 
+characterize the core properties of dynamic network connections from the perspectives of active 
+and passive connections between internal and external hosts. The extracted features retain the 
+pattern differences between normal and abnormal connections in historical data while maintaining 
+the generality required for cross-scenario transferability [16]. By processing historical data 
+through this metric system, a source-domain feature set
+
+
+,
+src
+src
+src
+G
+Q
+
+y
+suitable for transfer 
+learning is generated, where 
+
+
+,
+,
+,
+i
+i
+i
+i
+src
+A B C
+G
+D
+
+ represents a multidimensional feature matrix 
+and 
+src
+y
+ denotes the anomaly label. This enables the transfer of knowledge regarding anomaly 
+connection identification from the source domain to real-time scenarios in the target domain. It not 
+only monitors abnormal connection behavior within the internal network but also accurately 
+detects penetration connections from external networks into the internal network, effectively 
+addressing the core challenges of significant differences in data distribution across scenarios and 
+the rapid dynamic evolution of anomaly patterns. 
+2.2 Extraction of Dynamic Connection Temporal Features under the Gated Recurrent Unit 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 8 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Although the dynamic connection model and feature indicators constructed in Section 2.1 
+realize the quantitative description and structured representation of network connection behavior 
+at a single moment, the essential feature of dynamic network abnormal connections lies in their 
+cross-moment temporal correlation patterns—attack behaviors often present temporal evolution 
+laws such as low-frequency probing, gradual penetration and sudden outbreak, and static features 
+at a single moment are difficult to capture the dynamic coupling characteristics of such abnormal 
+behaviors. To address the above problems, it is necessary to further introduce a temporal modeling 
+method on the basis of structured representation to mine the evolutionary laws of connection 
+features in the temporal dimension and provide decision support in the temporal dimension for 
+abnormal pattern recognition. 
+Based on this, a Gated Recurrent Unit (GRU) is introduced to extract the temporal features of 
+abnormal connections in dynamic networks [17]. The dynamic connection feature matrix 
+
+G t 
+constructed in Section 2.1 is taken as the input of the GRU. Specifically, the multi-dimensional 
+feature vector
+
+ 
+i
+i
+j
+j
+A
+B
+C
+D
+、、
+、
+ obtained by concatenating all feature vectors in the matrix at 
+the current time step is used as the input at this moment. 
+The Gated Recurrent Unit can introduce the feature representation of the previous time step 
+into the input processing of the next time step, enabling effective capture of the temporal features 
+of dynamic network connections in historical data. The GRU model merges the forget gate and the 
+input gate into a reset gate, which significantly improves the computational speed while retaining 
+the temporal memory capability. The GRU calculates the temporal feature state 
+th at time t 
+using the temporal memory state 
+1
+th  at time
+1
+t  and the dynamic connection feature input 
+tx at time t , thereby realizing the capture of temporal features of dynamic network connections. 
+The calculation process is as follows: 
+The reset gate determines how historical information is combined with the current input: 
+
+
+1
+t
+r
+t
+t
+src
+r
+r
+Q
+W x
+U h
+
+
+
+
+ (6) 
+The update gate controls the extent to which historical information is retained up to the 
+current time step: 
+
+
+1
+t
+z
+t
+t
+src
+z
+z
+Q
+W x
+U h
+
+
+
+
+ (7) 
+The candidate hidden state fuses the reset historical information with the current input: 
+
+
+1
+nh
+ 
+ta
+t
+t
+h
+t
+h
+r
+t
+s c
+h
+r U h
+Q W x
+
+
+
+
+(8) 
+ The final hidden state balances historical information and candidate states through the 
+update gate: 
+
+
+1
+ 
+ 
+1
+t
+t
+t
+t
+t
+h
+z
+h
+z h 
+
+
+
+
+
+(9) 
+Where, 
+r
+W and
+r
+U are the input weight matrices and hidden layer weight matrices of the 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 9 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+reset gate, respectively;
+z
+W and
+z
+U are the input weight matrices and hidden layer weight 
+matrices of the update gate, respectively;
+h
+W and
+h
+U are the input weight matrices and hidden 
+layer weight matrices of the candidate hidden state, respectively; is the sigmoid activation 
+function,tanh is the hyperbolic tangent activation function, and is the element-wise product. 
+ To fully explore the multi-scale temporal correlations in dynamic network connections, a 
+three-layer stacked GRU architecture is constructed, where the hidden state sequences output by 
+the lower-layer GRUs serve as inputs to the upper-layer GRUs, abstracting temporal features layer 
+by layer; finally, a fully connected layer is connected to integrate the temporal features extracted 
+by the multi-layer GRUs [18], and the final temporal feature representation is output via the 
+sigmoid activation function, expressed as follows: 
+1
+( )
+1
+sigmoid
+e 
+
+
+
+ 
+(10) 
+Where,  is the independent variable of the activation function. 
+Through the memory effect and gating mechanism of the stacked GRU network described 
+above, temporal evolution patterns of anomalous behavior in historical data can be fully 
+explored—including the progressive process from low-frequency probing to high-frequency 
+outbreaks, and the path evolution from single-point scanning to lateral propagation, among other 
+temporal coupling features. Combined with the nonlinear processing capabilities of the sigmoid 
+activation function, this further enhances the domain adaptability of temporal features, effectively 
+addressing the issue of temporal pattern drift caused by the dynamic evolution of network 
+topology. It provides a temporal feature representation for subsequent transfer learning that both 
+embodies temporal evolution patterns and possesses cross-domain generalization capabilities, 
+ultimately improving the intelligent recognition of abnormal connection patterns in dynamic 
+networks. 
+2.3 Anomaly Pattern Feature Enhancement via Global Correlation Fusion 
+The temporal evolution features of dynamic network connection behaviors are extracted via a 
+stacked Gated Recurrent Unit (GRU), which effectively captures the gradual progression of 
+abnormal behaviors from low-frequency probing to high-frequency outbreaks. However, temporal 
+features from a single-host perspective cannot fully characterize the global interaction patterns of 
+multi-host collaborative attacks in dynamic networks—abnormal behaviors such as multi-source 
+concurrent access in Distributed Denial of Service (DDoS) attacks, cross-host springboard 
+migration in lateral penetration attacks, and botnet collaborative command response are inherently 
+characterized by global correlation dependencies among multiple hosts. To address these issues, 
+on the basis of temporal feature extraction, it is necessary to further introduce a global interaction 
+modeling method to mine the spatial correlation features of multi-host connection behaviors, and 
+inject global information into the temporal model to improve the ability to identify concealed 
+collaborative abnormal patterns. 
+A self-attention feature enhancement module is designed to utilize the self-attention 
+mechanism to capture global correlations in connection behaviors across different hosts, uncover 
+global associations in multi-host connections within dynamic networks, and improve the detection 
+accuracy of anomalous patterns. The self-attention mechanism relies less on external information 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 10 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+and is better suited to capturing internal correlation features of network connections [19]. Given a 
+matrix
+,1
+,2
+,3
+,
+[
+,
+,
+,
+,
+]
+a
+a
+a
+a
+a a
+V
+v
+v
+v
+v
+
+ composed of host connection feature embedding vectors, 
+where
+,
+T
+a i
+a
+v
+V
+
+is the single-host connection feature embedding vector calculated based 
+on 
+
+ 
+i
+i
+j
+j
+A
+B
+C
+D
+、、
+、
+ , and a represents the total number of hosts participating in the 
+interaction, query, key, and value matrices are generated from this matrix as inputs to the 
+self-attention mechanism. The output is a connection feature matrix weighted by global 
+associations. The specific algorithmic steps are as follows: 
+ (1) Project the query and key into the same feature space to obtain the attention query 
+matrixQ and the key matrix K for the connection features, expressed as follows: 
+
+
+Re
+a
+Q
+Q
+LU V W
+
+ (11) 
+
+
+Re
+a
+K
+K
+LU V W
+
+ (12) 
+Where,
+Q
+W and
+K
+W represent the connection feature weight matrices for query and key, 
+respectively. 
+(2) By performing a dot product on the results from step (1), the expression for the host 
+connection association weight matrix 
+a
+S of a a
+
+ is as follows: 
+max
+T
+a
+attn
+QK
+S
+soft
+d
+
+
+
+
+
+
+
+
+
+ (13) 
+Where, Q , K , and 
+a
+V correspond to the query, key, and value matrices in the 
+self-attention module, respectively; 
+attn
+d
+ denotes the attention feature dimension. 
+(3) Multiplying the correlation weight matrix 
+a
+S by the value matrix 
+a
+V yields the 
+connection feature matrix 
+a
+Z with enhanced global correlation, as shown below: 
+a
+a
+a
+Z
+S V
+
+ (14) 
+By fusing the globally enhanced features
+a
+Z output by the self-attention module with the 
+temporal features
+( )
+sigmoid 
+extracted in Section 2.2, we obtain the composite 
+features
+
+
+Concat
+,
+( )
+a
+Z sig
+H
+moid 
+
+, which incorporate both temporal evolution patterns and 
+global correlation information. This composite feature incorporates both the temporal evolution of 
+single-host behavior and the global interaction dependencies among multiple hosts, enabling 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 11 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+effective identification of covert collaborative anomaly patterns such as the temporal synchrony of 
+multi-source concurrent attacks in DDoS attacks and the path correlations of cross-host jumps in 
+lateral movement. At the same time, the introduction of global correlation features enhances the 
+domain invariance of the features, reduces the distribution discrepancies between historical and 
+real-time data caused by changes in network topology, and provides feature inputs with greater 
+generalization capabilities for subsequent transfer learning, ultimately improving the intelligent 
+identification of dynamic network anomaly connection patterns. 
+2.4 History-Driven Knowledge Transfer for Dynamic Network Anomalies 
+Sections 2.2 and 2.3 extract the temporal evolution features of dynamic network connection 
+behaviors and the multi-host global interaction features via the Gated Recurrent Unit (GRU) and 
+self-attention mechanism, respectively, forming a composite feature representation that integrates 
+both temporal regularities and global correlations. However, the extraction of the above features 
+and the recognition of abnormal patterns are both trained based on the historical data of the source 
+domain. When applied to the real-time dynamic network scenario of the target domain, the 
+recognition model trained on the source domain will face the problems of feature drift and 
+generalization ability attenuation due to cross-scenario data distribution differences caused by 
+factors such as the evolution of network topology, changes in service load, and migration of user 
+behaviors. To address these challenges, on the basis of the temporal-global composite features, it 
+is necessary to further construct a cross-domain transfer learning framework to efficiently transfer 
+the anomaly recognition knowledge contained in the historical data of the source domain to the 
+real-time scenario of the target domain, so as to realize the cross-scenario intelligent recognition of 
+dynamic network abnormal connection patterns. 
+Based on this, a transfer learning framework based on cross-domain transmission networks is 
+constructed. 
+The 
+enhanced 
+time-series-global 
+composite 
+features
+
+
+Concat
+,
+( )
+a
+Z sig
+H
+moid 
+
+ generated in Section 2.3 are used as input. Through 
+bidirectional feature transfer between source-domain historical data and target-domain real-time 
+data, cross-scenario transfer and dynamic adaptation of anomaly detection knowledge are 
+achieved. In transfer learning, there are two concepts: domain and task. The domain Dom is 
+divided into the source domain
+s
+Dom and the target domain
+t
+Dom , and the corresponding 
+tasksT are also divided into the source task
+sT and the target task
+tT . In the recognition of 
+dynamic network anomaly connection patterns, the domain Dom consists of a feature space 
+formed by connection features such as the network connection feature space X and the 
+corresponding feature edge probability distribution 
+
+
+P X
+, expressed as follows: 
+{
+, (
+)}
+Dom
+X P
+H
+X
+
+ (15) 
+The task T , composed of the feature space X and the objective function
+( )
+f  for anomaly 
+detection, is expressed as follows: 
+{ ,
+( )}
+T
+y f
+
+
+ (16) 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 12 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Transfer learning enables the transfer of knowledge learned from the anomaly detection 
+task
+sT in the source domain
+s
+Dom using historical data to the anomaly detection task
+tT in the 
+target domain
+t
+Dom , which is similar to the source domain
+s
+Dom , and the target real-time 
+dynamic network. 
+By reducing the variance in connection feature distributions between the historical data 
+domain and the real-time data domain, the system learns cross-domain invariant features of 
+anomalous connection patterns to achieve accurate classification. For different network scenarios, 
+historical and real-time network connection feature data are categorized into source and target 
+domains based on whether the data is labeled as anomalous [20]. The system then transfers the 
+anomaly detection knowledge learned from the source domain to the target domain, enabling 
+intelligent identification of anomalous connection patterns in real-time dynamic network data.We 
+design a Cross-domain Transport Network (CTN) with cross-mapping to enable bidirectional 
+feature transfer between historical data in the source domain and real-time data in the target 
+domain, thereby providing cross-domain fused features for anomaly connection identification. Its 
+core task is to facilitate bidirectional information exchange between the two domains through a 
+shared transmission matrix within a single network layer, thereby leveraging the knowledge of 
+anomaly connections from historical data in the source domain to enhance the detection of 
+network anomalies in real-time data within the target domain [21]. The Cross-domain Transport 
+Network is a single-layer cross-mapping awareness network that takes the connection feature 
+matrices of historical data from the source domain and real-time data from the target domain as 
+inputs. The specific descriptions of thel and
+1
+l  layers are as follows: 
+(1) Layerl  
+Let
+l
+S
+H denote the connection feature output of CTN at layerl in the source domain S ; 
+l
+T
+H denote the connection feature output of CTN at layerl in the target domainT ; 
+S
+ denote 
+the output of layerl in the source domain S after fusing information from both domains;
+1
+l
+S
+H  
+denote the output of layer
+1
+l  in the source domain S ; 
+T
+ and 
+1
+l
+T
+H  correspond to the fused 
+output and the output of the next layer in the target domain T . The output formulas for CTN at 
+layerl in the source domain S and the target domainT are as follows: 
+
+
+l
+l
+S
+S
+S
+M
+T
+H
+H W H
+T
+
+
+ (17) 
+
+
+l
+T
+l
+T
+T
+T
+M
+S
+W H
+T H
+H
+
+
+ (18) 
+Where,
+S
+W and
+T
+W represent the connection feature weight matrices for the source 
+domain S and the target domainT , respectively; the matrix
+M
+T is the transfer matrix, which 
+controls the flow of connection feature information between the source and target domains. 
+Cross-domain information flows simultaneously from the source domain to the target domain and 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 13 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+from the target domain to the source domain, enabling bidirectional transfer of anomaly 
+connection knowledge across domains and ensuring that the model can access the associated 
+feature information of the other domain in each domain. 
+(2) Layer
+1
+l   
+The cross-domain transmission module implements inter-domain information transmission 
+via a cross-mapping network, with the source domain S and the target domainT coupled 
+through cross-connections: 
+
+
+
+
+1
+l
+l
+l
+S
+S
+S
+S
+M
+T
+H
+W H
+T H
+
+
+
+
+
+
+ (19) 
+
+
+
+
+1
+l
+l
+T
+l
+T
+T
+T
+T
+M
+S
+H
+W H
+T H
+
+
+
+
+
+
+ (20) 
+From the above content, 
+1
+l
+S
+H  in domain S receives two parts of information: one is the 
+local connection feature information 
+l
+S
+H controlled by the weight matrix
+S
+W ; the other is the 
+connection feature information from domain T controlled by matrix 
+M
+T . Matrix 
+M
+T is called 
+the transmission matrix, as 
+M
+T
+controls the transmission of abnormal connection feature 
+information from other domains. 
+The fully connected layer fuses the features extracted from the source domain and the 
+features extracted from the target domain, and maps them to the same feature space. The 
+expression of the final feature 
+d
+Fusion is obtained as follows: 
+
+
+
+
+1
+1
+,
+ 
+,
+ 
+l
+src
+S
+src
+d
+l
+tgt
+T
+tgt
+f W H
+b
+if d
+s
+Fusion
+f W H
+b
+if d
+t
+
+
+
+
+
+
+
+
+
+
+ 
+(21) 
+Where, f represents the ReLU activation function; 
+src
+W
+ denotes the weights of the fully 
+connected layer in the source domain; 
+tgt
+W
+ denotes the weights of the fully connected layer in 
+the target domain; 
+src
+b
+ denotes the bias term for the source domain; 
+tgt
+b
+ denotes the bias term 
+for the target domain; d denotes the domain label, d
+s
+
+ represents the source domain and 
+d
+t
+ represents the target domain. 
+The expression for the shared feature
+,
+h c
+Share
+, which represents the common anomaly 
+connection patterns between the source and target domains, is as follows: 
+,
+T
+h c
+com
+Share
+Fusion W
+Fusion
+
+ (22) 
+Where, h corresponds to the host identifier; c corresponds to the connection behavior 
+identifier. 
+Finally, the result 
+,
+Pr
+h c
+ed
+ of the dynamic network connection anomaly identification is as 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 14 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+follows:  
+,
+,
+1
+1
+1
+1
+Pr
+( , )
+K
+L
+h c
+h c
+h
+c
+i
+j
+ed
+Share
+p q
+b
+b
+K
+L
+
+
+
+
+
+
+ (23) 
+Where, K represents the total number of connection sequences between the source and 
+target domains; 
+hb and 
+cb represent the host offset and connection behavior offset, respectively; 
+the value of 
+,
+Pr
+h c
+ed
+ is used to determine whether the connection is abnormal; p and q are 
+the connection sequence index and behavior feature index, respectively, used to locate specific 
+elements in the shared feature matrix 
+,
+h c
+Share
+ . 
+The global and temporal features generated by self-attention and GRU outputs have already 
+filtered out invalid connection information and focused on anomalous patterns; alternating transfer 
+learning performs hierarchical optimization based on these high-quality features, enabling faster 
+acquisition of transfer knowledge from historical domain anomaly patterns to real-time domain 
+anomaly detection. This reduces ineffective training iterations caused by low-quality features and 
+produces more accurate results for the intelligent identification of dynamic network anomaly 
+connection patterns. 
+3 Experimental Analysis 
+To verify the effectiveness of the proposed intelligent recognition method for dynamic 
+network abnormal connection patterns, the core hardware carrier of the experimental environment 
+is shown in Figure 1. The control cabinet is deployed in the core production workshop of an 
+automotive parts intelligent manufacturing demonstration base (covering three process domains: 
+machining, assembly and testing). The cabinet adopts a multi-level hardware architecture: the 
+upper layer integrates a relay module and a signal conditioning module, the middle layer is 
+equipped with a PLC control unit (including digital/analog IO modules) and a high-density 
+terminal block, and the hierarchical connection of the electrical system is realized through 
+yellow-green-red power cables and blue signal cables; the lower part is equipped with an 
+industrial computer for equipment status monitoring and data collection. The workshop is 
+simultaneously equipped with industrial Internet of Things (IIoT) terminal devices such as 
+Siemens S7-1500 PLC controllers, Basler GigE Vision industrial cameras, MiR100 AGV robots, 
+PT100 temperature and pressure sensors and Huawei AR502H edge gateways. The devices are 
+mixed-networked through heterogeneous industrial control protocols such as Profinet (control 
+layer), Modbus TCP (sensing layer), EtherNet/IP (vision layer) and OPC UA (application layer) to 
+construct a dynamic industrial network topology with coexisting multi-protocols; a traffic probe 
+and an intrusion detection system are deployed at the network egress, and real-time traffic 
+collection is realized based on Switched Port Analyzer (SPAN) technology and connected to a 
+security analysis platform. During the experiment, multi-dimensional attack vectors such as 
+"external network penetration (port scanning), internal network lateral movement (protocol 
+forgery), and physical layer interference (radio frequency signal injection)" are simulated to 
+reproduce typical intrusion scenarios such as unauthorized access, UDP flood DDoS, and protocol 
+tampering. Security operation and maintenance personnel rely on the monitoring large screen 
+(cooperating with the industrial computer in Figure 1) to observe alarm events and dynamic 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 15 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+fluctuations of traffic features in real time to verify the applicability of the method in real 
+industrial scenarios. 
+ 
+Figure 1 Hardware Deployment Architecture Diagram of Industrial Control Cabinet 
+for Dynamic Network Experiment in Intelligent Manufacturing Workshop of Auto Parts 
+The parameter settings of some nodes of the industrial Internet of Things are shown in Table 
+1. 
+Table 1 Node Parameter Settings for Industrial Internet of Things 
+Node 
+Number 
+Scene Type 
+ID 
+Device Type 
+Device 
+Model 
+communication 
+protocol 
+1 
+Intelligent 
+Manufacturing 
+Workshop 
+IIoT-
+001 
+PLC controller 
+Siemens 
+S7-1500 
+Profinet 
+2 
+Intelligent 
+Manufacturing 
+Workshop 
+IIoT-
+002 
+Machine vision camera 
+Basler 
+GigE Vision 
+3 
+Intelligent 
+Manufacturing 
+Workshop 
+IIoT-
+003 
+Temperature sensor 
+PT100 
+Modbus TCP 
+4 
+Smart grid 
+distribution 
+room 
+IIoT-
+004 
+Smart electricity meter 
+DL/T 645 
+IEC 61850 
+5 
+Smart grid 
+distribution 
+room 
+IIoT-
+005 
+Edge gateway 
+AR502H 
+MQTT 
+6 
+Chemical 
+production 
+park 
+IIoT-
+006 
+SCADA server 
+Schneider 
+DNP3 
+7 
+Chemical 
+production 
+park 
+IIoT-
+007 
+Pressure sensor 
+Rosemount 
+HART IP 
+8 
+Logistics 
+warehousing 
+center 
+IIoT-
+008 
+AGV robot 
+MiR 100 
+WiFi 6 
+9 
+Logistics 
+warehousing 
+center 
+IIoT-
+009 
+Radio Frequency 
+Identification 
+Reader/Writer 
+SIMATIC 
+RF340R 
+ISO 18000 
+10 
+Mixed 
+industrial 
+scenarios 
+IIoT-
+010 
+Edge server 
+Intel NUC 
+OPC UA 
+Part of the historical data of dynamic network abnormal connections of the industrial Internet 
+of Things is collected, and the collection results are shown in Table 2. 
+Table 2 Historical Data Collection Results of Network Abnormal Connections 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 16 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Time 
+Scene Type 
+ID 
+Target 
+node 
+Connection 
+status 
+Attack Type 
+Reason for 
+abnormal 
+triggering 
+Durat
+ion 
+2024/6/
+10 8:10 
+Intelligent 
+Manufacturing 
+Workshop 
+IIoT
+-001 
+192.16
+8.1.20
+0 
+Abnormal 
+Illegal 
+access 
+attack 
+External 
+malicious node 
+attempts to 
+scan PLC port 
+2min 
+2024/6/
+10 8:20 
+Intelligent 
+Manufacturing 
+Workshop 
+IIoT
+-002 
+SV-01 
+Abnormal 
+UDP 
+flooding 
+DDoS 
+Malicious 
+nodes forging 
+camera data 
+packets occupy 
+bandwidth 
+5min 
+2024/6/
+10 9:30 
+Smart grid 
+distribution 
+room 
+IIoT
+-004 
+203.98
+.87.68 
+Abnormal 
+Protocol 
+tampering 
+attack 
+Malicious 
+nodes forge 
+distribution 
+instruction 
+messages 
+3min 
+2024/6/
+10 
+10:15 
+Chemical 
+production 
+park 
+IIoT
+-006 
+PC-05 
+Abnormal 
+Horizontal 
+penetration 
+attack 
+Internal host 
+hijacked, 
+attempting to 
+access SCADA 
+4min 
+2024/6/
+10 
+11:08 
+Logistics 
+warehousing 
+center 
+IIoT
+-009 
+WMS-
+01 
+Abnormal 
+Signal 
+interference 
+attack 
+Malicious 
+nodes emit 
+radio frequency 
+interference 
+signals 
+3min 
+The collected historical data of dynamic network abnormal connections of the industrial 
+Internet of Things provides a reliable data basis for the intelligent recognition of abnormal 
+connection patterns. The performance of transfer learning depends on the labeling integrity and 
+scenario representativeness of source domain data, while the dynamic network scenario of the 
+industrial Internet of Things has common problems such as difficulty in collecting abnormal 
+samples, high labeling costs and rare new attacks. The collected historical data is used to pre-train 
+the basic anomaly recognition model, and then adapt to the target scenario through transfer 
+learning without a large number of labeled samples in the target domain. The table covers 5 types 
+of high-incidence abnormal attacks in the industrial Internet of Things, including unauthorized 
+access, UDP flood DDoS, protocol tampering, lateral penetration and signal interference, and 
+corresponds to core scenarios such as intelligent manufacturing, smart grid, chemical industry and 
+logistics. These samples enable the transfer model to learn cross-scenario universal abnormal 
+connection features and solve the problem of pattern overfitting caused by single source domain 
+data. Fields such as collection timestamp, duration and target node type in the table imply the core 
+features of dynamic networks. These dynamic attributes can be used as key features of source 
+domain data to help the transfer model learn the abnormal criteria of dynamic connection patterns 
+rather than threshold-type anomalies in static networks, which perfectly meets the core demand of 
+dynamic network anomaly recognition. 
+Based on the collected historical data of dynamic network abnormal connections of the 
+industrial Internet of Things, the intelligent recognition of dynamic network abnormal connection 
+patterns is carried out, and the recognition results are shown in Table 3. 
+Table 3 Intelligent recognition results of dynamic network abnormal connection 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 17 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+patterns 
+Serial 
+number 
+Case study 
+of historical 
+data 
+association 
+Attack Type 
+Abnormal connection 
+pattern recognition result 
+Is it correctly 
+identified 
+1 
+IIoT-001 
+Illegal 
+access attack 
+Identified unfamiliar IP 
+connection request 
+Correctly 
+identify 
+2 
+IIoT-001 
+Illegal 
+access attack 
+Unknown IP+PLC port 
+Correctly 
+identify 
+3 
+IIoT-001 
+Illegal 
+access attack 
+Unknown IP port 
+scanning+connection 
+frequency gradient 
+Correctly 
+identify 
+4 
+IIoT-002 
+UDP 
+flooding 
+DDoS 
+UDP packet 
+forgery+sudden increase 
+in 
+bandwidth+synchronous 
+surge in packet loss rate 
+Correctly 
+identify 
+5 
+IIoT-002 
+UDP 
+flooding 
+DDoS 
+Falsifying camera data 
+packets+sudden increase 
+in bandwidth+abnormal 
+protocol fields 
+Correctly 
+identify 
+6 
+IIoT-004 
+Protocol 
+tampering 
+attack 
+Overseas IP 
+access+instruction 
+tampering+abnormal data 
+reporting 
+Correctly 
+identify 
+7 
+IIoT-006 
+Horizontal 
+penetration 
+attack 
+PC-05 hijacked → 
+intermediate switch → 
+horizontal connection 
+path of SCADA server 
+Correctly 
+identify 
+8 
+IIoT-006 
+Horizontal 
+penetration 
+attack 
+Concealed lateral 
+movement+low-frequency 
+connection+SCADA 
+permission exploration 
+Correctly 
+identify 
+9 
+IIoT-009 
+Signal 
+interference 
+attack 
+Delayed 
+surge+continuous 
+fluctuation 
+Correctly 
+identify 
+10 
+IIoT-009 
+Signal 
+interference 
+attack 
+Low intensity sustained 
+interference+periodic 
+fluctuations in recognition 
+rate+no topological 
+changes 
+Correctly 
+identify 
+Analyzing the experimental results in Table 3, the method in this paper realizes the intelligent 
+recognition of dynamic network abnormal connection patterns, and the recognition results fully 
+cover 5 types of high-incidence abnormal scenarios in the industrial Internet of Things, including 
+unauthorized access attacks, UDP flood DDoS attacks, protocol tampering attacks, lateral 
+penetration attacks and signal interference attacks. The recognition results of dynamic network 
+abnormal connection patterns include not only external intrusion attacks such as unauthorized 
+access and DDoS, but also internal threat types such as lateral penetration and physical 
+interference types such as signal interference, with no missing attack types; the abnormal 
+connections of the industrial Internet of Things dynamic network have the characteristics of 
+temporal suddenness, topological correlation and feature concealment, and traditional recognition 
+methods mostly rely on single static features, which are difficult to cope with complex dynamic 
+scenarios. However, the method in this paper realizes the accurate capture of abnormal patterns 
+through the multi-dimensional fusion of static features, dynamic features and correlation features. 
+For unauthorized access attacks, from the unfamiliar IP connection request to the temporal 
+dynamic feature combining unfamiliar IP port scanning and connection frequency gradient, the 
+dynamic behavior of attackers' low-frequency probing and gradual penetration is captured, 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 18 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+avoiding the missed reports of traditional methods caused by only relying on the static IP blacklist; 
+for signal interference attacks, from the single temporal feature of sudden delay rise and 
+continuous fluctuation to the multi-feature correlation of low-intensity continuous interference + 
+periodic fluctuation of recognition rate + no topological change, malicious signal interference is 
+accurately distinguished from normal fluctuations caused by AGV movement, avoiding the false 
+reports of traditional methods caused by relying on a single threshold. Experimental results verify 
+that the method in this paper can mine abnormal correlations from multiple dimensions such as IP, 
+port, bandwidth, delay, topological path and behavior frequency, realize a comprehensive 
+depiction of dynamic network abnormal connection patterns, achieve full-scenario protection, and 
+significantly reduce the complexity and cost of security deployment in the industrial Internet of 
+Things. 
+To further measure the performance of the proposed method for intelligent recognition of 
+dynamic network abnormal connection patterns, a confusion matrix is constructed based on the 
+recognition results of the proposed method, and the construction result is shown in Figure 2. 
+Abnormal connection mode category
+Abnormal connection mode category
+2
+1
+3
+5
+6
+7
+8
+4
+1
+2
+3
+4
+5
+6
+7
+8
+995
+993
+992
+991
+992
+993
+991
+992
+1
+0
+1
+0
+1
+3
+0
+2
+0
+2
+0
+0
+2
+4
+2
+2
+3
+0
+0
+0
+0
+3
+2
+1
+0
+2
+0
+1
+0
+3
+2
+0
+0
+2
+2
+2
+2
+0
+2
+1
+1
+0
+0
+0
+1
+3
+1
+0
+0
+2
+0
+1
+2
+0
+1
+1
+ 
+Figure 2 Confusion Matrix for Identifying Abnormal Network Connections 
+The matrix values in Figure 2 represent the number of samples in the corresponding 
+categories, where the diagonal values are the number of correctly classified samples, and the 
+off-diagonal values are the number of misclassified samples. The rows of the confusion matrix in 
+this paper correspond to 8 types of dynamic network abnormal connection patterns including 
+unauthorized access attacks, UDP flood DDoS attacks, protocol tampering attacks, lateral 
+penetration attacks and signal interference attacks, and the columns correspond to the abnormal 
+types identified by the method in this paper. The diagonal values of each category in Figure 2 are 
+concentrated in 991~995, indicating that the number of correctly classified samples for each type 
+of abnormal pattern accounts for the vast majority of the total samples of the category; the number 
+of misidentifications in the off-diagonal area is small, indicating that the method in this paper has 
+an extremely high overall recognition accuracy for dynamic network abnormal connection 
+patterns with almost no misclassification. The method in this paper has an extremely low risk of 
+missed reports for various dynamic anomalies in the industrial Internet of Things, which meets the 
+core demand of low missed reports in industrial scenarios. The method in this paper has an 
+extremely low risk of false reports for various dynamic anomalies in the industrial Internet of 
+Things, and will not interfere with the normal production process of the industrial Internet of 
+Things due to misjudgment. The misrecognition ratio of the method in this paper for various 
+dynamic anomaly recognitions in the industrial Internet of Things is extremely low, which hardly 
+affects the overall recognition performance, indicating that the method in this paper has a strong 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 19 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+ability to distinguish different abnormal patterns. The method in this paper can avoid attack risks 
+caused by missed reports or interfere with normal production due to false reports, and can 
+accurately distinguish different dynamic abnormal connection patterns, meeting the scenario of 
+coexistence of multiple types of anomalies in the industrial Internet of Things. The experimental 
+results of the confusion matrix verify that the method in this paper has excellent performance in 
+recognizing dynamic network abnormal connection patterns of the industrial Internet of Things, 
+which not only achieves an ultra-high overall accuracy, but also can accurately distinguish various 
+abnormal patterns and control the risks of missed and false reports, fully meeting the security 
+protection requirements of industrial scenarios, and its superiority is fully supported at the level of 
+quantitative indicators. 
+The methods in References [6-8] are selected as comparison methods, and the pattern 
+recognition coverage of intelligent recognition of dynamic network abnormal connection patterns 
+using different methods is counted. The comparison results are shown in Figure 3. 
+82
+84
+Pattern recognition coverage/%
+Number of nodes
+20
+30
+50
+60
+70
+80
+40
+86
+88
+90
+92
+94
+96
+98
+100
+Proposed Method
+Reference [6] method
+80
+Reference [7] method
+Reference [8] method
+10
+90
+ 
+Figure 3 Comparison Results of Pattern Recognition Coverage 
+The number of nodes in Figure 3 represents the complexity of the dynamic network—the 
+more nodes, the more complex the network topology and the richer the abnormal patterns; the 
+pattern recognition coverage can reflect the coverage ability of different methods for different 
+abnormal patterns. Analyzing the experimental results in Figure 3, when the number of nodes is 10, 
+the dynamic network complexity is the lowest, and the pattern recognition coverage of the method 
+in this paper is close to 98%, which is significantly higher than that of References [6], [7] and [8], 
+reflecting that the method in this paper has a better coverage ability for basic abnormal patterns. 
+As the number of nodes increases from 10 to 90, the dynamic network complexity continues to 
+increase, corresponding to more equipment access, more dynamic topology and richer abnormal 
+patterns in the industrial Internet of Things. The coverage of the method in this paper remains 
+above 96% with only slight fluctuations and no obvious decline; the coverage of the comparison 
+methods shows a gradual downward trend. Experimental results show that the more complex the 
+network, the more prominent the pattern coverage advantage of the method in this paper. The core 
+of pattern recognition coverage is the ability to identify different abnormal patterns in dynamic 
+networks, and the experimental results clearly reflect the superiority of the method in this paper. 
+The initial coverage of the method in this paper is higher, indicating that it can identify more basic 
+abnormal patterns; while the initial coverage of the comparison methods is low, which may only 
+cover a few typical abnormal patterns and has insufficient ability to identify edge and concealed 
+abnormal patterns. The increase in the number of nodes means that the network topology is more 
+dynamic and the abnormal patterns are more scattered and concealed. The decrease in the 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 20 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+coverage of the comparison methods indicates that they are difficult to adapt to complex dynamic 
+scenarios; while the stable coverage of the method in this paper reflects its strong adaptability to 
+dynamic network environments. The actual network of the industrial Internet of Things is usually 
+a complex scenario with multiple nodes and high dynamics. The method in this paper still 
+maintains high coverage with a high number of nodes, indicating that it can effectively cover a 
+variety of dynamic abnormal connection patterns in industrial scenarios; while the performance of 
+the comparison methods attenuates in complex scenarios, which is difficult to meet the 
+industrial-grade security protection requirements. 
+The changes in network throughput of intelligent recognition of dynamic network abnormal 
+connection patterns using different methods are counted, and the comparison results are shown in 
+Figure 4. 
+Communication time/min
+20
+30
+40
+50
+60
+10
+100
+200
+300
+400
+Throughput/Mbits
+0
+500
+Number of nodes
+15
+30
+45
+60
+75
+90
+Reference [7] method
+Reference [8] method
+Proposed Method
+Reference [6] method
+ 
+Figure 4 Throughput Comparison Results 
+Throughput reflects the effective data transmission capacity of the network when running the 
+anomaly recognition method—the higher the value, the smaller the interference of the method on 
+network performance and the stronger the engineering applicability. Analyzing the experimental 
+results in Figure 4, the throughput of the method in this paper is significantly higher than that of 
+the comparison methods regardless of the changes in the number of nodes and communication 
+time. When the number of nodes is 10 and the communication time is 30 minutes, the throughput 
+of the method in this paper is close to 400 Mbit/s, while the method in Reference [8] is only about 
+350 Mbit/s; when the number of nodes increases to 50 and the communication time is 60 minutes, 
+the throughput of the method in this paper remains above 450 Mbit/s. The communication time is 
+extended from 10 minutes to 60 minutes to simulate the long-term operation of industrial 
+scenarios. The throughput of the method in this paper is basically unchanged and remains stable; 
+although the throughput of the comparison methods does not show an obvious decline, it is always 
+lower than that of the method in this paper as a whole. As the number of nodes increases from 10 
+to 50, the throughput of the method in this paper only decreases slightly and still maintains a high 
+level; while the throughput of the comparison methods decreases more significantly, indicating 
+that the more nodes there are, the more serious the occupation of network bandwidth by the 
+comparison methods. The difference in throughput is essentially the difference in resource 
+consumption and engineering adaptability of anomaly recognition methods. Combined with the 
+analysis of the scenario requirements of the industrial Internet of Things, higher throughput 
+indicates that the method in this paper occupies less network bandwidth and computing resources 
+during operation, which is due to the fact that the method in this paper uses transfer learning to 
+avoid excessive consumption of network resources by complex models and ensure the normal 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 21 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+transmission of production data. When the number of nodes increases, the throughput of the 
+method in this paper remains stable, indicating that its interference on network performance is 
+always controllable in the complex scenarios of the industrial Internet of Things with 
+multi-equipment access and dynamic topological changes; while the throughput attenuation of the 
+comparison methods is more obvious, which is difficult to adapt to the high-complexity industrial 
+dynamic network. 
+4 Conclusion 
+Aiming at the challenges such as real-time evolution of dynamic network topology, 
+significant cross-scenario data distribution differences, and high concealment and polymorphism 
+of abnormal patterns, an intelligent recognition method for dynamic network abnormal connection 
+patterns based on transfer learning with historical data is proposed, and the following conclusions 
+are drawn: 
+(1) The method first constructs an interactive network flow dynamic connection model, and 
+establishes a fine-grained connection feature matrix by introducing multi-dimensional feature 
+indicators such as the in/out connection degrees of source/destination hosts, realizing the 
+structured expression of dynamic network behaviors and providing feature inputs with 
+cross-domain generalization ability for subsequent temporal modeling and transfer learning. 
+(2) On the basis of structured representation, a stacked Gated Recurrent Unit is introduced to 
+capture the evolutionary laws of connection features in the temporal dimension and mine the 
+temporal coupling features of abnormal behaviors; meanwhile, a self-attention feature 
+enhancement module is designed to explore the global interaction dependencies among multiple 
+hosts, and the global correlation features are injected into the temporal model, which effectively 
+improves the ability to identify concealed collaborative abnormal patterns. 
+(3) A transfer learning framework based on a cross-domain transport network is further 
+constructed, which takes the enhanced temporal-global composite features as input. Through 
+bidirectional feature transfer between the historical data of the source domain and the real-time 
+data of the target domain, cross-scenario migration and dynamic adaptation of abnormal 
+recognition knowledge are achieved, solving the problems of feature drift and generalization 
+ability attenuation caused by network topology evolution. 
+Experimental results show that the method can fully cover 8 typical abnormal attacks 
+including unauthorized access, UDP flood DDoS, protocol tampering, lateral penetration and 
+signal interference. In a complex dynamic environment with the number of nodes expanded to 90, 
+the pattern recognition coverage remains stable above 96%, and the network throughput is 
+maintained above 400 Mbit/s, verifying its superiority and engineering applicability in the task of 
+dynamic network anomaly recognition, and providing a reliable technical solution for dynamic 
+network security protection in key fields such as the industrial Internet of Things. 
+ 
+References 
+[1] Saket, O., Aicha, A. B. & Fathallah, H. (2025). Deep learning applied for abnormal human 
+behavior recognition in video surveillance systems: a systematic review. Applied Intelligence, 
+55(13), 1-25. 
+[2] Rajesh, D. & Ipseeta, N. (2022). Network/Security Threats And Countermeasures For Cloud 
+Computing. Acta Electronica Malaysia, 7(1): 1-3. 
+[3] Maged, A. & Xie, M. (2023). Recognition of abnormal patterns in industrial processes with 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 22 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+variable window size via convolutional neural networks and adaboost. Journal of Intelligent 
+Manufacturing, 34(4), 1941-1963. 
+[4] Modi, H. S., Information, V. F. A., Parikh, D. A. & Information, V. F. A. (2024). An 
+intelligent unsupervised anomaly detection in videos using inception capsule auto encoder. 
+The Imaging Science Journal, 72(2), 267-284. 
+[5] Nizamudeen, S. M. T. (2023). Intelligent intrusion detection framework for multi-clouds – 
+iot environment using swarm-based deep learning classifier. Journal of Cloud Computing, 
+12(1), 14-23. 
+[6] Rasheed, I. & Mostafa, H. (2025). Federated learning-based anomaly detection for zero-day 
+attack prevention in 6g network slices. Computer Networks, 268(Aug.), 1.1-1.13. 
+[7] Heidari, A., Navimipour, N. J. & Unal, M. (2024). A novel blockchain-based deepfake 
+detection method using federated and deep learning models. Cognitive Computation, 16(3), 
+1073-1091. 
+[8] Babaei, G. A., Bayat, P. & Ekbatanifard, G. (2025). Detecting attacks on the internet of things 
+network in the computing fog layer with an embedded learning approach based on clustering 
+and blockchain. Cluster Computing, 28(4), 1-31. 
+[9] Lilhore, U. K., Manoharan, P., Simaiya, S., Alroobaea, R., Alsafyani, M. & Baqasah, A. M., 
+et al. (2023). Hidm: hybrid intrusion detection model for industry 4.0 networks using an 
+optimized cnn-lstm with transfer learning. Sensors , 23(18), 19-27. 
+[10] Turab, A., Ullah, F., Cacciagrano, D., Ullah, S. & Zhao, Y. (2024). Enhanced network 
+intrusion detection system for internet of things security using multimodal big data 
+representation with transfer learning and game theory. Sensors, 24(13), 4152-4159. 
+[11] Nandanwar, H. & Katarya, R. (2024). Tl-bilstm iot: transfer learning model for prediction of 
+intrusion detection system in iot environment. International Journal of Information Security, 
+23(2), 27-35. 
+[12] Catillo, M., Pecchia, A. & Villano, U. (2024). Successful intrusion detection with a single 
+deep autoencoder: theory and practice. Software quality journal, 32(1), 95-123. 
+[13] Hardas, B. M., Raut, V. & Aush, P. M. G. (2024). Machine learning and enhanced encryption 
+for edge computing in iot and wireless networks. Journal of Electrical Systems, 20(1s), 
+200-210. 
+[14] Wei, S., Wei, X. & Kurniawan, Z. G. Y. (2023). Topology-preserving transfer learning for 
+weakly-supervised anomaly detection and segmentation. Pattern recognition letters, 170(Jun.), 
+77-84. 
+[15] Thirumurthy, B., Parameswaran, L. & Vaiapury, K. (2024). A deep learning and transfer 
+learning model for intra-change detection in images. Journal of supercomputing, 80(8), 
+11640-11660. 
+[16] Ravi, V. & Alazab, M. (2023). Attention-based convolutional neural network deep learning 
+approach for robust malware classification. Computational intelligence, 39(1), 145-168. 
+[17] Tan, R. H., Wang, J. & Shu, J. W. (2023). Research on Simulation of LAN Anomaly 
+Prediction Based on Improved Time Convolution Network. Computer Simulation, 40(12), 
+465-469. 
+[18] Eldahshan, K. A., Abutaleb, G. E., Elemary, B. R., Ebeid, E. A. & Alhabshy, A. A. A. (2024). 
+An optimized intelligent open-source mlaas framework for user-friendly clustering and 
+anomaly detection. Journal of supercomputing, 80(18), 26658-26684. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 23 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+[19] Singh, R., Saini, K., Sethi, A., Tiwari, A., Saurav, S. & Singh, S. (2023). Stemgan: 
+spatio-temporal generative adversarial network for video anomaly detection. Applied 
+Intelligence, 53(23), 28133-28152. 
+[20] Demirbaga, U. (2025). Advancing anomaly detection in cloud environments with 
+cutting-edge generative ai for expert systems. Expert Systems, 42(2), e13722.1-e13722.14. 
+[21] Kumar, S., Janet, B. & Neelakantan, S. (2024). Imcnn:intelligent malware classification using 
+deep convolution neural networks as transfer learning and ensemble learning in honeypot 
+enabled organizational network. Computer communications, 216(Feb.), 16-33. 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+
+========== PDF_PHYSICAL_PAGE 24 | PRINTED_PAGE_CANDIDATE 未识别 | PDF_PAGE_LABEL  ==========
+
+Intelligent Recognition Method for Dynamic Network Abnormal Connection 
+Patterns Based on Transfer Learning with Historical Data 
+Yidan Xu 
+School of Artificial Intelligence, Nanchang Jiaotong Institute, Nanchang, Jiangxi, 330100, China 
+Email: Xuyidan0917@163.com  
+Funding 
+Science and Technology Research Project of Jiangxi Provincial Department of Education: 
+Research on the Application of Deep Learning in the Construction of Speech Recognition Databases 
+(Project Number: GJJ209311) 
+Competing Interests 
+The authors have no relevant financial or non-financial interests to disclose. 
+Data availability statements 
+All data generated or analyzed during this study are included in this published article. 
+Ethical approval 
+Not applicable. 
+Consent to Publish 
+Not applicable. 
+Consent to Participate 
+Not applicable. 
+ 
+Title Page

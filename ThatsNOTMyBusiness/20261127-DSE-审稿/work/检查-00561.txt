@@ -1,0 +1,17 @@
+00561-01 CONFIRMED | 测试集上的预测构成预测矩阵 | 这是作者给出的协议描述。 | p5 “predictions on the test set, producing an M-dimensional prediction matrix”
+00561-02 CONFIRMED | 以其均值 | Lasso 的响应是树预测均值；应询问为何能提高对真实目标的预测。 | p5 “The mean prediction is taken as the response variable”
+00561-03 OVERSTATED | 既构成测试集泄漏 | 使用测试输入作无标签适配具有直推式性质；未见测试标签参与，不能直接断言标签泄漏。 | p5 “predictions on the test set, producing an M-dimensional prediction matrix” p5 “The mean prediction is taken as the response variable”
+00561-04 UNVERIFIABLE | 数学上完全退化 | 确定性伪响应给选择后推断带来问题，但需完整条件分布和推断目标才能证明所有推断退化。 | p5 “The mean prediction is taken as the response variable”
+00561-05 CONFIRMED | 0.0478 | Table 2 的 MAPE 四舍五入为 0.0478、MASE 为 0.0578。 | p9 “MTF-MSE 0.047832 0.057801”
+00561-06 IMPRECISE | 5–6 位有效数字 | 按打印数计算比值分别 1.20841696 与 1.20843004，非精确相等到五至六位。 | p9 “MTF-MSE 0.047832 0.057801” p9 “LightGBM 0.053428 0.064564”
+00561-07 OVERSTATED | 系公式化生成而非真实实验所得 | 固定比例是需要数据和计算记录解释的异常，不能单凭异常推断实验是否运行。 | p9 “LightGBM 0.053428 0.064564” p9 “XGBoost 0.055031 0.066501”
+00561-08 CONFIRMED | 随机游走 | 作者的数据生成机制是带漂移随机游走。 | p8 “a random walk process with a drift term”
+00561-09 UNVERIFIABLE | 理论贝叶斯最优下界（≥0.995） | 下界依赖预测窗口、归一化分母、可用输入、估计口径等；稿件描述不足以无条件推出该数值。 | p8 “a random walk process with a drift term” p9 “MTF-MSE 0.047832 0.057801”
+00561-10 CONFIRMED | 1.042 | Nemenyi 采用 48 个块；指标和步长并非独立数据集，解释统计独立性时需谨慎。 | p18 “Average ranks are 1.042 for MTF-MSE, 2.417 for PatchTST”
+00561-11 CONFIRMED | 2.8637 | 据作者报告，与 PatchTST 和诊断基线的平均秩差都小于该临界差。 | p18 “critical difference at” p18 “0.05 is 2.8637”
+00561-12 CONFIRMED | N×N 状态转移矩阵 | 作者说明将状态转移矩阵直接转为图像，需澄清与标准逐时间步转移场的区别。 | p4 “the matrix is of size N×N”
+00561-13 OVERSTATED | 基线实验结果系公式化生成 | 结果呈规律性是可核实的发现，生成来源需原始日志和代码，不作动机判断。 | p9 “LightGBM 0.053428 0.064564” p9 “XGBoost 0.055031 0.066501”
+00561-14 CONFIRMED | Page 12 line 1666 对“分母缩小导致 MAPE 降低”的解释存在基本算术错误 | 绝对误差不变时分母缩小会提高比例误差；若分子同时下降整体 MAPE 仍可下降，应分别报告分子和分母，不能据此定性结果造假。 | p12 “falls from h = 2 to h = 3” p12 “shrinks the error denominator”
+00561-15 CONFIRMED | i.i.d. 数据反降错 | Simulation 3 报告从 h=1 到 h=2 的 MAPE 和 MASE 均下降；h=2 到 h=3 两者又上升。预测窗口、标签及指标分母未确认前，不认定理论不可能。 | p12 “five independent variables, each following a uniform distribution” p13 “MTF-MSE 0.377322 0.987924” p13 “0.207910 / 0.875777 at h = 2” p13 “0.238693 / 0.925495 at h = 3”
+00561-16 WRONG | 14 个基线 | Table 7–8 总计 14 种方法包含所提 MTF-MSE；其余 13 种是对照方法，不能写成 14 个基线。 | p13 “the fourteen methods” p13 “Proposed MTF-MSE 0.377322 0.987924 Classical ARIMA 0.390818” p13 “Diagnostic GBDT + flattened MTF”
+00561-17 IMPRECISE | 而非 T×T 转移场 | §2.1 描述 N×N 状态转移矩阵转图像，§2.4 又称按时间步和状态索引；稿件自述存在需要澄清的张力，不能仅凭描述确定实际代码或一概否定方法。 | p4 “each pixel represents the transition probability from one state to another” p6 “transition probabilities indexed by both time step and state”

@@ -67,9 +67,12 @@
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>把“能不能上 L2”变成要论证的例外，而不是默认选项——这是本方案最省钱的一条设计。</Text>
         </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [G-04]</Text>
+        </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>当量为相对资源占用与人力投入的经验估算；比例来自存量租户画像推算，需以实测回填</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>12 / 20</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>12 / 21</Text>
         </Box>
     </Box>
 </Slide>

@@ -1,0 +1,12 @@
+{
+  "build_seconds": 38.56,
+  "bytes": 1224237056,
+  "dataset_version": "0.6.0",
+  "note": "仅用于生产规模 act 工具网关压测标定；不替代 v0/v1/v2 真值库，可通过 python dataset/db/build_prod_scale.py 一键确定性重建。",
+  "scale_factor": 100,
+  "scaled_table_count": 40,
+  "smoke_checked_tasks": 20,
+  "source_snapshot": "db/snapshots/v0.sqlite",
+  "total_rows": 4444640,
+  "total_tables": 60
+}

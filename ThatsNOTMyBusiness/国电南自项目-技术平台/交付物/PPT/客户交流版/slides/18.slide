@@ -61,7 +61,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>S2 为跨板块二级租户场景，是本方案约定的原型验证环境</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>18 / 20</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>18 / 21</Text>
         </Box>
     </Box>
 </Slide>

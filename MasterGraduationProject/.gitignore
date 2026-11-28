@@ -5,3 +5,12 @@
 dataset/.env
 dataset/.env.*
 !dataset/.env.example
+
+# 百万行压力标定库（可一键重建，不入库）
+dataset/db/scale/prod_scale.sqlite
+
+# 重排模型缓存（可用 dataset/tools/download_reranker.py 重新下载；单文件超过 GitHub 100MB 限制）
+dataset/embeddings/cache/bge-reranker-v2-m3-onnx/
+
+# 会话临时目录
+.dsh-tmp/

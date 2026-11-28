@@ -1,0 +1,12 @@
+from pathlib import Path
+p=Path('work/build_ledger.py')
+s=p.read_text(encoding='utf-8')
+s=s.replace("A('00526','事实','136 份中国企业管理者结构化问卷','CONFIRMED'","A('00526','事实','136 份中国企业管理者结构化问卷','IMPRECISE'")
+s=s.replace("],'表述为稿件报告样本；未核验原始数据。')","],'原文报告 136 家企业；该引文未限定答卷者均为管理者，未核验原始数据。')")
+s=s.replace("(14,'Support Vector Machine (SVM) [28] 88.2 87.5 87.1 87.3'),(14,'Naïve Bayes [31] 78.4 76.9 77.5 77.2')","(14,'Naïve Bayes [31] 78.4 76.9 77.5 77.2'),(14,'Decision Tree [30] 81.9 80.6 80.9 80.7'),(14,'Logistic Regression [29] 83.7 82.8 82.5 82.6'),(14,'Random Forest [29] 86.5 85.9 85.2 85.5'),(14,'Support Vector Machine (SVM) [28] 88.2 87.5 87.1 87.3'),(14,'Enhanced Naïve Bayes (ENB) 94.6 93.8 94.2 94.0')")
+s=s.replace("(9,'330 of the 369 distributed surveys are eventually retrieved')","(9,'330 of the 369 distributed surveys are eventually retrieved'),(9,'The effective questionnaire rate was 81.7%')")
+s=s.replace("原文是超出 512 条候选双跳路径时退回单跳，不等同于将路径截断为 512 条。","独立短语有歧义；速览卡已写明超出阈值退回单跳，不能误称截取前 512 条。")
+s=s.replace("A('00562','事实','仅报告 MAE、MSE、R²','CONFIRMED'","A('00562','事实','仅报告 MAE、MSE、R²','IMPRECISE'")
+s=s.replace("此结论针对 Table 1，不能据此推出全文其他所有图均无分类信息。","Table 1 报告这三个回归指标；所引“一轮”表述若指全文则覆盖超过现有核验。")
+s=s.replace("A('00562','判断','高度疑似','UNSUPPORTED',[(12,'RF 43.3659 3170.1811 0.8973')],'不得据指标规模推断源自另一实验或作者动机。')\n","")
+p.write_text(s,encoding='utf-8')

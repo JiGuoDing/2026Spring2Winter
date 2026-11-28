@@ -1,0 +1,6 @@
+obj_type,fallback_path,stage,n,p50_ms,p95_ms,mean_ms,measured,mock,note
+resp,resp_exact_invalid_fallback,lookup_and_check_fail,3000,0.000500,0.002400,0.000882,1,,精确查表+版本/块哈希核对失败后的额外开销（不含后续正常执行）；纯本地 perf_counter 实测
+resp,resp_sem_invalid_fallback,sem_recall_and_check_fail,3000,0.009600,0.012300,0.010030,1,,200条活跃池句向量Top-1召回+系统视角硬校验失败后的额外开销（不含后续正常执行）；纯本地实测
+rag,rag_stale_fallback,chunk_version_check_fail,3000,0.001300,0.004900,0.002037,1,,证据块版本与哈希校验失败后回退完整检索的额外探测开销；纯本地 perf_counter 实测
+act,act_stale_fallback,signature_state_check_fail,3000,0.000400,0.000900,0.000456,1,,只读工具签名查表+快照/权限校验失败后回退SQL执行的额外探测开销；纯本地 perf_counter 实测
+plan,plan_adapt_rework_fallback,adapt_fail_or_rework,0,,,,,pending,计划模板适配失败或执行返工的模型段额外开销；尚未实测，严禁补零或伪造，EvalPath 缺数须返回 UNRESOLVABLE

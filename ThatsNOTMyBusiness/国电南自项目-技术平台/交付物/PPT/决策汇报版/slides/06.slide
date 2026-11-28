@@ -44,7 +44,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>区间先宽后窄是刻意的：一期不确定的是边界，不是人力</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>06 / 08</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>06 / 09</Text>
         </Box>
     </Box>
 </Slide>

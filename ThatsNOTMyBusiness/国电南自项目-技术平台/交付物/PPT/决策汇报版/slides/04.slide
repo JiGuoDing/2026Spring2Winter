@@ -81,8 +81,8 @@
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>一张图记住三件事：Ⅲ区是硬约束、L2 是改造重心、L3 只有五个组件要动。</Text>
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 27 号令（2024 年第 27 号令，2025-01-01 施行）</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>04 / 08</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 27 号令、[G-05]</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>04 / 09</Text>
         </Box>
     </Box>
 </Slide>

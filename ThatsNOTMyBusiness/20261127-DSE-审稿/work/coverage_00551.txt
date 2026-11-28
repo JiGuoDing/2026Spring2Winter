@@ -1,0 +1,60 @@
+### SOURCE FRAGMENTS 00551 37
+S0007 DSE-2026 行12 [] | 4 | `DSEJ-D-26-00551` | 24 | Intelligent Recognition Method for Dynamic Network Abnormal Connection Patterns Based on Transfer Learning with Historical Data | ❌ Desk Reject | 偏离范围 + 方法与结果断裂 + 误用Deepfake论文作网络基线 |
+S0130 DSE-2026 行150 [] - **页数 / 稿件类型**：24 页 / Research Papers
+S0134 DSE-2026 行153 [] - **可复现与基线信号**：代码/数据链接 `无` ｜ 消融实验 `无` ｜ 统计方差/显著性 `无` ｜ 局限性讨论 `无` ｜ 最新基线年份 `2025` ｜ 最新文献年份 `2025`
+S0136 DSE-2026 行159 [] 随着5G、物联网（IoT）、工业物联网（IIoT）与边缘计算的深度融合，动态网络拓扑结构随终端接入与业务迁移实时演化，网络流量呈现高度动态性与异构性，异常连接模式（如非法访问、DDoS、协议篡改、横向渗透等）表现出强时序耦合、高隐蔽性与多态性（Section 1, Pages 3–4）。
+S0137 DSE-2026 行162 [] 在动态网络拓扑持续演化、跨场景分布差异显著且目标域异常样本稀疏的条件下，如何利用历史标注数据实现跨场景的动态网络异常连接模式智能识别与自适应迁移（Section 1, Pages 3–5; Section 2, Page 11）。
+S0138 DSE-2026 行165 [] 论文声称面临四大核心挑战：（1）动态拓扑与业务负载演化导致跨场景数据分布差异大、特征漂移严重；
+S0139 DSE-2026 行165 [] （2）异常行为具有低频探测到突发爆发的跨时刻时序耦合演化规律，静态单时刻特征难以刻画；
+S0140 DSE-2026 行165 [] （3）DDoS、横向渗透等协同攻击存在多主机全局交互依赖，单主机视角难以识别隐蔽模式；
+S0141 DSE-2026 行165 [] （4）目标动态场景异常样本稀疏、标注成本高，单一场景模型易过拟合且泛化衰减（Abstract, Pages 1, 3; Section 1, Pages 3–5; Section 2, Pages 5–11）。
+S0142 DSE-2026 行168 [] 提出一种由四个串联环节组成的框架（Section 2, Pages 5–14）：（1）动态连接结构化表征（Section 2.1, Eqs. 1–5）：基于出口路由器捕获的五元组交互流构建内部m台源主机与外部n台目标主机的收发包数矩阵G(t)（元素为(a_ij, b_ji)），并定义4个出入度计数指标——源主机出向连接密度A_i、源主机入向连接密度B_i、目标主机出向连接密度C_j与目标主机入向连接度D_j；
+S0143 DSE-2026 行168 [00551-20] （2）时序特征提取（Section 2.2, Eqs. 6–10）：采用三层堆叠GRU（Stacked GRU）接全连接层与Sigmoid激活提取连接特征的时序演化表征；
+S0144 DSE-2026 行168 [] （3）全局关联特征增强（Section 2.3, Eqs. 11–14）：构造基于主机连接嵌入矩阵V_a的自注意力（Self-Attention）模块，经ReLU线性投影生成Q、K（未对V作投影），计算注意力权重S_a = softmax(Q K^T / sqrt(d_attn))及全局增强特征Z_a = S_a V_a，并与GRU时序输出拼接为复合特征H = Concat(Z_a, sigmoid(xi))；
+S0145 DSE-2026 行168 [] （4）跨域知识迁移（Section 2.4, Eqs. 15–23）：构建跨领域传输网络（Cross-domain Transport Network, CTN），通过共享传输矩阵T_M实现源域与目标域单层双向交叉映射（H_S^{l+1} = sigma(W_S H_S^l + T_M H_T^l)，H_T^{l+1} = sigma(W_T H_T^l + T_M H_S^l)），再经全连接层映射为Fusion_d、双线性共享特征Share_{h,c}及求和偏置输出异常预测值Pred_{h,c}。
+S0147 DSE-2026 行171 [00551-18] 在某汽车零部件智能制造示范基地的控制柜硬件环境中开展实验（Fig. 1, Pages 14–15），表1列出横跨智能制造、智能电网、化工园区、物流仓储与混合工业场景的10个IIoT节点（Siemens S7-1500 PLC、Basler相机、PT100传感器、AR502H网关、MiR100 AGV等，Page 15），表2展示2024/6/10采集的5条历史异常记录（Page 16）。
+S0148 DSE-2026 行171 [00551-19] 通过SPAN流量镜像接入安全分析平台，评估包括：表3的10条案例定性识别结果（Page 17）、图2的8类异常混淆矩阵（Page 18）、以及以文献[6][7][8]为对比基线在节点数（10–90）与通信时间（10–60 min）变化下的模式识别覆盖率（Fig. 3, Page 19）和网络吞吐量（Fig. 4, Page 20）。
+S0150 DSE-2026 行174 [00551-01] 论文报告的主要结果包括：（1）表3（Page 17）显示对5类攻击共10条历史关联案例全部“Correctly identify”；
+S0151 DSE-2026 行174 [00551-11、00551-12] （2）图2（Page 18）的8×8混淆矩阵显示8类异常的对角线正确识别样本数集中在991–995（约每类1000样本，总体准确率约99.2%）；
+S0152 DSE-2026 行174 [00551-15、00551-16] （3）图3（Page 19）显示节点数为10时模式识别覆盖率接近98%，节点扩展至90时稳定保持在96%以上，高于对比方法[6][7][8]；
+S0153 DSE-2026 行174 [00551-04、00551-05、00551-17] （4）图4（Page 20）及摘要/结论宣称在节点数扩展至90（但正文Page 20仅讨论10至50节点）及通信时间10–60 min下，网络吞吐量维持在400 Mbit/s以上（正文称10节点30 min时接近400 Mbit/s、50节点60 min时高于450 Mbit/s，高于文献[8]的约350 Mbit/s）。
+S0155 DSE-2026 行178 [] - 选题背景具有一定的现实工程动机：关注工业物联网（IIoT）动态网络拓扑演化与目标域异常样本稀疏带来的跨场景迁移难题（Section 1, Pages 3–4）。
+S0156 DSE-2026 行179 [] - 整体行文按照“表征构造—时序建模—全局增强—跨域迁移—实验验证”的流水线结构组织，主线框架清晰易读（Section 2.1–2.4, Pages 5–14）。
+S0158 DSE-2026 行181 [00551-08] - 【期刊定位与原创性】偏离DSE核心数据科学与数据工程范畴，方法仅为度统计+Stacked GRU+Self-Attention+CTN的机械堆砌，无实质性理论或算法创新（Sections 2.1–2.4, Pages 5–14）。
+S0159 DSE-2026 行182 [00551-06、00551-07] - 【方法与结果严重脱节】Section 2仅以4个主机度计数(A_i, B_i, C_j, D_j)为输入且Eq. (23)输出标量，但Table 3（Page 17）与Page 18宣称识别出海外IP、协议字段篡改、交换机跳板路径与RF物理干扰，数学模型与实验输出彻底断裂。
+S0160 DSE-2026 行183 [] - 【公式与机制错误百出】Eqs. (6)–(8)（Page 8）将含标签的源域集合Q_src错误乘入GRU门控公式；
+S0161 DSE-2026 行183 [00551-14] Page 8误称GRU将遗忘门和输入门合并为重置门；
+S0162 DSE-2026 行183 [] Eqs. (1)–(5)及Page 7/10存在m与n索引错配和张量维度冲突；
+S0163 DSE-2026 行183 [00551-09] Section 2.4缺少损失函数、训练算法、多分类头、分类阈值以及在线推理时源/目标域配对机制；
+S0164 DSE-2026 行183 [] Eq. (23)求和下标(i,j)与被加项(p,q)不符且L未定义。
+S0165 DSE-2026 行184 [] - 【基线荒谬与严重文献错引】将视频/图像Deepfake区块链论文[7]曲解为网络攻击检测并用作Fig. 3/4的对比基线（Pages 4, 19–20）；
+S0166 DSE-2026 行184 [] 大面积错引视频/图像异常检测文献[1][4][15][19]支撑网络安全论述；
+S0167 DSE-2026 行184 [] 遗漏引言提及的相关迁移学习IDS基线[9][10][11]及全部公开基准数据集。
+S0458 DSE-2026 行20 [] | `DSEJ-D-26-00551` | 动态工业网络迁移异常连接识别 | DOES_NOT_MEET | DOES_NOT_MEET | DOES_NOT_MEET | DOES_NOT_MEET | DOES_NOT_MEET | DOES_NOT_MEET | ❌ Desk Reject | 偏离 DSE；
+S0459 DSE-2026 行20 [] Section 2 四度特征与 Table 3 协议/RF 结果断裂；
+S0460 DSE-2026 行20 [00551-02] 误将 Deepfake 论文[7]当网络入侵基线 |
+S0552 Decision 段13 [] Decision for DSEJ-D-26-00551: Desk reject
+S0557 Decision 段15 [] The formulation in Section 2 contains fundamental errors and omits the loss, training, and online inference protocols, while disconnecting completely from the fine-grained protocol, RF, and routing outputs claimed in Section 3.
+S0558 Decision 段15 [00551-10、00551-13] Moreover, the evaluation lacks public benchmarks, ablation studies, and a benign traffic class in the confusion matrix, exhibits internal contradictions (5 vs. 8 attack classes and conflicting throughput trends), and uses inappropriate baselines—including mischaracterizing a deepfake detection study ([7]) as a network intrusion baseline.
+
+### LEDGER 00551
+00551-01 CONFIRMED 5类攻击  ->  这是 Table 3 对历史案例的描述。
+00551-02 CONFIRMED Deepfake 论文  ->  文内称该文研究网络异常，[7] 题名为 deepfake 检测；需核实原文和基线改造细节。
+00551-03 OVERSTATED 错将视频 Deepfake 论文当网络入侵基线  ->  仅凭参考文献题名不能确认全部任务细节；说明图表比较和引用的关联方式不清。
+00551-04 CONFIRMED 10至50节点  ->  这是正文所讨论的两个例子，不证明 90 节点图值错误。
+00551-05 CONFIRMED 400 Mbit/s  ->  是正文对 10 节点、30 分钟的近似描述。
+00551-06 IMPRECISE Section 2仅以4个主机度计数  ->  §2.1 确有四项连接特征，§2.2 的 GRU 输入该矩阵；不能仅据此排除文中其他环节还使用了其他数据或后处理。
+00551-07 OVERSTATED 数学模型与实验输出彻底断裂  ->  应指出协议字段、路径及干扰信息与建模输入/输出的映射未说明。
+00551-08 UNVERIFIABLE 偏离DSE核心数据科学与数据工程范畴  ->  原稿能支持领域描述；范围结论需编辑按现行政策判断。
+00551-09 UNVERIFIABLE 缺少损失函数  ->  [UNVERIFIABLE] 尚不能排除其他位置的训练/损失定义；对外只说训练与评估细节不足。
+00551-10 CONFIRMED 5 vs. 8 attack classes  ->  历史样例和混淆矩阵的类别数不同；两者可能覆盖不同集合，须解释对应关系。
+00551-11 CONFIRMED 对角线正确识别样本数集中在991–995  ->  图 2 的数字分布也由作者正文描述；总样本量和整体准确率仍需逐格完整核算。
+00551-12 CONFIRMED 约每类1000样本，总体准确率约99.2%  ->  逐格读图核算：八行各 1,000，对角和 7,939，总体 7,939/8,000＝99.2375%；图仅报告异常类别，不能由此估计正常流量误报率。
+00551-13 CONFIRMED a benign traffic class in the confusion matrix  ->  Fig. 2 只标示八类异常，未单列正常流量；不能以此否定作者在其他实验中可能使用正常流量。
+00551-14 CONFIRMED Page 8误称GRU将遗忘门和输入门合并为重置门  ->  正文的门控说明与标准 GRU 中由更新门控制新旧状态混合的描述不符；应请作者更正术语并明确实现。
+00551-15 CONFIRMED 节点数为10时模式识别覆盖率接近98%  ->  §3 对 Fig. 3 的正文描述，依图示量级而非可精确复现的原始测量值。
+00551-16 CONFIRMED 节点扩展至90时稳定保持在96%以上  ->  正文对 Fig. 3 的描述；该曲线对应的重复实验和误差尚待说明。
+00551-17 CONFIRMED 50节点60 min时高于450 Mbit/s  ->  这是正文报告；不应直接与不同通信时长下的 10 节点数值拼成单变量趋势。
+00551-18 CONFIRMED 表1列出横跨智能制造、智能电网、化工园区、物流仓储与混合工业场景的10个IIoT节点  ->  Table 1 的 10 行是节点参数配置，不能据此断定实验覆盖五个独立生产场所。
+00551-19 CONFIRMED 表3的10条案例定性识别结果  ->  Table 3 共 10 个案例，逐行标注正确识别；不足以据此推断总体准确率。
+00551-20 CONFIRMED 三层堆叠GRU（Stacked GRU）接全连接层与Sigmoid激活  ->  §2.2 所述架构；不意味着已核对训练实现。

@@ -87,9 +87,12 @@
             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>结论</Text>
             <Text style={{ fontSize: 16, color: '#FFFFFF' }}>升级触发点是“是否跨租户提供 / 接收数据”，不是数据量大小——这条要写进准入校验。</Text>
         </Box>
+        <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>依据 [C-1]</Text>
+        </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>另有 5 条一票否决：B=5 不得进场、R=5 或 D=5 至少 L3、R=4 至少 L2、S≥4 且 B≥3 至少 L2、外部主体一律 L3</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>08 / 12</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>08 / 13</Text>
         </Box>
     </Box>
 </Slide>

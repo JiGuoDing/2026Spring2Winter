@@ -50,7 +50,7 @@
         </Box>
         <Box style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 14, color: '#7A8699' }}>平台已在 31 个省级区域、近 700 个场站运行，七大板块都在</Text>
-            <Text style={{ fontSize: 14, color: '#7A8699' }}>03 / 08</Text>
+            <Text style={{ fontSize: 14, color: '#7A8699' }}>03 / 09</Text>
         </Box>
     </Box>
 </Slide>

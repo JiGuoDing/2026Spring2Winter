@@ -1,0 +1,51 @@
+P000 [Normal] These papers have passed the preliminary review and entered the peer-review stage：
+P001 [Normal] DSEJ-D-25-00340，DSEJ-D-25-00352，DSEJ-D-25-00371，DSEJ-D-25-00374，DSEJ-D-25-00380.
+P002 [Normal] Comments for Desk Rejection:
+P003 [List Paragraph] Decision for DSEJ-D-25-00347: Desk reject
+P004 [List Paragraph] Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper proposes SDHSW, a robust and reversible database watermarking scheme using square prediction and histogram shifting.
+P005 [List Paragraph] The major concern is regarding its scope and technical alignment with the DSE journal’s focus. The paper primarily addresses database watermarking techniques, which fall under multimedia security or information hiding. Furthermore, the presentation and technical contribution need to be improved.
+P006 [List Paragraph] Decision for DSEJ-D-25-00357: Desk reject
+P007 [List Paragraph] Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper describes a visualization approach for multilingual dictionary mapping.
+P008 [List Paragraph] The work leans heavily on linguistic and geographic representation but lacks integration with core data science techniques. There is no clear experimental design, dataset description, or comparative analysis. Furthermore, the presentation and technical contribution need to be improved.
+P009 [List Paragraph] Decision for DSEJ-D-25-00359: Desk reject
+P010 [List Paragraph] Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper presents a comparative analysis of anomaly detection in Vehicle-to-Everything communication for smart cities.
+P011 [List Paragraph] The major concern is lacking a more rigorous comparative analysis with state-of-the-art techniques. The manuscript contains redundant sections. The organization could be improved to enhance readability and conciseness. 
+P012 [List Paragraph] Decision for DSEJ-D-25-00361: Desk reject
+P013 [List Paragraph] Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper proposes Dual-MBO-SGANet, an AI framework for forecasting corporate green bond index values by integrating. 
+P014 [List Paragraph] But the highly specialized methodology and synthetic dataset limit its generalizability and practical applicability. Furthermore, the presentation and technical contribution need to be improved.
+P015 [List Paragraph] Decision for DSEJ-D-25-00364: Desk reject
+P016 [List Paragraph] Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper presents an AI-driven predictive load balancing framework for containerized multi-cloud and edge computing environments.
+P017 [List Paragraph] But it falls short of current standards for clarity, depth, and originality at DSE. Major concerns include insufficient technical detail, limited experimental rigor/statistical support, and failure to compare against the most relevant recent literature. 
+P018 [List Paragraph] Decision for DSEJ-D-25-00365: Desk reject
+P019 [List Paragraph] Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper evaluates critical success factors for blockchain adoption in the automotive supply chain and ranks suppliers based on their readiness to implement blockchain technology.
+P020 [List Paragraph] The major concern is lacking significant theoretical or methodological innovation. They only focus on automotive industry limiting the generalizability. Furthermore, the presentation needs to be improved.
+P021 [List Paragraph] Decision for DSEJ-D-25-00366: Desk reject
+P022 [List Paragraph] Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper proposes a non-invasive, automated system for diagnosing hyperkinetic dysphonia, a voice disorder characterized by excessive vocal fold tension.
+P023 [List Paragraph] But the absence of detailed quantitative results, a lack of novel methodological contributions, and significant gaps in baseline evaluation and related work coverage prevent it from meeting the standards for acceptance at DSE.
+P024 [List Paragraph] Decision for DSEJ-D-25-00367: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper addresses the challenges of processing skyline queries in dynamic, multi-dimensional data streams with heterogeneous attribute types and subspace preferences.
+P025 [List Paragraph] The major concern is lacking discussion on limitations of CMGS model, such as when the ISDT structures could become prohibitively large or in what settings strong/weak pruning might not yield substantial benefit. Furthermore, the presentation and technical contribution need to be improved.
+P026 [List Paragraph] Decision for DSEJ-D-25-00368: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper addresses the problem of verifiable fuzzy query processing in blockchain databases.
+P027 [List Paragraph] The major concerns are lacking discussion on adversarial settings and limited originality. Prior works have explored fuzzy search with verifiable data structures in blockchain. Furthermore, the presentation and technical contribution need to be improved.
+P028 [List Paragraph] Decision for DSEJ-D-25-00369: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. The paper provides a descriptive overview of linked data in digital libraries but does not present new methodologies, empirical results, or significant theoretical advancements beyond existing literature. Furthermore, the presentation needs to be improved.
+P029 [List Paragraph] Decision for DSEJ-D-25-00370: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper presents HiCMIM, a hierarchical multimodal framework for rumor detection on social media. 
+P030 [List Paragraph] But the core innovation is thus mostly in refined architecture choices and integration, rather than a substantial leap in results. Furthermore, the presentation needs to be improved.
+P031 [List Paragraph] Decision for DSEJ-D-25-00372: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper presents a deep learning framework for forecasting nitrogen oxide emissions from heavy-duty vehicles by integrating real-world onboard sensor data, trip metadata, and meteorological measurements.
+P032 [List Paragraph] But it falls short of current standards for clarity, depth, and originality at DSE.
+P033 [List Paragraph] The major concern is lacking major theoretical innovation. Most methodological components are established in prior literature. Furthermore, the presentation needs to be improved.
+P034 [List Paragraph] Decision for DSEJ-D-25-00373: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This survey provides an extensive overview of Agentic AI systems driving autonomous scientific discovery, focusing particularly on their application to end-to-end scientific workflows with an emphasis on Earth system science, digital twin modeling, and laboratory automation.
+P035 [List Paragraph] But the paper omits several recent, directly relevant survey and position works on Agentic AI in scientific discovery. The work lacks critical analysis of the limitations, open challenges, or empirical deficiencies of existing agentic systems beyond high-level summaries.
+P036 [List Paragraph] Decision for DSEJ-D-25-00375: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper addresses the task of automatic ICD coding by proposing a Multi-aspect Label Information Fusion Enhanced Method.
+P037 [List Paragraph] The major concern is lacking ablation, analytic depth, and direct benchmark comparison to some relevant and recent methods. Furthermore, the presentation and technical contribution need to be improved.
+P038 [List Paragraph] Decision for DSEJ-D-25-00377: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. This paper addresses the challenge of detecting internal leakage in electro-hydrostatic actuators by proposing nonparametric Bayesian classification frameworks. 
+P039 [List Paragraph] The major concerns are limited novelty due to strong similarity to prior work, lack of competitive empirical baseline comparisons, absence of external validation, and missing discussion of key recent literature.
+P040 [List Paragraph] Decision for DSEJ-D-25-00381: Desk reject
+Thanks for submitting your paper to DSE. However, the paper in its current form is not ready for publication in DSE. The paper provides a comprehensive review of security issues and solutions for resource-constrained IoT devices using the MQTT protocol.
+P041 [List Paragraph] The major concern is lacking comparative tables, matrices, and concrete quantitative synthesis, which will limit the reader’s ability to critically compare state-of-the-art solutions or identify best practices. Moreover, no meaningful qualitative or quantitative results table is provided in the paper.

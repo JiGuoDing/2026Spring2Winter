@@ -3,6 +3,43 @@
 规则：任何对 `schema/`、`contracts/`、`config/`、`common/` 的改动都必须在此登记，
 写明原因、影响范围与已通知的 agent。
 
+## 2026-11-28 · v0.6.0
+
+**变更**：零破坏冻结 `v0.3.0` 主干数据与 300 条慢模型主标定，构建真实生产级 `act` 执行环境（133.7 万行压力分析库 + HTTP/JSON 只读工具网关 + 连接池并发排队压测）及硬件无关 `act` 价值硬证据，使 `P3` 画像达成 **RAG 与 ACT 双真机 `measured`**。
+
+- `db/build_prod_scale.py` + `db/scale/meta.json`：确定性将 34 张事实表 + 6 张日志表扩容 100× 至 4,444,640 行（1.22 GB，含 `(*_key, date_key)` 组合索引，不进 Git 与顶层 MANIFEST，可一键重建），200 条 `gold_sql` 保持原样可执行。
+- `costs/act_tool_server.py` + `costs/measure_act_prod.py` + `costs/act_prod_costs.csv` + `embeddings/calibration/act_prod_300.jsonl`：真实只读 HTTP/JSON 工具网关（RBAC 鉴权 + 有界连接池 `pool_size=4` + `request_queue_size=128` + 4 步工具链含 BI 分区/口径核验探查 + JSON 序列化），在 `c=1/8/16` 三档并发下全量实测 300 条请求（`c=1` mean 1.02 s、`c=8` mean 3.12 s / p95 5.54 s、`c=16` mean 5.10 s / p95 30.77 s，零 `sleep`，全部 `measured=1`）。
+- `costs/analyze_act_value.py` + `costs/act_value_diagnostics.json`：实测快照数值漂移率（`v0→v1` 15.0%，全程 21.0%）、DB 查询削减上界（93.09%）、精确 `resp` 未命中时 `act` 残余命中率（85.84%）及下游支撑度 $d_i$ 分层。
+- `costs/deployment_profiles.json`：`P2` 与 `P3` 的 `act_stage` 升级为 `c=8` 百万行网关真机 `measured`。
+- `verify/verify.py`：断言由 58 项扩至 **59 项**（新增生产级 `act` 网关压测、100 万行门槛、高并发排队与价值诊断校验）。
+
+## 2026-11-28 · v0.5.0
+
+**变更**：零破坏冻结 `v0.3.0` 主干数据与 300 条慢模型主标定，按 2025–2026 顶会范式升级现代六阶段块级 RAG 流水线、4 步只读 `act` 工具链本地实测、50 条快模型标定通道与 P1–P4 多部署画像契约。
+
+- `embeddings/chunk_embeddings.npz` + `tools/build_chunk_embeddings.py`：对 13,770 个版本块构建 Contextual Chunk Embeddings（`bge-small-zh-v1.5` ONNX，L2 归一化，确定性 ZIP）。
+- `costs/rag_pipeline.py` + `costs/measure_rag_rerank.py` + `costs/rag_rerank_costs.csv` + `costs/rag_ir_eval.csv`：实现六阶段现代 RAG（RBAC `<=` 与 `sys_ver` 前置过滤 → Contextual BM25 + 实时 ONNX Dense → RRF $k=60$ → `bge-reranker-v2-m3` INT8 ONNX 交叉重排 + Per-Doc Cap=2 + `seed43` 校准动态截断 → Sides Repacking），300 条全实测并输出 4 组标准 IR 消融指标。
+- `costs/measure_act_toolchain.py` + `costs/act_toolchain_costs.csv`：真实测量企业取数 4 步只读工具链（`schema_inspect` / `sql_validate` / `sql_execute` / `result_check`，全部 `measured=1`）；明确 `act_plan_pool.json` 的 `downstream_tools` 为下游支撑度特征 $d_i$。
+- `events/build_fast_sample.py` + `events/fast_calibration_sample_50.jsonl` + `tools/run_fast_model_calibration.py`：50 条分层快模型样本与标定通道（`--dry-run` 验通，未真跑前严守 `pending`）。
+- `costs/deployment_profiles.json` + `costs/build_deployment_profiles.py`：P1–P4 四档部署画像，每个分量独立标注 `measured` / `assumed`。
+- `verify/verify.py`：断言由 54 项扩至 **58 项**（含 `v0.3.0` 主干冻结哈希守卫与 `v0.5.0` 全量产物校验）。
+
+## 2026-11-28 · v0.4.0
+
+**变更**：零破坏冻结 `v0.3.0` 主干数据（300 条 27B 主标定与 600 条句向量 100% 复用），通过契约升级与独立 sidecar 一次补齐动机实验（图 1-1 a/b/c）及 C1–C4 正式实验前置接口。
+
+- `config/params.json`：`dataset_version=0.4.0`；`cache_capacity_tiers` 对齐论文 §1.4.4 / v5 改为 `[0.1, 0.25, 0.5]`；新增 `pool_working_set_ref`、`stream_splits`（`seed42` 主基准、`seed43` 验证流、`seed44–46` 独立测试流，动机 M2 跑 `seed42–46`）与 `repair_calibration` 块。
+- `contracts/ONLINE_EVAL_SPLIT.json` + `common/io.py::strip_eval_fields()`：显式隔离在线可见字段与评测真值字段（`cluster_id`、`gold_doc_ids`、`gold_fact_spans`、`effective_at` 等在线禁用）。
+- `contracts/PATH_AND_TIMING_SPEC.md`：固化路径触发条件/成本来源表（缺数返回 `UNRESOLVABLE`，禁补 0）与顺序事件回放时序表。
+- `costs/measure_fallback.py` + `costs/fallback_costs.csv`：本地 `perf_counter` 实测四类本地回退探测开销（`measured=1`），`plan_adapt_rework_fallback` 保持 `mock=pending`。
+- `events/build_update_impact.py` + `events/update_impact_summary.jsonl`：40 条更新事件的逐事件文档级/主张级影响面与局部/大改分层汇总（支撑图 1-1(c) 与 C3）。
+- `events/build_repair_sample.py` + `events/repair_calibration_sample.jsonl` + `tools/run_repair_calibration.py`：确定性抽取 40 对先导样本（20 局部 / 10 大改 / 10 仅文档变，100% 绑定已有 300 条主标定旧回答）并提供 `--dry-run`/`--resume`/`--write-back` 标定通道，待接通模型后替换 `path_costs.csv` 中 `partial_repair/rewrite` 的 `plan` P50 代理值。
+- `events/build_tool_failures.py` + `events/tool_failures.jsonl`：确定性工具失败重试 sidecar（显式标注 `assumed_synthetic`），供 M3/C4 远程工具画像回放。
+- `tools/score_human_review.py`：60 条人工复核一致率与 Cohen's κ 自动计算脚本。
+- `verify/verify.py`：断言由 48 项扩至 **54 项**（含 `v0.3.0` 主干冻结哈希守卫）。
+
+**保留不变**：`db/`、`knowledge/docs.jsonl`、`tasks/tasks.jsonl`、`events/request_stream.jsonl`、`events/update_events.jsonl`、`events/real_calibration_300.csv`、`embeddings/query_embeddings.npz` 逐字节不变。
+
 ## 2026-11-26 · v0.3.0
 
 **变更**：模型阶段成本实测回填，数据集由"模板 + pending"升级为"300 条真机标定"。

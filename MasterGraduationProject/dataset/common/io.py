@@ -74,3 +74,24 @@ def embedding_lookup(path: Path | None = None) -> dict[str, list[float]]:
     """返回 question_text -> 向量 的字典，便于按请求文本直接查。"""
     texts, mat = load_query_embeddings(path)
     return {t: mat[i].tolist() for i, t in enumerate(texts)}
+
+
+# ---- 在线/评测字段隔离（v0.4.0） -------------------------------------------
+_SPLIT_CACHE: dict | None = None
+
+
+def load_online_eval_split() -> dict:
+    """读取 contracts/ONLINE_EVAL_SPLIT.json。"""
+    global _SPLIT_CACHE
+    if _SPLIT_CACHE is None:
+        _SPLIT_CACHE = read_json(ROOT / "contracts" / "ONLINE_EVAL_SPLIT.json")
+    return _SPLIT_CACHE
+
+
+def strip_eval_fields(record: dict, kind: str) -> dict:
+    """返回只保留 online_visible 字段的浅拷贝，防止在线策略读取评测真值。"""
+    tables = load_online_eval_split()["tables"]
+    if kind not in tables:
+        raise KeyError(f"未知表名 {kind}，可选: {sorted(tables)}")
+    allowed = set(tables[kind]["online_visible"])
+    return {k: v for k, v in record.items() if k in allowed}
